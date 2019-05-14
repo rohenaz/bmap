@@ -6,7 +6,7 @@ You need a [TXO formatted](https://github.com/interplanaria/txo) transaction. Th
 
 # Usage
 ```js
-require('bmap')
+require('bmapjs')
 bmap.TransformTx(txo)
 ```
 
