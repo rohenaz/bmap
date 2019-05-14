@@ -1,6 +1,6 @@
 const bmap = {}
 // Takes a bitdb formatted op_return transaction
-bmap.TransformTxs = (tx) => {
+bmap.TransformTx = (tx) => {
   if (!tx) {
     throw new Error('Cant process tx', tx)
   }
