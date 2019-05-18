@@ -5,6 +5,11 @@ bmap.TransformTx = (tx) => {
   if (!tx) {
     throw new Error('Cant process tx', tx)
   }
+  let protocolMap = new Map()
+  protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
+  protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
+
+  // ToDo we snouldnt need both opf these
   let protocolSchema = {
     '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut': 'B',
     '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5': 'MAP'
@@ -37,7 +42,7 @@ bmap.TransformTx = (tx) => {
   // Loop over the tx keys (in, out, tx, blk ...)
   for (let key of Object.keys(tx)) {
     // Check for op_return
-    if (key === 'out' && tx[key].some((output) => { return output && output.b0 && output.b0.op === 106 })) {
+    if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
       // There can be only one
       let opReturnOutput = tx[key][0]
 
@@ -133,8 +138,8 @@ bmap.TransformTx = (tx) => {
     }
 
     // Detect & swap binary encoding
-    if (newB.hasOwnProperty('encoding') && newB['encoding'] === 'binary' && self.out.some(out => { return out.s1 === this.B_PREFIX && out.s4 === 'binary' })) {
-      newB['content'] = self.out.filter(out => { return out && out.s1 === this.B_PREFIX }).map((out) => { return out.lb2 })[0]
+    if (newB.hasOwnProperty('encoding') && newB['encoding'] === 'binary' && self.out.some(out => { return out.s1 === protocolMap.get('B') && out.s4 === 'binary' })) {
+      newB['content'] = self.out.filter(out => { return out && out.s1 === protocolMap.get('B') }).map((out) => { return out.lb2 })[0]
     }
     self.B = newB
   }
