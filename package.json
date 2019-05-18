@@ -1,9 +1,10 @@
 {
   "name": "bmapjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A parser for TXO formatted transactions comprised of B and MAP OP_RETURN protocols together in a single tx.",
-  "main": "bmap.js",
+  "main": "bmap_node.js",
   "scripts": {
+    "build": "browserify bmap_node.js -o dist/bmap_node.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,6 +19,9 @@
     "protocol",
     "bsv"
   ],
+  "devDependencies": {
+    "browserify": "^16.2.0"
+  },
   "author": "Satchmo",
   "license": "MIT",
   "bugs": {
