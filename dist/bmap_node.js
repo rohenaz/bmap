@@ -149,7 +149,6 @@ bmap.TransformTx = (tx) => {
 }
 
 exports.TransformTx = function(tx) {
-  console.log("This is a message from the demo package")
   return bmap.TransformTx(tx)
 }
 },{}]},{},[1]);

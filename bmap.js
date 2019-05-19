@@ -36,7 +36,7 @@ bmap.TransformTx = (tx) => {
   // Loop over the tx keys (in, out, tx, blk ...)
   for (let key of Object.keys(tx)) {
     // Check for op_return
-    if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
+    if (key === 'out' && tx[key].some((output) => { return output && output.b0 && output.b0.op === 106 })) {
       // There can be only one
       let opReturnOutput = tx[key][0]
 
@@ -49,12 +49,7 @@ bmap.TransformTx = (tx) => {
         pushdataKey = opReturnOutput.hasOwnProperty(pushdataKey) ? pushdataKey : opReturnOutput.hasOwnProperty('l' + pushdataKey) ? 'l' + pushdataKey : null
         if (!pushdataKey) {
           // missing large data fields (ex. chronos bitsocket)
-          if (!opReturnOutput.hasOwnProperty('lb' + relativeIndex)) {
-            pushdataKey = 'lb' + relativeIndex
-          } else {
-            
-          }
- 
+          pushdataKey = 'lb' + relativeIndex
           pushdataKey = 'ls' + relativeIndex
         }
         let pushdata = opReturnOutput[pushdataKey]
