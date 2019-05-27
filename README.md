@@ -6,7 +6,8 @@ While the initial release only supports B and MAP protocols, the idea is to supp
 # Pre-requisites
   - Read [B Protocol](https://github.com/unwriter/B)
   - Read [MAP protocol](https://github.com/rohenaz/MAP)
-  - A [TXO formatted](https://github.com/interplanaria/txo) transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria)
+  - Read [AIP protocol](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)
+  - A [TXO](https://github.com/interplanaria/txo) formatted transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria)
   - npm
 
 # Install
@@ -26,7 +27,7 @@ bmap.TransformTx(txo)
 `ToDo`
 
 # Roadmap
-- [ ] AIP support
+- [x] AIP support
 - [ ] C support
 - [ ] D Support
 - [ ] BCAT support

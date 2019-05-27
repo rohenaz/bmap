@@ -33,7 +33,7 @@ bmap.TransformTx = (tx) => {
     'AIP': [
       { 'algorithm': 'string' },
       { 'address': 'string' },
-      { 'signature': 'string' },
+      { 'signature': 'binary' },
       [
         {'index': 'string'}
       ]
@@ -51,7 +51,7 @@ bmap.TransformTx = (tx) => {
   // Loop over the tx keys (in, out, tx, blk ...)
   for (let key of Object.keys(tx)) {
     // Check for op_return
-    if (key === 'out' && tx[key].some((output) => { return output && output.b0 && output.b0.op === 106 })) {
+    if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
       // There can be only one
       let opReturnOutput = tx[key][0]
 
@@ -69,6 +69,7 @@ bmap.TransformTx = (tx) => {
         }
         let pushdata = opReturnOutput[pushdataKey]
 
+        // TODO - only do this if the field in question should be a string
         if ((!pushdataKey.startsWith('s') && !pushdataKey.startsWith('ls')) || pushdataKey === 'str') {
           // skip the non string values
           continue
@@ -126,6 +127,7 @@ bmap.TransformTx = (tx) => {
   // TRANSFORM
   let newMap = {}
   let newB = {}
+  let newAIP = {}
   let keyTemp
   let self = dataObj
   if (self.hasOwnProperty('MAP')) {
@@ -146,11 +148,35 @@ bmap.TransformTx = (tx) => {
       newB[key] = Object.values(kv)[0]
     }
 
-    // Detect & swap binary encoding
+    // Detect & swap binary encoding for B files
     if (newB.hasOwnProperty('encoding') && newB['encoding'] === 'binary' && self.out.some(out => { return out.s1 === protocolMap.get('B') && out.s4 === 'binary' })) {
       newB['content'] = self.out.filter(out => { return out && out.s1 === protocolMap.get('B') }).map((out) => { return out.lb2 })[0]
     }
+
     self.B = newB
+  }
+
+  if (self.hasOwnProperty('AIP')) {
+    for (let kv of self.AIP) {
+      let key = Object.keys(kv)[0]
+      newAIP[key] = Object.values(kv)[0]
+    }
+
+    // Detect and swap signature
+    if (newAIP.hasOwnProperty('signature') && newAIP.signature.length > 0) {
+
+      // find where the bad signature lives, and replace 's' with 'b'
+      let opOuts = self.out.filter((out) => { return out && out.hasOwnProperty('b0') && out.b0.hasOwnProperty('op') && out.b0.op === 106 })
+      for (let [key, val] of Object.entries(opOuts[0])) {
+        if (val === newAIP.signature) {
+          // replace signature with binary
+          newAIP.signature = opOuts[0][key.replace('s','b')]
+          break
+        }
+      }
+    }
+
+    self.AIP = newAIP
   }
 
   // Now my object is ready

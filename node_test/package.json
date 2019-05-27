@@ -1,0 +1,13 @@
+{
+  "name": "bmapjs-nodetest",
+  "version": "0.0.1",
+  "description": "Testing node implementation of bmapjs",
+  "main": "test_bmap_node.js",
+  "author": "Satchmo",
+  "license": "MIT",
+  "dependencies": {
+    "bmapjs": "latest",
+    "node-fetch": "latest",
+    "btoa": "latest"
+  }
+}

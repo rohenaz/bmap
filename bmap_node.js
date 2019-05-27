@@ -1,9 +1,10 @@
 const bmap = {}
 // Takes a bitdb formatted op_return transaction
 bmap.TransformTx = (tx) => {
-  if (!tx) {
+  if (!tx || !tx.hasOwnProperty('in') || !tx.hasOwnProperty('out')) {
     throw new Error('Cant process tx', tx)
   }
+
   let protocolMap = new Map()
   protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
@@ -14,7 +15,6 @@ bmap.TransformTx = (tx) => {
     '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5': 'MAP',
     '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva': 'AIP'
   }
-
 
   let querySchema = {
     'B': [
@@ -151,6 +151,29 @@ bmap.TransformTx = (tx) => {
       newB['content'] = self.out.filter(out => { return out && out.s1 === protocolMap.get('B') }).map((out) => { return out.lb2 })[0]
     }
     self.B = newB
+  }
+
+  if (self.hasOwnProperty('AIP')) {
+    for (let kv of self.AIP) {
+      let key = Object.keys(kv)[0]
+      newAIP[key] = Object.values(kv)[0]
+    }
+
+    // Detect and swap signature
+    if (newAIP.hasOwnProperty('signature') && newAIP.signature.length > 0) {
+
+      // find where the bad signature lives, and replace 's' with 'b'
+      let opOuts = self.out.filter((out) => { return out && out.hasOwnProperty('b0') && out.b0.hasOwnProperty('op') && out.b0.op === 106 })
+      for (let [key, val] of Object.entries(opOuts[0])) {
+        if (val === newAIP.signature) {
+          // replace signature with binary
+          newAIP.signature = opOuts[0][key.replace('s','b')]
+          break
+        }
+      }
+    }
+
+    self.AIP = newAIP
   }
 
   // Now my object is ready
