@@ -33,7 +33,7 @@ bmap.TransformTx = (tx) => {
     'AIP': [
       { 'algorithm': 'string' },
       { 'address': 'string' },
-      { 'signature': 'string' },
+      { 'signature': 'binary' },
       [
         {'index': 'string'}
       ]
@@ -148,7 +148,7 @@ bmap.TransformTx = (tx) => {
     }
 
     // Detect & swap binary encoding
-    if (newB.hasOwnProperty('encoding') && newB['encoding'] === 'binary' && self.out.some(out => { return out.s1 === protocolMap.get('B') && out.s4 === 'binary' })) {
+    if (newB.hasOwnProperty('encoding') && (newB['encoding'] === 'binary' || newB['encoding'] === 'gzip') && self.out.some(out => { return out && out.s1 === protocolMap.get('B') && (out.s4 === 'binary' || out.s4 === 'gzip') })) {
       newB['content'] = self.out.filter(out => { return out && out.s1 === protocolMap.get('B') }).map((out) => { return out.lb2 })[0]
     }
     self.B = newB
