@@ -126,6 +126,7 @@ bmap.TransformTx = (tx) => {
   // TRANSFORM
   let newMap = {}
   let newB = {}
+  let newAIP = {}
   let keyTemp
   let self = dataObj
   if (self.hasOwnProperty('MAP')) {
