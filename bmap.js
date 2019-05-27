@@ -1,12 +1,19 @@
 const bmap = {}
 // Takes a bitdb formatted op_return transaction
 bmap.TransformTx = (tx) => {
-  if (!tx) {
+  if (!tx || !tx.hasOwnProperty('in') || !tx.hasOwnProperty('out')) {
     throw new Error('Cant process tx', tx)
   }
+
+  let protocolMap = new Map()
+  protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
+  protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
+  protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
+
   let protocolSchema = {
     '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut': 'B',
-    '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5': 'MAP'
+    '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5': 'MAP',
+    '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva': 'AIP'
   }
 
   let querySchema = {
@@ -21,6 +28,14 @@ bmap.TransformTx = (tx) => {
       [
         { 'key': 'string' },
         { 'val': 'string' }
+      ]
+    ],
+    'AIP': [
+      { 'algorithm': 'string' },
+      { 'address': 'string' },
+      { 'signature': 'string' },
+      [
+        {'index': 'string'}
       ]
     ]
   }
@@ -132,8 +147,8 @@ bmap.TransformTx = (tx) => {
     }
 
     // Detect & swap binary encoding
-    if (newB.hasOwnProperty('encoding') && newB['encoding'] === 'binary' && self.out.some(out => { return out.s1 === this.B_PREFIX && out.s4 === 'binary' })) {
-      newB['content'] = self.out.filter(out => { return out && out.s1 === this.B_PREFIX }).map((out) => { return out.lb2 })[0]
+    if (newB.hasOwnProperty('encoding') && newB['encoding'] === 'binary' && self.out.some(out => { return out.s1 === protocolMap.get('B') && out.s4 === 'binary' })) {
+      newB['content'] = self.out.filter(out => { return out && out.s1 === protocolMap.get('B') }).map((out) => { return out.lb2 })[0]
     }
     self.B = newB
   }

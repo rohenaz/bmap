@@ -7,12 +7,14 @@ bmap.TransformTx = (tx) => {
   let protocolMap = new Map()
   protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
+  protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
 
-  // ToDo we snouldnt need both opf these
   let protocolSchema = {
     '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut': 'B',
-    '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5': 'MAP'
+    '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5': 'MAP',
+    '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva': 'AIP'
   }
+
 
   let querySchema = {
     'B': [
@@ -26,6 +28,14 @@ bmap.TransformTx = (tx) => {
       [
         { 'key': 'string' },
         { 'val': 'string' }
+      ]
+    ],
+    'AIP': [
+      { 'algorithm': 'string' },
+      { 'address': 'string' },
+      { 'signature': 'string' },
+      [
+        {'index': 'string'}
       ]
     ]
   }
