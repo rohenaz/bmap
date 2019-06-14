@@ -24,7 +24,7 @@ bmap.TransformTx = (tx) => {
     'B': [
       { 'content': ['string', 'binary'] },
       { 'content-type': 'string' },
-      { 'encoding': 'string' }, // we try to use this to determine content character encoding. If encoding is not a valid character encoding, we assume it is binary
+      { 'encoding': 'string' }, // we use this field to determine content character encoding. If encoding is not a valid character encoding (gzip), we assume it is binary
       { 'filename': 'string' }
     ],
     'MAP': [
@@ -34,7 +34,9 @@ bmap.TransformTx = (tx) => {
         { 'val': 'string' }
       ]
     ],
-    'METANET': [],
+    'METANET': [
+
+    ],
     'AIP': [
       { 'algorithm': 'string' },
       { 'address': 'string' },
@@ -80,7 +82,6 @@ bmap.TransformTx = (tx) => {
       let roundIndex = 0
 
       for (let pushdataKey in opReturnOutput) {
-        // console.log('key', pushdataKey)
         // Get the TXO index number by itself (strip letters)
         let num = parseInt(pushdataKey.replace(/[A-Za-z]/g,''))
         if (num >= 0) {
@@ -99,13 +100,14 @@ bmap.TransformTx = (tx) => {
         }
       }
 
+      console.log('Value Maps', valueMaps)
       // Loop for pushdata count and find appropriate value
       let relativeIndex = 0
-      for (let x = 0; x < indexCount; x++) {
+      for (let x = 0; x <= indexCount; x++) {
 
         if (relativeIndex === 0 && protocolMap.getKey(valueMaps.string.get(x + 1))) {
           protocolName = protocolMap.getKey(valueMaps.string.get(x + 1))
-          dataObj[protocolName] = []
+          dataObj[protocolName] = {}
           offsets.set(protocolName, x+1)
           continue
         }
@@ -117,7 +119,6 @@ bmap.TransformTx = (tx) => {
           continue
         }
 
-        //console.log('Value is', valueMaps[encoding].get(x), '(',encoding,')')
         let encoding
         if (relativeIndex !== 0) {
           // get the schema object, or array of objects in case of repeating fields
@@ -133,7 +134,7 @@ bmap.TransformTx = (tx) => {
             encoding = Object.values(schemaField[roundIndex++])[0]
             obj[thekey] = valueMaps[encoding].get(x)
 
-            dataObj[protocolName].push(obj)
+            dataObj[protocolName][thekey] = obj[thekey]
             continue
           } else {
             // get the key, value pair from this query schema
@@ -146,15 +147,14 @@ bmap.TransformTx = (tx) => {
               // if encoding field if not included in content array assume its binary
               let encodingLocation = 's' + (offsets.get(protocolName) + 2 + relativeIndex)
               encoding = schemaEncoding.includes(opReturnOutput[encodingLocation]) ? opReturnOutput[encodingLocation] : 'binary'
-              console.log('key', schemaKey, 'options', schemaEncoding, 'encoding', encoding)
+
             } else {
               encoding = schemaEncoding
             }
             
+            // attach correct value to the output object
             obj[schemaKey] = valueMaps[encoding].get(x)
-
-            // console.log('push for', protocolName, 'to field', schemaField, 'on', dataObj[protocolName], 'full', dataObj)
-            dataObj[protocolName].push(obj)
+            dataObj[protocolName][schemaKey] = obj[schemaKey]
             relativeIndex++
           }
         } else {

@@ -32,6 +32,8 @@ fetch(url, header).then((r) => {
   for (tx of r.c) {
   console.log('raw:', r)
   let bmapTx = bmap.TransformTx(tx)
-  console.log('result', bmapTx.AIP)
+  delete bmapTx.in
+  delete bmapTx.out
+  console.log('result', bmapTx)
   }
 })
