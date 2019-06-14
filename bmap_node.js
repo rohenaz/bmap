@@ -167,7 +167,7 @@ bmap.TransformTx = (tx) => {
       let newMap = {}
       if (dataObj.hasOwnProperty('MAP')) {
         let i = 0
-        for (let kv of dataObj.MAP) {
+        for (let kv in dataObj.MAP) {
           let key = Object.keys(kv)[0]
           let value = Object.values(kv)[0]
           if (key === 'cmd') { newMap.cmd = value; continue }
