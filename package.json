@@ -1,6 +1,6 @@
 {
   "name": "bmapjs",
-  "version": "0.0.12",
+  "version": "0.0.15",
   "description": "A parser for TXO formatted transactions comprised of B, MAP, and AIP OP_RETURN protocols together in a single tx.",
   "main": "bmap_node.js",
   "scripts": {
