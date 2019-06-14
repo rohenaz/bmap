@@ -107,7 +107,7 @@ bmap.TransformTx = (tx) => {
 
         if (relativeIndex === 0 && protocolMap.getKey(valueMaps.string.get(x + 1))) {
           protocolName = protocolMap.getKey(valueMaps.string.get(x + 1))
-          dataObj[protocolName] = {}
+          dataObj[protocolName] = []
           offsets.set(protocolName, x+1)
           continue
         }
@@ -134,7 +134,7 @@ bmap.TransformTx = (tx) => {
             encoding = Object.values(schemaField[roundIndex++])[0]
             obj[thekey] = valueMaps[encoding].get(x)
 
-            dataObj[protocolName][thekey] = obj[thekey]
+            dataObj[protocolName].push(obj)
             continue
           } else {
             // get the key, value pair from this query schema
@@ -154,7 +154,7 @@ bmap.TransformTx = (tx) => {
             
             // attach correct value to the output object
             obj[schemaKey] = valueMaps[encoding].get(x)
-            dataObj[protocolName][schemaKey] = obj[schemaKey]
+            dataObj[protocolName].push(obj)
             relativeIndex++
           }
         } else {
@@ -167,7 +167,7 @@ bmap.TransformTx = (tx) => {
       let newMap = {}
       if (dataObj.hasOwnProperty('MAP')) {
         let i = 0
-        for (let kv in dataObj.MAP) {
+        for (let kv of dataObj.MAP) {
           let key = Object.keys(kv)[0]
           let value = Object.values(kv)[0]
           if (key === 'cmd') { newMap.cmd = value; continue }
@@ -179,6 +179,20 @@ bmap.TransformTx = (tx) => {
           i++
         }
         dataObj.MAP = newMap
+      }
+
+      if (dataObj.hasOwnProperty('B')) {
+        dataObj.B = dataObj.B.reduce(function(map, obj) {
+          map[Object.keys(obj)[0]] = Object.values(obj)[0]
+          return map
+        }, {})
+      }
+      
+      if (dataObj.hasOwnProperty('AIP')) {
+        dataObj.AIP = dataObj.AIP.reduce(function(map, obj) {
+          map[Object.keys(obj)[0]] = Object.values(obj)[0]
+          return map
+        }, {})
       }
 
       return dataObj
