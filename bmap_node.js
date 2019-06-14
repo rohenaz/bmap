@@ -1,4 +1,13 @@
 const bmap = {}
+
+Map.prototype.getKey = function (searchValue) {
+  for (let [key, value] of this.entries()) {
+    if (value === searchValue)
+      return key
+  }
+  return null
+}
+
 // Takes a bitdb formatted op_return transaction
 bmap.TransformTx = (tx) => {
   if (!tx || !tx.hasOwnProperty('in') || !tx.hasOwnProperty('out')) {

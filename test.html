@@ -8,41 +8,41 @@
       console.log('bmap', bmap)
 
       // The query we constructed from step 2.
-      // let query = {
-      //     "v": 3,
-      //     "q": {
-      //       "find": {
-      //         "tx.h": {
-      //           "$in": ["0272e1b230dfe2603a77469037ad04b32661261ec1453261ded793da0ce297f6", "46991bd7b30c136e41626e998fc04fab8830bb0a8fab8ae8410081426c3d6505"]
-      //         }
-      //       }
-      //     }
-      //   }
+      let query = {
+          "v": 3,
+          "q": {
+            "find": {
+              "tx.h": {
+                "$in": ["0272e1b230dfe2603a77469037ad04b32661261ec1453261ded793da0ce297f6", "46991bd7b30c136e41626e998fc04fab8830bb0a8fab8ae8410081426c3d6505"]
+              }
+            }
+          }
+        }
 
-      //   // Turn the query into base64 encoded string.
-      //   // This is required for accessing a public bitdb node
-      //   var b64 = btoa(JSON.stringify(query))
-      //   var url = 'https://babel.bitdb.network/q/1DHDifPvtPgKFPZMRSxmVHhiPvFmxZwbfh/' + b64
+        // Turn the query into base64 encoded string.
+        // This is required for accessing a public bitdb node
+        var b64 = btoa(JSON.stringify(query))
+        var url = 'https://babel.bitdb.network/q/1DHDifPvtPgKFPZMRSxmVHhiPvFmxZwbfh/' + b64
 
-      //   // Attach API KEY as header
-      //   var header = {
-      //     headers: { key: '14yHvrKQEosfAbkoXcEwY6wSvxNKteFbzU' }
-      //   }
+        // Attach API KEY as header
+        var header = {
+          headers: { key: '14yHvrKQEosfAbkoXcEwY6wSvxNKteFbzU' }
+        }
 
-      //   // Make an HTTP request to bmap endpoint
-      //   fetch(url, header).then((r) => {
-      //     return r.json()
-      //   }).then(async (r) => {
-      //     for (tx of r.c) {
-      //     console.log('raw:', r)
-      //     let bmapTx = bmap.default.TransformTx(tx)
-      //     console.log('result', bmapTx)
-      //     }
-      //   })
-      let bmapTx = bmap.default.TransformTx(JSON.parse(localStorage.getItem('tx1')))
-      console.log('tx1', bmapTx)
-      bmapTx = bmap.default.TransformTx(JSON.parse(localStorage.getItem('tx2')))
-      console.log('tx2', bmapTx)
+        // Make an HTTP request to bmap endpoint
+        fetch(url, header).then((r) => {
+          return r.json()
+        }).then(async (r) => {
+          for (tx of r.c) {
+          console.log('raw:', r)
+          let bmapTx = bmap.default.TransformTx(tx)
+          console.log('result', bmapTx)
+          }
+        })
+      // let bmapTx = bmap.default.TransformTx(JSON.parse(localStorage.getItem('tx1')))
+      // console.log('tx1', bmapTx)
+      // bmapTx = bmap.default.TransformTx(JSON.parse(localStorage.getItem('tx2')))
+      // console.log('tx2', bmapTx)
     })
     
     

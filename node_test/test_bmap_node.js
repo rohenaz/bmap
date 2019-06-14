@@ -28,9 +28,9 @@ var header = {
 // Make an HTTP request to bmap endpoint
 fetch(url, header).then((r) => {
   return r.json()
-}).then(async (r) => {
+}).then((r) => {
   for (tx of r.c) {
-  // console.log('raw:', r)
+  console.log('raw:', r)
   let bmapTx = bmap.TransformTx(tx)
   console.log('result', bmapTx.AIP)
   }
