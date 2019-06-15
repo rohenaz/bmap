@@ -14,7 +14,6 @@ bmap.TransformTx = (tx) => {
     throw new Error('Cant process tx', tx)
   }
 
-  console.log('before processing', tx.out)
   let protocolMap = new Map()
   protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
@@ -36,7 +35,8 @@ bmap.TransformTx = (tx) => {
       ]
     ],
     'METANET': [
-
+      { 'address': 'string'},
+      { 'parent': 'string' }
     ],
     'AIP': [
       { 'algorithm': 'string' },
@@ -69,8 +69,10 @@ bmap.TransformTx = (tx) => {
 
   // Loop over the tx keys (in, out, tx, blk ...)
   for (let key of Object.keys(tx)) {
+
     // Check for op_return
     if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
+
       // There can be only one
       let opReturnOutput = tx[key][0]
 
@@ -200,11 +202,11 @@ bmap.TransformTx = (tx) => {
 
       dataObj.out = tx.out.filter(o => { return o && o.hasOwnProperty('e') &&  !(o && o.b0 && o.b0.op === 106) })
 
-      return dataObj
     } else {
       dataObj[key] = tx[key]
     }
   }
+  return dataObj
 }
 
 exports.TransformTx = function(tx) {
