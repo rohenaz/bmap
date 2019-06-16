@@ -19,7 +19,12 @@ bmap.TransformTx = (tx) => {
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
   protocolMap.set('META', 'META')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
-      
+  
+  let encodingMap = new Map()
+  encodingMap.set('utf8', 'string')
+  encodingMap.set('text', 'string') // invalid but people use it :(
+  encodingMap.set('gzip', 'binary') // invalid but people use it :(
+
   let querySchema = {
     'B': [
       { 'content': ['string', 'binary'] },
@@ -63,9 +68,6 @@ bmap.TransformTx = (tx) => {
   }
 
   let protocolName = protocolMap.getKey(prefix)
-
-  // save a trimmed out (non op_return)
-  // dataObj.out = tx.out ? tx.out.filter(output => { return output && !(output.b0 && output.b0.op === 106) }) : []
 
   // Loop over the tx keys (in, out, tx, blk ...)
   for (let key of Object.keys(tx)) {
@@ -117,13 +119,6 @@ bmap.TransformTx = (tx) => {
           continue
         }
 
-        // Detect UNIX pipeline
-        if (valueMaps.string.get(x+1) === '|') {
-          // console.log('========================= End', protocolName)
-          relativeIndex = 0
-          continue
-        }
-
         let encoding
         if (relativeIndex !== 0) {
           // get the schema object, or array of objects in case of repeating fields
@@ -151,8 +146,8 @@ bmap.TransformTx = (tx) => {
             if (schemaEncoding instanceof Array) {                
               // if encoding field if not included in content array assume its binary
               let encodingLocation = 's' + (offsets.get(protocolName) + 2 + relativeIndex)
-              encoding = schemaEncoding.includes(opReturnOutput[encodingLocation]) ? opReturnOutput[encodingLocation] : 'binary'
-
+              let cleanEncoding = (opReturnOutput[encodingLocation] || '').toLowerCase().replace(/[-]/g, '')
+              encoding = encodingMap.has(cleanEncoding) ? encodingMap.get(cleanEncoding) : 'binary'
             } else {
               encoding = schemaEncoding
             }
@@ -161,6 +156,13 @@ bmap.TransformTx = (tx) => {
             obj[schemaKey] = valueMaps[encoding].get(x)
             dataObj[protocolName].push(obj)
             relativeIndex++
+          }
+
+          // Detect UNIX pipeline
+          if (valueMaps.string.get(x+1) === '|') {
+            // console.log('========================= End', protocolName)
+            relativeIndex = 0
+            continue
           }
         } else {
           relativeIndex++
