@@ -48,8 +48,11 @@ bmap.TransformTx = (tx) => {
       { 'address': 'string' },
       { 'signature': 'binary' },
       [
-        {'index': 'string'}
+        {'index': 'binary'}
       ]
+    ],
+    'default': [
+      [{'pushdata': 'string'}]
     ]
   }
 
@@ -113,15 +116,22 @@ bmap.TransformTx = (tx) => {
       for (let x = 0; x < indexCount; x++) {
         let stringVal = valueMaps.string.get(x + 1)
         // console.log('x', x, 'relative', relativeIndex, 'val', currentVal)
-        if (relativeIndex === 0 && protocolMap.getKey(stringVal)) {
-          protocolName = protocolMap.getKey(stringVal)
+        if (relativeIndex === 0) {
+          if (!protocolMap.getKey(stringVal)) {
+            // Unknown protocol, just use the address as the key
+            protocolName = stringVal
+            querySchema[protocolName] = querySchema.default
+          } else {
+            protocolName = protocolMap.getKey(stringVal)
+          }
+          
           dataObj[protocolName] = []
           offsets.set(protocolName, x+1)
         }
 
         // Detect UNIX pipeline
         if (stringVal === '|') {
-          console.log('========================= End', protocolName)
+          // console.log('========================= End', protocolName)
           relativeIndex = 0
           continue
         }
@@ -163,13 +173,6 @@ bmap.TransformTx = (tx) => {
             
             // attach correct value to the output object
             let dataVal = valueMaps[encoding].get(x + 1)
-            if (dataVal === '|') { 
-              debugger
-            }
-            if (!dataVal) {
-              debugger
-              continue
-            }
             obj[schemaKey] = dataVal
             dataObj[protocolName].push(obj)
             relativeIndex++

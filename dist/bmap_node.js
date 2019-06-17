@@ -49,7 +49,7 @@ bmap.TransformTx = (tx) => {
       { 'address': 'string' },
       { 'signature': 'binary' },
       [
-        {'index': 'string'}
+        {'index': 'binary'}
       ]
     ],
     'default': [
@@ -174,13 +174,6 @@ bmap.TransformTx = (tx) => {
             
             // attach correct value to the output object
             let dataVal = valueMaps[encoding].get(x + 1)
-            if (dataVal === '|') { 
-              debugger
-            }
-            if (!dataVal) {
-              debugger
-              continue
-            }
             obj[schemaKey] = dataVal
             dataObj[protocolName].push(obj)
             relativeIndex++
