@@ -110,12 +110,19 @@ bmap.TransformTx = (tx) => {
 
       // Loop for pushdata count and find appropriate value
       let relativeIndex = 0
-      for (let x = 0; x <= indexCount; x++) {
-
-        if (relativeIndex === 0 && protocolMap.getKey(valueMaps.string.get(x + 1))) {
-          protocolName = protocolMap.getKey(valueMaps.string.get(x + 1))
+      for (let x = 0; x < indexCount; x++) {
+        let stringVal = valueMaps.string.get(x + 1)
+        // console.log('x', x, 'relative', relativeIndex, 'val', currentVal)
+        if (relativeIndex === 0 && protocolMap.getKey(stringVal)) {
+          protocolName = protocolMap.getKey(stringVal)
           dataObj[protocolName] = []
           offsets.set(protocolName, x+1)
+        }
+
+        // Detect UNIX pipeline
+        if (stringVal === '|') {
+          console.log('========================= End', protocolName)
+          relativeIndex = 0
           continue
         }
 
@@ -131,8 +138,10 @@ bmap.TransformTx = (tx) => {
             // loop through the schema as we add values
             roundIndex = roundIndex % schemaField.length
             let thekey = Object.keys(schemaField[roundIndex++])[0]
+            roundIndex = roundIndex % schemaField.length
             encoding = Object.values(schemaField[roundIndex++])[0]
-            obj[thekey] = valueMaps[encoding].get(x)
+            
+            obj[thekey] = valueMaps[encoding].get(x + 1)
 
             dataObj[protocolName].push(obj)
             continue
@@ -153,16 +162,17 @@ bmap.TransformTx = (tx) => {
             }
             
             // attach correct value to the output object
-            obj[schemaKey] = valueMaps[encoding].get(x)
+            let dataVal = valueMaps[encoding].get(x + 1)
+            if (dataVal === '|') { 
+              debugger
+            }
+            if (!dataVal) {
+              debugger
+              continue
+            }
+            obj[schemaKey] = dataVal
             dataObj[protocolName].push(obj)
             relativeIndex++
-          }
-
-          // Detect UNIX pipeline
-          if (valueMaps.string.get(x+1) === '|') {
-            // console.log('========================= End', protocolName)
-            relativeIndex = 0
-            continue
           }
         } else {
           relativeIndex++

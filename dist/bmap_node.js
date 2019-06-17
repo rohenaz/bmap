@@ -15,13 +15,17 @@ bmap.TransformTx = (tx) => {
     throw new Error('Cant process tx', tx)
   }
 
-  console.log('before processing', tx.out)
   let protocolMap = new Map()
   protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
   protocolMap.set('META', 'META')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
-      
+  
+  let encodingMap = new Map()
+  encodingMap.set('utf8', 'string')
+  encodingMap.set('text', 'string') // invalid but people use it :(
+  encodingMap.set('gzip', 'binary') // invalid but people use it :(
+
   let querySchema = {
     'B': [
       { 'content': ['string', 'binary'] },
@@ -37,7 +41,8 @@ bmap.TransformTx = (tx) => {
       ]
     ],
     'METANET': [
-
+      { 'address': 'string'},
+      { 'parent': 'string' }
     ],
     'AIP': [
       { 'algorithm': 'string' },
@@ -65,13 +70,12 @@ bmap.TransformTx = (tx) => {
 
   let protocolName = protocolMap.getKey(prefix)
 
-  // save a trimmed out (non op_return)
-  // dataObj.out = tx.out ? tx.out.filter(output => { return output && !(output.b0 && output.b0.op === 106) }) : []
-
   // Loop over the tx keys (in, out, tx, blk ...)
   for (let key of Object.keys(tx)) {
+
     // Check for op_return
     if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
+
       // There can be only one
       let opReturnOutput = tx[key][0]
 
@@ -107,18 +111,18 @@ bmap.TransformTx = (tx) => {
 
       // Loop for pushdata count and find appropriate value
       let relativeIndex = 0
-      for (let x = 0; x <= indexCount; x++) {
-
-        if (relativeIndex === 0 && protocolMap.getKey(valueMaps.string.get(x + 1))) {
-          protocolName = protocolMap.getKey(valueMaps.string.get(x + 1))
+      for (let x = 0; x < indexCount; x++) {
+        let stringVal = valueMaps.string.get(x + 1)
+        // console.log('x', x, 'relative', relativeIndex, 'val', currentVal)
+        if (relativeIndex === 0 && protocolMap.getKey(stringVal)) {
+          protocolName = protocolMap.getKey(stringVal)
           dataObj[protocolName] = []
           offsets.set(protocolName, x+1)
-          continue
         }
 
         // Detect UNIX pipeline
-        if (valueMaps.string.get(x+1) === '|') {
-          // console.log('========================= End', protocolName)
+        if (stringVal === '|') {
+          console.log('========================= End', protocolName)
           relativeIndex = 0
           continue
         }
@@ -135,8 +139,10 @@ bmap.TransformTx = (tx) => {
             // loop through the schema as we add values
             roundIndex = roundIndex % schemaField.length
             let thekey = Object.keys(schemaField[roundIndex++])[0]
+            roundIndex = roundIndex % schemaField.length
             encoding = Object.values(schemaField[roundIndex++])[0]
-            obj[thekey] = valueMaps[encoding].get(x)
+            
+            obj[thekey] = valueMaps[encoding].get(x + 1)
 
             dataObj[protocolName].push(obj)
             continue
@@ -150,14 +156,22 @@ bmap.TransformTx = (tx) => {
             if (schemaEncoding instanceof Array) {                
               // if encoding field if not included in content array assume its binary
               let encodingLocation = 's' + (offsets.get(protocolName) + 2 + relativeIndex)
-              encoding = schemaEncoding.includes(opReturnOutput[encodingLocation]) ? opReturnOutput[encodingLocation] : 'binary'
-
+              let cleanEncoding = (opReturnOutput[encodingLocation] || '').toLowerCase().replace(/[-]/g, '')
+              encoding = encodingMap.has(cleanEncoding) ? encodingMap.get(cleanEncoding) : 'binary'
             } else {
               encoding = schemaEncoding
             }
             
             // attach correct value to the output object
-            obj[schemaKey] = valueMaps[encoding].get(x)
+            let dataVal = valueMaps[encoding].get(x + 1)
+            if (dataVal === '|') { 
+              debugger
+            }
+            if (!dataVal) {
+              debugger
+              continue
+            }
+            obj[schemaKey] = dataVal
             dataObj[protocolName].push(obj)
             relativeIndex++
           }
@@ -201,11 +215,11 @@ bmap.TransformTx = (tx) => {
 
       dataObj.out = tx.out.filter(o => { return o && o.hasOwnProperty('e') &&  !(o && o.b0 && o.b0.op === 106) })
 
-      return dataObj
     } else {
       dataObj[key] = tx[key]
     }
   }
+  return dataObj
 }
 
 exports.TransformTx = function(tx) {
