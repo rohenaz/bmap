@@ -1,11 +1,12 @@
 {
   "name": "bmapjs",
-  "version": "0.0.22",
+  "version": "0.1.0",
   "description": "A parser for TXO formatted transactions comprised of B, MAP, and AIP OP_RETURN protocols together in a single tx.",
   "main": "bmap_node.js",
   "scripts": {
     "build": "browserify bmap_node.js -o dist/bmap_node.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "yarn build && ws"
   },
   "repository": {
     "type": "git",

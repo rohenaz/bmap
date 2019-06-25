@@ -17,7 +17,7 @@ bmap.TransformTx = (tx) => {
   let protocolMap = new Map()
   protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
-  protocolMap.set('META', 'META')
+  protocolMap.set('METANET', 'meta')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
   
   let encodingMap = new Map()
@@ -41,7 +41,11 @@ bmap.TransformTx = (tx) => {
     ],
     'METANET': [
       { 'address': 'string'},
-      { 'parent': 'string' }
+      { 'parent': 'string' },
+      { 'name': 'string' },
+      [ 
+        {'kwd': 'string'}
+      ]
     ],
     'AIP': [
       { 'algorithm': 'string' },
@@ -73,13 +77,13 @@ bmap.TransformTx = (tx) => {
   let protocolName = protocolMap.getKey(prefix)
 
   // Loop over the tx keys (in, out, tx, blk ...)
-  for (let key of Object.keys(tx)) {
+  for (let [key, val] of Object.entries(tx)) {
 
     // Check for op_return
     if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
 
       // There can be only one
-      let opReturnOutput = tx[key][0]
+      let opReturnOutput = val[0]
 
       // FIRST, we separate the string, key, and binary values
       let valueMaps = {
@@ -187,17 +191,18 @@ bmap.TransformTx = (tx) => {
       let newMap = {}
       if (dataObj.hasOwnProperty('MAP')) {
         let i = 0
-        for (let kv of dataObj.MAP) {
-          let key = Object.keys(kv)[0]
-          let value = Object.values(kv)[0]
-          if (key === 'cmd') { newMap.cmd = value; continue }
+        for (const [k, v] of Object.entries(dataObj.MAP)) {
+          if (k === 'cmd') { newMap.cmd = v; continue }
           if (i % 2 === 0) {
-            keyTemp = value
+            // MAP key
+            keyTemp = v
           } else {
-            newMap[keyTemp] = value
+            // MAP value
+            newMap[keyTemp] = v
           }
           i++
         }
+        // ToDo - detect key with no val and remove it? or set it to ''?
         dataObj.MAP = newMap
       }
 
@@ -218,7 +223,7 @@ bmap.TransformTx = (tx) => {
       dataObj.out = tx.out.filter(o => { return o && o.hasOwnProperty('e') &&  !(o && o.b0 && o.b0.op === 106) })
 
     } else {
-      dataObj[key] = tx[key]
+      dataObj[key] = val
     }
   }
   return dataObj
