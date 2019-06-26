@@ -190,8 +190,6 @@ bmap.TransformTx = (tx) => {
       let keyTemp
       let newMap = {}
       for (const [key, val] of Object.entries(dataObj)) {
-        console.log('k', key)
-        console.log('v', val)
         if (key === 'MAP') {
           let i = 0
           for (let item of val) {
