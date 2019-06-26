@@ -18,8 +18,10 @@
                 // "$in": ["33d963997360d9edb6b056b9c46cbece48637ed6daa6f2ddd2ea4073ce2e8c72"]
                 // "$in": ["a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327"]
                 // "$in": ["cdfe7ae5c91afe4dc3a5db383e0ca948ec3d51dc2954a9d18ca464db7c9d5d3d"]
-                "$in": ["70bcbe4dc1ff796389e3de4f5f151cff7eb4a172142468a79677c703afd930b9","59f2e83ac0607d44d764b9040aaa8dd8741e6169444739464f97422055ad001c","06ea0de45680b790d25372bc12b52c7e740e3b10f36d8aabd8b8a31e858a79c2"] //metanet node, parent, ancestor
-                // "$in": ["a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327"]
+                // "$in": ["70bcbe4dc1ff796389e3de4f5f151cff7eb4a172142468a79677c703afd930b9","59f2e83ac0607d44d764b9040aaa8dd8741e6169444739464f97422055ad001c","06ea0de45680b790d25372bc12b52c7e740e3b10f36d8aabd8b8a31e858a79c2"] //metanet node, parent, ancestor
+                "$in": ["a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327"]
+                // "$in": ["b5f173c090c6fbfc5e1ff6d200baab2d1b968eec6c5ce64536f60c51f2591812"] // B with more fields than schema. Throws error
+                // "$in": ["0e34cc59e1c80262b1f25a8079dddcd3a47b90d728b5a3a7348b70a7c437b80c"]
               }
             }
           }
@@ -41,7 +43,13 @@
         }).then(async (r) => {
           for (tx of r.c) {
           console.log('raw:', tx)
-          let bmapTx = bmap.default.TransformTx(tx)
+          let bmapTx
+            try {
+              bmapTx = bmap.default.TransformTx(tx)
+            } catch (e) {
+              console.warn('error', e)
+            }
+
           console.log('result', bmapTx)
           }
         })

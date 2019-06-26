@@ -79,7 +79,7 @@ bmap.TransformTx = (tx) => {
 
   // Loop over the tx keys (in, out, tx, blk ...)
   for (let [key, val] of Object.entries(tx)) {
-
+    
     // Check for op_return
     if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
 
@@ -192,7 +192,9 @@ bmap.TransformTx = (tx) => {
       let newMap = {}
       if (dataObj.hasOwnProperty('MAP')) {
         let i = 0
-        for (const [k, v] of Object.entries(dataObj.MAP)) {
+        for (let item of dataObj.MAP) {
+          let k = Object.keys(item)[0]
+          let v = Object.values(item)[0]
           if (k === 'cmd') { newMap.cmd = v; continue }
           if (i % 2 === 0) {
             // MAP key

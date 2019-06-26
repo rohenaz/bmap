@@ -189,37 +189,36 @@ bmap.TransformTx = (tx) => {
       // TRANSFORM MAP from {key: "keyname", val: "myval"} to {keyname: 'myval'}
       let keyTemp
       let newMap = {}
-      if (dataObj.hasOwnProperty('MAP')) {
-        let i = 0
-        for (let item of dataObj.MAP) {
-          let k = Object.keys(item)[0]
-          let v = Object.values(item)[0]
-          if (k === 'cmd') { newMap.cmd = v; continue }
-          if (i % 2 === 0) {
-            // MAP key
-            keyTemp = v
-          } else {
-            // MAP value
-            newMap[keyTemp] = v
+      for (const [key, val] of Object.entries(dataObj)) {
+        console.log('k', key)
+        console.log('v', val)
+        if (key === 'MAP') {
+          let i = 0
+          for (let item of val) {
+            let k = Object.keys(item)[0]
+            let v = Object.values(item)[0]
+            if (k === 'cmd') { newMap.cmd = v; continue }
+            if (i % 2 === 0) {
+              // MAP key
+              keyTemp = v
+            } else {
+              // MAP value
+              newMap[keyTemp] = v
+            }
+            i++
           }
-          i++
+          // ToDo - detect key with no val and remove it? or set it to ''?
+          dataObj[key] = newMap
+        } else {
+          if (key === '_id' || key === 'tx' || key === 'in' || key === 'out' || key === 'blk') {
+            continue            
+          }
+          // Reduce non MAP root node (unknown protocol)
+          dataObj[key] = val.reduce(function(map, obj) {
+            map[Object.keys(obj)[0]] = Object.values(obj)[0]
+            return map
+          }, {})
         }
-        // ToDo - detect key with no val and remove it? or set it to ''?
-        dataObj.MAP = newMap
-      }
-
-      if (dataObj.hasOwnProperty('B')) {
-        dataObj.B = dataObj.B.reduce(function(map, obj) {
-          map[Object.keys(obj)[0]] = Object.values(obj)[0]
-          return map
-        }, {})
-      }
-      
-      if (dataObj.hasOwnProperty('AIP')) {
-        dataObj.AIP = dataObj.AIP.reduce(function(map, obj) {
-          map[Object.keys(obj)[0]] = Object.values(obj)[0]
-          return map
-        }, {})
       }
 
       dataObj.out = tx.out.filter(o => { return o && o.hasOwnProperty('e') &&  !(o && o.b0 && o.b0.op === 106) })
