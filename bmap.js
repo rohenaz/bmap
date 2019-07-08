@@ -83,7 +83,7 @@ bmap.TransformTx = (tx) => {
     if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
 
       // There can be only one
-      let opReturnOutput = val[0]
+      let opReturnOutput = val.filter((output) => { return output && output.b0 && output.b0.op === 106 })[0]
 
       // FIRST, we separate the string, key, and binary values
       let valueMaps = {

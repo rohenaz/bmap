@@ -18,11 +18,14 @@
                 // "$in": ["33d963997360d9edb6b056b9c46cbece48637ed6daa6f2ddd2ea4073ce2e8c72"]
                 // "$in": ["a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327"]
                 // "$in": ["cdfe7ae5c91afe4dc3a5db383e0ca948ec3d51dc2954a9d18ca464db7c9d5d3d"]
-                "$in": ["70bcbe4dc1ff796389e3de4f5f151cff7eb4a172142468a79677c703afd930b9","59f2e83ac0607d44d764b9040aaa8dd8741e6169444739464f97422055ad001c","06ea0de45680b790d25372bc12b52c7e740e3b10f36d8aabd8b8a31e858a79c2"] //metanet node, parent, ancestor
+                // "$in": ["70bcbe4dc1ff796389e3de4f5f151cff7eb4a172142468a79677c703afd930b9","59f2e83ac0607d44d764b9040aaa8dd8741e6169444739464f97422055ad001c","06ea0de45680b790d25372bc12b52c7e740e3b10f36d8aabd8b8a31e858a79c2"] //metanet node, parent, ancestor
                 // "$in": ["a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327"]
                 // "$in": ["b5f173c090c6fbfc5e1ff6d200baab2d1b968eec6c5ce64536f60c51f2591812"] // B with more fields than schema. Throws error
                 // "$in": ["0e34cc59e1c80262b1f25a8079dddcd3a47b90d728b5a3a7348b70a7c437b80c"]
                 // "$in": ["07790cb21e48fc98296319efed3645c3b43307031ce6748fa1aed929b24f0f89"] // metanet ex
+                // "$in": ["added2539ef771353b226a2e262f0c0b0ff4305bd9dfe81f900868d4297882d3"] // aip with no sig?
+                // "$in": ["4410068e7582c79da06adc5d6ff32d2845b6e9c002f566f1ebf8b09bbb4d68ca", "3252152dd6b1d3a02030a968664e9c465a7934ef72d54923b55ef6e460196e43", "08078b86273342b2ced4983dc1a8992ddeac165d9b69d72b002a3374bf004c11", "b1c0d7393e4184f7a0b1036d2d83ad5345e7b406fe42174c8ff4021c1004e0b0", "66094e053724980819aa2e1010549a7161c33394c8f86b5e03b979c5b3856297"] // from metanaria examples
+                "$in": ["34ba78755c4db1179029537a2b0189aac75a8ac0c6c99f30fec06c60aa71b183"] // hagbards tx
               }
             }
           }
@@ -43,15 +46,19 @@
           return r.json()
         }).then(async (r) => {
           for (tx of r.c) {
-          console.log('raw:', tx)
-          let bmapTx
+            console.log('before transform:', tx)
+            let bmapTx
             try {
               bmapTx = bmap.default.TransformTx(tx)
             } catch (e) {
               console.warn('error', e)
             }
 
-          console.log('result', bmapTx)
+            let pre = document.createElement('pre')
+            pre.innerHTML = 'METANET:<br /> ' + JSON.stringify(bmapTx.METANET || {}) + '<br />B:<br /> ' + JSON.stringify(bmapTx.B || {}) + '<br />MAP:<br /> ' + JSON.stringify(bmapTx.MAP || {})  + '<br />AIP:<br /> ' + JSON.stringify(bmapTx.AIP || {}) + '<br />'
+            document.body.appendChild(pre)
+            document.body.appendChild(document.createElement('hr'))
+            console.log('after transform', bmapTx)
           }
         })
       // let bmapTx = bmap.default.TransformTx(JSON.parse(localStorage.getItem('tx1')))
