@@ -5,6 +5,7 @@
     body {
       background-color: #000;
       color: #fff;
+      padding: 4rem;
     }
     button {
       padding: .5rem;
@@ -77,17 +78,21 @@
         }
 
         // Fields to display as text
-        let textFields = ['_id', 'i', 'mem']
+        let textFields = []
 
         // Fields to omit
-        let ignoredFields = ['tx', 'blk']
+        let ignoredFields = ['tx', 'blk', 'in', '_id', 'i', 'mem']
 
         // Make an HTTP request to bmap endpoint
         fetch(url, header).then((r) => {
           return r.json()
         }).then(async (r) => {
           let collection = !useMom() ? r.c : r.metanet
-          console.log('collection', collection, useMom(), r.c)
+
+          if (!collection.length) {
+            document.querySelector('#currentExample').innerHTML = 'No Results'
+          }
+          
           for (tx of collection) {
             console.log('before transform:', tx)
             let bmapTx
@@ -97,8 +102,8 @@
               console.warn('error', e)
             }
 
-            let txHeading = document.createElement('h4')
-            txHeading.innerHTML = bmapTx.tx.h
+            let txHeading = document.createElement('h5')
+            txHeading.innerHTML = 'TxID: ' + bmapTx.tx.h
             document.body.appendChild(txHeading)
 
             let pre = document.createElement('div')
@@ -109,7 +114,7 @@
                 continue
               }
               if (textFields.indexOf(key) === -1) {
-                html = '<b>' + key +'</b><br /><textarea class="editor" style="width:100%; height:200px">' + JSON.stringify(value, null, '\t') + '</textarea><br /><br />'
+                html = '<b>result.' + key +'</b><br /><textarea class="editor" style="width:100%; height:200px">' + JSON.stringify(value, null, '\t') + '</textarea><br /><br />'
               } else {
                 html = key + ': ' + value + '<br /><br />'
               }
@@ -133,7 +138,7 @@
             editor.setTheme("ace/theme/mono_industrial")
             editor.setShowPrintMargin(false)
             editor.setOptions({
-              maxLines: Infinity,
+              maxLines: 10,
               minLines: 3,
               tabSize: 2,
               useSoftTabs: true
