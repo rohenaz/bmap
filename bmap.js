@@ -9,7 +9,7 @@ Map.prototype.getKey = function (searchValue) {
 }
 
 // Takes a BOB formatted op_return transaction
-bmap.TransformTx = (tx) => {
+bmap.TransformTx = async (tx) => {
   if (!tx || !tx.hasOwnProperty('in') || !tx.hasOwnProperty('out')) {
     throw new Error('Cant process tx', tx)
   }
@@ -44,10 +44,7 @@ bmap.TransformTx = (tx) => {
     'METANET': [
       { 'address': 'string'},
       { 'parent': 'string' },
-      { 'name': 'string' },
-      [ 
-        {'kwd': 'string'}
-      ]
+      { 'name': 'string' }
     ],
     'AIP': [
       { 'algorithm': 'string' },
@@ -168,8 +165,39 @@ bmap.TransformTx = (tx) => {
                 }
               break
               case 'METANET':
-                dataObj[protocolName] = cell
-                break;
+                // For now, we just copy from MOM keys later if available, or keep BOB format
+
+                // Described this node
+                // Get  ID
+                let buf = new ArrayBuffer(tx.in[0].e.a + tx.in[0].e.h)
+                let digest = await crypto.subtle.digest('SHA-256', buf)
+                let id = buf2hex(digest)                
+
+                let node = {
+                  a: cell[1].s,
+                  tx: tx.tx.h,
+                  id: id,
+                }
+
+                // Parent node
+                console.log('got an ID', id)
+
+                let parent = {
+                  a: cell[1].s,
+                  tx: tx.in[0].e.h,
+                  id: cell[2].s
+                }
+
+
+                dataObj[protocolName] = {}
+                dataObj[protocolName] = {
+                  node: node,
+                  parent: parent
+                }
+
+                console.log('METANET', dataObj.METANET)
+                              
+              break;
               default:
                 // Unknown protocol prefix. Keep BOB's cell format
                 dataObj[protocolName] = cell
@@ -187,6 +215,21 @@ bmap.TransformTx = (tx) => {
     }
   }
 
+
+  // If this is a MOM planaria it will have metanet keys available
+  if (dataObj.hasOwnProperty('METANET') && tx.hasOwnProperty('ancestor')) {
+    
+    dataObj.METANET['ancestor'] = tx.ancestor
+    delete dataObj.ancestor
+    dataObj.METANET['child'] = tx.child
+    delete dataObj.child
+    // dataObj.METANET['parent'] = tx.parent
+    delete dataObj.parent
+    // dataObj.METANET['node'] = tx.node
+    delete dataObj.node
+    dataObj.METANET['head'] = tx.head
+    delete dataObj.head
+  }
   return dataObj
 }
 
@@ -194,5 +237,12 @@ bmap.TransformTx = (tx) => {
 function checkOpFalseOpReturn(cc) {
   return (cc.cell[0].op === 0 && cc.cell[1].hasOwnProperty('op') && cc.cell[1].op === 106) || cc.cell[0].op === 106
 }
+
+
+// ArrayBuffer to hex string
+function buf2hex(buffer) { 
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+}
+
 
 export default bmap
