@@ -21,11 +21,36 @@ Previous versions of bmap used [TXO](https://github.com/interplanaria/txo) forma
 npm install bmapjs
 ```
 
-# Usage
+or for using it in the browser:
+```
+<script src="bmap.js"></script>
+```
 
+# Importing
+using node:
 ```js
 require('bmapjs')
-bmap.TransformTx(bob_or_mom_tx)
+```
+
+or in the browser:
+
+```js
+let prom = import('./bmap.js')
+prom.then((bmap) => {
+  .. use it here ...
+})
+
+```
+
+# Usage
+Turn a BOB or MOM formatted transaction into a BMAP tx. It will throw an error if the transaction is malformed.
+```js
+try {
+  bmap.TransformTx(bob_or_mom_tx)
+} catch (e) {
+  console.error(e)
+}
+
 ```
 
 After transforming a transaction it will have a key for each protocol used in the transaction:

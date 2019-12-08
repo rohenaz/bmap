@@ -1,11 +1,13 @@
 <html>
 
-<head>
+<head>  
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
   <style type="text/css">
     body {
       background-color: #000;
       color: #fff;
       padding: 4rem;
+      font-family: 'Roboto', sans-serif;
     }
     button {
       padding: .5rem;
@@ -14,10 +16,26 @@
       border: 0;
       color: #fff;
     }
+    #tx-list {
+      display: grid;
+      grid-gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(40rem, 1fr));    
+    }
+
+    #tx-list > div {
+      width: 100%;
+    }
+
+    .keyname {
+      color:#333;
+      font-size: .8rem;
+    }
+
 
   </style>
   <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/mode-json.js"></script>
+
   <script>
     let prom = import('./bmap.js')
 
@@ -35,7 +53,7 @@
       'B_MAP_AIP_1': ['cdfe7ae5c91afe4dc3a5db383e0ca948ec3d51dc2954a9d18ca464db7c9d5d3d'],
       'B_MAP_AIP_2': ['1a7cdf318416d81a3546b7b27b5c569d5099300f3cca385d1531c270524aa653'],
       'bitpaste': ['33d963997360d9edb6b056b9c46cbece48637ed6daa6f2ddd2ea4073ce2e8c72'],
-      'B_invalid': ['b5f173c090c6fbfc5e1ff6d200baab2d1b968eec6c5ce64536f60c51f2591812'], // too many fields for schema, should throw error
+      'B_invalid': ['b5f173c090c6fbfc5e1ff6d200baab2d1b968eec6c5ce64536f60c51f2591812'], // too many fields for schema, should warn
       'B_MAP_AIP_MANY': ["0272e1b230dfe2603a77469037ad04b32661261ec1453261ded793da0ce297f6", "46991bd7b30c136e41626e998fc04fab8830bb0a8fab8ae8410081426c3d6505", "6645b54733bf630597a89540bc336804d297161113a3290e4285c1bb5e54119b", "536dc444770e0841fbf1b7813e6b228d962a240677be8b778100fc01dfb7ae7d", "36b01a3216e3728b929356a5c4ed137ad4093e14b8d0d92d3d4080721c1c2321", "7b9145df4b41dad05569248c1ac0d3cb5483d898eab30abcd30348c131df14a6", "0afee9bf5603fa529a9d2bda06123c5306079fdb7e64d4db3a32fa46d78b510a", "1a7cdf318416d81a3546b7b27b5c569d5099300f3cca385d1531c270524aa653", "000e988b20060a237c024d24cace5974050f446f8d5c355fe2f031256631b814"]
     }
 
@@ -83,6 +101,8 @@
         // Fields to omit
         let ignoredFields = ['tx', 'blk', 'in', '_id', 'i', 'mem']
 
+        list = document.createElement('div')
+        list.id = 'tx-list'
         // Make an HTTP request to bmap endpoint
         fetch(url, header).then((r) => {
           return r.json()
@@ -92,7 +112,7 @@
           if (!collection.length) {
             document.querySelector('#currentExample').innerHTML = 'No Results'
           }
-          
+
           for (tx of collection) {
             console.log('before transform:', tx)
             let bmapTx
@@ -102,32 +122,20 @@
               console.warn('error', e)
             }
 
+            let item = document.createElement('div')
+
             let txHeading = document.createElement('h5')
             txHeading.innerHTML = 'TxID: ' + bmapTx.tx.h
-            document.body.appendChild(txHeading)
+            item.appendChild(txHeading)
 
-            let pre = document.createElement('div')
-            for (let [key, value] of Object.entries(bmapTx)) {
-
-              let html
-              if (ignoredFields.indexOf(key) !== -1) {
-                continue
-              }
-              if (textFields.indexOf(key) === -1) {
-                html = '<b>result.' + key +'</b><br /><textarea class="editor" style="width:100%; height:200px">' + JSON.stringify(value, null, '\t') + '</textarea><br /><br />'
-              } else {
-                html = key + ': ' + value + '<br /><br />'
-              }
-              pre.innerHTML += html
-              // pre.innerHTML = ':<br /> ' + JSON.stringify(bmapTx.METANET || {}) + '<br />B:<br /> ' + JSON.stringify(bmapTx.B || {}) + '<br />MAP:<br /> ' + JSON.stringify(bmapTx.MAP || {})  + '<br />AIP:<br /> ' + JSON.stringify(bmapTx.AIP || {}) + '<br />'
-              document.body.appendChild(pre)
-
-            }
-            console.log('after transform', bmapTx)
-            document.body.appendChild(document.createElement('hr'))
+            let json =  JSON.stringify(bmapTx, null, '\t')
+            let edt = document.createElement('div')
+            edt.innerHTML = '<textarea class="editor">' + json + '</textarea>';
+            item.appendChild(edt)
+            list.appendChild(item)
           }
 
-            
+          document.body.appendChild(list)
           let editor
           //  editor.setTheme('ace/theme/idle_fingers')
           let editors = document.querySelectorAll('.editor')
@@ -138,7 +146,7 @@
             editor.setTheme("ace/theme/mono_industrial")
             editor.setShowPrintMargin(false)
             editor.setOptions({
-              maxLines: 10,
+              maxLines: 25,
               minLines: 3,
               tabSize: 2,
               useSoftTabs: true
@@ -186,6 +194,7 @@
 
 </head>
 <body>
+  <h1>BMAPjs Examples</h1>
   <nav id="nav"></nav>
   <button id="momToggle"></button>
   <h1 id="currentExample"></h1>

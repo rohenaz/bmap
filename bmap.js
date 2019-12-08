@@ -168,7 +168,7 @@ bmap.TransformTx = async (tx) => {
                 // For now, we just copy from MOM keys later if available, or keep BOB format
 
                 // Described this node
-                // Get  ID
+                // Calculate the node ID
                 let buf = new ArrayBuffer(tx.in[0].e.a + tx.in[0].e.h)
                 let digest = await crypto.subtle.digest('SHA-256', buf)
                 let id = buf2hex(digest)                
@@ -180,23 +180,17 @@ bmap.TransformTx = async (tx) => {
                 }
 
                 // Parent node
-                console.log('got an ID', id)
-
                 let parent = {
                   a: cell[1].s,
                   tx: tx.in[0].e.h,
                   id: cell[2].s
                 }
 
-
                 dataObj[protocolName] = {}
                 dataObj[protocolName] = {
                   node: node,
                   parent: parent
-                }
-
-                console.log('METANET', dataObj.METANET)
-                              
+                }                              
               break;
               default:
                 // Unknown protocol prefix. Keep BOB's cell format
@@ -210,6 +204,12 @@ bmap.TransformTx = async (tx) => {
           // dataObj[key] = val
         }
       }
+    } else if (key === 'in') {
+      dataObj[key] = val.map(v => {
+        let r = Object.assign({}, v)
+        delete r.tape
+        return r
+      })
     } else {
       dataObj[key] = val
     }
@@ -217,16 +217,17 @@ bmap.TransformTx = async (tx) => {
 
 
   // If this is a MOM planaria it will have metanet keys available
-  if (dataObj.hasOwnProperty('METANET') && tx.hasOwnProperty('ancestor')) {
+  if (dataObj.hasOwnProperty('METANET') && tx.hasOwnProperty('parent')) {
     
     dataObj.METANET['ancestor'] = tx.ancestor
     delete dataObj.ancestor
     dataObj.METANET['child'] = tx.child
     delete dataObj.child
-    // dataObj.METANET['parent'] = tx.parent
+
+    // remove parent and node from root level for (MOM data)
     delete dataObj.parent
-    // dataObj.METANET['node'] = tx.node
     delete dataObj.node
+
     dataObj.METANET['head'] = tx.head
     delete dataObj.head
   }
