@@ -67,17 +67,18 @@
         }
 
         // Turn the query into base64 encoded string.
-        // This is required for accessing a public bitdb node
         let b64 = btoa(JSON.stringify(query))
-        // let url = 'https://genesis.bitdb.network/q/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/' + b64
         let url = 'https://bob.planaria.network/q/1GgmC7Cg782YtQ6R9QkM58voyWeQJmJJzG/' + b64
 
-        // Attach API KEY as header
+        // Attach planaria API KEY as header
         let header = {
           headers: { key: '14yHvrKQEosfAbkoXcEwY6wSvxNKteFbzU' }
         }
 
+        // Fields to display as text
         let textFields = ['_id', 'i']
+
+        // Fields to omit
         let ignoredFields = ['in', 'tx']
 
         // Make an HTTP request to bmap endpoint
@@ -124,7 +125,6 @@
           let editors = document.querySelectorAll('.editor')
           
           for(let e of editors) {
-            console.log('editor?', e)
             editor = ace.edit(e)
             editor.getSession().setMode("ace/mode/json")
             editor.setTheme("ace/theme/mono_industrial")
@@ -137,14 +137,6 @@
             })
           }
         })
-
-
-        
-      // let bmapTx = bmap.default.TransformTx(JSON.parse(localStorage.getItem('tx1')))
-      // console.log('tx1', bmapTx)
-      // bmapTx = bmap.default.TransformTx(JSON.parse(localStorage.getItem('tx2')))
-      // console.log('tx2', bmapTx)
-
     })
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -165,9 +157,7 @@
       }
     })
 
-
   </script>
-
 
 </head>
 <body>

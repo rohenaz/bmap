@@ -20,6 +20,12 @@ bmap.TransformTx = (tx) => {
   protocolMap.set('METANET', 'meta')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
 
+  let encodingMap = new Map()
+  encodingMap.set('utf8', 'string')
+  encodingMap.set('text', 'string') // invalid but people use it :(
+  encodingMap.set('gzip', 'binary') // invalid but people use it :(
+  encodingMap.set('image/png', 'binary')
+  encodingMap.set('image/jpeg', 'binary')
   
   let querySchema = {
     'B': [
@@ -60,7 +66,6 @@ bmap.TransformTx = (tx) => {
   let dataObj = {}
 
   for (let [key, val] of Object.entries(tx)) {
-    console.log('key', key, 'val', val)
 
     if (key === 'out') {
       // loop over the outputs
@@ -77,7 +82,6 @@ bmap.TransformTx = (tx) => {
             }
             
             let cell = cell_container.cell
-      
 
             // Get protocol name from prefix
             let protocolName = protocolMap.getKey(cell[0].s) || cell[0].s
@@ -85,6 +89,52 @@ bmap.TransformTx = (tx) => {
             dataObj[protocolName] = {}
 
             switch (protocolName) {
+              case 'AIP':
+                console.log('AIP')
+                dataObj[protocolName] = cell
+              break;
+              case 'B': 
+                // loop over the schema
+                for (let [idx, schemaField] of Object.entries(querySchema.B)) {
+                  let x = parseInt(idx)
+                  let bField = Object.keys(schemaField)[0]
+                  let schemaEncoding = Object.values(schemaField)[0]
+                  if (bField === 'content') {
+                    // If the encoding is ommitted, try to infer from content-type instead of breaking
+                    if (!cell[3]) {
+                      schemaEncoding = encodingMap.get(cell[2].s)
+                      if (!schemaEncoding) {
+                        console.warn('Problem inferring encoding. Malformed B data.', cell)
+                        break
+                      } else {
+                        // add the missing encoding field
+                        cell.push({ s: schemaEncoding === 'string' ? 'utf8' : 'binary' })
+                      }
+                    } else {
+                      schemaEncoding = cell[3] && cell[3].s ? encodingMap.get(cell[3].s.replace('-','').toLowerCase()) : null
+                    }
+                  }
+
+
+                  // Sometimes filename is not used
+                  if (bField === 'filename' && !cell[x + 1]) {
+                    // filename ommitted
+                    continue
+                  }
+
+                  // check for malformed syntax
+                  if (!cell.hasOwnProperty(x + 1)) {
+                    console.warn('malformed B syntax', cell)
+                    continue
+                  }
+
+                  // set field value from either s, b, ls, or lb depending on encoding and availability
+                  let correctValue = schemaEncoding === 'string' ? (cell[x + 1].hasOwnProperty('s') ? cell[x + 1].s : cell[x + 1].ls) : (cell[x + 1].hasOwnProperty('b') ? cell[x + 1].b : cell[x + 1].lb)
+                  dataObj[protocolName][bField] = correctValue
+                  
+                }
+                // dataObj[protocolName]
+              break;
               case 'MAP':
                 let command = cell[1].s
 
@@ -100,7 +150,7 @@ bmap.TransformTx = (tx) => {
                     let last = null
                     for (let pushdata_container of cell) {
                       // ignore MAP command
-                      if ( pushdata_container.i === 0) {
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
                         continue
                       }
                       let pushdata = pushdata_container.s
@@ -117,6 +167,9 @@ bmap.TransformTx = (tx) => {
                   break
                 }
               break
+              case 'METANET':
+                dataObj[protocolName] = cell
+                break;
               default:
                 // Unknown protocol prefix. Keep BOB's cell format
                 dataObj[protocolName] = cell
