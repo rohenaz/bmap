@@ -1,0 +1,72 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'publish' ]
+2 info using npm@3.5.2
+3 info using node@v8.10.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/mnt/c/Users/Satchmo/code/bmap',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /home/satchmo/.npm/bmapjs/0.0.12/package.tgz not in flight; packing
+9 info lifecycle bmapjs@0.0.12~prepublish: bmapjs@0.0.12
+10 silly lifecycle bmapjs@0.0.12~prepublish: no script for prepublish, continuing
+11 verbose tar pack [ '/home/satchmo/.npm/bmapjs/0.0.12/package.tgz',
+11 verbose tar pack   '/mnt/c/Users/Satchmo/code/bmap' ]
+12 verbose tarball /home/satchmo/.npm/bmapjs/0.0.12/package.tgz
+13 verbose folder /mnt/c/Users/Satchmo/code/bmap
+14 verbose addLocalTarball adding from inside cache /home/satchmo/.npm/bmapjs/0.0.12/package.tgz
+15 silly cache afterAdd bmapjs@0.0.12
+16 verbose afterAdd /home/satchmo/.npm/bmapjs/0.0.12/package/package.json not in flight; writing
+17 verbose afterAdd /home/satchmo/.npm/bmapjs/0.0.12/package/package.json written
+18 silly publish { name: 'bmapjs',
+18 silly publish   version: '0.0.12',
+18 silly publish   description: 'A parser for TXO formatted transactions comprised of B, MAP, and AIP OP_RETURN protocols together in a single tx.',
+18 silly publish   main: 'bmap_node.js',
+18 silly publish   scripts:
+18 silly publish    { build: 'browserify bmap_node.js -o dist/bmap_node.js',
+18 silly publish      test: 'echo "Error: no test specified" && exit 1' },
+18 silly publish   repository: { type: 'git', url: 'git+https://github.com/rohenaz/bmap.git' },
+18 silly publish   keywords: [ 'bitcoin', 'bmap', 'magic', 'attribute', 'protocol', 'bsv' ],
+18 silly publish   devDependencies: { browserify: '^16.2.0' },
+18 silly publish   author: { name: 'Satchmo' },
+18 silly publish   license: 'MIT',
+18 silly publish   bugs: { url: 'https://github.com/rohenaz/bmap/issues' },
+18 silly publish   homepage: 'https://github.com/rohenaz/bmap#readme',
+18 silly publish   readme: '# bmap\nBmap is a TXO parser for `B | MAP` OP_RETURN protocols. Bmap processes transaction outputs and transforms them into self descriptive js objects based on the OP_RETURN protocols it discovers in the data.\n\nWhile the initial release only supports B and MAP protocols, the idea is to support many more in the future.\n\n# Pre-requisites\n  - Read [B Protocol](https://github.com/unwriter/B)\n  - Read [MAP protocol](https://github.com/rohenaz/MAP)\n  - Read [AIP protocol](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)\n  - A [TXO](https://github.com/interplanaria/txo) formatted transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria)\n  - npm\n\n# Install\n\n```\nnpm install bmapjs\n```\n\n# Usage\n\n```js\nrequire(\'bmapjs\')\nbmap.TransformTx(txo)\n```\n\n# Example\n`ToDo`\n\n# Roadmap\n- [x] AIP support\n- [ ] C support\n- [ ] D Support\n- [ ] BCAT support\n',
+18 silly publish   readmeFilename: 'README.md',
+18 silly publish   gitHead: '539e2fc3f41e2214c31558ab1ec1f0ce349c9995',
+18 silly publish   _id: 'bmapjs@0.0.12',
+18 silly publish   _shasum: 'c1a6b985119e0b3058c2c3f94c7fff44098677ba',
+18 silly publish   _from: '.' }
+19 verbose getPublishConfig undefined
+20 silly mapToRegistry name bmapjs
+21 silly mapToRegistry using default registry
+22 silly mapToRegistry registry https://registry.npmjs.org/
+23 silly mapToRegistry uri https://registry.npmjs.org/bmapjs
+24 verbose publish registryBase https://registry.npmjs.org/
+25 silly publish uploading /home/satchmo/.npm/bmapjs/0.0.12/package.tgz
+26 verbose stack Error: auth required for publishing
+26 verbose stack     at CachingRegistryClient.publish (/usr/share/npm/node_modules/npm-registry-client/lib/publish.js:30:14)
+26 verbose stack     at /usr/share/npm/lib/publish.js:137:14
+26 verbose stack     at mapToRegistry (/usr/share/npm/lib/utils/map-to-registry.js:55:3)
+26 verbose stack     at publish_ (/usr/share/npm/lib/publish.js:106:3)
+26 verbose stack     at Array.<anonymous> (/usr/share/npm/node_modules/slide/lib/bind-actor.js:15:8)
+26 verbose stack     at LOOP (/usr/share/npm/node_modules/slide/lib/chain.js:15:14)
+26 verbose stack     at LOOP (/usr/share/npm/node_modules/slide/lib/chain.js:14:28)
+26 verbose stack     at chain (/usr/share/npm/node_modules/slide/lib/chain.js:20:5)
+26 verbose stack     at /usr/share/npm/lib/publish.js:72:5
+26 verbose stack     at RES (/usr/share/npm/node_modules/inflight/inflight.js:23:14)
+27 verbose cwd /mnt/c/Users/Satchmo/code/bmap
+28 error Linux 4.4.0-17763-Microsoft
+29 error argv "/usr/bin/node" "/usr/bin/npm" "publish"
+30 error node v8.10.0
+31 error npm  v3.5.2
+32 error code ENEEDAUTH
+33 error need auth auth required for publishing
+34 error need auth You need to authorize this machine using `npm adduser`
+35 verbose exit [ 1, true ]

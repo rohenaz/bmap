@@ -8,7 +8,7 @@ Map.prototype.getKey = function (searchValue) {
   return null
 }
 
-// Takes a bitdb formatted op_return transaction
+// Takes a BOB formatted op_return transaction
 bmap.TransformTx = (tx) => {
   if (!tx || !tx.hasOwnProperty('in') || !tx.hasOwnProperty('out')) {
     throw new Error('Cant process tx', tx)
@@ -19,12 +19,8 @@ bmap.TransformTx = (tx) => {
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
   protocolMap.set('METANET', 'meta')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
-  
-  let encodingMap = new Map()
-  encodingMap.set('utf8', 'string')
-  encodingMap.set('text', 'string') // invalid but people use it :(
-  encodingMap.set('gzip', 'binary') // invalid but people use it :(
 
+  
   let querySchema = {
     'B': [
       { 'content': ['string', 'binary'] },
@@ -63,169 +59,87 @@ bmap.TransformTx = (tx) => {
   // This will become our nicely formatted response object
   let dataObj = {}
 
-  // offsets record the position of each protocol
-  let offsets = new Map()
-
-  // We always know what the first protocol is, it's always in s1
-  let prefix = tx.out.filter(tx => { return tx && tx.b0.op === 106 })[0].s1
-
-  // If s1 does not contain a protocol prefix, there's nothing to do
-  if (!protocolMap.getKey(prefix)) {
-    throw new Error('Unrecognized transaction', tx)
-  }
-
-  let protocolName = protocolMap.getKey(prefix)
-
-  // Loop over the tx keys (in, out, tx, blk ...)
   for (let [key, val] of Object.entries(tx)) {
-    
-    // Check for op_return
-    if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
+    console.log('key', key, 'val', val)
 
-      // There can be only one
-      let opReturnOutput = val.filter((output) => { return output && output.b0 && output.b0.op === 106 })[0]
+    if (key === 'out') {
+      // loop over the outputs
+      for (let out of tx.out) {
+        let tape = out.tape
 
-      // FIRST, we separate the string, key, and binary values
-      let valueMaps = {
-        'binary': new Map(),
-        'string': new Map(),
-        'hex': new Map()
-      }
-
-      let otherVals = {}
-      let indexCount = 0
-      let roundIndex = 0
-
-      for (let pushdataKey in opReturnOutput) {
-        // Get the TXO index number by itself (strip letters)
-        let num = parseInt(pushdataKey.replace(/[A-Za-z]/g,''))
-        if (num >= 0) {
-          if (pushdataKey.startsWith('s') || pushdataKey.startsWith('ls')) {
-            valueMaps.string.set(num, opReturnOutput[pushdataKey])
-          } else if(pushdataKey.startsWith('b') || pushdataKey.startsWith('lb')) {
-            valueMaps.binary.set(num, opReturnOutput[pushdataKey])
-          } else if(pushdataKey.startsWith('h') || pushdataKey.startsWith('lh')) {
-            valueMaps.hex.set(num, opReturnOutput[pushdataKey])
-          }
-          if (num > indexCount) {
-            indexCount = num
-          }
-        } else {
-          otherVals[pushdataKey] = opReturnOutput[pushdataKey]
-        }
-      }
-
-      // Loop for pushdata count and find appropriate value
-      let relativeIndex = 0
-      for (let x = 0; x < indexCount; x++) {
-        let stringVal = valueMaps.string.get(x + 1)
-        // console.log('x', x, 'relative', relativeIndex, 'val', currentVal)
-        if (relativeIndex === 0) {
-          if (!protocolMap.getKey(stringVal)) {
-            // Unknown protocol, just use the address as the key
-            protocolName = stringVal
-            querySchema[protocolName] = querySchema.default
-          } else {
-            protocolName = protocolMap.getKey(stringVal)
-          }
-          
-          dataObj[protocolName] = []
-          offsets.set(protocolName, x+1)
-        }
-
-        // Detect UNIX pipeline
-        if (stringVal === '|') {
-          // console.log('========================= End', protocolName)
-          relativeIndex = 0
-          continue
-        }
-
-        let encoding
-        if (relativeIndex !== 0) {
-          // get the schema object, or array of objects in case of repeating fields
-          let schemaField = querySchema[protocolName][relativeIndex-1]
-          if (!schemaField) { throw new Error('Failed to find schema field for ', protocolName) }
-
-          let obj = {}
-
-          if (schemaField instanceof Array) {
-            // loop through the schema as we add values
-            roundIndex = roundIndex % schemaField.length
-            let thekey = Object.keys(schemaField[roundIndex++])[0]
-            roundIndex = roundIndex % schemaField.length
-            encoding = Object.values(schemaField[roundIndex++])[0]
-            
-            obj[thekey] = valueMaps[encoding].get(x + 1)
-
-            dataObj[protocolName].push(obj)
-            continue
-          } else {
-            // get the key, value pair from this query schema
-          
-            let schemaKey = Object.keys(schemaField)[0]
-            let schemaEncoding = Object.values(schemaField)[0]
-
-            // B has many encoding possibilities for content, look in index 2 relative to the protocol schema
-            if (schemaEncoding instanceof Array) {                
-              // if encoding field if not included in content array assume its binary
-              let encodingLocation = 's' + (offsets.get(protocolName) + 2 + relativeIndex)
-              let cleanEncoding = (opReturnOutput[encodingLocation] || '').toLowerCase().replace(/[-]/g, '')
-              encoding = encodingMap.has(cleanEncoding) ? encodingMap.get(cleanEncoding) : 'binary'
-            } else {
-              encoding = schemaEncoding
+        if (tape.some((cc) => {
+          return checkOpFalseOpReturn(cc)
+        })) {
+          for (let cell_container of tape) {
+            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+            if(checkOpFalseOpReturn(cell_container)) {
+              continue
             }
             
-            // attach correct value to the output object
-            let dataVal = valueMaps[encoding].get(x + 1)
-            obj[schemaKey] = dataVal
-            dataObj[protocolName].push(obj)
-            relativeIndex++
-          }
-        } else {
-          relativeIndex++
-        }
-      }
+            let cell = cell_container.cell
+      
 
-      // TRANSFORM MAP from {key: "keyname", val: "myval"} to {keyname: 'myval'}
-      let keyTemp
-      let newMap = {}
-      for (const [key, val] of Object.entries(dataObj)) {
-        if (key === 'MAP') {
-          let i = 0
-          for (let item of val) {
-            let k = Object.keys(item)[0]
-            let v = Object.values(item)[0]
-            if (k === 'cmd') { newMap.cmd = v; continue }
-            if (i % 2 === 0) {
-              // MAP key
-              keyTemp = v
-            } else {
-              // MAP value
-              newMap[keyTemp] = v
+            // Get protocol name from prefix
+            let protocolName = protocolMap.getKey(cell[0].s) || cell[0].s
+
+            dataObj[protocolName] = {}
+
+            switch (protocolName) {
+              case 'MAP':
+                let command = cell[1].s
+
+                // Get the MAP command key name from the query schema
+                let mapCmdKey = Object.keys(querySchema[protocolName][0])[0]
+
+                // Add the MAP command in the response object
+                dataObj[protocolName][mapCmdKey] = command
+
+                // Individual parsing rules for each MAP command
+                switch (command) {
+                  case 'SET':
+                    let last = null
+                    for (let pushdata_container of cell) {
+                      // ignore MAP command
+                      if ( pushdata_container.i === 0) {
+                        continue
+                      }
+                      let pushdata = pushdata_container.s
+                      if (pushdata_container.i % 2 === 0) {
+                        // key
+                        dataObj[protocolName][pushdata] = ''
+                        last = pushdata
+                      } else {
+                        // value
+                        if (!last) { console.warn('malformed MAP syntax. Cannot parse.', last); continue }
+                        dataObj[protocolName][last] = pushdata
+                      }
+                    }      
+                  break
+                }
+              break
+              default:
+                // Unknown protocol prefix. Keep BOB's cell format
+                dataObj[protocolName] = cell
+              break
             }
-            i++
           }
-          // ToDo - detect key with no val and remove it? or set it to ''?
-          dataObj[key] = newMap
         } else {
-          if (key === '_id' || key === 'tx' || key === 'in' || key === 'out' || key === 'blk') {
-            continue            
-          }
-          // Reduce non MAP root node (unknown protocol)
-          dataObj[key] = val.reduce(function(map, obj) {
-            map[Object.keys(obj)[0]] = Object.values(obj)[0]
-            return map
-          }, {})
+          // No OP_RETURN in this outputs
+          // ToDo - Keep it
+          // dataObj[key] = val
         }
       }
-
-      dataObj.out = tx.out.filter(o => { return o && o.hasOwnProperty('e') &&  !(o && o.b0 && o.b0.op === 106) })
-
     } else {
       dataObj[key] = val
     }
   }
+
   return dataObj
+}
+
+// Check a cell starts with OP_FALSE OP_RETURN -or- OP_RETURN
+function checkOpFalseOpReturn(cc) {
+  return (cc.cell[0].op === 0 && cc.cell[1].hasOwnProperty('op') && cc.cell[1].op === 106) || cc.cell[0].op === 106
 }
 
 export default bmap
