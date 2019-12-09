@@ -20,6 +20,8 @@ bmap.TransformTx = async (tx) => {
   protocolMap.set('METANET', 'meta')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
   protocolMap.set('HAIP','1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3')
+  protocolMap.set('BITCOM','$')
+  protocolMap.set('BITKEY', '13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC')
 
   let encodingMap = new Map()
   encodingMap.set('utf8', 'string')
@@ -65,6 +67,43 @@ bmap.TransformTx = async (tx) => {
         {'field_index': 'binary' }
       ]
     ],
+    'BITKEY': [
+      { 'bitkey_signature': 'binary' },
+      { 'user_signature': 'binary' },
+      { 'paymail': 'string' },
+      { 'pubkey': 'string' }
+    ],
+    'BITCOM': [{ 
+      'su': [
+        {'pubkey': 'string'},
+        {'sign_position': 'string'},
+        {'signature': 'string'},
+      ],
+      'echo': [
+        {'data': 'string'},
+        {'to': 'string'},
+        {'filename': 'string'}
+      ],
+      'route': [
+        [
+          {
+            'add': [
+              { 'bitcom_address': 'string'}, 
+              {'route_matcher': 'string'}, 
+              {'endpoint_template': 'string'}
+            ] 
+          }, 
+          {
+            'enable': [
+              { 'path': 'string' }
+            ] 
+          }
+        ],
+      ],  
+      'useradd': [
+        {'address': 'string'}
+      ]
+    }],
     'default': [
       [{'pushdata': 'string'}]
     ]
@@ -97,10 +136,20 @@ bmap.TransformTx = async (tx) => {
             dataObj[protocolName] = {}
 
             switch (protocolName) {
+              case 'BITKEY':
+                let bitkeyObj = {}
+                // loop over the schema
+                for (let [idx, schemaField] of Object.entries(querySchema.BITKEY)) {
+                  let x = parseInt(idx)
+                  let bitkeyField = Object.keys(schemaField)[0]
+                  let schemaEncoding = Object.values(schemaField)[0]
+                  bitkeyObj[bitkeyField] = cellValue(cell[x + 1], schemaEncoding)
+                }
+                dataObj[protocolName] = bitkeyObj
+              break
               case 'HAIP':
-                console.log('HAIP')
+                // USE AIP - Fallthrough
               case 'AIP':
-                console.log('AIP')
                 // loop over the schema
                 let aipObj = {}
                 
@@ -211,9 +260,12 @@ bmap.TransformTx = async (tx) => {
 
                 // Described this node
                 // Calculate the node ID
-                let buf = new ArrayBuffer(tx.in[0].e.a + tx.in[0].e.h)
-                let digest = await crypto.subtle.digest('SHA-256', buf)
-                let id = buf2hex(digest)                
+                let id
+                try {
+                  id =  await getEnvSafeMetanetID(tx.in[0].e.a, tx.in[0].e.h)
+                } catch(e) {
+                  console.warn('error', e)
+                }
 
                 let node = {
                   a: cell[1].s,
@@ -233,6 +285,12 @@ bmap.TransformTx = async (tx) => {
                   node: node,
                   parent: parent
                 }                              
+              break;
+              case 'BITCOM':
+                let bitcomObj = cell.map(c => {
+                  return c.s
+                })
+                dataObj[protocolName] = bitcomObj
               break;
               default:
                 // Unknown protocol prefix. Keep BOB's cell format
@@ -282,12 +340,35 @@ function checkOpFalseOpReturn(cc) {
 
 // ArrayBuffer to hex string
 function buf2hex(buffer) { 
-  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('')
 }
 
 // returns the BOB cell value for a given encoding
 function cellValue(pushdata, schemaEncoding) {
   return schemaEncoding === 'string' ? (pushdata.hasOwnProperty('s') ? pushdata.s : pushdata.ls) : (pushdata.hasOwnProperty('b') ? pushdata.b : pushdata.lb)
+}
+
+// Different methods for node vs browser
+async function getEnvSafeMetanetID(a, tx) {
+  // Calculate the node ID
+  if (isBrowser()) {
+    // browser
+    let buf = new ArrayBuffer(a + tx)
+    let digest = await crypto.subtle.digest('SHA-256', buf)
+    return buf2hex(digest)                
+  } else {
+    // node
+    let buf = Buffer.from(a + tx)
+    return crypto.createHash('sha256').update(buf).digest('hex')
+  }
+}
+
+function isBrowser() { 
+  try {
+    return this===window
+  } catch(e){ 
+    return false
+  }
 }
 
 export default bmap

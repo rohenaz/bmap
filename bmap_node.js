@@ -1,5 +1,12 @@
 const bmap = {}
 
+let crypto
+try {
+  crypto = require('crypto')
+} catch (err) {
+  console.error('crypto support is disabled!')
+}
+
 Map.prototype.getKey = function (searchValue) {
   for (let [key, value] of this.entries()) {
     if (value === searchValue)
@@ -8,8 +15,8 @@ Map.prototype.getKey = function (searchValue) {
   return null
 }
 
-// Takes a bitdb formatted op_return transaction
-bmap.TransformTx = (tx) => {
+// Takes a BOB formatted op_return transaction
+bmap.TransformTx = async (tx) => {
   if (!tx || !tx.hasOwnProperty('in') || !tx.hasOwnProperty('out')) {
     throw new Error('Cant process tx', tx)
   }
@@ -19,12 +26,17 @@ bmap.TransformTx = (tx) => {
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
   protocolMap.set('METANET', 'meta')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
-  
+  protocolMap.set('HAIP','1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3')
+  protocolMap.set('BITCOM','$')
+  protocolMap.set('BITKEY', '13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC')
+
   let encodingMap = new Map()
   encodingMap.set('utf8', 'string')
   encodingMap.set('text', 'string') // invalid but people use it :(
   encodingMap.set('gzip', 'binary') // invalid but people use it :(
-
+  encodingMap.set('image/png', 'binary')
+  encodingMap.set('image/jpeg', 'binary')
+  
   let querySchema = {
     'B': [
       { 'content': ['string', 'binary'] },
@@ -42,10 +54,7 @@ bmap.TransformTx = (tx) => {
     'METANET': [
       { 'address': 'string'},
       { 'parent': 'string' },
-      { 'name': 'string' },
-      [ 
-        {'kwd': 'string'}
-      ]
+      { 'name': 'string' }
     ],
     'AIP': [
       { 'algorithm': 'string' },
@@ -55,6 +64,53 @@ bmap.TransformTx = (tx) => {
         {'index': 'binary'}
       ]
     ],
+    'HAIP': [
+      { 'hashing_algorithm': 'string' },
+      { 'signing_algorithm': 'string' },
+      { 'signing_address': 'string' },
+      { 'signature': 'binary' },
+      { 'index_unit_size': 'binary' },
+      [
+        {'field_index': 'binary' }
+      ]
+    ],
+    'BITKEY': [
+      { 'bitkey_signature': 'binary' },
+      { 'user_signature': 'binary' },
+      { 'paymail': 'string' },
+      { 'pubkey': 'string' }
+    ],
+    'BITCOM': [{ 
+      'su': [
+        {'pubkey': 'string'},
+        {'sign_position': 'string'},
+        {'signature': 'string'},
+      ],
+      'echo': [
+        {'data': 'string'},
+        {'to': 'string'},
+        {'filename': 'string'}
+      ],
+      'route': [
+        [
+          {
+            'add': [
+              { 'bitcom_address': 'string'}, 
+              {'route_matcher': 'string'}, 
+              {'endpoint_template': 'string'}
+            ] 
+          }, 
+          {
+            'enable': [
+              { 'path': 'string' }
+            ] 
+          }
+        ],
+      ],  
+      'useradd': [
+        {'address': 'string'}
+      ]
+    }],
     'default': [
       [{'pushdata': 'string'}]
     ]
@@ -63,169 +119,263 @@ bmap.TransformTx = (tx) => {
   // This will become our nicely formatted response object
   let dataObj = {}
 
-  // offsets record the position of each protocol
-  let offsets = new Map()
-
-  // We always know what the first protocol is, it's always in s1
-  let prefix = tx.out.filter(tx => { return tx && tx.b0.op === 106 })[0].s1
-
-  // If s1 does not contain a protocol prefix, there's nothing to do
-  if (!protocolMap.getKey(prefix)) {
-    throw new Error('Unrecognized transaction', tx)
-  }
-
-  let protocolName = protocolMap.getKey(prefix)
-
-  // Loop over the tx keys (in, out, tx, blk ...)
   for (let [key, val] of Object.entries(tx)) {
-    
-    // Check for op_return
-    if (key === 'out' && tx.out.some((output) => { return output && output.b0 && output.b0.op === 106 })) {
 
-      // There can be only one
-      let opReturnOutput = val.filter((output) => { return output && output.b0 && output.b0.op === 106 })[0]
+    if (key === 'out') {
+      // loop over the outputs
+      for (let out of tx.out) {
+        let tape = out.tape
 
-      // FIRST, we separate the string, key, and binary values
-      let valueMaps = {
-        'binary': new Map(),
-        'string': new Map(),
-        'hex': new Map()
-      }
-
-      let otherVals = {}
-      let indexCount = 0
-      let roundIndex = 0
-
-      for (let pushdataKey in opReturnOutput) {
-        // Get the TXO index number by itself (strip letters)
-        let num = parseInt(pushdataKey.replace(/[A-Za-z]/g,''))
-        if (num >= 0) {
-          if (pushdataKey.startsWith('s') || pushdataKey.startsWith('ls')) {
-            valueMaps.string.set(num, opReturnOutput[pushdataKey])
-          } else if(pushdataKey.startsWith('b') || pushdataKey.startsWith('lb')) {
-            valueMaps.binary.set(num, opReturnOutput[pushdataKey])
-          } else if(pushdataKey.startsWith('h') || pushdataKey.startsWith('lh')) {
-            valueMaps.hex.set(num, opReturnOutput[pushdataKey])
-          }
-          if (num > indexCount) {
-            indexCount = num
-          }
-        } else {
-          otherVals[pushdataKey] = opReturnOutput[pushdataKey]
-        }
-      }
-
-      // Loop for pushdata count and find appropriate value
-      let relativeIndex = 0
-      for (let x = 0; x < indexCount; x++) {
-        let stringVal = valueMaps.string.get(x + 1)
-        // console.log('x', x, 'relative', relativeIndex, 'val', currentVal)
-        if (relativeIndex === 0) {
-          if (!protocolMap.getKey(stringVal)) {
-            // Unknown protocol, just use the address as the key
-            protocolName = stringVal
-            querySchema[protocolName] = querySchema.default
-          } else {
-            protocolName = protocolMap.getKey(stringVal)
-          }
-          
-          dataObj[protocolName] = []
-          offsets.set(protocolName, x+1)
-        }
-
-        // Detect UNIX pipeline
-        if (stringVal === '|') {
-          // console.log('========================= End', protocolName)
-          relativeIndex = 0
-          continue
-        }
-
-        let encoding
-        if (relativeIndex !== 0) {
-          // get the schema object, or array of objects in case of repeating fields
-          let schemaField = querySchema[protocolName][relativeIndex-1]
-          if (!schemaField) { throw new Error('Failed to find schema field for ', protocolName) }
-
-          let obj = {}
-
-          if (schemaField instanceof Array) {
-            // loop through the schema as we add values
-            roundIndex = roundIndex % schemaField.length
-            let thekey = Object.keys(schemaField[roundIndex++])[0]
-            roundIndex = roundIndex % schemaField.length
-            encoding = Object.values(schemaField[roundIndex++])[0]
-            
-            obj[thekey] = valueMaps[encoding].get(x + 1)
-
-            dataObj[protocolName].push(obj)
-            continue
-          } else {
-            // get the key, value pair from this query schema
-          
-            let schemaKey = Object.keys(schemaField)[0]
-            let schemaEncoding = Object.values(schemaField)[0]
-
-            // B has many encoding possibilities for content, look in index 2 relative to the protocol schema
-            if (schemaEncoding instanceof Array) {                
-              // if encoding field if not included in content array assume its binary
-              let encodingLocation = 's' + (offsets.get(protocolName) + 2 + relativeIndex)
-              let cleanEncoding = (opReturnOutput[encodingLocation] || '').toLowerCase().replace(/[-]/g, '')
-              encoding = encodingMap.has(cleanEncoding) ? encodingMap.get(cleanEncoding) : 'binary'
-            } else {
-              encoding = schemaEncoding
+        if (tape.some((cc) => {
+          return checkOpFalseOpReturn(cc)
+        })) {
+          for (let cell_container of tape) {
+            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+            if(checkOpFalseOpReturn(cell_container)) {
+              continue
             }
             
-            // attach correct value to the output object
-            let dataVal = valueMaps[encoding].get(x + 1)
-            obj[schemaKey] = dataVal
-            dataObj[protocolName].push(obj)
-            relativeIndex++
-          }
-        } else {
-          relativeIndex++
-        }
-      }
+            let cell = cell_container.cell
 
-      // TRANSFORM MAP from {key: "keyname", val: "myval"} to {keyname: 'myval'}
-      let keyTemp
-      let newMap = {}
-      for (const [key, val] of Object.entries(dataObj)) {
-        if (key === 'MAP') {
-          let i = 0
-          for (let item of val) {
-            let k = Object.keys(item)[0]
-            let v = Object.values(item)[0]
-            if (k === 'cmd') { newMap.cmd = v; continue }
-            if (i % 2 === 0) {
-              // MAP key
-              keyTemp = v
-            } else {
-              // MAP value
-              newMap[keyTemp] = v
+            // Get protocol name from prefix
+            let protocolName = protocolMap.getKey(cell[0].s) || cell[0].s
+
+            dataObj[protocolName] = {}
+
+            switch (protocolName) {
+              case 'BITKEY':
+                let bitkeyObj = {}
+                // loop over the schema
+                for (let [idx, schemaField] of Object.entries(querySchema.BITKEY)) {
+                  let x = parseInt(idx)
+                  let bitkeyField = Object.keys(schemaField)[0]
+                  let schemaEncoding = Object.values(schemaField)[0]
+                  bitkeyObj[bitkeyField] = cellValue(cell[x + 1], schemaEncoding)
+                }
+                dataObj[protocolName] = bitkeyObj
+              break
+              case 'HAIP':
+                // USE AIP - Fallthrough
+              case 'AIP':
+                // loop over the schema
+                let aipObj = {}
+                
+                // Does not have the required number of fields
+                if (cell.length < 4) {
+                  console.warn('AIP requires at least 4 fields including the prefix.')
+                  delete dataObj[protocolName]
+                  break
+                }
+
+                for (let [idx, schemaField] of Object.entries(querySchema[protocolName])) {
+                  let x = parseInt(idx)
+
+                  let schemaEncoding
+                  let aipField
+                  if (schemaField instanceof Array) {
+                    // signature indexes are specified
+                    schemaEncoding = schemaField[0]['index']
+                    aipField = Object.keys(schemaField[0])[0]
+                    continue
+                  } else {
+                    aipField = Object.keys(schemaField)[0]
+                    schemaEncoding = Object.values(schemaField)[0]  
+                  }
+                  
+                  aipObj[aipField] =  cellValue(cell[x + 1], schemaEncoding)
+                }
+                
+                dataObj[protocolName] = aipObj
+              break;
+              case 'B': 
+                // loop over the schema
+                for (let [idx, schemaField] of Object.entries(querySchema.B)) {
+                  let x = parseInt(idx)
+                  let bField = Object.keys(schemaField)[0]
+                  let schemaEncoding = Object.values(schemaField)[0]
+                  if (bField === 'content') {
+                    // If the encoding is ommitted, try to infer from content-type instead of breaking
+                    if (!cell[3]) {
+                      schemaEncoding = encodingMap.get(cell[2].s)
+                      if (!schemaEncoding) {
+                        console.warn('Problem inferring encoding. Malformed B data.', cell)
+                        break
+                      } else {
+                        // add the missing encoding field
+                        cell.push({ s: schemaEncoding === 'string' ? 'utf8' : 'binary' })
+                      }
+                    } else {
+                      schemaEncoding = cell[3] && cell[3].s ? encodingMap.get(cell[3].s.replace('-','').toLowerCase()) : null
+                    }
+                  }
+
+
+                  // Sometimes filename is not used
+                  if (bField === 'filename' && !cell[x + 1]) {
+                    // filename ommitted
+                    continue
+                  }
+
+                  // check for malformed syntax
+                  if (!cell.hasOwnProperty(x + 1)) {
+                    console.warn('malformed B syntax', cell)
+                    continue
+                  }
+
+                  // set field value from either s, b, ls, or lb depending on encoding and availability
+                  let data = cell[x + 1]
+                  let correctValue = cellValue(data, schemaEncoding)
+                  dataObj[protocolName][bField] = correctValue
+                  
+                }
+                // dataObj[protocolName]
+              break;
+              case 'MAP':
+                let command = cell[1].s
+
+                // Get the MAP command key name from the query schema
+                let mapCmdKey = Object.keys(querySchema[protocolName][0])[0]
+
+                // Add the MAP command in the response object
+                dataObj[protocolName][mapCmdKey] = command
+
+                // Individual parsing rules for each MAP command
+                switch (command) {
+                  case 'SET':
+                    let last = null
+                    for (let pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      let pushdata = pushdata_container.s
+                      if (pushdata_container.i % 2 === 0) {
+                        // key
+                        dataObj[protocolName][pushdata] = ''
+                        last = pushdata
+                      } else {
+                        // value
+                        if (!last) { console.warn('malformed MAP syntax. Cannot parse.', last); continue }
+                        dataObj[protocolName][last] = pushdata
+                      }
+                    }      
+                  break
+                }
+              break
+              case 'METANET':
+                // For now, we just copy from MOM keys later if available, or keep BOB format
+
+                // Described this node
+                // Calculate the node ID
+                let id
+                try {
+                  id =  await getEnvSafeMetanetID(tx.in[0].e.a, tx.in[0].e.h)
+                } catch(e) {
+                  console.warn('error', e)
+                }
+
+                let node = {
+                  a: cell[1].s,
+                  tx: tx.tx.h,
+                  id: id,
+                }
+
+                // Parent node
+                let parent = {
+                  a: cell[1].s,
+                  tx: tx.in[0].e.h,
+                  id: cell[2].s
+                }
+
+                dataObj[protocolName] = {}
+                dataObj[protocolName] = {
+                  node: node,
+                  parent: parent
+                }                              
+              break;
+              case 'BITCOM':
+                let bitcomObj = cell.map(c => {
+                  return c.s
+                })
+                dataObj[protocolName] = bitcomObj
+              break;
+              default:
+                // Unknown protocol prefix. Keep BOB's cell format
+                dataObj[protocolName] = cell
+              break
             }
-            i++
           }
-          // ToDo - detect key with no val and remove it? or set it to ''?
-          dataObj[key] = newMap
         } else {
-          if (key === '_id' || key === 'tx' || key === 'in' || key === 'out' || key === 'blk') {
-            continue            
-          }
-          // Reduce non MAP root node (unknown protocol)
-          dataObj[key] = val.reduce(function(map, obj) {
-            map[Object.keys(obj)[0]] = Object.values(obj)[0]
-            return map
-          }, {})
+          // No OP_RETURN in this outputs
+          // ToDo - Keep it
+          // dataObj[key] = val
         }
       }
-
-      dataObj.out = tx.out.filter(o => { return o && o.hasOwnProperty('e') &&  !(o && o.b0 && o.b0.op === 106) })
-
+    } else if (key === 'in') {
+      dataObj[key] = val.map(v => {
+        let r = Object.assign({}, v)
+        delete r.tape
+        return r
+      })
     } else {
       dataObj[key] = val
     }
   }
+
+  // If this is a MOM planaria it will have metanet keys available
+  if (dataObj.hasOwnProperty('METANET') && tx.hasOwnProperty('parent')) {
+    
+    dataObj.METANET['ancestor'] = tx.ancestor
+    delete dataObj.ancestor
+    dataObj.METANET['child'] = tx.child
+    delete dataObj.child
+
+    // remove parent and node from root level for (MOM data)
+    delete dataObj.parent
+    delete dataObj.node
+
+    dataObj.METANET['head'] = tx.head
+    delete dataObj.head
+  }
   return dataObj
+}
+
+// Check a cell starts with OP_FALSE OP_RETURN -or- OP_RETURN
+function checkOpFalseOpReturn(cc) {
+  return (cc.cell[0].op === 0 && cc.cell[1].hasOwnProperty('op') && cc.cell[1].op === 106) || cc.cell[0].op === 106
+}
+
+// ArrayBuffer to hex string
+function buf2hex(buffer) { 
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('')
+}
+
+// returns the BOB cell value for a given encoding
+function cellValue(pushdata, schemaEncoding) {
+  return schemaEncoding === 'string' ? (pushdata.hasOwnProperty('s') ? pushdata.s : pushdata.ls) : (pushdata.hasOwnProperty('b') ? pushdata.b : pushdata.lb)
+}
+
+// Different methods for node vs browser
+async function getEnvSafeMetanetID(a, tx) {
+  // Calculate the node ID
+  if (isBrowser()) {
+    // browser
+    let buf = new ArrayBuffer(a + tx)
+    let digest = await crypto.subtle.digest('SHA-256', buf)
+    return buf2hex(digest)                
+  } else {
+    // node
+    let buf = Buffer.from(a + tx)
+    return crypto.createHash('sha256').update(buf).digest('hex')
+  }
+}
+
+function isBrowser() { 
+  try {
+    return this===window
+  } catch(e){ 
+    return false
+  }
 }
 
 exports.TransformTx = function(tx) {

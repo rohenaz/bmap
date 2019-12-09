@@ -1,7 +1,7 @@
 # bmap
 Bmap is a BOB parser for `B | MAP` OP_RETURN protocols. Bmap processes transaction outputs and transforms them into self descriptive js objects based on the OP_RETURN protocols it discovers in the data.
 
-While the release only supports B and MAP and AIP protocols, the idea is to support many more in the future.
+BMAPjs supports supports B, MAP, AIP, HAIP, and METANET protocols in both BOB and MOM formats. Support for more formats is planed.
 
 # Note 
 
@@ -10,7 +10,10 @@ Previous versions of bmap used [TXO](https://github.com/interplanaria/txo) forma
   - Read [B Protocol](https://github.com/unwriter/B)
   - Read [MAP protocol](https://github.com/rohenaz/MAP)
   - Read [AIP protocol](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)
+  - Read [HAIP protocol](https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md)
   - Read [Metanet protocol](https://nchain.com/app/uploads/2019/06/The-Metanet-Technical-Summary-v1.0.pdf)
+  - Read [Su protocol]()
+  
   - Using [MOM](https://github.com/interplanaria/mom) enables additional fields for MetaNet protocol transactions
   - A [BOB](https://github.com/interplanaria/bob) formatted transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria) Tx
   - npm
@@ -146,6 +149,34 @@ bmap will include metanet relavent keys from MOM Planaria when available. When n
 }
 ```
 
+# Bitkey support
+
+```json
+	"BITKEY": {
+		"bitkey_signature": "SDQwdkEyVnN0emtIY2VnYXJVTm1WUm1wQ3ZLUVBSdXR4KzczdG9Jcm4vMWxRWU9aQ1lRQ0cyaFhBdHRQRFl0L0h2KzE0dWtUZ25MWVh1UUNsTFp6blBnPQ==",
+		"user_signature": "SUxzZWpEWXVwMlBEYjltdnJET1dSaWxMSy9Xd1BtVlRiazFOWnZnUHZiczRWVzYyenM1MFY5c3E0akdrQm8yeDlLOG9jSE5acTlLd1hRMkREV0V2OGNjPQ==",
+		"paymail": "oktets@moneybutton.com",
+		"pubkey": "0210fdec2372cb65dd9d6adb982101d9cdbb407d9f2e2d5be31cd9d59a561ccacf"
+  }
+```
+
+# Bitcom support
+
+BITCOM commands 
+`useradd, echo, su, route`
+
+```json
+{
+  "BITCOM": [
+    "$",
+    "echo",
+    "delphe_test2",
+    "to",
+    "name"
+  ]
+}
+```
+
 # Unknown Protocols
 
 When an unknown protocol is encountered, bmap will keep the incoming format and use the protocol prefix as the key name on the response object:
@@ -171,6 +202,8 @@ When an unknown protocol is encountered, bmap will keep the incoming format and 
 # Roadmap
 - [x] B support
 - [x] MAP v1 support
+- [x] Bitcom support
+- [x] Bitkey support
 - [ ] MAP v2 support
 - [x] AIP support
 - [x] HAIP support

@@ -6,7 +6,6 @@
   "author": "Satchmo",
   "license": "MIT",
   "dependencies": {
-    "bmapjs": "latest",
     "node-fetch": "latest",
     "btoa": "latest"
   }
