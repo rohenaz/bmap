@@ -40,6 +40,7 @@
     let prom = import('./bmap.js')
 
     let examples = {
+      'bad_META': ['66cc4d27e1b657871f6389e061a611ec2a4bb1a1fdd9253c5e94d89e61365bd8'], // this uses string '0' instead of OP_FALSE
       'hagbard_MAP': ['34ba78755c4db1179029537a2b0189aac75a8ac0c6c99f30fec06c60aa71b183'],
       'symre_HAIP': ['3682dd4c0fc3346b21882e4669b6585733705bacdfb48d2166dff92338093468'],
       'symre_old': ['de6e22a88a7739325793941c53eab6c39b8f817e15f4e305ea6a084040f271f9'],
@@ -48,8 +49,8 @@
       'META_node_parent_ancestor': ["70bcbe4dc1ff796389e3de4f5f151cff7eb4a172142468a79677c703afd930b9","59f2e83ac0607d44d764b9040aaa8dd8741e6169444739464f97422055ad001c","06ea0de45680b790d25372bc12b52c7e740e3b10f36d8aabd8b8a31e858a79c2"],
       'META_1': ['07790cb21e48fc98296319efed3645c3b43307031ce6748fa1aed929b24f0f89'],
       'META_2': ['0e34cc59e1c80262b1f25a8079dddcd3a47b90d728b5a3a7348b70a7c437b80c'],
-      'B_MAP_1': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
-      'B_MAP_2': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
+      'bad_B_MAP1': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
+      'bad_B_MAP2': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
       'B_MAP_AIP_1': ['cdfe7ae5c91afe4dc3a5db383e0ca948ec3d51dc2954a9d18ca464db7c9d5d3d'],
       'B_MAP_AIP_2': ['1a7cdf318416d81a3546b7b27b5c569d5099300f3cca385d1531c270524aa653'],
       'bitpaste': ['33d963997360d9edb6b056b9c46cbece48637ed6daa6f2ddd2ea4073ce2e8c72'],
@@ -107,7 +108,7 @@
         fetch(url, header).then((r) => {
           return r.json()
         }).then(async (r) => {
-          let collection = !useMom() ? r.c : r.metanet
+          let collection = !useMom() ? r.c.concat(r.u || []) : r.metanet
 
           if (!collection.length) {
             document.querySelector('#currentExample').innerHTML = 'No Results'

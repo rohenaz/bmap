@@ -19,6 +19,7 @@ bmap.TransformTx = async (tx) => {
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
   protocolMap.set('METANET', 'meta')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
+  protocolMap.set('HAIP','1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3')
 
   let encodingMap = new Map()
   encodingMap.set('utf8', 'string')
@@ -54,6 +55,16 @@ bmap.TransformTx = async (tx) => {
         {'index': 'binary'}
       ]
     ],
+    'HAIP': [
+      { 'hashing_algorithm': 'string' },
+      { 'signing_algorithm': 'string' },
+      { 'signing_address': 'string' },
+      { 'signature': 'binary' },
+      { 'index_unit_size': 'binary' },
+      [
+        {'field_index': 'binary' }
+      ]
+    ],
     'default': [
       [{'pushdata': 'string'}]
     ]
@@ -86,9 +97,39 @@ bmap.TransformTx = async (tx) => {
             dataObj[protocolName] = {}
 
             switch (protocolName) {
+              case 'HAIP':
+                console.log('HAIP')
               case 'AIP':
                 console.log('AIP')
-                dataObj[protocolName] = cell
+                // loop over the schema
+                let aipObj = {}
+                
+                // Does not have the required number of fields
+                if (cell.length < 4) {
+                  console.warn('AIP requires at least 4 fields including the prefix.')
+                  delete dataObj[protocolName]
+                  break
+                }
+
+                for (let [idx, schemaField] of Object.entries(querySchema[protocolName])) {
+                  let x = parseInt(idx)
+
+                  let schemaEncoding
+                  let aipField
+                  if (schemaField instanceof Array) {
+                    // signature indexes are specified
+                    schemaEncoding = schemaField[0]['index']
+                    aipField = Object.keys(schemaField[0])[0]
+                    continue
+                  } else {
+                    aipField = Object.keys(schemaField)[0]
+                    schemaEncoding = Object.values(schemaField)[0]  
+                  }
+                  
+                  aipObj[aipField] =  cellValue(cell[x + 1], schemaEncoding)
+                }
+                
+                dataObj[protocolName] = aipObj
               break;
               case 'B': 
                 // loop over the schema
@@ -126,7 +167,8 @@ bmap.TransformTx = async (tx) => {
                   }
 
                   // set field value from either s, b, ls, or lb depending on encoding and availability
-                  let correctValue = schemaEncoding === 'string' ? (cell[x + 1].hasOwnProperty('s') ? cell[x + 1].s : cell[x + 1].ls) : (cell[x + 1].hasOwnProperty('b') ? cell[x + 1].b : cell[x + 1].lb)
+                  let data = cell[x + 1]
+                  let correctValue = cellValue(data, schemaEncoding)
                   dataObj[protocolName][bField] = correctValue
                   
                 }
@@ -215,7 +257,6 @@ bmap.TransformTx = async (tx) => {
     }
   }
 
-
   // If this is a MOM planaria it will have metanet keys available
   if (dataObj.hasOwnProperty('METANET') && tx.hasOwnProperty('parent')) {
     
@@ -239,11 +280,14 @@ function checkOpFalseOpReturn(cc) {
   return (cc.cell[0].op === 0 && cc.cell[1].hasOwnProperty('op') && cc.cell[1].op === 106) || cc.cell[0].op === 106
 }
 
-
 // ArrayBuffer to hex string
 function buf2hex(buffer) { 
   return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 }
 
+// returns the BOB cell value for a given encoding
+function cellValue(pushdata, schemaEncoding) {
+  return schemaEncoding === 'string' ? (pushdata.hasOwnProperty('s') ? pushdata.s : pushdata.ls) : (pushdata.hasOwnProperty('b') ? pushdata.b : pushdata.lb)
+}
 
 export default bmap
