@@ -25,6 +25,7 @@ bmap.TransformTx = async (tx) => {
   protocolMap.set('B','19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut')
   protocolMap.set('MAP','1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5')
   protocolMap.set('METANET', 'meta')
+  protocolMap.set('MAP','map')
   protocolMap.set('AIP','15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
   protocolMap.set('HAIP','1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3')
   protocolMap.set('BITCOM','$')
@@ -45,11 +46,31 @@ bmap.TransformTx = async (tx) => {
       { 'filename': 'string' }
     ],
     'MAP': [
-      { 'cmd': 'string' },
-      [
-        { 'key': 'string' },
-        { 'val': 'string' }
-      ]
+      { 'cmd': 
+        {
+          'SET': [
+            { 'key': 'string' },
+            { 'val': 'string' }
+          ],
+          'SELECT': [
+            { 'tx': 'string' }
+          ],
+          'ADD': [
+            { 'key': 'string'},
+            [ { 'val': 'string' } ]
+          ],
+          'DELETE': [
+            { 'key': 'string' },
+            [ {'val': 'string' } ]
+          ],
+          'REMOVE': [
+            [ { 'key': 'string' } ]
+          ],
+          'CLEAR': [
+            [ {'txid': 'string'} ]
+          ]
+        } 
+      }
     ],
     'METANET': [
       { 'address': 'string'},
@@ -239,8 +260,68 @@ bmap.TransformTx = async (tx) => {
                 // Add the MAP command in the response object
                 dataObj[protocolName][mapCmdKey] = command
 
+                // ToDo - MAP v2: Check for protocol separator and run commands in a loop
+                // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
+
                 // Individual parsing rules for each MAP command
                 switch (command) {
+                  case 'ADD':
+                    let last = null
+                    for (pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      let pushdata = pushdata_container.s
+                      if (pushdata_container.i === 2) {
+                        // Key name
+                        dataObj[protocolName][pushdata] = []
+                        last = pushdata
+                      } else {
+                        dataObj[protocolName][last].push(pushdata)
+                      }
+                    }
+                  break;
+                  case 'REMOVE':
+                    for (pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      dataObj[protocolName].push(pushdata_container.s)
+                    }
+                  break
+                  case "DELETE":
+                    let last = null
+                    for (pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      let pushdata = pushdata_container.s
+                      if (pushdata_container.i === 2) {
+                        // Key name
+                        dataObj[protocolName][pushdata] = []
+                        last = pushdata
+                      } else {
+                        dataObj[protocolName][last].push(pushdata)
+                      }
+                    }
+                  break
+                  case "CLEAR":
+                      console.log('MAP CLEAR')
+                  break
+                  case "SELECT":
+                      console.log('MAP SELECT')
+                      for (pushdata_container of cell) {
+                        // ignore MAP command
+                        if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                          continue
+                        }
+
+                        // TODO
+                      }
+                  break
                   case 'SET':
                     let last = null
                     for (let pushdata_container of cell) {

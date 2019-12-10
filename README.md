@@ -211,3 +211,5 @@ When an unknown protocol is encountered, bmap will keep the incoming format and 
 - [ ] C support
 - [ ] D Support
 - [ ] BCAT support
+- [x] SymRe support
+- [x] RON support
