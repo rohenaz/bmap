@@ -1,7 +1,7 @@
 {
   "name": "bmapjs",
-  "version": "0.1.5",
-  "description": "A parser for TXO formatted transactions comprised of B, MAP, and AIP OP_RETURN protocols together in a single tx.",
+  "version": "0.2.0",
+  "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
   "main": "bmap_node.js",
   "scripts": {
     "build": "browserify bmap_node.js -o dist/bmap_node.js",

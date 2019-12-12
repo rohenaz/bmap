@@ -19,7 +19,7 @@ const query = {
 // Turn the query into base64 encoded string.
 // This is required for accessing a public bitdb node
 var b64 = btoa(JSON.stringify(query))
-var url = 'https://genesis.bitdb.network/q/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/' + b64
+var url = 'https://bob.planaria.network/q/1GgmC7Cg782YtQ6R9QkM58voyWeQJmJJzG/' + b64
 
 // Attach API KEY as header
 var header = {
@@ -29,10 +29,10 @@ var header = {
 // Make an HTTP request to bmap endpoint
 fetch(url, header).then((r) => {
   return r.json()
-}).then((r) => {
+}).then(async (r) => {
   for (tx of r.c) {
   // console.log('raw:', r)
-  let bmapTx = bmap.TransformTx(tx)
+  let bmapTx = await bmap.TransformTx(tx)
   console.log('result', bmapTx)
   }
 })
