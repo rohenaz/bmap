@@ -57,16 +57,19 @@
       'B_MAP_AIP_1': ['cdfe7ae5c91afe4dc3a5db383e0ca948ec3d51dc2954a9d18ca464db7c9d5d3d'],
       'B_MAP_AIP_2': ['1a7cdf318416d81a3546b7b27b5c569d5099300f3cca385d1531c270524aa653'],
       'B_MAP_AIP_MANY': ["0272e1b230dfe2603a77469037ad04b32661261ec1453261ded793da0ce297f6", "46991bd7b30c136e41626e998fc04fab8830bb0a8fab8ae8410081426c3d6505", "6645b54733bf630597a89540bc336804d297161113a3290e4285c1bb5e54119b", "536dc444770e0841fbf1b7813e6b228d962a240677be8b778100fc01dfb7ae7d", "36b01a3216e3728b929356a5c4ed137ad4093e14b8d0d92d3d4080721c1c2321", "7b9145df4b41dad05569248c1ac0d3cb5483d898eab30abcd30348c131df14a6", "0afee9bf5603fa529a9d2bda06123c5306079fdb7e64d4db3a32fa46d78b510a", "1a7cdf318416d81a3546b7b27b5c569d5099300f3cca385d1531c270524aa653", "000e988b20060a237c024d24cace5974050f446f8d5c355fe2f031256631b814"],
+      'BAEMAIL': ['9a5c1f7df46946078f24c58578f890803efbe52f667ce70d5828559fb173127f', '78a626bfa4cd338731886d2e04e6b8caa0c4e0dd7cfa5d65d7a61f66cc003801', '8333f79aec14b517c8522464bdb99298cf214d2b41d4e111fccd65ddee6ef810', '87e44ea3a36ba7d7e5f8ffd234685a956df40c9de9f5c29983d62187c327f0bf', '9c1a93b3155a316eb76f71a4923ad7b373423aae40d5e5a327ca332fa2fc70db'],
       'BITCOM_ECHO': ['c5b43dce7d9805fb2797650f5b9af18d5d80e913ece16ee1adae48b1005398ad'], //echo
       'BITKEY': ['d3ca9a8654c70ba2472908d031380c3db769a8b02d4aa62fb8878b204644755b'],
       'BITKEY_2': ['1f9e31750a2f0280a08c3781f41904a098e82fb3aa8a7d39f138fb9927289651'], // SU
       'bitpaste': ['33d963997360d9edb6b056b9c46cbece48637ed6daa6f2ddd2ea4073ce2e8c72'],
       'BITPIC': ['c0e1bc05f7da82ec114d443d873e8561ea225d3f021730c9e5aa66822073f965'],
+      'D': ['19iG3WTYSsbyos3uJ733yK4zEioi1FesNU'],
       'MAP': ['34ba78755c4db1179029537a2b0189aac75a8ac0c6c99f30fec06c60aa71b183'], //hagbard
       'META_1': ['07790cb21e48fc98296319efed3645c3b43307031ce6748fa1aed929b24f0f89'],
       'META_2': ['0e34cc59e1c80262b1f25a8079dddcd3a47b90d728b5a3a7348b70a7c437b80c'],
       'META_3': ["70bcbe4dc1ff796389e3de4f5f151cff7eb4a172142468a79677c703afd930b9","59f2e83ac0607d44d764b9040aaa8dd8741e6169444739464f97422055ad001c","06ea0de45680b790d25372bc12b52c7e740e3b10f36d8aabd8b8a31e858a79c2"],
       'metanaria': ['4410068e7582c79da06adc5d6ff32d2845b6e9c002f566f1ebf8b09bbb4d68ca', '3252152dd6b1d3a02030a968664e9c465a7934ef72d54923b55ef6e460196e43', '08078b86273342b2ced4983dc1a8992ddeac165d9b69d72b002a3374bf004c11', 'b1c0d7393e4184f7a0b1036d2d83ad5345e7b406fe42174c8ff4021c1004e0b0', '66094e053724980819aa2e1010549a7161c33394c8f86b5e03b979c5b3856297'],
+      'open_directory': ['095d09380b391f12521f926810f09072b2ae47c8b1ac2633a6082bf237704d4b', '38140a21180c638e56c271920a7d0f6e86bf31ca3ec0ead49365828389e32875'],
       'RON': ['e63079a1c3ead70c846fefae47483ea2d7724054460b87c9d70c1a255d9d6026'],
       'SV.CHAT': ['474fd7df692ccc1e0ad33a0ad525d427fb850f8614eeda1fa29ee2e67ed1a4af', 'f88727a2db0a6bf3ce5eb4f4fd8a00d8f26a7fdc99e8a6ccba8df1a5a1312ed9', 'b168c31d3d8b77323a18ef97d718ac88326a3346a05c322281c6980d61b41515', '5badab2757f22c4cf1e9c07bd7e8c24557a7d3a42b1eec960401f724064272ad'],
       'symre_HAIP': ['3682dd4c0fc3346b21882e4669b6585733705bacdfb48d2166dff92338093468'],
@@ -224,11 +227,13 @@
 
   <p>A BOB transaction parser that makes many BSV OP_RETURN protocols easier to work with. BMAPjs knows about each supported protocol and will transform BOB transactions into readable, easy to understand objects.</p>
 
-  <p>Supported protocols: B, MAP, MetaNet, Bitcom, AIP, HAIP, SymRe, Bitkey and RON. All other protocol prefixes will retain their original BOB format.</p>
+  <p>Supported protocols: B, MAP, MetaNet, Bitcom, AIP, HAIP, SymRe, Bitkey and RON, BitPic, . All other protocol prefixes will retain their original BOB format.</p>
   <p>The parser, which uses the Open BSV license, is available on github.</p>
 
   <a href="https://github.com/rohenaz/bmap">Github</a>
 
+  <p>BMAPjs is used by the BMAP-Planaria which provides a simple search query syntax: <a href="https://b.map.sv/q/">Twetch</a>, MetaLens, BitPic</p>
+  
   <h2>Examples</h2>
 
   <nav id="nav"></nav>

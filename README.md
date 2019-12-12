@@ -12,7 +12,6 @@ Previous versions of bmap used [TXO](https://github.com/interplanaria/txo) forma
   - Read [AIP protocol](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)
   - Read [HAIP protocol](https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md)
   - Read [Metanet protocol](https://nchain.com/app/uploads/2019/06/The-Metanet-Technical-Summary-v1.0.pdf)
-  - Read [Su protocol]()
   
   - Using [MOM](https://github.com/interplanaria/mom) enables additional fields for MetaNet protocol transactions
   - A [BOB](https://github.com/interplanaria/bob) formatted transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria) Tx
@@ -45,14 +44,19 @@ prom.then((bmap) => {
 
 ```
 
+# Demo
+[Examples](https://bmapjs.firebaseapp.com)
+
 # Usage
-Turn a BOB or MOM formatted transaction into a BMAP tx. It will throw an error if the transaction is malformed.
+Turn a BOB or MOM formatted transaction into a BMAP tx. It will throw an error if the transaction is malformed. 
+
 ```js
 try {
   bmap.TransformTx(bob_or_mom_tx)
 } catch (e) {
   console.error(e)
 }
+
 
 ```
 
@@ -62,9 +66,10 @@ After transforming a transaction it will have a key for each protocol used in th
   "AIP": { ... },
   "B": { ... },
   "MAP": { ... },
-  "1SymRe7erxM46GByucUWnB9fEEMgo7spd": { ... }
+  "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo": { ... }
 }
 ```
+If you want to use a raw transaction, first transform it using [BPU](https://github.com/interplanaria/bpu), then use bmapjs on the output.
 
 There is a collection of sample transactions listed in the examples.html page.
 
@@ -151,13 +156,17 @@ bmap will include metanet relavent keys from MOM Planaria when available. When n
 
 # Bitkey support
 
+`bitkey_signature` and `user_signature` are in base64 encoded binary format
+
 ```json
+{
 	"BITKEY": {
 		"bitkey_signature": "SDQwdkEyVnN0emtIY2VnYXJVTm1WUm1wQ3ZLUVBSdXR4KzczdG9Jcm4vMWxRWU9aQ1lRQ0cyaFhBdHRQRFl0L0h2KzE0dWtUZ25MWVh1UUNsTFp6blBnPQ==",
 		"user_signature": "SUxzZWpEWXVwMlBEYjltdnJET1dSaWxMSy9Xd1BtVlRiazFOWnZnUHZiczRWVzYyenM1MFY5c3E0akdrQm8yeDlLOG9jSE5acTlLd1hRMkREV0V2OGNjPQ==",
 		"paymail": "oktets@moneybutton.com",
 		"pubkey": "0210fdec2372cb65dd9d6adb982101d9cdbb407d9f2e2d5be31cd9d59a561ccacf"
   }
+}
 ```
 
 # Bitcom support
@@ -177,39 +186,67 @@ BITCOM commands
 }
 ```
 
+# Bitpic support
+
+`pubkey` and `sig` fields are returned in base64 encoded binary format
+
+```json
+{
+	"BITPIC": {
+		"paymail": "stockrt@moneybutton.com",
+		"pubkey": "AoAgqoMucQcdi7kyLHhN4y1HVCPMyVpcPrj75AAoFo/6",
+		"sig": "SVBJVzU3NnplSnUzODlKNTVPT0RSNjVvSlhDdldYTDY0SWtEa1dOQzNkZ0xBdGZGVUx0MlYzWW1OWkNUQTBsUlV1M2dJMlIrRkswT1JlUnl1Vm9SQjVZPQ=="
+	}
+}
+```
+
 # Unknown Protocols
 
 When an unknown protocol is encountered, bmap will keep the incoming format and use the protocol prefix as the key name on the response object:
 ```json
 {
-  "1SymRe7erxM46GByucUWnB9fEEMgo7spd": [
-    {
-      "b": "MVN5bVJlN2VyeE00NkdCeXVjVVduQjlmRUVNZ283c3Bk",
-      "s": "1SymRe7erxM46GByucUWnB9fEEMgo7spd",
-      "ii": 2,
-      "i": 0
-    },
-    {
-      "b": "aHR0cHM6Ly9zYXRvc2hpZG9vZGxlcy5jb20vc3B2LWlzaC8=",
-      "s": "https://satoshidoodles.com/spv-ish/",
-      "ii": 3,
-      "i": 1
-    }
-  ]
+	"1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo": [
+		{
+			"b": "MU1BRWVwemdXZWk2ekttYnNkUVN5OHdBWUw1eVNEaXpLbw==",
+			"s": "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo",
+			"ii": 7,
+			"i": 0
+		},
+		{
+			"b": "bWF0dGVyLWNyZWF0ZS1wb3N0",
+			"s": "matter-create-post",
+			"ii": 8,
+			"i": 1
+		},
+		{
+			"b": "djE=",
+			"s": "v1",
+			"ii": 9,
+			"i": 2
+		},
+		{
+			"b": "aGVsbG8td29ybGQtcG9zdA==",
+			"s": "hello-world-post",
+			"ii": 10,
+			"i": 3
+		}
+	]
 }
 ```
 
-# Roadmap
-- [x] B support
-- [x] MAP v1 support
-- [x] Bitcom support
-- [x] Bitkey support
-- [ ] MAP v2 support
-- [x] AIP support
-- [x] HAIP support
-- [x] MetaNet support
-- [ ] C support
-- [ ] D Support
-- [ ] BCAT support
-- [x] SymRe support
-- [x] RON support
+# Protocol Support
+- [x] AIP
+- [ ] AIP validation
+- [x] B
+- [ ] BCAT
+- [x] Bitcom
+- [x] Bitkey
+- [x] Bitpic
+- [ ] D
+- [x] HAIP
+- [ ] HAIP validation
+- [x] MAP v1
+- [ ] MAP v2
+- [x] MetaNet
+- [x] RON
+- [x] SymRe
