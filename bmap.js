@@ -41,11 +41,31 @@ bmap.TransformTx = async (tx) => {
       { 'filename': 'string' }
     ],
     'MAP': [
-      { 'cmd': 'string' },
-      [
-        { 'key': 'string' },
-        { 'val': 'string' }
-      ]
+      { 'cmd': 
+        {
+          'SET': [
+            { 'key': 'string' },
+            { 'val': 'string' }
+          ],
+          'SELECT': [
+            { 'tx': 'string' }
+          ],
+          'ADD': [
+            { 'key': 'string'},
+            [ { 'val': 'string' } ]
+          ],
+          'DELETE': [
+            { 'key': 'string' },
+            [ {'val': 'string' } ]
+          ],
+          'REMOVE': [
+            [ { 'key': 'string' } ]
+          ],
+          'CLEAR': [
+            [ {'txid': 'string'} ]
+          ]
+        } 
+      }
     ],
     'METANET': [
       { 'address': 'string'},
@@ -143,6 +163,11 @@ bmap.TransformTx = async (tx) => {
             
             let cell = cell_container.cell
 
+            if (!cell) {
+              console.error('empty cell while parcing')
+              return
+            }
+
             // Get protocol name from prefix
             let protocolName = protocolMap.getKey(cell[0].s) || cell[0].s
 
@@ -161,6 +186,12 @@ bmap.TransformTx = async (tx) => {
                 dataObj[protocolName] = bitkeyObj
               break
               case 'BITPIC':
+                // Validation
+                if(!cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].b) {
+                  console.warn('Invalid BITPIC record')
+                  return
+                }
+
                 dataObj[protocolName] = {
                   paymail: cell[1].s,
                   pubkey: cell[2].b,
@@ -201,6 +232,10 @@ bmap.TransformTx = async (tx) => {
                 dataObj[protocolName] = aipObj
               break;
               case 'B': 
+                if (!cell[1] || !cell[2]) {
+                  console.error('Invalid B tx')
+                  return
+                }
                 // loop over the schema
                 for (let [idx, schemaField] of Object.entries(querySchema.B)) {
                   let x = parseInt(idx)
@@ -230,9 +265,9 @@ bmap.TransformTx = async (tx) => {
                   }
 
                   // check for malformed syntax
-                  if (!cell.hasOwnProperty(x + 1)) {
-                    console.warn('malformed B syntax', cell)
-                    continue
+                  if (!cell || !cell.hasOwnProperty(x + 1)) {
+                    console.error('malformed B syntax', cell)
+                    continue 
                   }
 
                   // set field value from either s, b, ls, or lb depending on encoding and availability
@@ -244,6 +279,13 @@ bmap.TransformTx = async (tx) => {
                 // dataObj[protocolName]
               break;
               case 'MAP':
+
+                // Validate
+                if (!cell[1] || !cell[1].s || !cell[2] || !cell[2].s) {
+                  console.error('Invalid MAP record')
+                  break
+                }
+
                 let command = cell[1].s
 
                 // Get the MAP command key name from the query schema
@@ -252,13 +294,74 @@ bmap.TransformTx = async (tx) => {
                 // Add the MAP command in the response object
                 dataObj[protocolName][mapCmdKey] = command
 
+                let last
+
                 // Individual parsing rules for each MAP command
                 switch (command) {
-                  case 'SET':
-                    let last = null
-                    for (let pushdata_container of cell) {
+                  // ToDo - MAP v2: Check for protocol separator and run commands in a loop
+                  // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
+                  case 'ADD':
+                    last = null
+                    for (pushdata_container of cell) {
                       // ignore MAP command
                       if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      let pushdata = pushdata_container.s
+                      if (pushdata_container.i === 2) {
+                        // Key name
+                        dataObj[protocolName][pushdata] = []
+                        last = pushdata
+                      } else {
+                        dataObj[protocolName][last].push(pushdata)
+                      }
+                    }
+                  break
+                  case 'REMOVE':
+                    for (pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      dataObj[protocolName].push(pushdata_container.s)
+                    }
+                  break
+                  case 'DELETE':
+                    last = null
+                    for (pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      let pushdata = pushdata_container.s
+                      if (pushdata_container.i === 2) {
+                        // Key name
+                        dataObj[protocolName][pushdata] = []
+                        last = pushdata
+                      } else {
+                        dataObj[protocolName][last].push(pushdata)
+                      }
+                    }
+                  break
+                  case 'CLEAR':
+                      console.log('MAP CLEAR')
+                  break
+                  case 'SELECT':
+                      console.log('MAP SELECT')
+                      for (pushdata_container of cell) {
+                        // ignore MAP command
+                        if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                          continue
+                        }
+
+                        // TODO
+                      }
+                  break
+                  case 'SET':
+                    last = null
+                    for (let pushdata_container of cell) {
+                      // ignore MAP command
+                      if (!pushdata_container.s || pushdata_container.i === 0 || pushdata_container.i === 1) {
                         continue
                       }
                       let pushdata = pushdata_container.s
@@ -276,13 +379,18 @@ bmap.TransformTx = async (tx) => {
                 }
               break
               case 'METANET':
+
+                if (!cell[1] || !cell[1].s) {
+                  console.error('Invalid Metanet tx')
+                  break
+                }
                 // For now, we just copy from MOM keys later if available, or keep BOB format
 
                 // Described this node
                 // Calculate the node ID
                 let id
                 try {
-                  id =  await getEnvSafeMetanetID(tx.in[0].e.a, tx.in[0].e.h)
+                  id =  getEnvSafeMetanetID(tx.in[0].e.a, tx.in[0].e.h)
                 } catch(e) {
                   console.warn('error', e)
                 }
@@ -295,9 +403,9 @@ bmap.TransformTx = async (tx) => {
 
                 // Parent node
                 let parent = {
-                  a: cell[1].s,
+                  a: cell[1] && cell[1].s ? cell[1].s : '',
                   tx: tx.in[0].e.h,
-                  id: cell[2].s
+                  id: cell[2] && cell[2].s ? cell[2].s : ''
                 }
 
                 dataObj[protocolName] = {}
@@ -308,16 +416,20 @@ bmap.TransformTx = async (tx) => {
               break;
               case 'BITCOM':
                 let bitcomObj = cell.map(c => {
-                  return c.s
+                  return c && c.s ? c.s : ''
                 })
                 dataObj[protocolName] = bitcomObj
               break;
               case 'RON':
-                dataObj[protocolName].pair = JSON.parse(cell[1].s)
-                dataObj[protocolName].address = cell[2].s
-                dataObj[protocolName].timestamp = cell[3].s
+                dataObj[protocolName].pair = cell[1] && cell[1].s ? JSON.parse(cell[1].s) : {}
+                dataObj[protocolName].address = cell[2] && cell[2].s ? cell[2].s : ''
+                dataObj[protocolName].timestamp = cell[3] && cell[3].s ? cell[3].s : ''
               break
               case 'SYMRE':
+                if (!cell[1] || !cell[1].s) {
+                  console.error('Invalid SymRe tx')
+                  break
+                }
                 dataObj[protocolName] = {'url': cell[1].s}
               break
               default:
@@ -365,7 +477,7 @@ bmap.TransformTx = async (tx) => {
 
 // Check a cell starts with OP_FALSE OP_RETURN -or- OP_RETURN
 function checkOpFalseOpReturn(cc) {
-  return (cc.cell[0].op === 0 && cc.cell[1].hasOwnProperty('op') && cc.cell[1].op === 106) || cc.cell[0].op === 106
+  return (cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].hasOwnProperty('op') && cc.cell[1].op === 106) || cc.cell[0].op === 106
 }
 
 // ArrayBuffer to hex string
@@ -375,6 +487,10 @@ function buf2hex(buffer) {
 
 // returns the BOB cell value for a given encoding
 function cellValue(pushdata, schemaEncoding) {
+  if (!pushdata) {
+    console.error('cannot get cell value of', pushdata)
+    return
+  }
   return schemaEncoding === 'string' ? (pushdata.hasOwnProperty('s') ? pushdata.s : pushdata.ls) : (pushdata.hasOwnProperty('b') ? pushdata.b : pushdata.lb)
 }
 
@@ -393,13 +509,7 @@ async function getEnvSafeMetanetID(a, tx) {
   }
 }
 
-function isBrowser() { 
-  // try {
-  //   return this===window
-  // } catch(e){ 
-  //   return false
-  // }
-
+function isBrowser() {
   return typeof window !== 'undefined'
 }
 
