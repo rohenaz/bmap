@@ -1,20 +1,10 @@
-# bmap
-Bmap is a BOB parser for `B | MAP` OP_RETURN protocols. Bmap processes transaction outputs and transforms them into self descriptive js objects based on the OP_RETURN protocols it discovers in the data.
+# BMAPjs
+BMAPjs is a BOB parser for `B | MAP` OP_RETURN protocols. It  processes transaction outputs and transforms them into self descriptive js objects based on the OP_RETURN protocols it discovers in the data.
 
-BMAPjs supports supports B, MAP, AIP, HAIP, and METANET protocols in both BOB and MOM formats. Support for more formats is planed.
+It supports B, MAP, AIP, METANET and a list of other popular protocols It ingests structured JSON objects in both [BOB](https://bob.planaria.network/) and [MOM](https://mom.planaria.network/) formats.
 
-# Note 
-
-Previous versions of bmap used [TXO](https://github.com/interplanaria/txo) formatted transactions
 # Pre-requisites
-  - Read [B Protocol](https://github.com/unwriter/B)
-  - Read [MAP protocol](https://github.com/rohenaz/MAP)
-  - Read [AIP protocol](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)
-  - Read [HAIP protocol](https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md)
-  - Read [Metanet protocol](https://nchain.com/app/uploads/2019/06/The-Metanet-Technical-Summary-v1.0.pdf)
-  
-  - Using [MOM](https://github.com/interplanaria/mom) enables additional fields for MetaNet protocol transactions
-  - A [BOB](https://github.com/interplanaria/bob) formatted transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria) Tx
+  - A [BOB](https://bob.planaria.network/) formatted transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria)
   - npm
 
 # Install
@@ -23,25 +13,23 @@ Previous versions of bmap used [TXO](https://github.com/interplanaria/txo) forma
 npm install bmapjs
 ```
 
-or for using it in the browser:
-```
-<script src="bmap.js"></script>
-```
-
 # Importing
 using node:
 ```js
-require('bmapjs')
+let bmap = require('bmapjs')
 ```
 
 or in the browser:
+
+```html
+<script src="bmap.js"></script>
+```
 
 ```js
 let prom = import('./bmap.js')
 prom.then((bmap) => {
   .. use it here ...
 })
-
 ```
 
 # Demo
@@ -56,8 +44,6 @@ try {
 } catch (e) {
   console.error(e)
 }
-
-
 ```
 
 After transforming a transaction it will have a key for each protocol used in the transaction:
@@ -73,7 +59,22 @@ If you want to use a raw transaction, first transform it using [BPU](https://git
 
 There is a collection of sample transactions listed in the examples.html page.
 
-# B support
+# Additional Documentation
+
+## Protocols
+  - [B](https://github.com/unwriter/B)
+  - [MAP](https://github.com/rohenaz/MAP)
+  - [AIP](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)
+  - [HAIP](https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md)
+  - [Metanet](https://nchain.com/app/uploads/2019/06/The-Metanet-Technical-Summary-v1.0.pdf)
+
+## Planarias
+  - [BOB](https://bob.planaria.network/)
+  - [BMAP](https://b.map.sv/) (a public BMAPjs pre-formatted planaria indexing MAP, BITPIC, BITKEY,  transactions)
+  - [MOM](https://mom.planaria.network/) (enables additional fields for MetaNet)
+
+# Example Responses
+## B
 example:
 ```json
 {
@@ -86,7 +87,7 @@ example:
 }
 ```
 
-# MAP support
+## MAP
 example:
 ```json
 {
@@ -100,9 +101,9 @@ example:
 }
 ```
 
-# MetaNet Support
+## MetaNet
 
-bmap will include metanet relavent keys from MOM Planaria when available. When not available (BOB data source), bmap will provide the "parent" and "node" keys only. These will be provided in the same data structure as MOM Planaria.
+Response will include metanet relavent keys from MOM Planaria when available. When not available (BOB data source), bmap will provide the "parent" and "node" keys only. These will be provided in the same data structure as MOM Planaria.
 
 #### BOB Data Source
 ```json
@@ -154,7 +155,7 @@ bmap will include metanet relavent keys from MOM Planaria when available. When n
 }
 ```
 
-# Bitkey support
+## Bitkey
 
 `bitkey_signature` and `user_signature` are in base64 encoded binary format
 
@@ -169,7 +170,7 @@ bmap will include metanet relavent keys from MOM Planaria when available. When n
 }
 ```
 
-# Bitcom support
+## Bitcom
 
 BITCOM commands 
 `useradd, echo, su, route`
@@ -186,7 +187,7 @@ BITCOM commands
 }
 ```
 
-# Bitpic support
+## Bitpic
 
 `pubkey` and `sig` fields are returned in base64 encoded binary format
 
@@ -200,7 +201,7 @@ BITCOM commands
 }
 ```
 
-# Unknown Protocols
+## Unknown Protocols
 
 When an unknown protocol is encountered, bmap will keep the incoming format and use the protocol prefix as the key name on the response object:
 ```json
@@ -234,7 +235,7 @@ When an unknown protocol is encountered, bmap will keep the incoming format and 
 }
 ```
 
-# Protocol Support
+# Support Checklist
 - [x] AIP
 - [ ] AIP validation
 - [x] B
@@ -250,3 +251,22 @@ When an unknown protocol is encountered, bmap will keep the incoming format and 
 - [x] MetaNet
 - [x] RON
 - [x] SymRe
+
+#### Note: TXO Format Deprecation
+
+Beginning with v0.2.0, bmapjs uses BOB as the source format for transaction processing. The previous versions of bmap used [TXO](https://github.com/interplanaria/txo) formatted transactions. To use bmapjs with TXO data, use v0.1.5. 
+
+You can also use [BPU](https://github.com/interplanaria/bpu) to get a BOB format tx from a raw tx, and then parse it with bmapjs v0.2.0 or higher:
+
+```js
+const BPU = require('bpu')
+const bmapjs = require('bmapjs')
+// 'rawtx' is a raw transaction string
+(async function() {
+  let bob = await BPU.parse({
+    tx: { r: rawtx }
+  })
+  let bmap = bmapjs.TransformTx(bob) 
+  ...
+})()
+```

@@ -81,8 +81,7 @@
       'bad_META': ['66cc4d27e1b657871f6389e061a611ec2a4bb1a1fdd9253c5e94d89e61365bd8'], // this uses string '0' instead of OP_FALSE
       'bad_B_MAP1': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
       'bad_B_MAP2': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
-      
-
+      'twetch_nopipe': ['20df173a582d85b4bb337dc5e849daca6b10664aae3b6cb04dd7975eb2a99a12']    
     }
 
     let currentExample = localStorage.getItem('example')
@@ -227,12 +226,12 @@
 
   <p>A BOB transaction parser that makes many BSV OP_RETURN protocols easier to work with. BMAPjs knows about each supported protocol and will transform BOB transactions into readable, easy to understand objects.</p>
 
-  <p>Supported protocols: B, MAP, MetaNet, Bitcom, AIP, HAIP, SymRe, Bitkey and RON, BitPic, . All other protocol prefixes will retain their original BOB format.</p>
+  <p>Supported protocols: B, MAP, MetaNet, Bitcom, AIP, HAIP, SymRe, Bitkey and RON, and BitPic. All other protocol prefixes will retain their original BOB format.</p>
   <p>The parser, which uses the Open BSV license, is available on github.</p>
 
   <a href="https://github.com/rohenaz/bmap">Github</a>
 
-  <p>BMAPjs is used by the BMAP-Planaria which provides a simple search query syntax: <a href="https://b.map.sv/q/">Twetch</a>, MetaLens, BitPic</p>
+  <p>BMAPjs is used by the BMAP-Planaria which provides a simple search query syntax: <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJ0d2V0Y2giCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">Twetch</a>, <a href="https://b.map.sv">MetaLens</a>, <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUS0VZLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">BitKey</a>, <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">BitPic</a></p>
   
   <h2>Examples</h2>
 

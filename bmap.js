@@ -1,13 +1,5 @@
 const bmap = {}
 
-// const BPU = require('bpu');
-// // 'rawtx' is a raw transaction string
-// (async function() {
-//   let result = await BPU.parse({
-//     tx: { r: rawtx }
-//   })
-// })();
-
 Map.prototype.getKey = function (searchValue) {
   for (let [key, value] of this.entries()) {
     if (value === searchValue)
