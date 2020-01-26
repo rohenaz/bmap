@@ -4,3 +4,8 @@ node_test/yarn.lock
 firebase.json
 .firebaserc
 .firebase
+
+public/fromscript.html
+public/js/bson
+dist
+.DS_STORE

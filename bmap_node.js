@@ -1,4 +1,14 @@
 const bmap = {}
+// import { Long, serialize, deserialize } from 'bson'
+
+// // Serialize a document
+// const doc = { long: Long.fromNumber(100) }
+// const data = serialize(doc)
+// console.log('data:', data)
+
+// // De serialize it again
+// const doc_2 = deserialize(data)
+// console.log('doc_2:', doc_2)
 
 let crypto
 try {
@@ -32,6 +42,7 @@ bmap.TransformTx = async (tx) => {
   protocolMap.set('BITKEY', '13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC')
   protocolMap.set('SYMRE', '1SymRe7erxM46GByucUWnB9fEEMgo7spd')
   protocolMap.set('RON', '1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1')
+  protocolMap.set('PSP', '1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4')
 
   let encodingMap = new Map()
   encodingMap.set('utf8', 'string')
@@ -65,6 +76,7 @@ bmap.TransformTx = async (tx) => {
             { 'key': 'string' },
             [ {'val': 'string' } ]
           ],
+          'JSON': 'string',
           'REMOVE': [
             [ { 'key': 'string' } ]
           ],
@@ -138,6 +150,11 @@ bmap.TransformTx = async (tx) => {
         {'address': 'string'}
       ]
     }],
+    'PSP': [
+      { 'signature': 'binary' },
+      { 'public_key': 'string' },
+      { 'paymail': 'string' }
+    ],
     'RON': [ 
       { 'pair': 'json' },
       { 'address': 'string' },
@@ -192,6 +209,19 @@ bmap.TransformTx = async (tx) => {
                 }
                 dataObj[protocolName] = bitkeyObj
               break
+              case 'PSP': // Paymail Signature Protocol
+                // Validation
+                if(!cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s) {
+                  console.warn('Invalid Paymail Signature Protocol record')
+                  return
+                }
+
+                dataObj[protocolName] = {
+                  paymail: cell[3].s,
+                  pubkey: cell[2].s,
+                  sig: cell[1].b
+                }
+              break;              
               case 'BITPIC':
                 // Validation
                 if(!cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].b) {
@@ -355,7 +385,7 @@ bmap.TransformTx = async (tx) => {
                   break
                   case 'SELECT':
                       console.log('MAP SELECT')
-                      for (pushdata_container of cell) {
+                      for (let pushdata_container of cell) {
                         // ignore MAP command
                         if (pushdata_container.i === 0 || pushdata_container.i === 1) {
                           continue
@@ -364,6 +394,50 @@ bmap.TransformTx = async (tx) => {
                         // TODO
                       }
                   break
+                  case 'MSGPACK':
+                    for (let pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      if (pushdata_container.i === 2) {
+                        try {
+                          if (!decode) {
+                            console.warn('Msgpack is required but not loaded')
+                            continue
+                          }
+                          try {
+                            let buff = MessagePack.Buffer.from(pushdata_container.b, 'base64')
+                            let decoded = decode(buff)
+                            dataObj[protocolName] = decoded
+                          } catch(e) {
+                            console.error('faile to parse', e)
+                            continue
+                          }
+                          
+                        } catch (e) {
+                          console.warn('failed to parse MAP MSGPACK')
+                          continue
+                        } 
+                      }
+                    }
+                  break
+                  case 'JSON':
+                    for (let pushdata_container of cell) {
+                      // ignore MAP command
+                      if (pushdata_container.i === 0 || pushdata_container.i === 1) {
+                        continue
+                      }
+                      if (pushdata_container.i === 2) {
+                        try {
+                          dataObj[protocolName] = JSON.parse(pushdata_container.s)
+                        } catch (e) {
+                          console.warn('failed to parse MAP JSON')
+                          continue
+                        } 
+                      }
+                    }
+                  break
                   case 'SET':
                     last = null
                     for (let pushdata_container of cell) {
@@ -371,6 +445,7 @@ bmap.TransformTx = async (tx) => {
                       if (!pushdata_container.s || pushdata_container.i === 0 || pushdata_container.i === 1) {
                         continue
                       }
+                      
                       let pushdata = pushdata_container.s
                       if (pushdata_container.i % 2 === 0) {
                         // key
@@ -519,6 +594,7 @@ async function getEnvSafeMetanetID(a, tx) {
 function isBrowser() {
   return typeof window !== 'undefined'
 }
+
 exports.TransformTx = function(tx) {
   return bmap.TransformTx(tx)
 }

@@ -49,7 +49,38 @@
   </style>
   <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/mode-json.js"></script>
+  <!-- latest umd build -->
+  <script src="https://unpkg.com/what-the-pack/dist/MessagePack.min.js"></script>
 
+  <!-- exposed as 'MessagePack' -->
+  <script>
+    const { encode, decode } = MessagePack.initialize(2**22) // 4MB
+    const data = {
+      name: 'Lunox',
+      age: 20
+    }
+    const encoded = encode(data)
+    const decoded = decode(encoded)
+    console.log({ encoded, decoded })
+  </script>
+
+  <!-- todo bson is busted https://github.com/mongodb/js-bson/issues/330 -->
+  <!-- <script src="./js/bson/bson.bundle.js"></script> -->
+  <!-- <script>
+    function start() {
+      // Get the Long type
+      const Long = BSON.Long;
+  
+      // Serialize a document
+      const doc = { long: Long.fromNumber(100) }
+      const data = BSON.serialize(doc);
+      console.log('data:', data);
+  
+      // De serialize it again
+      const doc_2 = BSON.deserialize(data);
+      console.log('doc_2:', doc_2);
+    }
+  </script> -->
   <script>
     let prom = import('./bmap.js')
 
@@ -81,7 +112,13 @@
       'bad_META': ['66cc4d27e1b657871f6389e061a611ec2a4bb1a1fdd9253c5e94d89e61365bd8'], // this uses string '0' instead of OP_FALSE
       'bad_B_MAP1': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
       'bad_B_MAP2': ['a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327'],
-      'twetch_nopipe': ['20df173a582d85b4bb337dc5e849daca6b10664aae3b6cb04dd7975eb2a99a12']    
+      'twetch_nopipe': ['20df173a582d85b4bb337dc5e849daca6b10664aae3b6cb04dd7975eb2a99a12'],
+      'BAD_MAP_JSON': ['4eedd926d8b8f32f11699e35d323aa102daf705543803c281b572ca559f435f6'],
+      'VERY_BAD_MAP_JSON': ['13b59940d3ad80b1203e20dadd54103a4343b39c93c700f20edd07d08bacd329'],
+      'MAP_JSON': ['6a824a01eea74d8bab0da204c61c758cfde0d0f92845a1b2b616b8d3ae4cec99'],
+      'MAP_MSGPACK': ['39791e114c5619bfccef5ab6c0e4cdae4e6340e41f67616b11bcb926ae5f9d33'],
+      'TONICPOW_EMBED': ['60afdabd8c91ba2499e8abff2f0638a7ce5b4a2e585fd33914acb956ce3f8b18'],
+      'PSP_2PAYMAIL': ['ce7429a101b7aecdf1e5449151d0be17a3948cb5c22282832ae942107edb2272']
     }
 
     let currentExample = localStorage.getItem('example')
@@ -231,7 +268,7 @@
 
   <a href="https://github.com/rohenaz/bmap">Github</a>
 
-  <p>BMAPjs is used by the BMAP-Planaria which provides a simple search query syntax: <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJ0d2V0Y2giCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">Twetch</a>, <a href="https://b.map.sv">MetaLens</a>, <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUS0VZLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">BitKey</a>, <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">BitPic</a></p>
+  <p>BMAPjs is used by the BMAP-Planaria which provides a simple search query syntax: <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJ0d2V0Y2giCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">Twetch</a>, <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJtZXRhbGVucyIKICAgIH0sCiAgICAibGltaXQiOiAxMAogIH0KfQ==">MetaLens</a>, <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUS0VZLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">BitKey</a>, <a href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0=">BitPic</a></p>
   
   <h2>Examples</h2>
 
