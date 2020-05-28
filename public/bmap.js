@@ -1,3 +1,5 @@
+const buffer = MessagePack.Buffer
+
 const bmap = {}
 
 Map.prototype.getKey = function (searchValue) {
@@ -326,14 +328,12 @@ bmap.TransformTx = async (tx) => {
                 // Add the MAP command in the response object
                 mapObj[mapCmdKey] = command
 
-                let last
-
                 // Individual parsing rules for each MAP command
                 switch (command) {
                   // ToDo - MAP v2: Check for protocol separator and run commands in a loop
                   // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
                   case 'ADD':
-                    last = null
+                    let last = null
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -365,7 +365,7 @@ bmap.TransformTx = async (tx) => {
                     }
                     break
                   case 'DELETE':
-                    last = null
+                    let last = null
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -417,7 +417,7 @@ bmap.TransformTx = async (tx) => {
                             continue
                           }
                           try {
-                            let buff = MessagePack.Buffer.from(
+                            let buff = buffer.from(
                               pushdata_container.b,
                               'base64'
                             )
@@ -428,7 +428,7 @@ bmap.TransformTx = async (tx) => {
                             continue
                           }
                         } catch (e) {
-                          console.warn('failed to parse MAP MSGPACK')
+                          console.warn('failed to parse MAP MSGPACK', e)
                           continue
                         }
                       }
@@ -454,7 +454,7 @@ bmap.TransformTx = async (tx) => {
                     }
                     break
                   case 'SET':
-                    last = null
+                    let last = null
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (

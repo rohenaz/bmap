@@ -6,7 +6,7 @@
   "author": "Satchmo",
   "license": "MIT",
   "dependencies": {
-    "node-fetch": "latest",
-    "btoa": "latest"
+    "btoa": "latest",
+    "node-fetch": "latest"
   }
 }

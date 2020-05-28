@@ -9,3 +9,5 @@ public/fromscript.html
 public/js/bson
 dist
 .DS_STORE
+functions/
+firebase.json

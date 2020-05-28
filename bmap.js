@@ -1,3 +1,5 @@
+const buffer = MessagePack.Buffer
+
 const bmap = {}
 
 Map.prototype.getKey = function (searchValue) {
@@ -415,7 +417,7 @@ bmap.TransformTx = async (tx) => {
                             continue
                           }
                           try {
-                            let buff = MessagePack.Buffer.from(
+                            let buff = buffer.from(
                               pushdata_container.b,
                               'base64'
                             )
@@ -426,7 +428,7 @@ bmap.TransformTx = async (tx) => {
                             continue
                           }
                         } catch (e) {
-                          console.warn('failed to parse MAP MSGPACK')
+                          console.warn('failed to parse MAP MSGPACK', e)
                           continue
                         }
                       }
