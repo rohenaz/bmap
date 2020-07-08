@@ -32,6 +32,9 @@ prom.then((bmap) => {
 })
 ```
 
+# Other languages
+[Go](https://github.com/rohenaz/go-bmap)
+
 # Demo
 [Examples](https://bmapjs.firebaseapp.com)
 
