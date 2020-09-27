@@ -171,7 +171,7 @@ bmap.TransformTx = async (tx) => {
             let protocolName = protocolMap.getKey(cell[0].s) || cell[0].s
 
             switch (protocolName) {
-              case 'BITKEY':
+              case 'BITKEY': {
                 let bitkeyObj = {}
                 // loop over the schema
                 for (let [idx, schemaField] of Object.entries(
@@ -187,7 +187,9 @@ bmap.TransformTx = async (tx) => {
                 }
                 saveProtocolData(protocolName, bitkeyObj)
                 break
-              case 'PSP': // Paymail Signature Protocol
+              }
+              case 'PSP': {
+                // Paymail Signature Protocol
                 // Validation
                 if (
                   !cell[1] ||
@@ -208,7 +210,8 @@ bmap.TransformTx = async (tx) => {
                 })
 
                 break
-              case 'BITPIC':
+              }
+              case 'BITPIC': {
                 // Validation
                 if (
                   !cell[1] ||
@@ -229,9 +232,10 @@ bmap.TransformTx = async (tx) => {
                 })
 
                 break
+              }
               case 'HAIP':
               // USE AIP - Fallthrough
-              case 'AIP':
+              case 'AIP': {
                 // loop over the schema
                 let aipObj = {}
 
@@ -267,7 +271,8 @@ bmap.TransformTx = async (tx) => {
                 saveProtocolData(protocolName, aipObj)
 
                 break
-              case 'B':
+              }
+              case 'B': {
                 if (!cell[1] || !cell[2]) {
                   console.error('Invalid B tx')
                   return
@@ -323,7 +328,8 @@ bmap.TransformTx = async (tx) => {
                 }
                 saveProtocolData(protocolName, bObj)
                 break
-              case 'MAP':
+              }
+              case 'MAP': {
                 // Validate
                 if (!cell[1] || !cell[1].s || !cell[2] || !cell[2].s) {
                   console.error('Invalid MAP record')
@@ -340,14 +346,12 @@ bmap.TransformTx = async (tx) => {
                 // Add the MAP command in the response object
                 mapObj[mapCmdKey] = command
 
-                let last
-
                 // Individual parsing rules for each MAP command
                 switch (command) {
                   // ToDo - MAP v2: Check for protocol separator and run commands in a loop
                   // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
-                  case 'ADD':
-                    last = null
+                  case 'ADD': {
+                    let last = null
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -366,7 +370,8 @@ bmap.TransformTx = async (tx) => {
                       }
                     }
                     break
-                  case 'REMOVE':
+                  }
+                  case 'REMOVE': {
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -378,8 +383,9 @@ bmap.TransformTx = async (tx) => {
                       mapObj.push(pushdata_container.s)
                     }
                     break
-                  case 'DELETE':
-                    last = null
+                  }
+                  case 'DELETE': {
+                    let last = null
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -398,10 +404,12 @@ bmap.TransformTx = async (tx) => {
                       }
                     }
                     break
-                  case 'CLEAR':
+                  }
+                  case 'CLEAR': {
                     console.log('MAP CLEAR')
                     break
-                  case 'SELECT':
+                  }
+                  case 'SELECT': {
                     console.log('MAP SELECT')
                     for (let pushdata_container of cell) {
                       // ignore MAP command
@@ -415,7 +423,8 @@ bmap.TransformTx = async (tx) => {
                       // TODO
                     }
                     break
-                  case 'MSGPACK':
+                  }
+                  case 'MSGPACK': {
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -448,7 +457,8 @@ bmap.TransformTx = async (tx) => {
                       }
                     }
                     break
-                  case 'JSON':
+                  }
+                  case 'JSON': {
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -467,8 +477,9 @@ bmap.TransformTx = async (tx) => {
                       }
                     }
                     break
-                  case 'SET':
-                    last = null
+                  }
+                  case 'SET': {
+                    let last = null
                     for (let pushdata_container of cell) {
                       // ignore MAP command
                       if (
@@ -497,10 +508,12 @@ bmap.TransformTx = async (tx) => {
                       }
                     }
                     break
+                  }
                 }
                 saveProtocolData(protocolName, mapObj)
                 break
-              case 'METANET':
+              }
+              case 'METANET': {
                 if (!cell[1] || !cell[1].s) {
                   console.error('Invalid Metanet tx')
                   break
@@ -535,13 +548,15 @@ bmap.TransformTx = async (tx) => {
                   parent: parent,
                 }
                 break
-              case 'BITCOM':
+              }
+              case 'BITCOM': {
                 let bitcomObj = cell.map((c) => {
                   return c && c.s ? c.s : ''
                 })
                 saveProtocolData(protocolName, bitcomObj)
                 break
-              case 'RON':
+              }
+              case 'RON': {
                 dataObj[protocolName].pair =
                   cell[1] && cell[1].s ? JSON.parse(cell[1].s) : {}
                 dataObj[protocolName].address =
@@ -549,7 +564,8 @@ bmap.TransformTx = async (tx) => {
                 dataObj[protocolName].timestamp =
                   cell[3] && cell[3].s ? cell[3].s : ''
                 break
-              case 'SYMRE':
+              }
+              case 'SYMRE': {
                 if (!cell[1] || !cell[1].s) {
                   console.error('Invalid SymRe tx')
                   break
@@ -557,11 +573,13 @@ bmap.TransformTx = async (tx) => {
                 saveProtocolData(protocolName, { url: cell[1].s })
 
                 break
-              default:
+              }
+              default: {
                 // Unknown protocol prefix. Keep BOB's cell format
 
                 saveProtocolData(protocolName, cell)
                 break
+              }
             }
           }
         } else {

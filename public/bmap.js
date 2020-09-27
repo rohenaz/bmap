@@ -466,41 +466,40 @@ bmap.TransformTx = async (tx) => {
                     }
                     break
                   }
-                  case 'SET':
-                    {
-                      let last = null
-                      for (let pushdata_container of cell) {
-                        // ignore MAP command
-                        if (
-                          !pushdata_container.s ||
-                          pushdata_container.i === 0 ||
-                          pushdata_container.i === 1
-                        ) {
+                  case 'SET': {
+                    let last = null
+                    for (let pushdata_container of cell) {
+                      // ignore MAP command
+                      if (
+                        !pushdata_container.s ||
+                        pushdata_container.i === 0 ||
+                        pushdata_container.i === 1
+                      ) {
+                        continue
+                      }
+
+                      let pushdata = pushdata_container.s
+                      if (pushdata_container.i % 2 === 0) {
+                        // key
+                        mapObj[pushdata] = ''
+                        last = pushdata
+                      } else {
+                        // value
+                        if (!last) {
+                          console.warn(
+                            'malformed MAP syntax. Cannot parse.',
+                            last
+                          )
                           continue
                         }
-
-                        let pushdata = pushdata_container.s
-                        if (pushdata_container.i % 2 === 0) {
-                          // key
-                          mapObj[pushdata] = ''
-                          last = pushdata
-                        } else {
-                          // value
-                          if (!last) {
-                            console.warn(
-                              'malformed MAP syntax. Cannot parse.',
-                              last
-                            )
-                            continue
-                          }
-                          mapObj[last] = pushdata
-                        }
+                        mapObj[last] = pushdata
                       }
-                      break
                     }
-                    saveProtocolData(protocolName, mapObj)
                     break
+                  }
                 }
+                saveProtocolData(protocolName, mapObj)
+                break
               }
               case 'METANET': {
                 if (!cell[1] || !cell[1].s) {
