@@ -7,20 +7,15 @@ import {
 import { AIP } from './protocols/aip';
 import { B } from './protocols/b';
 import { BAP } from './protocols/bap';
-import { BITCOM } from './protocols/bitcom';
-import { BITKEY } from './protocols/bitkey';
-import { BITPIC } from './protocols/bitpic';
 import { HAIP } from './protocols/haip';
 import { MAP } from './protocols/map';
 import { METANET } from './protocols/metanet';
 import { PSP } from './protocols/psp';
-import { RON } from './protocols/ron';
-import { SYMRE } from './protocols/symre';
 
 const protocolMap = {};
 const protocolHandlers = {};
 const protocolQuerySchemas = {};
-[AIP, B, BAP, BITCOM, BITKEY, BITPIC, HAIP, MAP, METANET, PSP, RON, SYMRE].forEach((protocol) => {
+[AIP, B, BAP, HAIP, MAP, METANET, PSP].forEach((protocol) => {
   protocolMap[protocol.address] = protocol.name;
   protocolHandlers[protocol.name] = protocol.handler;
   protocolQuerySchemas[protocol.name] = protocol.querySchema;
@@ -35,7 +30,13 @@ export default class BMAP {
     this.protocolQuerySchemas = protocolQuerySchemas;
   }
 
-  addProtocolHandler(name, address, querySchema, handler) {
+  addProtocolHandler(protocolDefinition) {
+    const {
+      name,
+      address,
+      querySchema,
+      handler,
+    } = protocolDefinition;
     this.protocolMap[address] = name;
     this.protocolHandlers[name] = handler;
     this.protocolQuerySchemas[name] = querySchema;

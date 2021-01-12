@@ -5,26 +5,31 @@ import twetchTransaction from './data/twetch-transaction.json';
 import indexedTransaction from './data/b-aip-transaction-with-indexes.json';
 import mapTransactions from './data/map-transactions.json';
 
-describe('TransformTx', () => {
+describe('bmap', () => {
   test('class init', () => {
     const bmap = new BMAP();
     expect(typeof bmap.protocolMap).toEqual('object');
-    expect(Object.keys(bmap.protocolMap).length).toEqual(12);
+    expect(Object.keys(bmap.protocolMap).length).toEqual(7);
     expect(bmap.protocolMap.meta).toEqual('METANET');
-    expect(bmap.protocolMap.$).toEqual('BITCOM');
+    expect(bmap.protocolMap['15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva']).toEqual('AIP');
 
     expect(typeof bmap.protocolHandlers).toEqual('object');
-    expect(Object.keys(bmap.protocolHandlers).length).toEqual(12);
+    expect(Object.keys(bmap.protocolHandlers).length).toEqual(7);
   });
 
   test('add handler', () => {
     const bmap = new BMAP();
     const querySchema = [];
     const protocolHandler = function(dataObj, protocolName, cell, tx) {};
-    bmap.addProtocolHandler('test', '123TEST', querySchema, protocolHandler)
+    bmap.addProtocolHandler({
+      name: 'test',
+      address: '123TEST',
+      querySchema,
+      handler: protocolHandler,
+    });
 
     expect(typeof bmap.protocolHandlers).toEqual('object');
-    expect(Object.keys(bmap.protocolHandlers).length).toEqual(13);
+    expect(Object.keys(bmap.protocolHandlers).length).toEqual(8);
     expect(bmap.protocolMap['123TEST']).toEqual('test');
   });
 

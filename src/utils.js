@@ -1,22 +1,4 @@
 /**
- * Check a cell starts with OP_FALSE OP_RETURN -or- OP_RETURN
- *
- * @param cc
- * @returns {boolean}
- */
-export const checkOpFalseOpReturn = function (cc) {
-  return (
-    (cc.cell[0]
-      && cc.cell[1]
-      && cc.cell[0].op === 0
-      && cc.cell[1].hasOwnProperty('op')
-      && cc.cell[1].op === 106
-    )
-    || cc.cell[0].op === 106
-  );
-};
-
-/**
  * returns the BOB cell value for a given encoding
  *
  * @param pushData
@@ -44,6 +26,24 @@ export const cellValue = function (pushData, schemaEncoding) {
 };
 
 /**
+ * Check a cell starts with OP_FALSE OP_RETURN -or- OP_RETURN
+ *
+ * @param cc
+ * @returns {boolean}
+ */
+export const checkOpFalseOpReturn = function (cc) {
+  return (
+    (cc.cell[0]
+      && cc.cell[1]
+      && cc.cell[0].op === 0
+      && cc.cell[1].hasOwnProperty('op')
+      && cc.cell[1].op === 106
+    )
+    || cc.cell[0].op === 106
+  );
+};
+
+/**
  * Helper function to store protocol data
  *
  * @param dataObj
@@ -61,4 +61,40 @@ export const saveProtocolData = (dataObj, protocolName, data) => {
     }
     dataObj[protocolName][dataObj[protocolName].length] = data;
   }
+};
+
+/**
+ * BMAP default handler to work with query schema's
+ *
+ * @param querySchema
+ * @param protocolName
+ * @param dataObj
+ * @param cell
+ * @param tape
+ * @param tx
+ */
+export const bmapQuerySchemaHandler = function (
+  protocolName, querySchema, dataObj, cell, tape, tx,
+) {
+  // loop over the schema
+  const obj = {};
+
+  // Does not have the required number of fields
+  const length = querySchema.length + 1;
+  if (cell.length < length) {
+    throw new Error(
+      `${protocolName} requires at least ${length} fields including the prefix: ${tx.tx.h}`,
+    );
+  }
+
+  /* eslint-disable no-restricted-syntax */
+  for (const [idx, schemaField] of Object.entries(querySchema)) {
+    const x = parseInt(idx, 10);
+
+    const [field] = Object.keys(schemaField);
+    const [schemaEncoding] = Object.values(schemaField);
+    obj[field] = cellValue(cell[x + 1], schemaEncoding);
+  }
+
+  saveProtocolData(dataObj, protocolName, obj);
 };

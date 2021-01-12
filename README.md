@@ -107,9 +107,23 @@ bmapjs on the output.
 
 There is a collection of sample transactions listed in the examples.html page.
 
+## Adding other protocols
+
+Not all protocols available in `bmap.js` are active by default. These are less used or older protocols, but they can be easily added at runtime.
+
+```javascript
+import BMAP from 'bmapjs';
+import { RON } from 'bmapjs/dist/protocols/ron.js'
+
+const bmap = new BMAP();
+bmap.addProtocolHandler(RON);
+```
+
+The protocols that are available, but not active by default are `BITCOM`, `BITKEY`, `BITPIC`, `RON` and `SYMRE`.
+
 ## Extending the BMAP class
 
-You can easily add new handlers for processing any type of bitcom output.
+You can also easily add new handlers for processing any type of bitcom output.
 
 ```javascript
 import BMAP from 'bmapjs';
@@ -123,12 +137,57 @@ const handler = function(dataObj, cell, tape, tx) {
   // tx is the total transaction
 };
 // addProtocolHandler(name, address, querySchema, handler);
-bmap.addProtocolHandler('TEST', '1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ', querySchema, handler);
+bmap.addProtocolHandler({
+  name:'TEST',
+  address: '1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ',
+  querySchema,
+  handler,
+});
 
 bmap.transformTx(bob_or_mom_tx);
 ```
 
-See the current protocol handlers for examples on how to create your own handler.
+You can also use the default protocol handler, with a well defined query schema to make it even easier:
+
+In this example the OP_RETURN has 4 fields (the first is the bitcom address and is not included in the definition).
+
+```
+OP_FALSE OP_RETURN
+  1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ
+  <type>
+  <hash>
+  <sequence>
+```
+
+```javascript
+import BMAP from 'bmapjs';
+import { bmapQuerySchemaHandler } from './utils';
+
+const bmap = new BMAP();
+const querySchema = {
+  { type: 'string' },
+  { hash: 'string' },
+  { sequence: 'string' },
+};
+
+const handler = bmapQuerySchemaHandler.bind(this, 'TEST', querySchema);
+// or
+const handler2 = function(dataObj, cell, tape, tx) {
+  bmapQuerySchemaHandler('TEST', querySchema, dataObj, cell, tape, tx);
+}
+
+// addProtocolHandler(name, address, querySchema, handler);
+bmap.addProtocolHandler({
+  name: 'TEST',
+  address: '1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ',
+  querySchema,
+  handler,
+});
+
+bmap.transformTx(bob_or_mom_tx);
+```
+
+See the current protocol handlers in `src/protocols/` for examples on how to create your own handler.
 
 # Additional Documentation
 
