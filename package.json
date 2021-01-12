@@ -73,7 +73,6 @@
     "@msgpack/msgpack": "^1.11.0",
     "bsv": "^1.5.3",
     "crypto": "^1.0.1",
-    "dns": "^0.2.2",
     "node-fetch": "^2.6.1"
   },
   "jest": {
