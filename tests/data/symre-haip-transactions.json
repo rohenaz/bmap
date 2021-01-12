@@ -1,0 +1,322 @@
+[
+  {
+    "_id": "5ee5e6f44a4f6f60eb7c06f3",
+    "tx": {
+      "h": "a74af4794f777e3416d91b1fc075242c37d87141cc6a22c46e27ff2aea473b8e"
+    },
+    "out": [
+      {
+        "i": 0,
+        "tape": [
+          {
+            "cell": [
+              {
+                "op": 0,
+                "ops": "OP_0",
+                "i": 0,
+                "ii": 0
+              },
+              {
+                "op": 106,
+                "ops": "OP_RETURN",
+                "i": 1,
+                "ii": 1
+              }
+            ],
+            "i": 0
+          },
+          {
+            "cell": [
+              {
+                "s": "1SymRe7erxM46GByucUWnB9fEEMgo7spd",
+                "h": "3153796d5265376572784d3436474279756355576e42396645454d676f37737064",
+                "b": "MVN5bVJlN2VyeE00NkdCeXVjVVduQjlmRUVNZ283c3Bk",
+                "i": 0,
+                "ii": 2
+              },
+              {
+                "s": "https://medium.com/@Stas33496115/bitcoin-script-engineering-part-ii-ba8095f093c0",
+                "h": "68747470733a2f2f6d656469756d2e636f6d2f405374617333333439363131352f626974636f696e2d7363726970742d656e67696e656572696e672d706172742d69692d626138303935663039336330",
+                "b": "aHR0cHM6Ly9tZWRpdW0uY29tL0BTdGFzMzM0OTYxMTUvYml0Y29pbi1zY3JpcHQtZW5naW5lZXJpbmctcGFydC1paS1iYTgwOTVmMDkzYzA=",
+                "i": 1,
+                "ii": 3
+              }
+            ],
+            "i": 1
+          },
+          {
+            "cell": [
+              {
+                "s": "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5",
+                "h": "3150755161374b36324d694b43747373534c4b79316b683536575755374d74555235",
+                "b": "MVB1UWE3SzYyTWlLQ3Rzc1NMS3kxa2g1NldXVTdNdFVSNQ==",
+                "i": 0,
+                "ii": 5
+              },
+              {
+                "s": "SET",
+                "h": "534554",
+                "b": "U0VU",
+                "i": 1,
+                "ii": 6
+              },
+              {
+                "s": "app",
+                "h": "617070",
+                "b": "YXBw",
+                "i": 2,
+                "ii": 7
+              },
+              {
+                "s": "symre",
+                "h": "73796d7265",
+                "b": "c3ltcmU=",
+                "i": 3,
+                "ii": 8
+              },
+              {
+                "s": "title",
+                "h": "7469746c65",
+                "b": "dGl0bGU=",
+                "i": 4,
+                "ii": 9
+              },
+              {
+                "s": "Bitcoin Script Engineering part II",
+                "h": "426974636f696e2053637269707420456e67696e656572696e672070617274204949",
+                "b": "Qml0Y29pbiBTY3JpcHQgRW5naW5lZXJpbmcgcGFydCBJSQ==",
+                "i": 5,
+                "ii": 10
+              },
+              {
+                "s": "description",
+                "h": "6465736372697074696f6e",
+                "b": "ZGVzY3JpcHRpb24=",
+                "i": 6,
+                "ii": 11
+              },
+              {
+                "s": "An introduction to the original Bitcoin capability of smart-contract creation",
+                "h": "416e20696e74726f64756374696f6e20746f20746865206f726967696e616c20426974636f696e206361706162696c697479206f6620736d6172742d636f6e7472616374206372656174696f6e",
+                "b": "QW4gaW50cm9kdWN0aW9uIHRvIHRoZSBvcmlnaW5hbCBCaXRjb2luIGNhcGFiaWxpdHkgb2Ygc21hcnQtY29udHJhY3QgY3JlYXRpb24=",
+                "i": 7,
+                "ii": 12
+              },
+              {
+                "s": "category",
+                "h": "63617465676f7279",
+                "b": "Y2F0ZWdvcnk=",
+                "i": 8,
+                "ii": 13
+              },
+              {
+                "s": "Articles",
+                "h": "41727469636c6573",
+                "b": "QXJ0aWNsZXM=",
+                "i": 9,
+                "ii": 14
+              },
+              {
+                "s": "tags",
+                "h": "74616773",
+                "b": "dGFncw==",
+                "i": 10,
+                "ii": 15
+              },
+              {
+                "s": "Bitcoin, Script, StasTrock, BSV, SmartContract, Oracle",
+                "h": "426974636f696e2c205363726970742c205374617354726f636b2c204253562c20536d617274436f6e74726163742c204f7261636c65",
+                "b": "Qml0Y29pbiwgU2NyaXB0LCBTdGFzVHJvY2ssIEJTViwgU21hcnRDb250cmFjdCwgT3JhY2xl",
+                "i": 11,
+                "ii": 16
+              }
+            ],
+            "i": 2
+          },
+          {
+            "cell": [
+              {
+                "s": "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3",
+                "h": "31484131503265786f6d4177435579635a487238576579466f793576755141534533",
+                "b": "MUhBMVAyZXhvbUF3Q1V5Y1pIcjhXZXlGb3k1dnVRQVNFMw==",
+                "i": 0,
+                "ii": 18
+              },
+              {
+                "s": "SHA256",
+                "h": "534841323536",
+                "b": "U0hBMjU2",
+                "i": 1,
+                "ii": 19
+              },
+              {
+                "s": "BITCOIN_ECDSA",
+                "h": "424954434f494e5f4543445341",
+                "b": "QklUQ09JTl9FQ0RTQQ==",
+                "i": 2,
+                "ii": 20
+              },
+              {
+                "s": "1Gu9N6TDsyQ28UU5trR96oC6837MRFf6nH",
+                "h": "314775394e365444737951323855553574725239366f43363833374d524666366e48",
+                "b": "MUd1OU42VERzeVEyOFVVNXRyUjk2b0M2ODM3TVJGZjZuSA==",
+                "i": 3,
+                "ii": 21
+              },
+              {
+                "s": "IPAsYWWEyn2XcloCVc+AHilHXWmhJwbV6GOTB4NnEN/LRu7uULpEaItYc9Xja2u6+IDYRT+4NyBV9UVCduKTVAw=",
+                "h": "4950417359575745796e3258636c6f4356632b4148696c4858576d684a77625636474f5442344e6e454e2f4c52753775554c7045614974596339586a613275362b49445952542b344e7942563955564364754b545641773d",
+                "b": "SVBBc1lXV0V5bjJYY2xvQ1ZjK0FIaWxIWFdtaEp3YlY2R09UQjRObkVOL0xSdTd1VUxwRWFJdFljOVhqYTJ1NitJRFlSVCs0TnlCVjlVVkNkdUtUVkF3PQ==",
+                "i": 4,
+                "ii": 22
+              },
+              {
+                "s": "\u0000",
+                "h": "00",
+                "b": "AA==",
+                "i": 5,
+                "ii": 23
+              }
+            ],
+            "i": 3
+          },
+          {
+            "cell": [
+              {
+                "s": "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5",
+                "h": "3150755161374b36324d694b43747373534c4b79316b683536575755374d74555235",
+                "b": "MVB1UWE3SzYyTWlLQ3Rzc1NMS3kxa2g1NldXVTdNdFVSNQ==",
+                "i": 0,
+                "ii": 25
+              },
+              {
+                "s": "SET",
+                "h": "534554",
+                "b": "U0VU",
+                "i": 1,
+                "ii": 26
+              },
+              {
+                "s": "bsvAlias",
+                "h": "627376416c696173",
+                "b": "YnN2QWxpYXM=",
+                "i": 2,
+                "ii": 27
+              },
+              {
+                "s": "torusjkl@moneybutton.com",
+                "h": "746f7275736a6b6c406d6f6e6579627574746f6e2e636f6d",
+                "b": "dG9ydXNqa2xAbW9uZXlidXR0b24uY29t",
+                "i": 3,
+                "ii": 28
+              }
+            ],
+            "i": 4
+          }
+        ],
+        "e": {
+          "v": 0,
+          "i": 0,
+          "a": "false"
+        }
+      },
+      {
+        "i": 1,
+        "tape": [
+          {
+            "cell": [
+              {
+                "op": 118,
+                "ops": "OP_DUP",
+                "i": 0,
+                "ii": 0
+              },
+              {
+                "op": 169,
+                "ops": "OP_HASH160",
+                "i": 1,
+                "ii": 1
+              },
+              {
+                "s": "\u0004���5a�=\u0011D\n�iyI!�`\u0004\u0019",
+                "h": "04e9c8ed3561ab3d11440ac96979492193600419",
+                "b": "BOnI7TVhqz0RRArJaXlJIZNgBBk=",
+                "i": 2,
+                "ii": 2
+              },
+              {
+                "op": 136,
+                "ops": "OP_EQUALVERIFY",
+                "i": 3,
+                "ii": 3
+              },
+              {
+                "op": 172,
+                "ops": "OP_CHECKSIG",
+                "i": 4,
+                "ii": 4
+              }
+            ],
+            "i": 0
+          }
+        ],
+        "e": {
+          "v": 1729,
+          "i": 1,
+          "a": "1SymRe7erxM46GByucUWnB9fEEMgo7spd"
+        }
+      },
+      {
+        "i": 2,
+        "tape": [
+          {
+            "cell": [
+              {
+                "op": 118,
+                "ops": "OP_DUP",
+                "i": 0,
+                "ii": 0
+              },
+              {
+                "op": 169,
+                "ops": "OP_HASH160",
+                "i": 1,
+                "ii": 1
+              },
+              {
+                "s": "�?@�+V�>����(���ІS",
+                "h": "fe3f40b92b56863ea3a77fb9db28dae7dfd08653",
+                "b": "/j9AuStWhj6jp3+52yja59/QhlM=",
+                "i": 2,
+                "ii": 2
+              },
+              {
+                "op": 136,
+                "ops": "OP_EQUALVERIFY",
+                "i": 3,
+                "ii": 3
+              },
+              {
+                "op": 172,
+                "ops": "OP_CHECKSIG",
+                "i": 4,
+                "ii": 4
+              }
+            ],
+            "i": 0
+          }
+        ],
+        "e": {
+          "v": 54843,
+          "i": 2,
+          "a": "1QBLQcHH63Re9rCt9b53XWZHEhqVMkVbYz"
+        }
+      }
+    ],
+    "blk": {
+      "i": 630567,
+      "h": "000000000000000002bcae5f31dd48336be4ef62a7910593759c932934071f0a",
+      "t": 1586880599
+    }
+  }
+]

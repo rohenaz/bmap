@@ -1,12 +1,24 @@
 {
   "name": "bmapjs",
-  "version": "0.2.4",
-  "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
-  "main": "bmap_node.js",
+  "version": "0.3.0",
+  "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "browserify -p tinyify bmap_node.js -o dist/bmap_node.js -t -t [ babelify --presets [ @babel/preset-env ] ]",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "yarn build && ws"
+    "buildold": "browserify -p tinyify bmap_node.js -o dist/bmap_node.js -t -t [ babelify --presets [ @babel/preset-env ] ]",
+    "serve": "npm run build && node ./node_modules/ws/index.js",
+    "clean": "rimraf dist/",
+    "build": "rimraf dist/ && babel src/ --presets minify --out-dir dist/",
+    "lint": "eslint ./src",
+    "lintfix": "eslint ./src --fix",
+    "testonly": "./node_modules/.bin/jest --collectCoverage",
+    "testwatch": "./node_modules/.bin/jest --watchAll --collectCoverage",
+    "test": "npm run lint && npm run testonly",
+    "test-watch": "npm run testwatch",
+    "check": "./node_modules/.bin/npm-check -u",
+    "prepare": "npm run clean && npm run lint && npm run test && npm run build",
+    "pub": "./node_modules/.bin/np || true",
+    "build-public": "npm run build && browserify dist/browser.js -o public/bmap.js",
+    "build-all": "npm run lint && npm run build-public"
   },
   "repository": {
     "type": "git",
@@ -21,12 +33,29 @@
     "bsv"
   ],
   "devDependencies": {
-    "@babel/core": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
-    "babelify": "^10.0.0",
-    "browserify": "^16.2.0",
-    "tinyify": "^2.5.2",
-    "prettier": "latest"
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.12.10",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.6.3",
+    "babel-preset-minify": "^0.5.1",
+    "eslint": "^7.16.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
+    "np": "2.20.1",
+    "npm-check": "5.7.0",
+    "pre-commit": "^1.2.2",
+    "regenerator-runtime": "^0.12.1",
+    "rimraf": "2.6.2",
+    "run-sequence": "2.2.1",
+    "ws": "^7.4.2"
   },
   "prettier": {
     "semi": false,
@@ -40,6 +69,21 @@
   },
   "homepage": "https://github.com/rohenaz/bmap#readme",
   "dependencies": {
-    "@msgpack/msgpack": "^1.11.0"
+    "@moneybutton/paymail-client": "^0.38.4",
+    "@msgpack/msgpack": "^1.11.0",
+    "bsv": "^1.5.3",
+    "crypto": "^1.0.1",
+    "dns": "^0.2.2",
+    "node-fetch": "^2.6.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "mjs",
+      "ts"
+    ],
+    "transform": {
+      "^.+\\.(mjs|jsx|js)$": "babel-jest"
+    }
   }
 }
