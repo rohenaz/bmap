@@ -1,4 +1,6 @@
-import { describe, expect, beforeEach, afterEach, test, } from '@jest/globals';
+import {
+  describe, expect, test
+} from '@jest/globals';
 import { METANET } from '../../src/protocols/metanet';
 import mapTransactions from '../data/map-transactions.json';
 import metanetTransactions from '../data/metanet-transactions.json';
@@ -22,8 +24,8 @@ describe('bitpic', () => {
 
   test('parse tx', () => {
     const dataObj = {};
-    const cell = mapTransactions[1].out[0].tape[1].cell;
-    const tape = mapTransactions[1].out[0].tape;
+    const { cell } = mapTransactions[1].out[0].tape[1];
+    const { tape } = mapTransactions[1].out[0];
     const tx = mapTransactions[1];
 
     METANET.handler(dataObj, cell, tape, tx);
@@ -42,8 +44,8 @@ describe('bitpic', () => {
 
   test('parse tx 2', () => {
     const dataObj = {};
-    const cell = metanetTransactions[0].out[0].tape[1].cell;
-    const tape = metanetTransactions[0].out[0].tape;
+    const { cell } = metanetTransactions[0].out[0].tape[1];
+    const { tape } = metanetTransactions[0].out[0];
     const tx = metanetTransactions[0];
 
     METANET.handler(dataObj, cell, tape, tx);
@@ -62,8 +64,8 @@ describe('bitpic', () => {
 
   test('parse tx 3', () => {
     const dataObj = {};
-    const cell = metanetTransactions[1].out[0].tape[1].cell;
-    const tape = metanetTransactions[1].out[0].tape;
+    const { cell } = metanetTransactions[1].out[0].tape[1];
+    const { tape } = metanetTransactions[1].out[0];
     const tx = metanetTransactions[1];
 
     METANET.handler(dataObj, cell, tape, tx);
@@ -80,3 +82,7 @@ describe('bitpic', () => {
     });
   });
 });
+
+// TODO: Add test
+// '66cc4d27e1b657871f6389e061a611ec2a4bb1a1fdd9253c5e94d89e61365bd8',
+// this uses string '0' instead of OP_FALSE

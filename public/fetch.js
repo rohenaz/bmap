@@ -1,5 +1,5 @@
-(async function() {
-  let examples = {
+(async function () {
+  const examples = {
     B_MAP_AIP_1: [
       'cdfe7ae5c91afe4dc3a5db383e0ca948ec3d51dc2954a9d18ca464db7c9d5d3d',
     ],
@@ -30,7 +30,7 @@
     ],
     BITCOM_ECHO: [
       'c5b43dce7d9805fb2797650f5b9af18d5d80e913ece16ee1adae48b1005398ad',
-    ], //echo
+    ], // echo
     BITKEY: [
       'd3ca9a8654c70ba2472908d031380c3db769a8b02d4aa62fb8878b204644755b',
     ],
@@ -46,7 +46,7 @@
     D: ['19iG3WTYSsbyos3uJ733yK4zEioi1FesNU'],
     MAP: [
       '34ba78755c4db1179029537a2b0189aac75a8ac0c6c99f30fec06c60aa71b183',
-    ], //hagbard
+    ], // hagbard
     META_1: [
       '07790cb21e48fc98296319efed3645c3b43307031ce6748fa1aed929b24f0f89',
     ],
@@ -89,28 +89,6 @@
       'fdfc5ab2efbd83a617f79eaf82348e9879499406c3cc9f7fcb902164cbb25956',
       'f55c43e434055d544ccb3169f56723d49a4e6039d5837d54a243c738bf603c38',
     ],
-
-    bad_AIP: [
-      'added2539ef771353b226a2e262f0c0b0ff4305bd9dfe81f900868d4297882d3',
-    ],
-    bad_META: [
-      '66cc4d27e1b657871f6389e061a611ec2a4bb1a1fdd9253c5e94d89e61365bd8',
-    ], // this uses string '0' instead of OP_FALSE
-    bad_B_MAP1: [
-      'a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327',
-    ],
-    bad_B_MAP2: [
-      'a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327',
-    ],
-    twetch_nopipe: [
-      '20df173a582d85b4bb337dc5e849daca6b10664aae3b6cb04dd7975eb2a99a12',
-    ],
-    BAD_MAP_JSON: [
-      '4eedd926d8b8f32f11699e35d323aa102daf705543803c281b572ca559f435f6',
-    ],
-    VERY_BAD_MAP_JSON: [
-      '13b59940d3ad80b1203e20dadd54103a4343b39c93c700f20edd07d08bacd329',
-    ],
     MAP_JSON: [
       '6a824a01eea74d8bab0da204c61c758cfde0d0f92845a1b2b616b8d3ae4cec99',
     ],
@@ -129,7 +107,7 @@
     MINERVA2: [
       '4a0b56c70944c4b5886e424a66b0080e59fb59b430c5969e16040cb496864b04',
     ],
-  }
+  };
 
   // let rawBob = {
   //   tx: {
@@ -607,32 +585,32 @@
   //   lock: 0,
   // }
 
-  let currentExample = localStorage.getItem('example')
+  let currentExample = localStorage.getItem('example');
   if (!currentExample) {
-    currentExample = Object.keys(examples)[0]
-    localStorage.setItem('example', Object.keys(examples)[0])
+    currentExample = Object.keys(examples)[0];
+    localStorage.setItem('example', Object.keys(examples)[0]);
   }
 
-  let txs = examples[localStorage.getItem('example')]
+  let txs = examples[localStorage.getItem('example')];
 
   try {
-    let xx = await bmap.TransformTx(rawBob)
-    console.log('transform bob', xx)
+    const xx = await bmap.TransformTx(rawBob);
+    console.log('transform bob', xx);
   } catch (e) {
-    console.error('fuck', e)
+    console.error('fuck', e);
   }
 
-  let decodePlugin = false
-  let parts = window.location.pathname.split('/')
-    .slice(1)
+  let decodePlugin = false;
+  const parts = window.location.pathname.split('/')
+    .slice(1);
   if (parts[0] === 'tx' && parts[1].length === 64) {
     // fetch it
-    txs = [parts[1]]
-    decodePlugin = true
+    txs = [parts[1]];
+    decodePlugin = true;
   }
 
   // The query we constructed from step 2.
-  let query = {
+  const query = {
     v: 3,
     q: {
       find: {
@@ -646,128 +624,126 @@
       },
       limit: 10,
     },
-  }
+  };
 
   // Turn the query into base64 encoded string.
   console.log('query', query);
-  let b64 = btoa(JSON.stringify(query))
+  const b64 = btoa(JSON.stringify(query));
   // let url = 'https://bob.planaria.network/q/1GgmC7Cg782YtQ6R9QkM58voyWeQJmJJzG/' + b64
-  let url =
-    (useMom()
-      ? 'https://mom.planaria.network/q/'
-      : 'https://bob.planaria.network/q/1GgmC7Cg782YtQ6R9QkM58voyWeQJmJJzG/') +
-    b64
+  const url = (useMom()
+    ? 'https://mom.planaria.network/q/'
+    : 'https://bob.planaria.network/q/1GgmC7Cg782YtQ6R9QkM58voyWeQJmJJzG/')
+    + b64;
 
   // Attach planaria API KEY as header
-  let header = {
+  const header = {
     headers: { key: '14yHvrKQEosfAbkoXcEwY6wSvxNKteFbzU' },
-  }
+  };
 
   // Fields to display as text
-  let textFields = []
+  const textFields = [];
 
   // Fields to omit
-  let ignoredFields = ['tx', 'blk', 'in', '_id', 'i', 'mem']
+  const ignoredFields = ['tx', 'blk', 'in', '_id', 'i', 'mem'];
 
-  list = document.createElement('div')
-  list.id = 'tx-list'
+  list = document.createElement('div');
+  list.id = 'tx-list';
   // Make an HTTP request to bmap endpoint
   fetch(url, header)
     .then((r) => {
-      return r.json()
+      return r.json();
     })
     .then(async (r) => {
       console.log(r);
-      let collection = !useMom() ? r.c.concat(r.u || []) : r.metanet
+      const collection = !useMom() ? r.c.concat(r.u || []) : r.metanet;
 
       if (!collection.length) {
-        document.querySelector('#currentExample').innerHTML = 'No Results'
+        document.querySelector('#currentExample').innerHTML = 'No Results';
       }
 
       for (tx of collection) {
-        console.log('before transform:', tx)
-        let bmapTx
+        console.log('before transform:', tx);
+        let bmapTx;
         try {
-          bmapTx = await bmap.TransformTx(tx)
+          bmapTx = await bmap.TransformTx(tx);
         } catch (e) {
-          console.warn('error', e)
-          break
+          console.warn('error', e);
+          break;
         }
 
         if (decodePlugin) {
-          document.body.innerHTML = bmapTx
-          return
+          document.body.innerHTML = bmapTx;
+          return;
         }
-        let item = document.createElement('div')
+        const item = document.createElement('div');
 
-        let txHeading = document.createElement('h5')
-        txHeading.innerHTML =
-          'TxID: <a target="_blank" href="https://whatsonchain.com/tx/' +
-          bmapTx.tx.h +
-          '">' +
-          bmapTx.tx.h +
-          '</a>'
-        item.appendChild(txHeading)
+        const txHeading = document.createElement('h5');
+        txHeading.innerHTML = 'TxID: <a target="_blank" href="https://whatsonchain.com/tx/'
+          + bmapTx.tx.h
+          + '">'
+          + bmapTx.tx.h
+          + '</a>';
+        item.appendChild(txHeading);
 
-        let json = JSON.stringify(bmapTx, null, '\t')
-        let edt = document.createElement('div')
-        edt.innerHTML = '<textarea class="editor">' + json + '</textarea>'
-        item.appendChild(edt)
-        list.appendChild(item)
+        const json = JSON.stringify(bmapTx, null, '\t');
+        const edt = document.createElement('div');
+        edt.innerHTML = '<textarea class="editor">' + json + '</textarea>';
+        item.appendChild(edt);
+        list.appendChild(item);
       }
 
-      document.body.appendChild(list)
-      let editor
+      document.body.appendChild(list);
+      let editor;
       //  editor.setTheme('ace/theme/idle_fingers')
-      let editors = document.querySelectorAll('.editor')
+      const editors = document.querySelectorAll('.editor');
 
-      for (let e of editors) {
-        editor = ace.edit(e)
-        editor.getSession().setMode('ace/mode/json')
-        editor.setTheme('ace/theme/mono_industrial')
-        editor.setShowPrintMargin(false)
+      for (const e of editors) {
+        editor = ace.edit(e);
+        editor.getSession().setMode('ace/mode/json');
+        editor.setTheme('ace/theme/mono_industrial');
+        editor.setShowPrintMargin(false);
         editor.setOptions({
           maxLines: 25,
           minLines: 3,
           tabSize: 2,
           useSoftTabs: true,
-        })
+        });
       }
-    })
+    });
 
   document.addEventListener('DOMContentLoaded', () => {
     // Set page title
-    document.getElementById('currentExample').innerHTML = currentExample
+    document.getElementById('currentExample').innerHTML = currentExample;
 
-    for (let key in examples) {
-      let button = document.createElement('button')
-      button.id = key
-      button.innerHTML = key
+    for (const key in examples) {
+      const button = document.createElement('button');
+      button.id = key;
+      button.innerHTML = key;
 
       button.addEventListener('click', (e) => {
-        localStorage.setItem('example', e.target.id)
-        document.location.reload()
-      })
+        localStorage.setItem('example', e.target.id);
+        document.location.reload();
+      });
 
       document.querySelector('nav')
-        .appendChild(button)
+        .appendChild(button);
     }
 
-    let momToggle = document.querySelector('#momToggle')
+    const momToggle = document.querySelector('#momToggle');
     momToggle.addEventListener('click', () => {
-      localStorage.setItem('useMom', !useMom())
-      updateMomToggle()
-      document.location.reload()
-    })
+      localStorage.setItem('useMom', !useMom());
+      updateMomToggle();
+      document.location.reload();
+    });
 
-    updateMomToggle()
-  })
+    updateMomToggle();
+  });
 
   function updateMomToggle() {
-    momToggle.innerHTML = 'Switch to ' + (!useMom() ? 'MOM' : 'BOB')
+    momToggle.innerHTML = 'Switch to ' + (!useMom() ? 'MOM' : 'BOB');
   }
 
   function useMom() {
-    return localStorage.getItem('useMom') === 'true'
+    return localStorage.getItem('useMom') === 'true';
   }
-})();
+}());
