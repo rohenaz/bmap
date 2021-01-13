@@ -1,6 +1,7 @@
-import { describe, expect, beforeEach, afterEach, test, } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 import { B } from '../../src/protocols/b';
 import indexedTransaction from '../data/b-aip-transaction-with-indexes.json';
+import badFieldsTransaction from '../data/b-bad-fields-transaction.json';
 
 describe('b', () => {
   test('protocol definition', () => {
@@ -21,8 +22,8 @@ describe('b', () => {
 
   test('parse tx', () => {
     const dataObj = {};
-    const cell = indexedTransaction.out[0].tape[1].cell;
-    const tape = indexedTransaction.out[0].tape;
+    const { cell } = indexedTransaction.out[0].tape[1];
+    const { tape } = indexedTransaction.out[0];
     const tx = indexedTransaction;
 
     B.handler(dataObj, cell, tape, tx);
@@ -37,8 +38,10 @@ describe('b', () => {
     const dataObj = {};
     const cell = JSON.parse(JSON.stringify(indexedTransaction.out[0].tape[1].cell));
     // remove encoding, parser should try to infer
-    cell[3].s = '', cell[3].h = '',cell[3].b = '';
-    const tape = indexedTransaction.out[0].tape;
+    cell[3].s = '';
+    cell[3].h = '';
+    cell[3].b = '';
+    const { tape } = indexedTransaction.out[0];
     const tx = indexedTransaction;
 
     B.handler(dataObj, cell, tape, tx);
@@ -49,12 +52,25 @@ describe('b', () => {
     expect(dataObj.B.filename).toEqual('\u0000');
   });
 
+  test('parse tx with too many fields for schema', () => {
+    // too many fields for schema, should warn
+    const dataObj = {};
+    const tx = badFieldsTransaction;
+    const { tape } = tx.out[0];
+    const cell = JSON.parse(JSON.stringify(tape[1].cell));
+    expect(() => {
+      B.handler(dataObj, cell, tape, tx);
+    }).toThrow();
+  });
+
   test('parse tx without filename', () => {
     const dataObj = {};
     const cell = JSON.parse(JSON.stringify(indexedTransaction.out[0].tape[1].cell));
     // remove encoding, parser should try to infer
-    cell[4].s = '', cell[4].h = '',cell[4].b = '';
-    const tape = indexedTransaction.out[0].tape;
+    cell[4].s = '';
+    cell[4].h = '';
+    cell[4].b = '';
+    const { tape } = indexedTransaction.out[0];
     const tx = indexedTransaction;
 
     B.handler(dataObj, cell, tape, tx);

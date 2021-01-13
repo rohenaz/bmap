@@ -23,6 +23,13 @@ const handler = function (dataObj, cell, tape, tx) {
     throw new Error('Invalid B tx: ' + tx);
   }
 
+  // Check pushdata length + 1 for protocol prefix
+  if (cell.length > querySchema.length + 1) {
+    throw new Error('Invalid B tx. Too many fields.');
+  }
+
+  // Make sure there are not more fields than possible
+
   const bObj = {};
   // loop over the schema
   /* eslint-disable no-restricted-syntax */
