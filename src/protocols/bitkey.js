@@ -17,7 +17,6 @@ const handler = function (dataObj, cell) {
   const bitkeyObj = {};
 
   // loop over the schema
-  /* eslint-disable no-restricted-syntax */
   for (const [idx, schemaField] of Object.entries(querySchema)) {
     const x = parseInt(idx, 10);
     const bitkeyField = Object.keys(schemaField)[0];

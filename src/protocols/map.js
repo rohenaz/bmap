@@ -44,7 +44,6 @@ const handler = function (dataObj, cell, tape, tx) {
     // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
     case 'ADD': {
       let last = null;
-      /* eslint-disable no-restricted-syntax */
       for (const pushdataContainer of cell) {
         // ignore MAP command
         if (
@@ -97,7 +96,6 @@ const handler = function (dataObj, cell, tape, tx) {
     case 'SELECT': {
       // TODO
       // console.log('MAP SELECT');
-      /* eslint-disable no-restricted-syntax */
       for (const pushdataContainer of cell) {
         // ignore MAP command
         if (
@@ -110,7 +108,6 @@ const handler = function (dataObj, cell, tape, tx) {
       break;
     }
     case 'MSGPACK': {
-      /* eslint-disable no-restricted-syntax */
       for (const pushdataContainer of cell) {
         // ignore MAP command
         if (
@@ -137,7 +134,6 @@ const handler = function (dataObj, cell, tape, tx) {
       break;
     }
     case 'JSON': {
-      /* eslint-disable no-restricted-syntax */
       for (const pushdataContainer of cell) {
         // ignore MAP command
         if (
@@ -158,7 +154,6 @@ const handler = function (dataObj, cell, tape, tx) {
     }
     case 'SET': {
       let last = null;
-      /* eslint-disable no-restricted-syntax */
       for (const pushdataContainer of cell) {
         // ignore MAP command
         if (

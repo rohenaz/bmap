@@ -87,7 +87,6 @@ export const bmapQuerySchemaHandler = function (
     );
   }
 
-  /* eslint-disable no-restricted-syntax */
   for (const [idx, schemaField] of Object.entries(querySchema)) {
     const x = parseInt(idx, 10);
 

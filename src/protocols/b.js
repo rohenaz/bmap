@@ -32,7 +32,6 @@ const handler = function (dataObj, cell, tape, tx) {
 
   const bObj = {};
   // loop over the schema
-  /* eslint-disable no-restricted-syntax */
   for (const [idx, schemaField] of Object.entries(querySchema)) {
     const x = parseInt(idx, 10);
     const bField = Object.keys(schemaField)[0];

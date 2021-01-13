@@ -1,8 +1,3 @@
-import {
-  checkOpFalseOpReturn,
-  saveProtocolData,
-} from './utils';
-
 // import default protocols
 import { AIP } from './protocols/aip';
 import { B } from './protocols/b';
@@ -11,6 +6,10 @@ import { HAIP } from './protocols/haip';
 import { MAP } from './protocols/map';
 import { METANET } from './protocols/metanet';
 import { PSP } from './protocols/psp';
+import {
+  checkOpFalseOpReturn,
+  saveProtocolData
+} from './utils';
 
 const protocolMap = {};
 const protocolHandlers = {};
@@ -58,7 +57,6 @@ export default class BMAP {
     // This will become our nicely formatted response object
     const dataObj = {};
 
-    /* eslint-disable no-restricted-syntax */
     for (const [key, val] of Object.entries(tx)) {
       if (key === 'out') {
         // loop over the outputs

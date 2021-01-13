@@ -17,6 +17,8 @@
   "rules": {
     "linebreak-style": 0,
     "global-require": 0,
+    "no-restricted-syntax": 0,
+    "comma-dangle": 0,
     "arrow-body-style": ["error", "always"],
     "class-methods-use-this": "off",
     "func-names": "off",

@@ -1,6 +1,6 @@
 import bsv from 'bsv';
 import Message from 'bsv/message';
-import { cellValue, saveProtocolData, checkOpFalseOpReturn } from '../utils';
+import { cellValue, checkOpFalseOpReturn, saveProtocolData } from '../utils';
 
 const address = '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva';
 
@@ -115,7 +115,6 @@ export const AIPhandler = function (useQuerySchema, protocolName, dataObj, cell,
     throw new Error('AIP requires at least 4 fields including the prefix', tx);
   }
 
-  /* eslint-disable no-restricted-syntax */
   for (const [idx, schemaField] of Object.entries(useQuerySchema)) {
     const x = parseInt(idx, 10);
 
