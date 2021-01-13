@@ -2,7 +2,7 @@
   "name": "bmapjs",
   "version": "0.3.0",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
-  "main": "dist/index.js",
+  "main": "dist/bmap.js",
   "scripts": {
     "buildold": "browserify -p tinyify bmap_node.js -o dist/bmap_node.js -t -t [ babelify --presets [ @babel/preset-env ] ]",
     "serve": "npm run build && node ./node_modules/ws/index.js",
