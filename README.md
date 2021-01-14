@@ -1,11 +1,16 @@
 # BMAPjs
-BMAPjs is a BOB parser for `B | MAP` OP_RETURN protocols. It  processes transaction outputs and transforms them into self descriptive js objects based on the OP_RETURN protocols it discovers in the data.
 
-It supports B, MAP, AIP, METANET and a list of other popular protocols It ingests structured JSON objects in both [BOB](https://bob.planaria.network/) and [MOM](https://mom.planaria.network/) formats.
+BMAPjs is a BOB parser for `B | MAP` OP_RETURN protocols. It processes transaction outputs and transforms them into self
+descriptive js objects based on the OP_RETURN protocols it discovers in the data.
+
+It supports B, MAP, AIP, METANET and a list of other popular protocols It ingests structured JSON objects in
+both [BOB](https://bob.planaria.network/) and [MOM](https://mom.planaria.network/) formats.
 
 # Pre-requisites
-  - A [BOB](https://bob.planaria.network/) formatted transaction. This is the format used by popular [planaria APIs](https://github.com/interplanaria)
-  - npm
+
+- A [BOB](https://bob.planaria.network/) formatted transaction. This is the format used by
+  popular [planaria APIs](https://github.com/interplanaria)
+- npm
 
 # Install
 
@@ -14,34 +19,21 @@ npm install bmapjs
 ```
 
 # Importing
+
 using node:
-```js
-let bmap = require('bmapjs')
-```
-
-or in the browser:
-
-```html
-<script src="bmap.js"></script>
-```
 
 ```js
-let prom = import('./bmap.js')
-prom.then((bmap) => {
-  .. use it here ...
-})
+var BMAP = require('bmapjs');
+// or
+import BMAP from 'bmapjs';
+
+const bmap = new BMAP();
 ```
 
-# Other languages
-[Go](https://github.com/rohenaz/go-bmap)
-
-# Demo
-[Examples](https://bmapjs.firebaseapp.com)
-
-# Usage
-Turn a BOB or MOM formatted transaction into a BMAP tx. It will throw an error if the transaction is malformed. 
+For backwards compatibility you can still process transactions the old way
 
 ```js
+var bmap = require('bmapjs').bmap;
 try {
   bmap.TransformTx(bob_or_mom_tx)
 } catch (e) {
@@ -49,36 +41,177 @@ try {
 }
 ```
 
-After transforming a transaction it will have a key for each protocol used in the transaction:
-```json
-{
-  "AIP": { ... },
-  "B": { ... },
-  "MAP": { ... },
-  "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo": { ... }
+or in the browser:
+
+```html
+
+<script src='bmap.js'></script>
+```
+
+```js
+let prom = import('./bmap.js')
+prom.then((bmap) => {
+..
+  use
+  it
+  here
+...
+})
+```
+
+# Other languages
+
+[Go](https://github.com/rohenaz/go-bmap)
+
+# Demo
+
+[Examples](https://bmapjs.firebaseapp.com)
+
+# Usage
+
+Turn a BOB or MOM formatted transaction into a BMAP tx. It will throw an error if the transaction is malformed.
+
+```js
+try {
+  const bmap = new BMAP();
+  bmap.transformTx(bob_or_mom_tx)
+} catch (e) {
+  console.error(e)
 }
 ```
-If you want to use a raw transaction, first transform it using [BPU](https://github.com/interplanaria/bpu), then use bmapjs on the output.
+
+After transforming a transaction it will have a key for each protocol used in the transaction:
+
+```json
+{
+  "AIP": {
+    ...
+  },
+  "B": {
+    ...
+  },
+  "BAP": {
+    ...
+  },
+  "MAP": {
+    ...
+  },
+  "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo": {
+    ...
+  }
+}
+```
+
+If you want to use a raw transaction, first transform it using [BPU](https://github.com/interplanaria/bpu), then use
+bmapjs on the output.
 
 There is a collection of sample transactions listed in the examples.html page.
+
+## Adding other protocols
+
+Not all protocols available in `bmap.js` are active by default. These are less used or older protocols, but they can be easily added at runtime.
+
+```javascript
+import BMAP from 'bmapjs';
+import { RON } from 'bmapjs/dist/protocols/ron.js'
+
+const bmap = new BMAP();
+bmap.addProtocolHandler(RON);
+```
+
+The protocols that are available, but not active by default are `BITCOM`, `BITKEY`, `BITPIC`, `RON` and `SYMRE`.
+
+## Extending the BMAP class
+
+You can also easily add new handlers for processing any type of bitcom output.
+
+```javascript
+import BMAP from 'bmapjs';
+
+const bmap = new BMAP();
+const querySchema = {}; // optional
+const handler = function(dataObj, cell, tape, tx) {
+  // dataObj is the object that all data is added to
+  // cell is the current cell being processed
+  // tape is the tape the cell is in
+  // tx is the total transaction
+};
+// addProtocolHandler(name, address, querySchema, handler);
+bmap.addProtocolHandler({
+  name:'TEST',
+  address: '1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ',
+  querySchema,
+  handler,
+});
+
+bmap.transformTx(bob_or_mom_tx);
+```
+
+You can also use the default protocol handler, with a well defined query schema to make it even easier:
+
+In this example the OP_RETURN has 4 fields (the first is the bitcom address and is not included in the definition).
+
+```
+OP_FALSE OP_RETURN
+  1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ
+  <type>
+  <hash>
+  <sequence>
+```
+
+```javascript
+import BMAP from 'bmapjs';
+import { bmapQuerySchemaHandler } from './utils';
+
+const bmap = new BMAP();
+const querySchema = {
+  { type: 'string' },
+  { hash: 'string' },
+  { sequence: 'string' },
+};
+
+const handler = bmapQuerySchemaHandler.bind(this, 'TEST', querySchema);
+// or
+const handler2 = function(dataObj, cell, tape, tx) {
+  bmapQuerySchemaHandler('TEST', querySchema, dataObj, cell, tape, tx);
+}
+
+// addProtocolHandler(name, address, querySchema, handler);
+bmap.addProtocolHandler({
+  name: 'TEST',
+  address: '1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ',
+  querySchema,
+  handler,
+});
+
+bmap.transformTx(bob_or_mom_tx);
+```
+
+See the current protocol handlers in `src/protocols/` for examples on how to create your own handler.
 
 # Additional Documentation
 
 ## Protocols
-  - [B](https://github.com/unwriter/B)
-  - [MAP](https://github.com/rohenaz/MAP)
-  - [AIP](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)
-  - [HAIP](https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md)
-  - [Metanet](https://nchain.com/app/uploads/2019/06/The-Metanet-Technical-Summary-v1.0.pdf)
+
+- [B](https://github.com/unwriter/B)
+- [MAP](https://github.com/rohenaz/MAP)
+- [BAP](https://github.com/icellan/BAP)
+- [AIP](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL)
+- [HAIP](https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md)
+- [Metanet](https://nchain.com/app/uploads/2019/06/The-Metanet-Technical-Summary-v1.0.pdf)
 
 ## Planarias
-  - [BOB](https://bob.planaria.network/)
-  - [BMAP](https://b.map.sv/) (a public BMAPjs pre-formatted planaria indexing MAP, BITPIC, BITKEY,  transactions)
-  - [MOM](https://mom.planaria.network/) (enables additional fields for MetaNet)
+
+- [BOB](https://bob.planaria.network/)
+- [BMAP](https://b.map.sv/) (a public BMAPjs pre-formatted planaria indexing MAP, BITPIC, BITKEY, transactions)
+- [MOM](https://mom.planaria.network/) (enables additional fields for MetaNet)
 
 # Example Responses
+
 ## B
+
 example:
+
 ```json
 {
   "B": {
@@ -90,11 +223,27 @@ example:
 }
 ```
 
-## MAP
+## BAP
+
 example:
+
+```json
+ {
+  "BAP": {
+    "type": "ATTEST",
+    "hash": "cf39fc55da24dc23eff1809e6e6cf32a0fe6aecc81296543e9ac84b8c501bac5",
+    "sequence": "0"
+  }
+}
+```
+
+## MAP
+
+example:
+
 ```json
 {
-  "MAP":  {
+  "MAP": {
     "cmd": "SET",
     "app": "metalens",
     "type": "comment",
@@ -106,9 +255,11 @@ example:
 
 ## MetaNet
 
-Response will include metanet relavent keys from MOM Planaria when available. When not available (BOB data source), bmap will provide the "parent" and "node" keys only. These will be provided in the same data structure as MOM Planaria.
+Response will include metanet relavent keys from MOM Planaria when available. When not available (BOB data source), bmap
+will provide the "parent" and "node" keys only. These will be provided in the same data structure as MOM Planaria.
 
 #### BOB Data Source
+
 ```json
 {
   "METANET": {
@@ -127,6 +278,7 @@ Response will include metanet relavent keys from MOM Planaria when available. Wh
 ```
 
 #### MOM Data Source
+
 ```json
 {
   "METANET": {
@@ -164,18 +316,18 @@ Response will include metanet relavent keys from MOM Planaria when available. Wh
 
 ```json
 {
-	"BITKEY": {
-		"bitkey_signature": "SDQwdkEyVnN0emtIY2VnYXJVTm1WUm1wQ3ZLUVBSdXR4KzczdG9Jcm4vMWxRWU9aQ1lRQ0cyaFhBdHRQRFl0L0h2KzE0dWtUZ25MWVh1UUNsTFp6blBnPQ==",
-		"user_signature": "SUxzZWpEWXVwMlBEYjltdnJET1dSaWxMSy9Xd1BtVlRiazFOWnZnUHZiczRWVzYyenM1MFY5c3E0akdrQm8yeDlLOG9jSE5acTlLd1hRMkREV0V2OGNjPQ==",
-		"paymail": "oktets@moneybutton.com",
-		"pubkey": "0210fdec2372cb65dd9d6adb982101d9cdbb407d9f2e2d5be31cd9d59a561ccacf"
+  "BITKEY": {
+    "bitkey_signature": "SDQwdkEyVnN0emtIY2VnYXJVTm1WUm1wQ3ZLUVBSdXR4KzczdG9Jcm4vMWxRWU9aQ1lRQ0cyaFhBdHRQRFl0L0h2KzE0dWtUZ25MWVh1UUNsTFp6blBnPQ==",
+    "user_signature": "SUxzZWpEWXVwMlBEYjltdnJET1dSaWxMSy9Xd1BtVlRiazFOWnZnUHZiczRWVzYyenM1MFY5c3E0akdrQm8yeDlLOG9jSE5acTlLd1hRMkREV0V2OGNjPQ==",
+    "paymail": "oktets@moneybutton.com",
+    "pubkey": "0210fdec2372cb65dd9d6adb982101d9cdbb407d9f2e2d5be31cd9d59a561ccacf"
   }
 }
 ```
 
 ## Bitcom
 
-BITCOM commands 
+BITCOM commands
 `useradd, echo, su, route`
 
 ```json
@@ -196,52 +348,56 @@ BITCOM commands
 
 ```json
 {
-	"BITPIC": {
-		"paymail": "stockrt@moneybutton.com",
-		"pubkey": "AoAgqoMucQcdi7kyLHhN4y1HVCPMyVpcPrj75AAoFo/6",
-		"sig": "SVBJVzU3NnplSnUzODlKNTVPT0RSNjVvSlhDdldYTDY0SWtEa1dOQzNkZ0xBdGZGVUx0MlYzWW1OWkNUQTBsUlV1M2dJMlIrRkswT1JlUnl1Vm9SQjVZPQ=="
-	}
+  "BITPIC": {
+    "paymail": "stockrt@moneybutton.com",
+    "pubkey": "AoAgqoMucQcdi7kyLHhN4y1HVCPMyVpcPrj75AAoFo/6",
+    "sig": "SVBJVzU3NnplSnUzODlKNTVPT0RSNjVvSlhDdldYTDY0SWtEa1dOQzNkZ0xBdGZGVUx0MlYzWW1OWkNUQTBsUlV1M2dJMlIrRkswT1JlUnl1Vm9SQjVZPQ=="
+  }
 }
 ```
 
 ## Unknown Protocols
 
-When an unknown protocol is encountered, bmap will keep the incoming format and use the protocol prefix as the key name on the response object:
+When an unknown protocol is encountered, bmap will keep the incoming format and use the protocol prefix as the key name
+on the response object:
+
 ```json
 {
-	"1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo": [
-		{
-			"b": "MU1BRWVwemdXZWk2ekttYnNkUVN5OHdBWUw1eVNEaXpLbw==",
-			"s": "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo",
-			"ii": 7,
-			"i": 0
-		},
-		{
-			"b": "bWF0dGVyLWNyZWF0ZS1wb3N0",
-			"s": "matter-create-post",
-			"ii": 8,
-			"i": 1
-		},
-		{
-			"b": "djE=",
-			"s": "v1",
-			"ii": 9,
-			"i": 2
-		},
-		{
-			"b": "aGVsbG8td29ybGQtcG9zdA==",
-			"s": "hello-world-post",
-			"ii": 10,
-			"i": 3
-		}
-	]
+  "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo": [
+    {
+      "b": "MU1BRWVwemdXZWk2ekttYnNkUVN5OHdBWUw1eVNEaXpLbw==",
+      "s": "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo",
+      "ii": 7,
+      "i": 0
+    },
+    {
+      "b": "bWF0dGVyLWNyZWF0ZS1wb3N0",
+      "s": "matter-create-post",
+      "ii": 8,
+      "i": 1
+    },
+    {
+      "b": "djE=",
+      "s": "v1",
+      "ii": 9,
+      "i": 2
+    },
+    {
+      "b": "aGVsbG8td29ybGQtcG9zdA==",
+      "s": "hello-world-post",
+      "ii": 10,
+      "i": 3
+    }
+  ]
 }
 ```
 
 # Support Checklist
+
 - [x] AIP
-- [ ] AIP validation
+- [x] AIP validation
 - [x] B
+- [x] BAP
 - [ ] BCAT
 - [x] Bitcom
 - [x] Bitkey
@@ -252,24 +408,28 @@ When an unknown protocol is encountered, bmap will keep the incoming format and 
 - [x] MAP v1
 - [ ] MAP v2
 - [x] MetaNet
+- [x] PSP
 - [x] RON
 - [x] SymRe
 
 #### Note: TXO Format Deprecation
 
-Beginning with v0.2.0, bmapjs uses BOB as the source format for transaction processing. The previous versions of bmap used [TXO](https://github.com/interplanaria/txo) formatted transactions. To use bmapjs with TXO data, use v0.1.5. 
+Beginning with v0.2.0, bmapjs uses BOB as the source format for transaction processing. The previous versions of bmap
+used [TXO](https://github.com/interplanaria/txo) formatted transactions. To use bmapjs with TXO data, use v0.1.5.
 
-You can also use [BPU](https://github.com/interplanaria/bpu) to get a BOB format tx from a raw tx, and then parse it with bmapjs v0.2.0 or higher:
+You can also use [BPU](https://github.com/interplanaria/bpu) to get a BOB format tx from a raw tx, and then parse it
+with bmapjs v0.2.0 or higher:
 
 ```js
 const BPU = require('bpu')
-const bmapjs = require('bmapjs')
-// 'rawtx' is a raw transaction string
-(async function() {
-  let bob = await BPU.parse({
-    tx: { r: rawtx }
-  })
-  let bmap = bmapjs.TransformTx(bob) 
+const BMAP = require('bmapjs')
+  // 'rawtx' is a raw transaction string
+  (async function () {
+    let bob = await BPU.parse({
+      tx: { r: rawtx }
+    });
+    const bmapjs = new BMAP();
+    let bmap = bmapjs.TransformTx(bob);
   ...
-})()
+  })()
 ```

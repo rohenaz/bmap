@@ -11,3 +11,4 @@ dist
 .DS_STORE
 functions/
 firebase.json
+coverage
