@@ -29,8 +29,7 @@ describe('bitpic', () => {
     expect(typeof dataObj.PSP).toEqual('object');
     expect(dataObj.PSP.paymail).toEqual('hagbard@moneybutton.com');
     expect(dataObj.PSP.pubkey).toEqual('02c89b6790eb605062a31f124250594bd0fd02988da2541b3d25e7ef3937fb4ae0');
-    expect(dataObj.PSP.signature).toEqual('SU5LRmIxNU1uQVhxTlFueStiNEtBVm5HTnR5bUcwZEhTdTEzKzg3MSt0aTBXTjVGQmVBLzdEZ1VuMXRsdzZGN29kYlc3SURyVmVQS1RMclRQQWlEcXlvPQ==');
-    // TODO: verify signatures
-    // expect(dataObj.PSP.verified).toEqual(true);
+    expect(dataObj.PSP.signature).toEqual('INKFb15MnAXqNQny+b4KAVnGNtymG0dHSu13+871+ti0WN5FBeA/7DgUn1tlw6F7odbW7IDrVePKTLrTPAiDqyo=');
+    expect(dataObj.PSP.verified).toEqual(true);
   });
 });
