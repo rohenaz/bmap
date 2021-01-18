@@ -28,7 +28,7 @@ describe('haip', () => {
     expect(typeof dataObj.HAIP).toEqual('object');
     expect(dataObj.HAIP.hashing_algorithm).toEqual('SHA256');
     expect(dataObj.HAIP.signing_algorithm).toEqual('BITCOIN_ECDSA');
-    expect(dataObj.HAIP.signing_address).toEqual('1N43TvtdHwSx6jYk6HVKcCGMhh8FnK1mWK');
+    expect(dataObj.HAIP.signing_address).toEqual('1Ghayxcf8askMqL9EV9V9QpExTR2j6afhv');
     expect(dataObj.HAIP.signature).toEqual('H6Y5LXIZRaSQ0CJEt5eY1tbUhKTxII31MZwSpEYv5fqmZLzwuylAwrtHiI3lk3yCqf3Ib/Uv3LpAfCoNSKk68fY=');
     expect(dataObj.HAIP.verified).toEqual(true);
   });
@@ -42,7 +42,7 @@ describe('haip', () => {
     expect(typeof dataObj.HAIP).toEqual('object');
     expect(dataObj.HAIP.hashing_algorithm).toEqual('SHA256');
     expect(dataObj.HAIP.signing_algorithm).toEqual('BITCOIN_ECDSA');
-    expect(dataObj.HAIP.signing_address).toEqual('1N6YF29g3YKe1BbnSWqFmDDUJDK85Pgbux');
+    expect(dataObj.HAIP.signing_address).toEqual('1Ghayxcf8askMqL9EV9V9QpExTR2j6afhv');
     expect(dataObj.HAIP.signature).toEqual('IFh8jXM4pKa5W0GFZ3aE1PYer8Wwynv76OIyqslBXXj+MYxG52nIV1mVfOSgR/5ozTKOCjHHhmVyx/6EZ7q+NBs=');
     expect(dataObj.HAIP.verified).toEqual(true);
   });

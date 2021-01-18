@@ -68,15 +68,19 @@ const validateSignature = function (aipObj, cell, tape) {
 
   let messageBuffer;
   if (aipObj.hashing_algorithm) {
-    // this is actually HAIP and works a bit differently
-    // Hashed-AIP
+    // this is actually Hashed-AIP (HAIP) and works a bit differently
     if (!aipObj.index_unit_size) {
-      // remove OP_RETURN - is added by bsv.Script.buildDataOut
+      // remove OP_RETURN - will be added by bsv.Script.buildDataOut
       signatureBufferStatements.shift();
     }
     const dataScript = bsv.Script.buildDataOut(signatureBufferStatements);
-    const dataBuffer = Buffer.from(dataScript.toHex(), 'hex');
-    messageBuffer = bsv.crypto.Hash.sha256(dataBuffer);
+    let dataBuffer = Buffer.from(dataScript.toHex(), 'hex');
+    if (aipObj.index_unit_size) {
+      // the indexed buffer should not contain the OP_RETURN opcode, but this
+      // is added by the buildDataOut function automatically. Remove it.
+      dataBuffer = dataBuffer.slice(1);
+    }
+    messageBuffer = bsv.crypto.Hash.sha256(Buffer.from(dataBuffer.toString('hex'))).toString('hex');
   } else {
     // regular AIP
     messageBuffer = Buffer.concat([
