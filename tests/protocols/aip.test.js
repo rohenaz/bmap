@@ -46,7 +46,7 @@ describe('aip', () => {
     expect(typeof dataObj.AIP).toEqual('object');
     expect(dataObj.AIP.algorithm).toEqual('BITCOIN_ECDSA');
     expect(dataObj.AIP.address).toEqual('1LQKZfR4YMWPZ9FwktC4PSwCzR71VbyMEi');
-    expect(dataObj.AIP.signature).toEqual('SUdhekhUTnhRL2kvL2pqa3lubGFJcjVqd0JkbFl0SFZXbEpRSWMwWTBZWCtIMkt2OHRtdjlyeE1nZjhTdHNablN2S1VLSzdLQ3BpbzZwQ1F6TjNvaWZzPQ==');
+    expect(dataObj.AIP.signature).toEqual('IGazHTNxQ/i//jjkynlaIr5jwBdlYtHVWlJQIc0Y0YX+H2Kv8tmv9rxMgf8StsZnSvKUKK7KCpio6pCQzN3oifs=');
     // TODO: Twetch signatures do not seem to follow the AIP protocol definition, why ?
     expect(dataObj.AIP.verified).toEqual(false);
   });

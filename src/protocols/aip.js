@@ -1,6 +1,11 @@
 import bsv from 'bsv';
 import Message from 'bsv/message';
-import { cellValue, checkOpFalseOpReturn, saveProtocolData } from '../utils';
+import {
+  cellValue,
+  checkOpFalseOpReturn,
+  saveProtocolData,
+  isBase64
+} from '../utils';
 
 const address = '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva';
 
@@ -132,6 +137,14 @@ export const AIPhandler = function (useQuerySchema, protocolName, dataObj, cell,
     }
 
     aipObj[aipField] = cellValue(cell[x + 1], schemaEncoding);
+  }
+
+  // There is an issue where some services add the signature as binary to the transaction
+  // whereas others add the signature as base64. This will confuse bob and the parser and
+  // the signature will not be verified. When the signature is added in binary cell[3].s is
+  // binary, otherwise cell[3].s contains the base64 signature and should be used.
+  if (cell[0].s === address && cell[3].s && isBase64(cell[3].s)) {
+    aipObj.signature = cell[3].s;
   }
 
   if (!aipObj.signature) {

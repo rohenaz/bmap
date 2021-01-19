@@ -97,3 +97,14 @@ export const bmapQuerySchemaHandler = function (
 
   saveProtocolData(dataObj, protocolName, obj);
 };
+
+/**
+ * Check whether the given data is base64
+ *
+ * @param data
+ * @returns {boolean}
+ */
+export const isBase64 = function (data) {
+  const regex = '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\/]{3}=)?';
+  return (new RegExp('^' + regex + '$', 'gi')).test(data);
+};
