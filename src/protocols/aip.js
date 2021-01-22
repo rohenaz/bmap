@@ -38,7 +38,14 @@ const validateSignature = function (aipObj, cell, tape) {
     if (!checkOpFalseOpReturn(cellContainer)) {
       cellContainer.cell.forEach((statement) => {
         // add the value as hex
-        signatureValues.push(statement.h);
+        if (statement.h) {
+          signatureValues.push(statement.h);
+        } else if (statement.b) {
+          // no hex? try base64
+          signatureValues.push(Buffer.from(statement.b, 'base64').toString('hex'));
+        } else {
+          signatureValues.push(Buffer.from(statement.s).toString('hex'));
+        }
       });
       signatureValues.push('7c'); // | hex
     }
