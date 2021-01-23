@@ -3,7 +3,7 @@ import { cellValue, saveProtocolData } from '../utils';
 const address = '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut';
 
 const querySchema = [
-  { content: ['string', 'binary'] },
+  { content: ['string', 'binary', 'file'] },
   { 'content-type': 'string' },
   { encoding: 'string' }, // we use this field to determine content character encoding. If encoding is not a valid character encoding (gzip), we assume it is binary
   { filename: 'string' },
@@ -38,7 +38,10 @@ const handler = function (dataObj, cell, tape, tx) {
     let schemaEncoding = Object.values(schemaField)[0];
     if (bField === 'content') {
       // If the encoding is ommitted, try to infer from content-type instead of breaking
-      if (!cell[3] || !cell[3].s) {
+      if (cell[1].f) {
+        // this is file reference to B files
+        schemaEncoding = 'file';
+      } else if (!cell[3] || !cell[3].s) {
         schemaEncoding = encodingMap[cell[2].s];
         if (!schemaEncoding) {
           console.warn('Problem inferring encoding. Malformed B data.', cell);

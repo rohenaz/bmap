@@ -2,6 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import { B } from '../../src/protocols/b';
 import indexedTransaction from '../data/b-aip-transaction-with-indexes.json';
 import badFieldsTransaction from '../data/b-bad-fields-transaction.json';
+import bitpicTransactions from '../data/b-bitpic-transactions.json';
 
 describe('b', () => {
   test('protocol definition', () => {
@@ -79,5 +80,18 @@ describe('b', () => {
     expect(dataObj.B['content-type']).toEqual('text/plain');
     expect(dataObj.B.encoding).toEqual('utf-8');
     expect(dataObj.B.filename).toEqual('');
+  });
+
+  test('parse bitpic', () => {
+    const dataObj = {};
+    const tx = bitpicTransactions[0];
+    const { tape } = tx.out[0];
+    const { cell } = tape[1];
+    B.handler(dataObj, cell, tape, tx);
+    expect(typeof dataObj.B).toEqual('object');
+    expect(dataObj.B.content).toEqual('b://7fde64ea6989985719b72032c77fd2042428fb2f94958fdbba1ec2ae8044e5cc.out.0.3');
+    expect(dataObj.B['content-type']).toEqual('image/jpeg');
+    expect(dataObj.B.encoding).toEqual('binary');
+    expect(dataObj.B.filename).toEqual(undefined);
   });
 });

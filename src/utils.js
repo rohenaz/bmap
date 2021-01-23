@@ -8,18 +8,14 @@
 export const cellValue = function (pushData, schemaEncoding) {
   if (!pushData) {
     throw new Error('cannot get cell value of: ' + pushData);
-  }
-
-  if (schemaEncoding === 'string') {
+  } else if (schemaEncoding === 'string') {
     return pushData.hasOwnProperty('s') ? pushData.s : pushData.ls;
-  }
-
-  if (schemaEncoding === 'hex') {
+  } else if (schemaEncoding === 'hex') {
     return pushData.hasOwnProperty('h') ? pushData.h : pushData.lh;
-  }
-
-  if (schemaEncoding === 'number') {
+  } else if (schemaEncoding === 'number') {
     return parseInt((pushData.hasOwnProperty('h') ? pushData.h : pushData.lh), 16);
+  } else if (schemaEncoding === 'file') {
+    return 'b://' + (pushData.hasOwnProperty('f') ? pushData.f : pushData.lf);
   }
 
   return pushData.hasOwnProperty('b') ? pushData.b : pushData.lb;
