@@ -89,7 +89,7 @@ describe('b', () => {
     const { cell } = tape[1];
     B.handler(dataObj, cell, tape, tx);
     expect(typeof dataObj.B).toEqual('object');
-    expect(dataObj.B.content).toEqual('b://7fde64ea6989985719b72032c77fd2042428fb2f94958fdbba1ec2ae8044e5cc.out.0.3');
+    expect(dataObj.B.content).toEqual('bitfs://7fde64ea6989985719b72032c77fd2042428fb2f94958fdbba1ec2ae8044e5cc.out.0.3');
     expect(dataObj.B['content-type']).toEqual('image/jpeg');
     expect(dataObj.B.encoding).toEqual('binary');
     expect(dataObj.B.filename).toEqual(undefined);

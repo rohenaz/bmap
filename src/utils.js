@@ -15,7 +15,7 @@ export const cellValue = function (pushData, schemaEncoding) {
   } else if (schemaEncoding === 'number') {
     return parseInt((pushData.hasOwnProperty('h') ? pushData.h : pushData.lh), 16);
   } else if (schemaEncoding === 'file') {
-    return 'b://' + (pushData.hasOwnProperty('f') ? pushData.f : pushData.lf);
+    return 'bitfs://' + (pushData.hasOwnProperty('f') ? pushData.f : pushData.lf);
   }
 
   return pushData.hasOwnProperty('b') ? pushData.b : pushData.lb;
