@@ -6,11 +6,12 @@ const querySchema = [
   { hashing_algorithm: 'string' },
   { signing_algorithm: 'string' },
   { signing_address: 'string' },
-  { signature: 'binary' },
+  { signature: 'string' },
   { index_unit_size: 'number' },
   [{ index: 'binary' }],
 ];
 
+// https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
 const handler = function (dataObj, cell, tape, tx) {
   AIPhandler(querySchema, 'HAIP', dataObj, cell, tape, tx);
 };

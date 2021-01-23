@@ -23,10 +23,9 @@ describe('map', () => {
 
   test('parse tx', () => {
     const dataObj = {};
-    const { cell } = mapTransactions[0].out[0].tape[1];
-    const { tape } = mapTransactions[0].out[0];
     const tx = mapTransactions[0];
-
+    const { tape } = tx.out[0];
+    const { cell } = tape[1];
     MAP.handler(dataObj, cell, tape, tx);
     expect(dataObj.MAP).toEqual({
       cmd: 'SET',
@@ -42,10 +41,9 @@ describe('map', () => {
 
   test('parse tx 2', () => {
     const dataObj = {};
-    const { cell } = mapTransactions[1].out[0].tape[3];
-    const { tape } = mapTransactions[1].out[0];
     const tx = mapTransactions[1];
-
+    const { tape } = tx.out[0];
+    const { cell } = tape[3];
     MAP.handler(dataObj, cell, tape, tx);
     expect(dataObj.MAP).toEqual({
       cmd: 'SET',
@@ -63,66 +61,103 @@ describe('map', () => {
 
   test('parse tx 3', () => {
     const dataObj = {};
-    const { cell } = mapTransactions[1].out[0].tape[4];
-    const { tape } = mapTransactions[1].out[0];
     const tx = mapTransactions[1];
-
+    const { tape } = tx.out[0];
+    const { cell } = tape[4];
     MAP.handler(dataObj, cell, tape, tx);
     expect(dataObj.MAP).toEqual({
-      cmd: 'ADD',
-      tags: ['BSV', 'Apps', 'Earning'],
-    });
+        cmd: 'ADD',
+        tags: ['BSV', 'Apps', 'Earning'],
+      });
   });
 
   test('parse REMOVE', () => {
     const dataObj = {};
-    const { cell } = mapTransactions[2].out[0].tape[0];
-    const { tape } = mapTransactions[2].out[0];
     const tx = mapTransactions[2];
-
+    const { tape } = tx.out[0];
+    const { cell } = tape[0];
     MAP.handler(dataObj, cell, tape, tx);
     expect(dataObj.MAP).toEqual({
-      cmd: 'REMOVE',
-      key: 'public_key',
-    });
+        cmd: 'REMOVE',
+        key: 'public_key',
+      });
   });
 
   test('parse DELETE', () => {
     const dataObj = {};
-    const { cell } = mapTransactions[3].out[0].tape[0];
-    const { tape } = mapTransactions[3].out[0];
     const tx = mapTransactions[3];
-
+    const { tape } = tx.out[0];
+    const { cell } = tape[0];
     MAP.handler(dataObj, cell, tape, tx);
     expect(dataObj.MAP).toEqual({
-      cmd: 'DELETE',
-      public_key: [
-        '02c89b6790eb605062a31f124250594bd0fd02988da2541b3d25e7ef3937fb4ae0',
-      ],
-    });
+        cmd: 'DELETE',
+        public_key: [
+          '02c89b6790eb605062a31f124250594bd0fd02988da2541b3d25e7ef3937fb4ae0',
+        ],
+      });
   });
 
   test('parse MSGPACK', () => {
     const dataObj = {};
-    const { cell } = mapTransactions[4].out[0].tape[0];
-    const { tape } = mapTransactions[4].out[0];
     const tx = mapTransactions[4];
-
+    const { tape } = tx.out[0];
+    const { cell } = tape[0];
     MAP.handler(dataObj, cell, tape, tx);
     expect(dataObj.MAP).toEqual({});
   });
 
   test('parse JSON', () => {
     const dataObj = {};
-    const { cell } = mapTransactions[5].out[0].tape[0];
-    const { tape } = mapTransactions[5].out[0];
     const tx = mapTransactions[5];
-
+    const { tape } = tx.out[0];
+    const { cell } = tape[0];
     MAP.handler(dataObj, cell, tape, tx);
     expect(dataObj.MAP).toEqual({});
   });
-});
 
+  // advanced tests
+
+  test('parse DELETE', () => {
+    const dataObj = {};
+    const cell = [
+      { 's': '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5', 'i': 0, },
+      { 's': 'DELETE', 'i': 1, },
+      { 's': 'public_key', 'i': 2, },
+      { 's': '02c89b6790eb605062a31f124250594bd0fd02988da2541b3d25e7ef3937fb4ae0', 'i': 3, },
+    ];
+    MAP.handler(dataObj, cell, [], {});
+    expect(dataObj.MAP).toEqual({
+      'cmd': 'DELETE',
+      'public_key': [
+        '02c89b6790eb605062a31f124250594bd0fd02988da2541b3d25e7ef3937fb4ae0',
+      ],
+    });
+  });
+
+  test('parse protocol separator', () => {
+    const dataObj = {};
+    const cell = [
+      { 's': '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5', 'i': 0, },
+      { 's': 'SET', 'i': 1, },
+      { 's': 'app', 'i': 2, },
+      { 's': 'social', 'i': 3, },
+      { 's': ':::', 'i': 4, },
+      { 's': 'ADD', 'i': 5, },
+      { 's': 'tag', 'i': 6, },
+      { 's': 'bitcoin', 'i': 7, },
+      { 's': 'social', 'i': 8, },
+    ];
+    MAP.handler(dataObj, cell, [], {});
+    expect(dataObj.MAP).toEqual({
+      'cmd': 'SET',
+      'app': 'social',
+      'tag': [
+        'bitcoin',
+        'social'
+      ]
+    });
+  });
+});
 // TODO: Test bad B + MAP txs
 // 'a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327',
 // 'a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327',

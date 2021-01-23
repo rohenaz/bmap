@@ -8,18 +8,14 @@
 export const cellValue = function (pushData, schemaEncoding) {
   if (!pushData) {
     throw new Error('cannot get cell value of: ' + pushData);
-  }
-
-  if (schemaEncoding === 'string') {
+  } else if (schemaEncoding === 'string') {
     return pushData.hasOwnProperty('s') ? pushData.s : pushData.ls;
-  }
-
-  if (schemaEncoding === 'hex') {
+  } else if (schemaEncoding === 'hex') {
     return pushData.hasOwnProperty('h') ? pushData.h : pushData.lh;
-  }
-
-  if (schemaEncoding === 'number') {
+  } else if (schemaEncoding === 'number') {
     return parseInt((pushData.hasOwnProperty('h') ? pushData.h : pushData.lh), 16);
+  } else if (schemaEncoding === 'file') {
+    return 'bitfs://' + (pushData.hasOwnProperty('f') ? pushData.f : pushData.lf);
   }
 
   return pushData.hasOwnProperty('b') ? pushData.b : pushData.lb;
@@ -96,4 +92,15 @@ export const bmapQuerySchemaHandler = function (
   }
 
   saveProtocolData(dataObj, protocolName, obj);
+};
+
+/**
+ * Check whether the given data is base64
+ *
+ * @param data
+ * @returns {boolean}
+ */
+export const isBase64 = function (data) {
+  const regex = '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\/]{3}=)?';
+  return (new RegExp('^' + regex + '$', 'gi')).test(data);
 };

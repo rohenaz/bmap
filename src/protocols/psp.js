@@ -1,3 +1,4 @@
+import bsv from 'bsv';
 import Message from 'bsv/message';
 import { checkOpFalseOpReturn, saveProtocolData } from '../utils';
 import { verifyPaymailPublicKey } from '../paymail';
@@ -5,12 +6,12 @@ import { verifyPaymailPublicKey } from '../paymail';
 const address = '1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4';
 
 const querySchema = [
-  { signature: 'binary' },
+  { signature: 'string' },
   { pubkey: 'string' },
   { paymail: 'string' },
 ];
 
-const validateSignature = function (aipObj, cell, tape) {
+const validateSignature = function (pspObj, cell, tape) {
   if (!Array.isArray(tape) || tape.length < 3) {
     throw new Error('PSP requires at least 3 cells including the prefix');
   }
@@ -25,10 +26,7 @@ const validateSignature = function (aipObj, cell, tape) {
     throw new Error('PSP could not find cell in tape');
   }
 
-  // OP_RETURN - is included in PSP ????
-  const signatureBufferStatements = [
-    Buffer.from('6a', 'hex'),
-  ];
+  const signatureBufferStatements = [];
   for (let i = 0; i < cellIndex; i++) {
     const cellContainer = tape[i];
     if (!checkOpFalseOpReturn(cellContainer)) {
@@ -46,23 +44,23 @@ const validateSignature = function (aipObj, cell, tape) {
       signatureBufferStatements.push(Buffer.from('7c', 'hex')); // | hex ????
     }
   }
+  const dataScript = bsv.Script.buildSafeDataOut(signatureBufferStatements);
+  const messageBuffer = Buffer.from(dataScript.toHex(), 'hex');
 
-  const messageBuffer = Buffer.concat([
-    ...signatureBufferStatements,
-  ]);
-
-  // verify aip signature
+  // verify psp signature
+  const publicKey = new bsv.PublicKey(pspObj.pubkey);
+  const signingAddress = bsv.Address.fromPublicKey(publicKey).toString();
   try {
-    aipObj.verified = Message.verify(
+    pspObj.verified = Message.verify(
       messageBuffer,
-      aipObj.address || aipObj.signing_address,
-      aipObj.signature,
+      signingAddress,
+      pspObj.signature,
     );
   } catch (e) {
-    aipObj.verified = false;
+    pspObj.verified = false;
   }
 
-  return aipObj.verified;
+  return pspObj.verified;
 };
 
 const handler = async function (dataObj, cell, tape, tx) {
@@ -81,7 +79,7 @@ const handler = async function (dataObj, cell, tape, tx) {
   }
 
   const pspObj = {
-    signature: cell[1].b,
+    signature: cell[1].s,
     pubkey: cell[2].s,
     paymail: cell[3].s,
   };

@@ -6,6 +6,8 @@ import indexedTransaction from '../data/b-aip-transaction-with-indexes.json';
 import validBobTransaction from '../data/bap-transaction.json';
 import unsignedBobTransaction from '../data/bap-unsigned-transaction.json';
 import twetchTransaction from '../data/twetch-transaction.json';
+import mapTransactions from '../data/map-transactions.json';
+import aipTransactions from '../data/aip-transactions.json';
 
 describe('aip', () => {
   test('protocol definition', () => {
@@ -46,7 +48,7 @@ describe('aip', () => {
     expect(typeof dataObj.AIP).toEqual('object');
     expect(dataObj.AIP.algorithm).toEqual('BITCOIN_ECDSA');
     expect(dataObj.AIP.address).toEqual('1LQKZfR4YMWPZ9FwktC4PSwCzR71VbyMEi');
-    expect(dataObj.AIP.signature).toEqual('SUdhekhUTnhRL2kvL2pqa3lubGFJcjVqd0JkbFl0SFZXbEpRSWMwWTBZWCtIMkt2OHRtdjlyeE1nZjhTdHNablN2S1VLSzdLQ3BpbzZwQ1F6TjNvaWZzPQ==');
+    expect(dataObj.AIP.signature).toEqual('IGazHTNxQ/i//jjkynlaIr5jwBdlYtHVWlJQIc0Y0YX+H2Kv8tmv9rxMgf8StsZnSvKUKK7KCpio6pCQzN3oifs=');
     // TODO: Twetch signatures do not seem to follow the AIP protocol definition, why ?
     expect(dataObj.AIP.verified).toEqual(false);
   });
@@ -86,7 +88,27 @@ describe('aip', () => {
     expect(dataObj.AIP.index).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]);
     expect(dataObj.AIP.verified).toEqual(true);
   });
-});
 
-// TODO:
-// Add test for bad AIP: 'added2539ef771353b226a2e262f0c0b0ff4305bd9dfe81f900868d4297882d3'
+  test('bsocial tx', () => {
+    const dataObj = {};
+    const tx = mapTransactions[6];
+    const { tape } = tx.out[0];
+    const { cell } = tape[3];
+    AIP.handler(dataObj, cell, tape, tx);
+    expect(dataObj.AIP.algorithm).toEqual('BITCOIN_ECDSA');
+    expect(dataObj.AIP.address).toEqual('1PXpeXKc7TXrofPm5paDWziLjvcCDPvjnY');
+    expect(dataObj.AIP.signature).toEqual('INJnUoEOjo6uu0MvcJ8VK07C1WdwWUdQLZySiXtOEG4YNaqF99yPFLlJRXd1B1fpQ2x2avhoBWf+TE/0jrCMDuQ=');
+    expect(dataObj.AIP.index).toEqual([]);
+    expect(dataObj.AIP.verified).toEqual(true);
+  });
+
+  test('badly signed tx', () => {
+    const dataObj = {};
+    const tx = aipTransactions[0];
+    const { tape } = tx.out[0];
+    const { cell } = tape[3];
+    expect(() => {
+      AIP.handler(dataObj, cell, tape, tx);
+    }).toThrow();
+  });
+});

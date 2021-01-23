@@ -1,6 +1,11 @@
 import bsv from 'bsv';
 import Message from 'bsv/message';
-import { cellValue, checkOpFalseOpReturn, saveProtocolData } from '../utils';
+import {
+  cellValue,
+  checkOpFalseOpReturn,
+  saveProtocolData,
+  isBase64
+} from '../utils';
 
 const address = '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva';
 
@@ -26,16 +31,37 @@ const validateSignature = function (aipObj, cell, tape) {
     throw new Error('AIP could not find cell in tape');
   }
 
-  const usingIndexes = aipObj.index || [];
+  let usingIndexes = aipObj.index || [];
   const signatureValues = ['6a']; // OP_RETURN - is included in AIP
   for (let i = 0; i < cellIndex; i++) {
     const cellContainer = tape[i];
     if (!checkOpFalseOpReturn(cellContainer)) {
       cellContainer.cell.forEach((statement) => {
         // add the value as hex
-        signatureValues.push(statement.h);
+        if (statement.h) {
+          signatureValues.push(statement.h);
+        } else if (statement.b) {
+          // no hex? try base64
+          signatureValues.push(Buffer.from(statement.b, 'base64').toString('hex'));
+        } else {
+          signatureValues.push(Buffer.from(statement.s).toString('hex'));
+        }
       });
       signatureValues.push('7c'); // | hex
+    }
+  }
+
+  if (aipObj.hashing_algorithm) {
+    // when using HAIP, we need to parse the indexes in a non standard way
+    // indexLength is byte size of the indexes being described
+    if (aipObj.index_unit_size) {
+      const indexLength = aipObj.index_unit_size * 2;
+      usingIndexes = [];
+      const indexes = cell[6].h;
+      for (let i = 0; i < indexes.length; i += indexLength) {
+        usingIndexes.push(parseInt(indexes.substr(i, indexLength), 16));
+      }
+      aipObj.index = usingIndexes;
     }
   }
 
@@ -52,41 +78,23 @@ const validateSignature = function (aipObj, cell, tape) {
     });
   }
 
-  // create signature buffer
   let messageBuffer;
-  const addHaipSignatureStatementToBuffer = function (signatureBufferStatement) {
-    // get the length in hex
-    let statementLengthHex = signatureBufferStatement.length.toString(16);
-    if (statementLengthHex.length % 2) {
-      statementLengthHex = '0' + statementLengthHex;
-    }
-
-    messageBuffer = Buffer.concat([
-      messageBuffer,
-      Buffer.from(statementLengthHex, 'hex'),
-      signatureBufferStatement,
-    ]);
-  };
-
   if (aipObj.hashing_algorithm) {
-    // this is actually HAIP and works a bit differently
-    signatureBufferStatements.shift(); // remove OP_RETURN
-
-    if (usingIndexes.length) {
-      usingIndexes.forEach((index) => {
-        addHaipSignatureStatementToBuffer(signatureBufferStatements[index]);
-      });
-    } else {
-      messageBuffer = Buffer.from('6a', 'hex'); // add the OP_RETURN without length
-      signatureBufferStatements.forEach((signatureBufferStatement) => {
-        addHaipSignatureStatementToBuffer(signatureBufferStatement);
-      });
+    // this is actually Hashed-AIP (HAIP) and works a bit differently
+    if (!aipObj.index_unit_size) {
+      // remove OP_RETURN - will be added by bsv.Script.buildDataOut
+      signatureBufferStatements.shift();
     }
-
-    // console.log(messageBuffer.toString('hex'))
-    messageBuffer = bsv.crypto.Hash.sha256(Buffer.from(messageBuffer.toString('hex')));
-    // console.log(messageBuffer.toString('hex'));
+    const dataScript = bsv.Script.buildDataOut(signatureBufferStatements);
+    let dataBuffer = Buffer.from(dataScript.toHex(), 'hex');
+    if (aipObj.index_unit_size) {
+      // the indexed buffer should not contain the OP_RETURN opcode, but this
+      // is added by the buildDataOut function automatically. Remove it.
+      dataBuffer = dataBuffer.slice(1);
+    }
+    messageBuffer = bsv.crypto.Hash.sha256(Buffer.from(dataBuffer.toString('hex'))).toString('hex');
   } else {
+    // regular AIP
     messageBuffer = Buffer.concat([
       ...signatureBufferStatements,
     ]);
@@ -136,6 +144,14 @@ export const AIPhandler = function (useQuerySchema, protocolName, dataObj, cell,
     }
 
     aipObj[aipField] = cellValue(cell[x + 1], schemaEncoding);
+  }
+
+  // There is an issue where some services add the signature as binary to the transaction
+  // whereas others add the signature as base64. This will confuse bob and the parser and
+  // the signature will not be verified. When the signature is added in binary cell[3].s is
+  // binary, otherwise cell[3].s contains the base64 signature and should be used.
+  if (cell[0].s === address && cell[3].s && isBase64(cell[3].s)) {
+    aipObj.signature = cell[3].s;
   }
 
   if (!aipObj.signature) {
