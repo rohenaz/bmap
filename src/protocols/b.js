@@ -57,9 +57,15 @@ const handler = function (dataObj, cell, tape, tx) {
       }
     }
 
-    // Sometimes filename is not used
+    // encoding is not required
+    if (bField === 'encoding' && !cell[x + 1]) {
+      // encoding omitted
+      continue;
+    }
+
+    // filename is not required
     if (bField === 'filename' && !cell[x + 1]) {
-      // filename ommitted
+      // filename omitted
       continue;
     }
 

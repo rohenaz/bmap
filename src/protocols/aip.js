@@ -1,10 +1,11 @@
 import bsv from 'bsv';
 import Message from 'bsv/message';
+import fetch from 'node-fetch';
 import {
   cellValue,
   checkOpFalseOpReturn,
   saveProtocolData,
-  isBase64
+  isBase64,
 } from '../utils';
 
 const address = '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva';
@@ -16,7 +17,19 @@ const querySchema = [
   [{ index: 'binary' }],
 ];
 
-const validateSignature = function (aipObj, cell, tape) {
+const getFileBuffer = async function (bitfsRef) {
+  let fileBuffer = Buffer.from('');
+  try {
+    const result = await fetch(`https://x.bitfs.network/${bitfsRef}`, {});
+    fileBuffer = result.buffer();
+  } catch (e) {
+    console.error(e);
+  }
+
+  return fileBuffer;
+};
+
+const validateSignature = async function (aipObj, cell, tape) {
   if (!Array.isArray(tape) || tape.length < 3) {
     throw new Error('AIP requires at least 3 cells including the prefix');
   }
@@ -36,17 +49,22 @@ const validateSignature = function (aipObj, cell, tape) {
   for (let i = 0; i < cellIndex; i++) {
     const cellContainer = tape[i];
     if (!checkOpFalseOpReturn(cellContainer)) {
-      cellContainer.cell.forEach((statement) => {
+      for (let nc = 0; nc < cellContainer.cell.length; nc++) {
+        const statement = cellContainer.cell[nc];
         // add the value as hex
         if (statement.h) {
           signatureValues.push(statement.h);
+        } else if (statement.f) {
+          // file reference - we need to get the file from bitfs
+          const fileBuffer = await getFileBuffer(statement.f);
+          signatureValues.push(fileBuffer.toString('hex'));
         } else if (statement.b) {
           // no hex? try base64
           signatureValues.push(Buffer.from(statement.b, 'base64').toString('hex'));
         } else {
           signatureValues.push(Buffer.from(statement.s).toString('hex'));
         }
-      });
+      }
       signatureValues.push('7c'); // | hex
     }
   }
@@ -114,7 +132,7 @@ const validateSignature = function (aipObj, cell, tape) {
   return aipObj.verified;
 };
 
-export const AIPhandler = function (useQuerySchema, protocolName, dataObj, cell, tape, tx) {
+export const AIPhandler = async function (useQuerySchema, protocolName, dataObj, cell, tape, tx) {
   // loop over the schema
   const aipObj = {};
 
@@ -158,15 +176,15 @@ export const AIPhandler = function (useQuerySchema, protocolName, dataObj, cell,
     throw new Error('AIP requires a signature', tx);
   }
 
-  if (!validateSignature(aipObj, cell, tape)) {
+  if (!await validateSignature(aipObj, cell, tape)) {
     // throw new Error('AIP requires a valid signature', tx);
   }
 
   saveProtocolData(dataObj, protocolName, aipObj);
 };
 
-const handler = function (dataObj, cell, tape, tx) {
-  AIPhandler(querySchema, 'AIP', dataObj, cell, tape, tx);
+const handler = async function (dataObj, cell, tape, tx) {
+  return AIPhandler(querySchema, 'AIP', dataObj, cell, tape, tx);
 };
 
 export const AIP = {

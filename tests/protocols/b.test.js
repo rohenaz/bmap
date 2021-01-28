@@ -3,6 +3,8 @@ import { B } from '../../src/protocols/b';
 import indexedTransaction from '../data/b-aip-transaction-with-indexes.json';
 import badFieldsTransaction from '../data/b-bad-fields-transaction.json';
 import bitpicTransactions from '../data/b-bitpic-transactions.json';
+import mapTransactions from '../data/map-transactions.json';
+import { AIP } from '../../src/protocols/aip';
 
 describe('b', () => {
   test('protocol definition', () => {
@@ -92,6 +94,20 @@ describe('b', () => {
     expect(dataObj.B.content).toEqual('bitfs://7fde64ea6989985719b72032c77fd2042428fb2f94958fdbba1ec2ae8044e5cc.out.0.3');
     expect(dataObj.B['content-type']).toEqual('image/jpeg');
     expect(dataObj.B.encoding).toEqual('binary');
+    expect(dataObj.B.filename).toEqual(undefined);
+  });
+
+
+  test('bsocial tx with image', () => {
+    const dataObj = {};
+    const tx = mapTransactions[7];
+    const { tape } = tx.out[0];
+    const { cell } = tape[1];
+    B.handler(dataObj, cell, tape, tx);
+    expect(typeof dataObj.B).toEqual('object');
+    expect(dataObj.B.content).toEqual('bitfs://868e663652556fa133878539b6c65093e36bef1a6497e511bdf0655b2ce1c935.out.0.3');
+    expect(dataObj.B['content-type']).toEqual('image/jpeg');
+    expect(dataObj.B.encoding).toEqual(undefined);
     expect(dataObj.B.filename).toEqual(undefined);
   });
 });

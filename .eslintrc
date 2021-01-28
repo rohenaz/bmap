@@ -27,6 +27,7 @@
       "ignoreComments": true
     }],
     "prefer-template": "off",
+    "no-await-in-loop": "off",
     "no-console": "off",
     "no-continue": "off",
     "no-control-regex": "off",
