@@ -12,8 +12,8 @@ const querySchema = [
 ];
 
 // https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
-const handler = function (dataObj, cell, tape, tx) {
-  AIPhandler(querySchema, 'HAIP', dataObj, cell, tape, tx);
+const handler = async function (dataObj, cell, tape, tx) {
+  return AIPhandler(querySchema, 'HAIP', dataObj, cell, tape, tx);
 };
 
 export const HAIP = {

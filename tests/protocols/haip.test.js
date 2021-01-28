@@ -1,6 +1,7 @@
 import { describe, expect, beforeEach, afterEach, test, } from '@jest/globals';
 import { HAIP } from '../../src/protocols/haip';
 import haipTransactions from '../data/haip-transactions.json'
+import { PSP } from '../../src/protocols/psp';
 
 describe('haip', () => {
   test('protocol definition', () => {
@@ -10,21 +11,21 @@ describe('haip', () => {
     expect(typeof HAIP.handler).toEqual('function');
   });
 
-  test('parse invalid tx', () => {
+  test('parse invalid tx', async () => {
     const dataObj = {};
     const cell = '';
     const tx = {};
-    expect(() => {
-      HAIP.handler(dataObj, cell, tx);
-    }).toThrow();
+    await expect(HAIP.handler(dataObj, cell, tx))
+      .rejects
+      .toThrow('AIP requires at least 4 fields including the prefix');
   });
 
-  test('parse tx', () => {
+  test('parse tx', async () => {
     const dataObj = {};
     const cell = haipTransactions[0].out[0].tape[2].cell;
     const tape = haipTransactions[0].out[0].tape;
     const tx = haipTransactions[0];
-    HAIP.handler(dataObj, cell, tape, tx);
+    await HAIP.handler(dataObj, cell, tape, tx);
     expect(typeof dataObj.HAIP).toEqual('object');
     expect(dataObj.HAIP.hashing_algorithm).toEqual('SHA256');
     expect(dataObj.HAIP.signing_algorithm).toEqual('BITCOIN_ECDSA');
@@ -33,12 +34,12 @@ describe('haip', () => {
     expect(dataObj.HAIP.verified).toEqual(true);
   });
 
-  test('parse tx 2', () => {
+  test('parse tx 2', async () => {
     const dataObj = {};
     const cell = haipTransactions[1].out[0].tape[2].cell;
     const tape = haipTransactions[1].out[0].tape;
     const tx = haipTransactions[1];
-    HAIP.handler(dataObj, cell, tape, tx);
+    await HAIP.handler(dataObj, cell, tape, tx);
     expect(typeof dataObj.HAIP).toEqual('object');
     expect(dataObj.HAIP.hashing_algorithm).toEqual('SHA256');
     expect(dataObj.HAIP.signing_algorithm).toEqual('BITCOIN_ECDSA');
