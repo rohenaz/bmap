@@ -1,4 +1,4 @@
-import { describe, expect, beforeEach, afterEach, test, } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 import { PSP } from '../../src/protocols/psp';
 import mapTransactions from '../data/map-transactions.json';
 
@@ -21,8 +21,8 @@ describe('bitpic', () => {
 
   test('parse tx', async () => {
     const dataObj = {};
-    const cell = mapTransactions[0].out[0].tape[2].cell;
-    const tape = mapTransactions[0].out[0].tape;
+    const { cell } = mapTransactions[0].out[0].tape[2];
+    const { tape } = mapTransactions[0].out[0];
     const tx = mapTransactions[0];
 
     await PSP.handler(dataObj, cell, tape, tx);

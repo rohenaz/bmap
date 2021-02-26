@@ -1,9 +1,9 @@
-import { describe, expect, beforeEach, afterEach, test, } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 import BMAP from '../src/bmap';
-import validBobTransaction from './data/bap-transaction.json';
-import twetchTransaction from './data/twetch-transaction.json';
 import indexedTransaction from './data/b-aip-transaction-with-indexes.json';
+import validBobTransaction from './data/bap-transaction.json';
 import mapTransactions from './data/map-transactions.json';
+import twetchTransaction from './data/twetch-transaction.json';
 
 describe('bmap', () => {
   test('class init', () => {
