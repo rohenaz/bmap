@@ -1,6 +1,6 @@
 {
   "name": "bmapjs",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
   "main": "dist/bmap.js",
   "scripts": {
@@ -33,17 +33,17 @@
     "bsv"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/cli": "^7.13.0",
+    "@babel/core": "^7.13.1",
+    "@babel/plugin-transform-runtime": "^7.13.7",
     "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/register": "^7.12.10",
+    "@babel/preset-env": "^7.13.5",
+    "@babel/register": "^7.13.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
     "babel-preset-minify": "^0.5.1",
-    "eslint": "^7.16.0",
+    "eslint": "^7.20.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.1",
@@ -55,7 +55,7 @@
     "regenerator-runtime": "^0.12.1",
     "rimraf": "2.6.2",
     "run-sequence": "2.2.1",
-    "ws": "^7.4.2"
+    "ws": "^7.4.3"
   },
   "prettier": {
     "semi": false,
@@ -71,8 +71,7 @@
   "dependencies": {
     "@moneybutton/paymail-client": "^0.38.4",
     "@msgpack/msgpack": "^1.11.0",
-    "bsv": "^1.5.3",
-    "crypto": "^1.0.1",
+    "bsv": "^1.5.4",
     "node-fetch": "^2.6.1"
   },
   "jest": {
