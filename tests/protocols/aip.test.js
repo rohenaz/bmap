@@ -8,7 +8,6 @@ import unsignedBobTransaction from '../data/bap-unsigned-transaction.json';
 import twetchTransaction from '../data/twetch-transaction.json';
 import mapTransactions from '../data/map-transactions.json';
 import aipTransactions from '../data/aip-transactions.json';
-import { HAIP } from '../../src/protocols/haip';
 
 describe('aip', () => {
   test('protocol definition', async () => {
@@ -42,16 +41,28 @@ describe('aip', () => {
 
   test('parse twetch tx', async () => {
     const dataObj = {};
-    const { cell } = twetchTransaction.out[0].tape[2];
-    const { tape } = twetchTransaction.out[0];
-    const tx = twetchTransaction;
+    const { cell } = twetchTransaction[0].out[0].tape[2];
+    const { tape } = twetchTransaction[0].out[0];
+    const tx = twetchTransaction[0];
     await AIP.handler(dataObj, cell, tape, tx);
     expect(typeof dataObj.AIP).toEqual('object');
     expect(dataObj.AIP.algorithm).toEqual('BITCOIN_ECDSA');
     expect(dataObj.AIP.address).toEqual('1LQKZfR4YMWPZ9FwktC4PSwCzR71VbyMEi');
     expect(dataObj.AIP.signature).toEqual('IGazHTNxQ/i//jjkynlaIr5jwBdlYtHVWlJQIc0Y0YX+H2Kv8tmv9rxMgf8StsZnSvKUKK7KCpio6pCQzN3oifs=');
-    // TODO: Twetch signatures do not seem to follow the AIP protocol definition, why ?
-    expect(dataObj.AIP.verified).toEqual(false);
+    expect(dataObj.AIP.verified).toEqual(true);
+  });
+
+  test('parse twetch tx 2', async () => {
+    const dataObj = {};
+    const { cell } = twetchTransaction[1].out[0].tape[3];
+    const { tape } = twetchTransaction[1].out[0];
+    const tx = twetchTransaction[1];
+    await AIP.handler(dataObj, cell, tape, tx);
+    expect(typeof dataObj.AIP).toEqual('object');
+    expect(dataObj.AIP.algorithm).toEqual('BITCOIN_ECDSA');
+    expect(dataObj.AIP.address).toEqual('1DL2kssJGtY9szPfURVt7dxR1JsMXvBKZH');
+    expect(dataObj.AIP.signature).toEqual('H+hD160bLia7bDBX0MWsh1D6JX9HjNt6+HC33km0EkzJdSTug6P5mhdLFPLleOjpOXDY0Be0SdVTshjEGRVBdn0=');
+    expect(dataObj.AIP.verified).toEqual(true);
   });
 
   test('unsigned tx', async () => {

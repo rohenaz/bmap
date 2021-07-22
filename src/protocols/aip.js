@@ -129,6 +129,25 @@ const validateSignature = async function (aipObj, cell, tape) {
     aipObj.verified = false;
   }
 
+  // Try if this is a Twetch compatible AIP signature
+  if (!aipObj.verified) {
+    // Twetch signs a UTF-8 buffer of the hex string of a sha256 hash of the message
+    // Without 0x06 (OP_RETURN) and without 0x7c at the end, the trailing pipe ("|")
+    messageBuffer = Buffer.concat([
+      ...signatureBufferStatements.slice(1, signatureBufferStatements.length - 1),
+    ]);
+    messageBuffer = Buffer.from(bsv.crypto.Hash.sha256(messageBuffer).toString('hex'));
+    try {
+      aipObj.verified = Message.verify(
+        messageBuffer,
+        aipObj.address || aipObj.signing_address,
+        aipObj.signature,
+      );
+    } catch (e) {
+      aipObj.verified = false;
+    }
+  }
+
   return aipObj.verified;
 };
 
