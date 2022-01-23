@@ -157,7 +157,59 @@ describe('map', () => {
       ]
     });
   });
+
+  test('parse poll', () => {
+    const dataObj = {};
+    const cell = [
+      { 's': '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5', 'i': 0, },
+      { 's': 'SET', 'i': 1, },
+      { 's': 'app', 'i': 2, },
+      { 's': 'social', 'i': 3, },
+      { 's': 'type', 'i': 4, },
+      { 's': 'poll', 'i': 5, },
+      { 's': ':::', 'i': 6, },
+      { 's': 'ADD', 'i': 7, },
+      { 's': 'options', 'i': 8, },
+      { 's': 'bitcoin', 'i': 9, },
+      { 's': 'social', 'i': 10, },
+    ];
+    MAP.handler(dataObj, cell, [], {});
+    expect(dataObj.MAP).toEqual({
+      'cmd': 'SET',
+      'app': 'social',
+      'type': 'poll',
+      'options': [
+        'bitcoin',
+        'social'
+      ]
+    });
+  });
+
+  test('parse vote', () => {
+    const dataObj = {};
+    const cell = [
+      { 's': '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5', 'i': 0, },
+      { 's': 'SET', 'i': 1, },
+      { 's': 'app', 'i': 2, },
+      { 's': 'social', 'i': 3, },
+      { 's': 'type', 'i': 4, },
+      { 's': 'vote', 'i': 5, },
+      { 's': 'tx', 'i': 6, },
+      { 's': 'txId', 'i': 7, },
+      { 's': 'vote', 'i': 8, },
+      { 's': 'bitcoin', 'i': 9, },
+    ];
+    MAP.handler(dataObj, cell, [], {});
+    expect(dataObj.MAP).toEqual({
+      'cmd': 'SET',
+      'app': 'social',
+      'type': 'vote',
+      'tx': 'txId',
+      'vote': 'bitcoin',
+    });
+  });
 });
+
 // TODO: Test bad B + MAP txs
 // 'a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327',
 // 'a970f70aad77704e55379ef22150c1bfd77232da5701959093d20cbe68fc1327',

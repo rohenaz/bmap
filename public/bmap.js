@@ -27835,33 +27835,33 @@ function config (name) {
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],194:[function(require,module,exports){
-"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.bmap=exports.default=void 0;var _defineProperty2=_interopRequireDefault(require("@babel/runtime/helpers/defineProperty")),_asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator")),_utils=require("./utils"),_aip=require("./protocols/aip"),_b=require("./protocols/b"),_bap=require("./protocols/bap"),_haip=require("./protocols/haip"),_map=require("./protocols/map"),_metanet=require("./protocols/metanet"),_psp=require("./protocols/psp");function ownKeys(a,b){var c=Object.keys(a);if(Object.getOwnPropertySymbols){var d=Object.getOwnPropertySymbols(a);b&&(d=d.filter(function(b){return Object.getOwnPropertyDescriptor(a,b).enumerable})),c.push.apply(c,d)}return c}function _objectSpread(a){for(var b,c=1;c<arguments.length;c++)b=null==arguments[c]?{}:arguments[c],c%2?ownKeys(Object(b),!0).forEach(function(c){(0,_defineProperty2.default)(a,c,b[c])}):Object.getOwnPropertyDescriptors?Object.defineProperties(a,Object.getOwnPropertyDescriptors(b)):ownKeys(Object(b)).forEach(function(c){Object.defineProperty(a,c,Object.getOwnPropertyDescriptor(b,c))});return a}var protocolMap={},protocolHandlers={},protocolQuerySchemas={};[_aip.AIP,_b.B,_bap.BAP,_haip.HAIP,_map.MAP,_metanet.METANET,_psp.PSP].forEach(a=>{protocolMap[a.address]=a.name,protocolHandlers[a.name]=a.handler,protocolQuerySchemas[a.name]=a.querySchema});class BMAP{constructor(){this.transformTx=function(){var a=(0,_asyncToGenerator2.default)(function*(a){var b=this;if(!a||!a.hasOwnProperty("in")||!a.hasOwnProperty("out"))throw new Error("Cannot process tx");var c={};for(var[f,g]of Object.entries(a))if("out"===f)for(var h of a.out){var{tape:i}=h;if(i.some(a=>(0,_utils.checkOpFalseOpReturn)(a))){for(var j of i)if(!(0,_utils.checkOpFalseOpReturn)(j)){var{cell:d}=j;if(!d)throw new Error("empty cell while parsing");var e=b.protocolMap[d[0].s]||d[0].s;b.protocolHandlers.hasOwnProperty(e)&&"function"==typeof b.protocolHandlers[e]?yield b.protocolHandlers[e](c,d,i,a):(0,_utils.saveProtocolData)(c,e,d,i,a)}}else c[f]||(c[f]=[]),c[f].push({i:h.i,e:h.e})}else c[f]="in"===f?g.map(a=>{var b=_objectSpread({},a);return delete b.tape,b}):g;return c.hasOwnProperty("METANET")&&a.hasOwnProperty("parent")&&(c.METANET.ancestor=a.ancestor,delete c.ancestor,c.METANET.child=a.child,delete c.child,delete c.parent,delete c.node,c.METANET.head=a.head,delete c.head),c});return function(){return a.apply(this,arguments)}}(),this.protocolMap=protocolMap,this.protocolHandlers=protocolHandlers,this.protocolQuerySchemas=protocolQuerySchemas}addProtocolHandler(a){var{name:b,address:c,querySchema:d,handler:e}=a;this.protocolMap[c]=b,this.protocolHandlers[b]=e,this.protocolQuerySchemas[b]=d}}exports.default=BMAP;var bmap={TransformTx:function(){var a=(0,_asyncToGenerator2.default)(function*(a){var c=new BMAP;return c.transformTx(a)});return function TransformTx(){return a.apply(this,arguments)}}()};exports.bmap=bmap;
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.bmap=exports.default=void 0;var _defineProperty2=_interopRequireDefault(require("@babel/runtime/helpers/defineProperty")),_asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator")),_aip=require("./protocols/aip"),_b=require("./protocols/b"),_bap=require("./protocols/bap"),_haip=require("./protocols/haip"),_map=require("./protocols/map"),_metanet=require("./protocols/metanet"),_psp=require("./protocols/psp"),_utils=require("./utils");function ownKeys(a,b){var c=Object.keys(a);if(Object.getOwnPropertySymbols){var d=Object.getOwnPropertySymbols(a);b&&(d=d.filter(function(b){return Object.getOwnPropertyDescriptor(a,b).enumerable})),c.push.apply(c,d)}return c}function _objectSpread(a){for(var b,c=1;c<arguments.length;c++)b=null==arguments[c]?{}:arguments[c],c%2?ownKeys(Object(b),!0).forEach(function(c){(0,_defineProperty2.default)(a,c,b[c])}):Object.getOwnPropertyDescriptors?Object.defineProperties(a,Object.getOwnPropertyDescriptors(b)):ownKeys(Object(b)).forEach(function(c){Object.defineProperty(a,c,Object.getOwnPropertyDescriptor(b,c))});return a}var protocolMap={},protocolHandlers={},protocolQuerySchemas={};[_aip.AIP,_b.B,_bap.BAP,_haip.HAIP,_map.MAP,_metanet.METANET,_psp.PSP].forEach(a=>{protocolMap[a.address]=a.name,protocolHandlers[a.name]=a.handler,protocolQuerySchemas[a.name]=a.querySchema});class BMAP{constructor(){this.transformTx=function(){var a=(0,_asyncToGenerator2.default)(function*(a){var b=this;if(!a||!a.hasOwnProperty("in")||!a.hasOwnProperty("out"))throw new Error("Cannot process tx");var c={};for(var[f,g]of Object.entries(a))if("out"===f)for(var h of a.out){var{tape:i}=h;if(i.some(a=>(0,_utils.checkOpFalseOpReturn)(a))){for(var j of i)if(!(0,_utils.checkOpFalseOpReturn)(j)){var{cell:d}=j;if(!d)throw new Error("empty cell while parsing");var e=b.protocolMap[d[0].s]||d[0].s;b.protocolHandlers.hasOwnProperty(e)&&"function"==typeof b.protocolHandlers[e]?yield b.protocolHandlers[e](c,d,i,a):(0,_utils.saveProtocolData)(c,e,d,i,a)}}else c[f]||(c[f]=[]),c[f].push({i:h.i,e:h.e})}else c[f]="in"===f?g.map(a=>{var b=_objectSpread({},a);return delete b.tape,b}):g;return c.hasOwnProperty("METANET")&&a.hasOwnProperty("parent")&&(c.METANET.ancestor=a.ancestor,delete c.ancestor,c.METANET.child=a.child,delete c.child,delete c.parent,delete c.node,c.METANET.head=a.head,delete c.head),c});return function(){return a.apply(this,arguments)}}(),this.protocolMap=protocolMap,this.protocolHandlers=protocolHandlers,this.protocolQuerySchemas=protocolQuerySchemas}addProtocolHandler(a){var{name:b,address:c,querySchema:d,handler:e}=a;this.protocolMap[c]=b,this.protocolHandlers[b]=e,this.protocolQuerySchemas[b]=d}}exports.default=BMAP;var bmap={TransformTx:function(){var a=(0,_asyncToGenerator2.default)(function*(a){var c=new BMAP;return c.transformTx(a)});return function TransformTx(){return a.apply(this,arguments)}}()};exports.bmap=bmap;
 },{"./protocols/aip":197,"./protocols/b":198,"./protocols/bap":199,"./protocols/haip":200,"./protocols/map":201,"./protocols/metanet":202,"./protocols/psp":203,"./utils":204,"@babel/runtime/helpers/asyncToGenerator":205,"@babel/runtime/helpers/defineProperty":206,"@babel/runtime/helpers/interopRequireDefault":207}],195:[function(require,module,exports){
 "use strict";var _interopRequireWildcard=require("@babel/runtime/helpers/interopRequireWildcard"),_bmap=_interopRequireWildcard(require("./bmap"));module.exports={BMAP:_bmap.default,bmap:_bmap.bmap},"undefined"!=typeof window&&(window.BMAP=_bmap.default,window.bmap=_bmap.bmap);
 },{"./bmap":194,"@babel/runtime/helpers/interopRequireWildcard":208}],196:[function(require,module,exports){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.verifyPaymailPublicKey=void 0;var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator")),_paymailClient=require("@moneybutton/paymail-client"),_nodeFetch=_interopRequireDefault(require("node-fetch")),_dns=_interopRequireDefault(require("dns")),verifyPaymailPublicKey=function(){var a=(0,_asyncToGenerator2.default)(function*(a,b){var c=new _paymailClient.PaymailClient(_dns.default,_nodeFetch.default);return c.verifyPubkeyOwner(b,a)});return function(){return a.apply(this,arguments)}}();exports.verifyPaymailPublicKey=verifyPaymailPublicKey;
 },{"@babel/runtime/helpers/asyncToGenerator":205,"@babel/runtime/helpers/interopRequireDefault":207,"@moneybutton/paymail-client":211,"dns":1,"node-fetch":306}],197:[function(require,module,exports){
 (function (Buffer){(function (){
-"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.AIP=exports.AIPhandler=void 0;var _bsv=_interopRequireDefault(require("bsv")),_message=_interopRequireDefault(require("bsv/message")),_utils=require("../utils"),address="15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva",querySchema=[{algorithm:"string"},{address:"string"},{signature:"binary"},[{index:"binary"}]],validateSignature=function(a,b,c){if(!Array.isArray(c)||3>c.length)throw new Error("AIP requires at least 3 cells including the prefix");var d=-1;if(c.forEach((a,c)=>{a.cell===b&&(d=c)}),-1===d)throw new Error("AIP could not find cell in tape");for(var e,f=a.index||[],g=["6a"],h=0;h<d;h++)e=c[h],(0,_utils.checkOpFalseOpReturn)(e)||(e.cell.forEach(a=>{g.push(a.h)}),g.push("7c"));var j=[];0<f.length?f.forEach(a=>{j.push(Buffer.from(g[a],"hex"))}):g.forEach(a=>{j.push(Buffer.from(a,"hex"))});var k,l=function(a){var b=a.length.toString(16);b.length%2&&(b="0"+b),k=Buffer.concat([k,Buffer.from(b,"hex"),a])};a.hashing_algorithm?(j.shift(),f.length?f.forEach(a=>{l(j[a])}):(k=Buffer.from("6a","hex"),j.forEach(a=>{l(a)})),k=_bsv.default.crypto.Hash.sha256(Buffer.from(k.toString("hex")))):k=Buffer.concat([...j]);try{a.verified=_message.default.verify(k,a.address||a.signing_address,a.signature)}catch(b){a.verified=!1}return a.verified},AIPhandler=function(a,b,c,d,e,f){var g={};if(4>d.length)throw new Error("AIP requires at least 4 fields including the prefix",f);for(var[l,m]of Object.entries(a)){var h=parseInt(l,10),j=void 0,k=void 0;if(m instanceof Array){j=m[0].index,[k]=Object.keys(m[0]),g[k]=[];for(var n=h+1;n<d.length;n++)g[k].push(parseInt(d[n].h,16));continue}else[k]=Object.keys(m),[j]=Object.values(m);g[k]=(0,_utils.cellValue)(d[h+1],j)}if(!g.signature)throw new Error("AIP requires a signature",f);!validateSignature(g,d,e),(0,_utils.saveProtocolData)(c,b,g)};exports.AIPhandler=AIPhandler;var handler=function(a,b,c,d){AIPhandler(querySchema,"AIP",a,b,c,d)},AIP={name:"AIP",address,querySchema,handler};exports.AIP=AIP;
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.AIP=exports.AIPhandler=void 0;var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator")),_bsv=_interopRequireDefault(require("bsv")),_message=_interopRequireDefault(require("bsv/message")),_nodeFetch=_interopRequireDefault(require("node-fetch")),_utils=require("../utils"),address="15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva",querySchema=[{algorithm:"string"},{address:"string"},{signature:"binary"},[{index:"binary"}]],getFileBuffer=function(){var a=(0,_asyncToGenerator2.default)(function*(a){var b=Buffer.from("");try{var c=yield(0,_nodeFetch.default)("https://x.bitfs.network/".concat(a),{});b=c.buffer()}catch(a){console.error(a)}return b});return function(){return a.apply(this,arguments)}}(),validateSignature=function(){var a=(0,_asyncToGenerator2.default)(function*(a,b,c){if(!Array.isArray(c)||3>c.length)throw new Error("AIP requires at least 3 cells including the prefix");var d=-1;if(c.forEach((a,c)=>{a.cell===b&&(d=c)}),-1===d)throw new Error("AIP could not find cell in tape");for(var e,f=a.index||[],g=["6a"],h=0;h<d;h++)if(e=c[h],!(0,_utils.checkOpFalseOpReturn)(e)){for(var p,q=0;q<e.cell.length;q++)if(p=e.cell[q],p.h)g.push(p.h);else if(p.f){var r=yield getFileBuffer(p.f);g.push(r.toString("hex"))}else p.b?g.push(Buffer.from(p.b,"base64").toString("hex")):g.push(Buffer.from(p.s).toString("hex"));g.push("7c")}if(a.hashing_algorithm&&a.index_unit_size){var s=2*a.index_unit_size;f=[];for(var j=b[6].h,k=0;k<j.length;k+=s)f.push(parseInt(j.substr(k,s),16));a.index=f}var l=[];0<f.length?f.forEach(a=>{l.push(Buffer.from(g[a],"hex"))}):g.forEach(a=>{l.push(Buffer.from(a,"hex"))});var m;if(a.hashing_algorithm){a.index_unit_size||l.shift();var n=_bsv.default.Script.buildDataOut(l),o=Buffer.from(n.toHex(),"hex");a.index_unit_size&&(o=o.slice(1)),m=_bsv.default.crypto.Hash.sha256(Buffer.from(o.toString("hex"))).toString("hex")}else m=Buffer.concat([...l]);try{a.verified=_message.default.verify(m,a.address||a.signing_address,a.signature)}catch(b){a.verified=!1}return a.verified});return function(){return a.apply(this,arguments)}}(),AIPhandler=function(){var a=(0,_asyncToGenerator2.default)(function*(a,b,c,d,e,f){var g={};if(4>d.length)throw new Error("AIP requires at least 4 fields including the prefix",f);for(var[l,m]of Object.entries(a)){var h=parseInt(l,10),j=void 0,k=void 0;if(m instanceof Array){j=m[0].index,[k]=Object.keys(m[0]),g[k]=[];for(var n=h+1;n<d.length;n++)g[k].push(parseInt(d[n].h,16));continue}else[k]=Object.keys(m),[j]=Object.values(m);g[k]=(0,_utils.cellValue)(d[h+1],j)}if(d[0].s===address&&d[3].s&&(0,_utils.isBase64)(d[3].s)&&(g.signature=d[3].s),!g.signature)throw new Error("AIP requires a signature",f);!(yield validateSignature(g,d,e)),(0,_utils.saveProtocolData)(c,b,g)});return function(){return a.apply(this,arguments)}}();exports.AIPhandler=AIPhandler;var handler=function(){var a=(0,_asyncToGenerator2.default)(function*(a,b,c,d){return AIPhandler(querySchema,"AIP",a,b,c,d)});return function(){return a.apply(this,arguments)}}(),AIP={name:"AIP",address,querySchema,handler};exports.AIP=AIP;
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"../utils":204,"@babel/runtime/helpers/interopRequireDefault":207,"bsv":218,"bsv/message":265,"buffer":68}],198:[function(require,module,exports){
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.B=void 0;var _utils=require("../utils"),address="19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut",querySchema=[{content:["string","binary"]},{"content-type":"string"},{encoding:"string"},{filename:"string"}],handler=function(a,b,c,d){var e={utf8:"string",text:"string",gzip:"binary","text/plain":"string","image/png":"binary","image/jpeg":"binary"};if(!b[1]||!b[2])throw new Error("Invalid B tx: "+d);var f={};for(var[k,l]of Object.entries(querySchema)){var g=parseInt(k,10),h=Object.keys(l)[0],i=Object.values(l)[0];if("content"===h)if(!b[3]||!b[3].s){if(i=e[b[2].s],!i)return void console.warn("Problem inferring encoding. Malformed B data.",b);b[3].s="string"===i?"utf-8":"binary"}else i=b[3]&&b[3].s?e[b[3].s.replace("-","").toLowerCase()]:null;if("filename"!==h||b[g+1]){if(!b||!b.hasOwnProperty(g+1))throw new Error("malformed B syntax",b);var j=b[g+1];f[h]=(0,_utils.cellValue)(j,i)}}(0,_utils.saveProtocolData)(a,"B",f)},B={name:"B",address,querySchema,handler};exports.B=B;
+},{"../utils":204,"@babel/runtime/helpers/asyncToGenerator":205,"@babel/runtime/helpers/interopRequireDefault":207,"bsv":218,"bsv/message":265,"buffer":68,"node-fetch":306}],198:[function(require,module,exports){
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.B=void 0;var _utils=require("../utils"),address="19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut",querySchema=[{content:["string","binary","file"]},{"content-type":"string"},{encoding:"string"},{filename:"string"}],handler=function(a,b,c,d){var e={utf8:"string",text:"string",gzip:"binary","text/plain":"string","image/png":"binary","image/jpeg":"binary"};if(!b[1]||!b[2])throw new Error("Invalid B tx: "+d);if(b.length>querySchema.length+1)throw new Error("Invalid B tx. Too many fields.");var f={};for(var[k,l]of Object.entries(querySchema)){var g=parseInt(k,10),h=Object.keys(l)[0],i=Object.values(l)[0];if("content"===h)if(b[1].f)i="file";else if(!b[3]||!b[3].s){if(i=e[b[2].s],!i)return void console.warn("Problem inferring encoding. Malformed B data.",b);b[3].s="string"===i?"utf-8":"binary"}else i=b[3]&&b[3].s?e[b[3].s.replace("-","").toLowerCase()]:null;if(("encoding"!==h||b[g+1])&&("filename"!==h||b[g+1])){if(!b||!b.hasOwnProperty(g+1))throw new Error("malformed B syntax",b);var j=b[g+1];f[h]=(0,_utils.cellValue)(j,i)}}(0,_utils.saveProtocolData)(a,"B",f)},B={name:"B",address,querySchema,handler};exports.B=B;
 },{"../utils":204}],199:[function(require,module,exports){
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.BAP=exports.handler=void 0;var _utils=require("../utils"),address="1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT",querySchema=[{type:"string"},{hash:"string"},{sequence:"string"}],handler=function(a,b,c,d){(0,_utils.bmapQuerySchemaHandler)("BAP",querySchema,a,b,c,d)};exports.handler=handler;var BAP={name:"BAP",address,querySchema,handler};exports.BAP=BAP;
 },{"../utils":204}],200:[function(require,module,exports){
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.HAIP=void 0;var _aip=require("./aip"),address="1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3",querySchema=[{hashing_algorithm:"string"},{signing_algorithm:"string"},{signing_address:"string"},{signature:"binary"},{index_unit_size:"number"},[{index:"binary"}]],handler=function(a,b,c,d){(0,_aip.AIPhandler)(querySchema,"HAIP",a,b,c,d)},HAIP={name:"HAIP",address,querySchema,handler};exports.HAIP=HAIP;
-},{"./aip":197}],201:[function(require,module,exports){
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.MAP=void 0;var _msgpack=require("@msgpack/msgpack"),_utils=require("../utils"),address="1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5",querySchema=[{cmd:{SET:[{key:"string"},{val:"string"}],SELECT:[{tx:"string"}],ADD:[{key:"string"},[{val:"string"}]],DELETE:[{key:"string"},[{val:"string"}]],JSON:"string",REMOVE:[[{key:"string"}]],CLEAR:[[{txid:"string"}]]}}],handler=function(a,b,c,d){if(b[0].s!==address||!b[1]||!b[1].s||!b[2]||!b[2].s)throw new Error("Invalid MAP record: "+d);var f={},g=b[1].s,h=Object.keys(querySchema[0])[0];switch(f[h]=g,g){case"ADD":{var l=null;for(var m of b)if(0!==m.i&&1!==m.i){var i=m.s;2===m.i?(f[i]=[],l=i):f[l].push(i)}break}case"REMOVE":{f.key=b[2].s;break}case"DELETE":{var n=null;for(var o of b)if(0!==o.i&&1!==o.i){var j=o.s;2===o.i?(f[j]=[],n=j):f[n].push(j)}break}case"CLEAR":break;case"SELECT":{for(var p of b)if(0===p.i||1===p.i)continue;break}case"MSGPACK":{for(var q of b)if(0!==q.i&&1!==q.i&&2===q.i)try{if(!_msgpack.decode)throw new Error("Msgpack is required but not loaded");var r=buffer.from(q.b,"base64");f=(0,_msgpack.decode)(r)}catch(a){f={}}break}case"JSON":{for(var s of b)if(0!==s.i&&1!==s.i&&2===s.i)try{f=JSON.parse(s.s)}catch(a){f={}}break}case"SET":{var t=null;for(var u of b)if(u.s&&0!==u.i&&1!==u.i){var k=u.s;if(0==u.i%2)f[k]="",t=k;else{if(!t)throw new Error("malformed MAP syntax. Cannot parse."+t);f[t]=k}}break}default:}(0,_utils.saveProtocolData)(a,"MAP",f)},MAP={name:"MAP",address,querySchema,handler};exports.MAP=MAP;
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.HAIP=void 0;var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator")),_aip=require("./aip"),address="1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3",querySchema=[{hashing_algorithm:"string"},{signing_algorithm:"string"},{signing_address:"string"},{signature:"string"},{index_unit_size:"number"},[{index:"binary"}]],handler=function(){var a=(0,_asyncToGenerator2.default)(function*(a,b,c,d){return(0,_aip.AIPhandler)(querySchema,"HAIP",a,b,c,d)});return function(){return a.apply(this,arguments)}}(),HAIP={name:"HAIP",address,querySchema,handler};exports.HAIP=HAIP;
+},{"./aip":197,"@babel/runtime/helpers/asyncToGenerator":205,"@babel/runtime/helpers/interopRequireDefault":207}],201:[function(require,module,exports){
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.MAP=void 0;var _msgpack=require("@msgpack/msgpack"),_utils=require("../utils"),address="1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5",querySchema=[{cmd:{SET:[{key:"string"},{val:"string"}],SELECT:[{tx:"string"}],ADD:[{key:"string"},[{val:"string"}]],DELETE:[{key:"string"},[{val:"string"}]],JSON:"string",REMOVE:[[{key:"string"}]],CLEAR:[[{txid:"string"}]]}}],processADD=function(a,b){var c=null;for(var e of a)if(0!==e.i&&1!==e.i){var d=e.s;2===e.i?(b[d]=[],c=d):b[c].push(d)}},proccessDELETE=function(a,b){var c=null;for(var e of a)if(0!==e.i&&1!==e.i){var d=e.s;2===e.i?(b[d]=[],c=d):b[c].push(d)}},processSELECT=function(a,b){for(var c of a)if(0===c.i||1===c.i){b.SELECT="TODO";continue}},processMSGPACK=function(a,b){for(var c of a)if(0!==c.i&&1!==c.i&&2===c.i)try{if(!_msgpack.decode)throw new Error("Msgpack is required but not loaded");var d=buffer.from(c.b,"base64");b=(0,_msgpack.decode)(d)}catch(a){b={}}return b},processJSON=function(a,b){for(var c of a)if(0!==c.i&&1!==c.i&&2===c.i)try{b=JSON.parse(c.s)}catch(a){b={}}return b},processSET=function(a,b){var c=null;for(var e of a)if(e.s&&0!==e.i&&1!==e.i){var d=e.s;if(0==e.i%2)b[d]="",c=d;else{if(!c)throw new Error("malformed MAP syntax. Cannot parse."+c);b[c]=d}}},handler=function(a,b,c,d){if(b[0].s!==address||!b[1]||!b[1].s||!b[2]||!b[2].s)throw new Error("Invalid MAP record: "+d);for(var e={},f=[],g=0,h=1;h<b.length;h++)":::"===b[h].s?g++:(f[g]||(f[g]=[]),b[h].i=f[g].length+1,f[g].push(b[h]));var j=Object.keys(querySchema[0])[0];e[j]=f[0][0].s,f.forEach(a=>{a.unshift({s:address,i:0});var b=a[1].s;switch(b){case"ADD":{processADD(a,e);break}case"REMOVE":{e.key=a[2].s;break}case"DELETE":{proccessDELETE(a,e);break}case"CLEAR":break;case"SELECT":{processSELECT(a,e);break}case"MSGPACK":{e=processMSGPACK(a,e);break}case"JSON":{e=processJSON(a,e);break}case"SET":{processSET(a,e);break}default:}}),(0,_utils.saveProtocolData)(a,"MAP",e)},MAP={name:"MAP",address,querySchema,handler};exports.MAP=MAP;
 },{"../utils":204,"@msgpack/msgpack":212}],202:[function(require,module,exports){
 (function (Buffer){(function (){
 "use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.METANET=exports.getEnvSafeMetanetID=void 0;var _bsv=_interopRequireDefault(require("bsv")),address="meta",querySchema=[{address:"string"},{parent:"string"},{name:"string"}],getEnvSafeMetanetID=function(b,a){var c=Buffer.from(b+a);return _bsv.default.crypto.Hash.sha256(c).toString("hex")};exports.getEnvSafeMetanetID=getEnvSafeMetanetID;var handler=function(a,b,c,d){if("meta"!==b[0].s||!b[1]||!b[1].s||!b[2]||!b[2].s)throw new Error("Invalid Metanet tx",d);var e={address:b[1].s,txId:d.tx.h,id:getEnvSafeMetanetID(b[1].s,d.tx.h)},f={address:d.in[0].e.a,txId:b[2].s,id:getEnvSafeMetanetID(d.in[0].e.a,b[2].s)};a.METANET={node:e,parent:f}},METANET={name:"METANET",address,querySchema,handler};exports.METANET=METANET;
 }).call(this)}).call(this,require("buffer").Buffer)
 },{"@babel/runtime/helpers/interopRequireDefault":207,"bsv":218,"buffer":68}],203:[function(require,module,exports){
 (function (Buffer){(function (){
-"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.PSP=void 0;var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator")),_message=_interopRequireDefault(require("bsv/message")),_utils=require("../utils"),_paymail=require("../paymail"),address="1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4",querySchema=[{signature:"binary"},{pubkey:"string"},{paymail:"string"}],validateSignature=function(a,b,c){if(!Array.isArray(c)||3>c.length)throw new Error("PSP requires at least 3 cells including the prefix");var d=-1;if(c.forEach((a,c)=>{a.cell===b&&(d=c)}),-1===d)throw new Error("PSP could not find cell in tape");for(var e,f=[Buffer.from("6a","hex")],g=0;g<d;g++)e=c[g],(0,_utils.checkOpFalseOpReturn)(e)||(e.cell.forEach(a=>{var b=a.h;b||(b=Buffer.from(a.b,"base64").toString("hex")),b||(b=Buffer.from(a.s).toString("hex")),f.push(Buffer.from(b,"hex"))}),f.push(Buffer.from("7c","hex")));var h=Buffer.concat([...f]);try{a.verified=_message.default.verify(h,a.address||a.signing_address,a.signature)}catch(b){a.verified=!1}return a.verified},handler=function(){var a=(0,_asyncToGenerator2.default)(function*(a,b,c,d){if(b[0].s!==address||!b[1]||!b[2]||!b[3]||!b[1].b||!b[2].s||!b[3].s)throw new Error("Invalid Paymail Signature Protocol record "+d);var e={signature:b[1].b,pubkey:b[2].s,paymail:b[3].s};validateSignature(e,b,c);var f=yield(0,_paymail.verifyPaymailPublicKey)(e.paymail,e.pubkey);e.verified=e.verified&&f,(0,_utils.saveProtocolData)(a,"PSP",e)});return function(){return a.apply(this,arguments)}}(),PSP={name:"PSP",address,querySchema,handler};exports.PSP=PSP;
+"use strict";var _interopRequireDefault=require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports,"__esModule",{value:!0}),exports.PSP=void 0;var _asyncToGenerator2=_interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator")),_bsv=_interopRequireDefault(require("bsv")),_message=_interopRequireDefault(require("bsv/message")),_utils=require("../utils"),_paymail=require("../paymail"),address="1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4",querySchema=[{signature:"string"},{pubkey:"string"},{paymail:"string"}],validateSignature=function(a,b,c){if(!Array.isArray(c)||3>c.length)throw new Error("PSP requires at least 3 cells including the prefix");var d=-1;if(c.forEach((a,c)=>{a.cell===b&&(d=c)}),-1===d)throw new Error("PSP could not find cell in tape");for(var e,f=[],g=0;g<d;g++)e=c[g],(0,_utils.checkOpFalseOpReturn)(e)||(e.cell.forEach(a=>{var b=a.h;b||(b=Buffer.from(a.b,"base64").toString("hex")),b||(b=Buffer.from(a.s).toString("hex")),f.push(Buffer.from(b,"hex"))}),f.push(Buffer.from("7c","hex")));var h=_bsv.default.Script.buildSafeDataOut(f),j=Buffer.from(h.toHex(),"hex"),k=new _bsv.default.PublicKey(a.pubkey),l=_bsv.default.Address.fromPublicKey(k).toString();try{a.verified=_message.default.verify(j,l,a.signature)}catch(b){a.verified=!1}return a.verified},handler=function(){var a=(0,_asyncToGenerator2.default)(function*(a,b,c,d){if(b[0].s!==address||!b[1]||!b[2]||!b[3]||!b[1].b||!b[2].s||!b[3].s)throw new Error("Invalid Paymail Signature Protocol record "+d);var e={signature:b[1].s,pubkey:b[2].s,paymail:b[3].s};validateSignature(e,b,c);var f=yield(0,_paymail.verifyPaymailPublicKey)(e.paymail,e.pubkey);e.verified=e.verified&&f,(0,_utils.saveProtocolData)(a,"PSP",e)});return function(){return a.apply(this,arguments)}}(),PSP={name:"PSP",address,querySchema,handler};exports.PSP=PSP;
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"../paymail":196,"../utils":204,"@babel/runtime/helpers/asyncToGenerator":205,"@babel/runtime/helpers/interopRequireDefault":207,"bsv/message":265,"buffer":68}],204:[function(require,module,exports){
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.bmapQuerySchemaHandler=exports.saveProtocolData=exports.checkOpFalseOpReturn=exports.cellValue=void 0;var cellValue=function(a,b){if(!a)throw new Error("cannot get cell value of: "+a);return"string"===b?a.hasOwnProperty("s")?a.s:a.ls:"hex"===b?a.hasOwnProperty("h")?a.h:a.lh:"number"===b?parseInt(a.hasOwnProperty("h")?a.h:a.lh,16):a.hasOwnProperty("b")?a.b:a.lb};exports.cellValue=cellValue;var checkOpFalseOpReturn=function(a){return a.cell[0]&&a.cell[1]&&0===a.cell[0].op&&a.cell[1].hasOwnProperty("op")&&106===a.cell[1].op||106===a.cell[0].op};exports.checkOpFalseOpReturn=checkOpFalseOpReturn;var saveProtocolData=(a,b,c)=>{if(!a.hasOwnProperty(b))a[b]=c;else{if(!Array.isArray(a[b])){var d=a[b];a[b]=[],a[b][0]=d}a[b][a[b].length]=c}};exports.saveProtocolData=saveProtocolData;var bmapQuerySchemaHandler=function(a,b,c,d,e,f){var g={},h=b.length+1;if(d.length<h)throw new Error("".concat(a," requires at least ").concat(h," fields including the prefix: ").concat(f.tx.h));for(var[l,m]of Object.entries(b)){var i=parseInt(l,10),[j]=Object.keys(m),[k]=Object.values(m);g[j]=cellValue(d[i+1],k)}saveProtocolData(c,a,g)};exports.bmapQuerySchemaHandler=bmapQuerySchemaHandler;
+},{"../paymail":196,"../utils":204,"@babel/runtime/helpers/asyncToGenerator":205,"@babel/runtime/helpers/interopRequireDefault":207,"bsv":218,"bsv/message":265,"buffer":68}],204:[function(require,module,exports){
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.isBase64=exports.bmapQuerySchemaHandler=exports.saveProtocolData=exports.checkOpFalseOpReturn=exports.cellValue=void 0;var cellValue=function(a,b){if(!a)throw new Error("cannot get cell value of: "+a);else{if("string"===b)return a.hasOwnProperty("s")?a.s:a.ls;if("hex"===b)return a.hasOwnProperty("h")?a.h:a.lh;if("number"===b)return parseInt(a.hasOwnProperty("h")?a.h:a.lh,16);if("file"===b)return"bitfs://"+(a.hasOwnProperty("f")?a.f:a.lf)}return a.hasOwnProperty("b")?a.b:a.lb};exports.cellValue=cellValue;var checkOpFalseOpReturn=function(a){return a.cell[0]&&a.cell[1]&&0===a.cell[0].op&&a.cell[1].hasOwnProperty("op")&&106===a.cell[1].op||106===a.cell[0].op};exports.checkOpFalseOpReturn=checkOpFalseOpReturn;var saveProtocolData=(a,b,c)=>{if(!a.hasOwnProperty(b))a[b]=c;else{if(!Array.isArray(a[b])){var d=a[b];a[b]=[],a[b][0]=d}a[b][a[b].length]=c}};exports.saveProtocolData=saveProtocolData;var bmapQuerySchemaHandler=function(a,b,c,d,e,f){var g={},h=b.length+1;if(d.length<h)throw new Error("".concat(a," requires at least ").concat(h," fields including the prefix: ").concat(f.tx.h));for(var[l,m]of Object.entries(b)){var i=parseInt(l,10),[j]=Object.keys(m),[k]=Object.values(m);g[j]=cellValue(d[i+1],k)}saveProtocolData(c,a,g)};exports.bmapQuerySchemaHandler=bmapQuerySchemaHandler;var isBase64=function(a){return /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+/]{3}=)?$/gi.test(a)};exports.isBase64=isBase64;
 },{}],205:[function(require,module,exports){
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
@@ -27900,6 +27900,7 @@ function _asyncToGenerator(fn) {
 }
 
 module.exports = _asyncToGenerator;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 },{}],206:[function(require,module,exports){
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -27917,6 +27918,7 @@ function _defineProperty(obj, key, value) {
 }
 
 module.exports = _defineProperty;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 },{}],207:[function(require,module,exports){
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : {
@@ -27925,8 +27927,9 @@ function _interopRequireDefault(obj) {
 }
 
 module.exports = _interopRequireDefault;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 },{}],208:[function(require,module,exports){
-var _typeof = require("@babel/runtime/helpers/typeof");
+var _typeof = require("@babel/runtime/helpers/typeof")["default"];
 
 function _getRequireWildcardCache() {
   if (typeof WeakMap !== "function") return null;
@@ -27981,6 +27984,7 @@ function _interopRequireWildcard(obj) {
 }
 
 module.exports = _interopRequireWildcard;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 },{"@babel/runtime/helpers/typeof":209}],209:[function(require,module,exports){
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -27989,16 +27993,21 @@ function _typeof(obj) {
     module.exports = _typeof = function _typeof(obj) {
       return typeof obj;
     };
+
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   } else {
     module.exports = _typeof = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
+
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   }
 
   return _typeof(obj);
 }
 
 module.exports = _typeof;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 },{}],210:[function(require,module,exports){
 (function (Buffer){(function (){
 'use strict';
@@ -44893,63 +44902,23 @@ module.exports = require('../lib/message')
 arguments[4][18][0].apply(exports,arguments)
 },{"dup":18}],267:[function(require,module,exports){
 module.exports={
-  "_from": "bsv@^1.5.3",
-  "_id": "bsv@1.5.4",
-  "_inBundle": false,
-  "_integrity": "sha512-CQVMS1jYveYbeq9Qdh5wXYq0Os3yduh7P+30d4oyHOMermiupbwR4IfBs2nfJEzaLxGjwNx4E4Z1rUYguZFRLw==",
-  "_location": "/bsv",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "range",
-    "registry": true,
-    "raw": "bsv@^1.5.3",
-    "name": "bsv",
-    "escapedName": "bsv",
-    "rawSpec": "^1.5.3",
-    "saveSpec": null,
-    "fetchSpec": "^1.5.3"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/bsv/-/bsv-1.5.4.tgz",
-  "_shasum": "3b3cb6985a2a4aecbe5864b3521223ac0d6d0f66",
-  "_spec": "bsv@^1.5.3",
-  "_where": "/Users/oskarsson/gitcheckout/bmap",
-  "author": {
-    "name": "Ryan X. Charles",
-    "email": "ryan@moneybutton.com"
-  },
-  "browser": {
-    "request": "browser-request"
-  },
-  "bugs": {
-    "url": "https://github.com/moneybutton/bsv/issues"
-  },
-  "bundleDependencies": false,
-  "dependencies": {
-    "aes-js": "^3.1.2",
-    "bn.js": "=4.11.8",
-    "bs58": "=4.0.1",
-    "clone-deep": "^4.0.1",
-    "elliptic": "6.5.3",
-    "hash.js": "^1.1.7",
-    "inherits": "2.0.3",
-    "unorm": "1.4.1"
-  },
-  "deprecated": false,
+  "name": "bsv",
+  "version": "1.5.4",
   "description": "A pure and powerful JavaScript Bitcoin SV (BSV) library.",
-  "devDependencies": {
-    "brfs": "2.0.1",
-    "chai": "4.2.0",
-    "mocha": "^5.2.0",
-    "nyc": "^14.1.1",
-    "sinon": "7.2.3",
-    "standard": "12.0.1",
-    "webpack": "4.29.3",
-    "webpack-cli": "3.2.3"
+  "author": "Ryan X. Charles <ryan@moneybutton.com>",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard",
+    "test": "standard && mocha",
+    "coverage": "nyc --reporter=text npm run test",
+    "build-bsv": "webpack index.js --config webpack.config.js",
+    "build-ecies": "webpack ecies/index.js --config webpack.subproject.config.js --output-library bsvEcies -o bsv-ecies.min.js",
+    "build-message": "webpack message/index.js --config webpack.subproject.config.js --output-library bsvMessage -o bsv-message.min.js",
+    "build-mnemonic": "webpack mnemonic/index.js --config webpack.subproject.config.js --output-library bsvMnemonic -o bsv-mnemonic.min.js",
+    "build": "yarn build-bsv && yarn build-ecies && yarn build-message && yarn build-mnemonic",
+    "prepublishOnly": "yarn build"
   },
-  "homepage": "https://github.com/moneybutton/bsv#readme",
+  "unpkg": "bsv.min.js",
   "keywords": [
     "bitcoin",
     "transaction",
@@ -44966,24 +44935,34 @@ module.exports={
     "bip70",
     "multisig"
   ],
-  "license": "MIT",
-  "main": "index.js",
-  "name": "bsv",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/moneybutton/bsv.git"
+    "url": "https://github.com/moneybutton/bsv"
   },
-  "scripts": {
-    "build": "yarn build-bsv && yarn build-ecies && yarn build-message && yarn build-mnemonic",
-    "build-bsv": "webpack index.js --config webpack.config.js",
-    "build-ecies": "webpack ecies/index.js --config webpack.subproject.config.js --output-library bsvEcies -o bsv-ecies.min.js",
-    "build-message": "webpack message/index.js --config webpack.subproject.config.js --output-library bsvMessage -o bsv-message.min.js",
-    "build-mnemonic": "webpack mnemonic/index.js --config webpack.subproject.config.js --output-library bsvMnemonic -o bsv-mnemonic.min.js",
-    "coverage": "nyc --reporter=text npm run test",
-    "lint": "standard",
-    "prepublishOnly": "yarn build",
-    "test": "standard && mocha"
+  "browser": {
+    "request": "browser-request"
   },
+  "dependencies": {
+    "aes-js": "^3.1.2",
+    "bn.js": "=4.11.8",
+    "bs58": "=4.0.1",
+    "clone-deep": "^4.0.1",
+    "elliptic": "6.5.3",
+    "hash.js": "^1.1.7",
+    "inherits": "2.0.3",
+    "unorm": "1.4.1"
+  },
+  "devDependencies": {
+    "brfs": "2.0.1",
+    "chai": "4.2.0",
+    "mocha": "^5.2.0",
+    "nyc": "^14.1.1",
+    "sinon": "7.2.3",
+    "standard": "12.0.1",
+    "webpack": "4.29.3",
+    "webpack-cli": "3.2.3"
+  },
+  "license": "MIT",
   "standard": {
     "globals": [
       "afterEach",
@@ -44991,11 +44970,12 @@ module.exports={
       "describe",
       "it"
     ]
-  },
-  "unpkg": "bsv.min.js",
-  "version": "1.5.4"
-}
+  }
 
+,"_resolved": "https://registry.npmjs.org/bsv/-/bsv-1.5.4.tgz"
+,"_integrity": "sha512-CQVMS1jYveYbeq9Qdh5wXYq0Os3yduh7P+30d4oyHOMermiupbwR4IfBs2nfJEzaLxGjwNx4E4Z1rUYguZFRLw=="
+,"_from": "bsv@1.5.4"
+}
 },{}],268:[function(require,module,exports){
 'use strict';
 
@@ -45079,48 +45059,37 @@ arguments[4][101][0].apply(exports,arguments)
 arguments[4][102][0].apply(exports,arguments)
 },{"bn.js":215,"dup":102,"minimalistic-assert":303,"minimalistic-crypto-utils":304}],284:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@6.5.3",
-  "_id": "elliptic@6.5.3",
-  "_inBundle": false,
-  "_integrity": "sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==",
-  "_location": "/elliptic",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "elliptic@6.5.3",
-    "name": "elliptic",
-    "escapedName": "elliptic",
-    "rawSpec": "6.5.3",
-    "saveSpec": null,
-    "fetchSpec": "6.5.3"
-  },
-  "_requiredBy": [
-    "/bsv"
+  "name": "elliptic",
+  "version": "6.5.3",
+  "description": "EC cryptography",
+  "main": "lib/elliptic.js",
+  "files": [
+    "lib"
   ],
-  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz",
-  "_shasum": "cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6",
-  "_spec": "elliptic@6.5.3",
-  "_where": "/Users/oskarsson/gitcheckout/bmap/node_modules/bsv",
-  "author": {
-    "name": "Fedor Indutny",
-    "email": "fedor@indutny.com"
+  "scripts": {
+    "jscs": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
+    "jshint": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
+    "lint": "npm run jscs && npm run jshint",
+    "unit": "istanbul test _mocha --reporter=spec test/index.js",
+    "test": "npm run lint && npm run unit",
+    "version": "grunt dist && git add dist/"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:indutny/elliptic"
+  },
+  "keywords": [
+    "EC",
+    "Elliptic",
+    "curve",
+    "Cryptography"
+  ],
+  "author": "Fedor Indutny <fedor@indutny.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "bundleDependencies": false,
-  "dependencies": {
-    "bn.js": "^4.4.0",
-    "brorand": "^1.0.1",
-    "hash.js": "^1.0.0",
-    "hmac-drbg": "^1.0.0",
-    "inherits": "^2.0.1",
-    "minimalistic-assert": "^1.0.0",
-    "minimalistic-crypto-utils": "^1.0.0"
-  },
-  "deprecated": false,
-  "description": "EC cryptography",
+  "homepage": "https://github.com/indutny/elliptic",
   "devDependencies": {
     "brfs": "^1.4.3",
     "coveralls": "^3.0.8",
@@ -45137,34 +45106,20 @@ module.exports={
     "jshint": "^2.10.3",
     "mocha": "^6.2.2"
   },
-  "files": [
-    "lib"
-  ],
-  "homepage": "https://github.com/indutny/elliptic",
-  "keywords": [
-    "EC",
-    "Elliptic",
-    "curve",
-    "Cryptography"
-  ],
-  "license": "MIT",
-  "main": "lib/elliptic.js",
-  "name": "elliptic",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/indutny/elliptic.git"
-  },
-  "scripts": {
-    "jscs": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
-    "jshint": "jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js",
-    "lint": "npm run jscs && npm run jshint",
-    "test": "npm run lint && npm run unit",
-    "unit": "istanbul test _mocha --reporter=spec test/index.js",
-    "version": "grunt dist && git add dist/"
-  },
-  "version": "6.5.3"
-}
+  "dependencies": {
+    "bn.js": "^4.4.0",
+    "brorand": "^1.0.1",
+    "hash.js": "^1.0.0",
+    "hmac-drbg": "^1.0.0",
+    "inherits": "^2.0.1",
+    "minimalistic-assert": "^1.0.0",
+    "minimalistic-crypto-utils": "^1.0.0"
+  }
 
+,"_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz"
+,"_integrity": "sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw=="
+,"_from": "elliptic@6.5.3"
+}
 },{}],285:[function(require,module,exports){
 arguments[4][123][0].apply(exports,arguments)
 },{"./hash/common":286,"./hash/hmac":287,"./hash/ripemd":288,"./hash/sha":289,"./hash/utils":296,"dup":123}],286:[function(require,module,exports){
