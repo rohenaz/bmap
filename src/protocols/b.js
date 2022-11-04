@@ -49,6 +49,9 @@ const handler = function (dataObj, cell, tape, tx) {
         }
 
         // add the missing encoding field
+        if (!cell[3]) {
+          cell[3] = {};
+        }
         cell[3].s = schemaEncoding === 'string' ? 'utf-8' : 'binary';
       } else {
         schemaEncoding = cell[3] && cell[3].s
