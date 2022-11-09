@@ -4,6 +4,7 @@ import indexedTransaction from '../data/b-aip-transaction-with-indexes.json';
 import badFieldsTransaction from '../data/b-bad-fields-transaction.json';
 import bitpicTransactions from '../data/b-bitpic-transactions.json';
 import mapTransactions from '../data/map-transactions.json';
+import bSocial from '../data/bsocial-2-b-outputs.json';
 import { AIP } from '../../src/protocols/aip';
 
 describe('b', () => {
@@ -97,7 +98,6 @@ describe('b', () => {
     expect(dataObj.B.filename).toEqual(undefined);
   });
 
-
   test('bsocial tx with image', () => {
     const dataObj = {};
     const tx = mapTransactions[7];
@@ -108,6 +108,19 @@ describe('b', () => {
     expect(dataObj.B.content).toEqual('bitfs://868e663652556fa133878539b6c65093e36bef1a6497e511bdf0655b2ce1c935.out.0.3');
     expect(dataObj.B['content-type']).toEqual('image/jpeg');
     expect(dataObj.B.encoding).toEqual(undefined);
+    expect(dataObj.B.filename).toEqual(undefined);
+  });
+
+  test('bsocial tx with image - no encoding', () => {
+    const dataObj = {};
+    const tx = bSocial[0];
+    const { tape } = tx.out[0];
+    const { cell } = tape[2];
+    B.handler(dataObj, cell, tape, tx);
+    expect(typeof dataObj.B).toEqual('object');
+    expect(dataObj.B.content).toEqual('');
+    expect(dataObj.B['content-type']).toEqual('image/png');
+    expect(dataObj.B.encoding).toEqual('binary');
     expect(dataObj.B.filename).toEqual(undefined);
   });
 });
