@@ -136,8 +136,10 @@ describe('b', () => {
         const tx = bSocial[0] as BobTx
         const { tape } = tx.out[0]
         if (tape) {
+            // first image
             const { cell } = tape[2]
             B.handler({ dataObj, cell, tape, tx })
+
             expect(typeof dataObj.B[0]).toEqual('object')
             expect(dataObj.B[0].content).toEqual('')
             expect(dataObj.B[0]['content-type']).toEqual('image/png')

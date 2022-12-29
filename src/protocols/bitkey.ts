@@ -18,7 +18,6 @@ const handler = async ({ dataObj, cell }: HandlerProps) => {
         throw new Error('Invalid Bitkey tx')
     }
 
-    console.log('cell length', cell.length)
     const bitkeyObj: { [key: string]: string | boolean } = {}
 
     // loop over the schema

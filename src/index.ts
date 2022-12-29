@@ -79,6 +79,7 @@ export default class bmap {
                     const { tape } = out
 
                     if (tape?.some((cc) => checkOpFalseOpReturn(cc))) {
+                        // loop over tape
                         for (const cellContainer of tape) {
                             // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
                             if (checkOpFalseOpReturn(cellContainer)) {
@@ -102,11 +103,10 @@ export default class bmap {
                                     protocolName
                                 ) === 'function'
                             ) {
-                                /* eslint-disable no-await-in-loop */
-                                const handler = self.protocolHandlers.get(
-                                    protocolName
-                                )
+                                const handler =
+                                    self.protocolHandlers.get(protocolName)
                                 if (handler) {
+                                    /* eslint-disable no-await-in-loop */
                                     await handler({
                                         dataObj: dataObj as BmapTx,
                                         cell,

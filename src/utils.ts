@@ -7,20 +7,23 @@ import { BobTx, Cell, Tape } from '../types/common'
  * @param schemaEncoding
  * @returns {string|number}
  */
-export const cellValue = function (pushData: Cell, schemaEncoding: string) {
+export const cellValue = (
+    pushData: Cell,
+    schemaEncoding: string
+): string | number => {
     if (!pushData) {
         throw new Error(`cannot get cell value of: ${pushData}`)
     } else if (schemaEncoding === 'string') {
-        return pushData['s'] ? pushData.s : pushData.ls
+        return pushData['s'] ? pushData.s : pushData.ls || ''
     } else if (schemaEncoding === 'hex') {
-        return pushData['h'] ? pushData.h : pushData.lh
+        return pushData['h'] ? pushData.h : pushData.lh || ''
     } else if (schemaEncoding === 'number') {
         return parseInt(pushData['h'] ? pushData.h : pushData.lh || '0', 16)
     } else if (schemaEncoding === 'file') {
         return `bitfs://${pushData['f'] ? pushData.f : pushData.lf}`
     }
 
-    return pushData['b'] ? pushData.b : pushData.lb
+    return (pushData['b'] ? pushData.b : pushData.lb) || ''
 }
 
 /**
@@ -55,11 +58,11 @@ export const saveProtocolData = (
     if (!dataObj[protocolName]) {
         dataObj[protocolName] = [data]
     } else {
-        // if (!Array.isArray(dataObj[protocolName])) {
-        //     const prevData = dataObj[protocolName]
-        //     dataObj[protocolName] = []
-        //     dataObj[protocolName][0] = prevData
-        // }
+        if (!Array.isArray(dataObj[protocolName])) {
+            const prevData = dataObj[protocolName]
+            dataObj[protocolName] = []
+            dataObj[protocolName][0] = prevData
+        }
         dataObj[protocolName][dataObj[protocolName].length] = data
     }
 }

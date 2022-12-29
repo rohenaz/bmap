@@ -132,9 +132,8 @@ describe('bmap', () => {
             'ba7a5ac78fe11e8dc92f1c48b1707cdc49d91317062465aad9ae0a36c059f3cc'
         )
 
-        expect(typeof parseTx.METANET).toEqual('object')
+        expect(typeof parseTx.METANET[0]).toEqual('object')
         // rest is checked in metanet.test.js
-
         expect(Array.isArray(parseTx.MAP)).toEqual(true)
         expect(parseTx.MAP.length).toEqual(2)
         expect(parseTx.MAP[0].cmd).toEqual('SET')
