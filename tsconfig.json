@@ -9,6 +9,7 @@
     "exclude": ["coverage", "functions", "tests"],
     "compileOnSave": true,
     "compilerOptions": {
+        "declaration": true,
         /* Visit https://aka.ms/tsconfig to read more about this file */
 
         /* Projects */
