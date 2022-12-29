@@ -13,3 +13,4 @@ functions/
 firebase.json
 coverage
 .parcel-cache
+.cache

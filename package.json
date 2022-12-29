@@ -1,6 +1,6 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.0",
+  "version": "0.4.0-beta.1",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
   "main": "dist/index.js",
   "module": "dist/module.js",
@@ -22,7 +22,9 @@
     "pub": "./node_modules/.bin/np || true",
     "build-public": "npm run build && ncp dist/bmap.js public/bmap.js && ncp dist/bmap.js.map public/bmap.js.map",
     "build-all": "npm run lint && npm run build-public",
-    "watch": "parcel-watch"
+    "watch": "parcel-watch",
+    "publish": "npm run build-public && npm publish",
+    "publish-beta": "npm run build-public && npm publish --tag beta"
   },
   "repository": {
     "type": "git",
