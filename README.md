@@ -18,32 +18,33 @@ both [BOB](https://bob.planaria.network/) and [MOM](https://mom.planaria.network
 npm install bmapjs
 ```
 
+or
+
+```
+yarn add bmapjs
+```
+
 # Importing
 
 using node:
 
 ```js
-var BMAP = require('bmapjs');
-// or
-import { TransformTx }} from 'bmapjs';
-
-try {
-  await bmap.TransformTx(bob_or_mom_tx_object)
-} catch (e) {
-  console.error(e)
-}
-
+var BMAP = require('bmapjs')
 ```
+
+or
+
+```js
+import { TransformTx }} from 'bmapjs';
+```
+
+````
 
 or in the browser:
 
 ```html
 <script src="bmap.js"></script>
-```
-
-```js
-window.bmap.TransformTx(bob_or_mom_tx_object)
-```
+````
 
 # Other languages
 
@@ -57,13 +58,20 @@ window.bmap.TransformTx(bob_or_mom_tx_object)
 
 Turn a BOB or MOM formatted transaction into a BMAP tx. It will throw an error if the transaction is malformed.
 
+in node:
+
 ```js
 try {
-    const bmap = new BMAP()
-    bmap.transformTx(bob_or_mom_tx)
+    const bmapTx = await bmap.TransformTx(bob_or_mom_tx_object)
 } catch (e) {
     console.error(e)
 }
+```
+
+or in the browser:
+
+```js
+const bmapTx = await window.bmap.TransformTx(bob_or_mom_tx_object)
 ```
 
 After transforming a transaction it will have a key for each protocol used in the transaction:
