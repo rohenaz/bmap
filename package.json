@@ -1,24 +1,28 @@
 {
   "name": "bmapjs",
-  "version": "0.3.7",
+  "version": "0.4.0-beta.0",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
-  "main": "dist/bmap.js",
+  "main": "dist/index.js",
+  "module": "dist/module.js",
+  "source": "src/index.ts",
+  "type": "module",
+  "types": "dist/types.d.ts",
   "scripts": {
-    "buildold": "browserify -p tinyify bmap_node.js -o dist/bmap_node.js -t -t [ babelify --presets [ @babel/preset-env ] ]",
     "serve": "npm run build && node ./node_modules/ws/index.js",
-    "clean": "rimraf dist/",
-    "build": "rimraf dist/ && babel src/ --presets minify --out-dir dist/",
+    "clean": "yarn cache clean && rimraf dist/",
+    "build": "rimraf dist/ && parcel build src/browser.ts -o bmap.js",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
-    "testonly": "./node_modules/.bin/jest --collectCoverage",
+    "testonly": "jest --collectCoverage",
     "testwatch": "./node_modules/.bin/jest --watchAll --collectCoverage",
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testwatch",
     "check": "./node_modules/.bin/npm-check -u",
     "prepare": "npm run clean && npm run lint && npm run test && npm run build",
     "pub": "./node_modules/.bin/np || true",
-    "build-public": "npm run build && browserify dist/browser.js -o public/bmap.js",
-    "build-all": "npm run lint && npm run build-public"
+    "build-public": "npm run build && ncp dist/bmap.js public/bmap.js && ncp dist/bmap.js.map public/bmap.js.map",
+    "build-all": "npm run lint && npm run build-public",
+    "watch": "parcel-watch"
   },
   "repository": {
     "type": "git",
@@ -33,34 +37,38 @@
     "bsv"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.13.0",
-    "@babel/core": "^7.13.1",
-    "@babel/plugin-transform-runtime": "^7.13.7",
-    "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.13.5",
-    "@babel/register": "^7.13.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.6.3",
-    "babel-preset-minify": "^0.5.1",
-    "eslint": "^7.20.0",
-    "eslint-config-airbnb-base": "^14.2.1",
+    "@babel/core": "^7.20.7",
+    "@types/jest": "^29.2.4",
+    "@types/node": "^18.11.18",
+    "@types/node-fetch": "^2.6.2",
+    "@types/parcel-bundler": "^1.12.5",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "babel-jest": "^29.3.1",
+    "caniuse-lite": "^1.0.30001441",
+    "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.3.1",
-    "jest": "^26.6.3",
-    "jest-cli": "^26.6.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.3.1",
+    "jest-cli": "29.3.1",
+    "jest-config": "29.3.1",
+    "jest-environment-node": "29.3.1",
+    "jest-preset-ts": "^1.0.1",
     "np": "2.20.1",
-    "npm-check": "5.7.0",
+    "parcel-bundler": "^1.12.5",
     "pre-commit": "^1.2.2",
+    "prettier": "^2.8.1",
     "regenerator-runtime": "^0.12.1",
     "rimraf": "2.6.2",
     "run-sequence": "2.2.1",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4",
     "ws": "^7.4.3"
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "es5"
+  "peerDependencies": {
+    "npm-check": "^6.0.1"
   },
   "author": "Satchmo",
   "license": "MIT",
@@ -71,17 +79,8 @@
   "dependencies": {
     "@moneybutton/paymail-client": "^0.38.4",
     "@msgpack/msgpack": "^1.11.0",
-    "bsv": "^1.5.4",
+    "@ts-bitcoin/core": "^2.2.0",
+    "ncp": "^2.0.0",
     "node-fetch": "^2.6.1"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "mjs",
-      "ts"
-    ],
-    "transform": {
-      "^.+\\.(mjs|jsx|js)$": "babel-jest"
-    }
   }
 }

@@ -12,3 +12,4 @@ dist
 functions/
 firebase.json
 coverage
+.parcel-cache
