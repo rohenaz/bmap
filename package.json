@@ -1,6 +1,6 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.1",
+  "version": "0.4.0-beta.2",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
   "types": "dist/index.d.ts",
   "module": "dist/bmap.module.js",
