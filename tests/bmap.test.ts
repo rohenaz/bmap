@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import BMAP, { TransformTx } from '../src/index'
+import { BMAP, TransformTx } from '../src/bmap'
 import { BobTx, Handler, HandlerProps } from '../types/common'
 import indexedTransaction from './data/b-aip-transaction-with-indexes.json'
 import validBobTransaction from './data/bap-transaction.json'

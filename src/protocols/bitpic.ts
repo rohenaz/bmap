@@ -1,4 +1,5 @@
 import { Address, Bsm, PubKey } from '@ts-bitcoin/core'
+import { Buffer } from 'buffer'
 import { HandlerProps } from '../../types/common'
 import { saveProtocolData, sha256 } from '../utils'
 

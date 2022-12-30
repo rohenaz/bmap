@@ -2,15 +2,38 @@
   "name": "bmapjs",
   "version": "0.4.0-beta.1",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
-  "main": "dist/index.js",
-  "module": "dist/module.js",
-  "source": "src/index.ts",
-  "type": "module",
-  "types": "dist/types.d.ts",
+  "types": "dist/index.d.ts",
+  "module": "dist/bmap.module.js",
+  "modern": "dist/bmap.js",
+  "targets": {
+    "main": false,
+    "modern": {
+      "includeNodeModules": true,
+      "distDir": "./dist",
+      "source": "./src/browser.ts",
+      "scopeHoist": true,
+      "context": "browser",
+      "outputFormat": "global",
+      "engines": {
+        "browsers": "Chrome 80"
+      }
+    },
+    "module": {
+      "context": "node",
+      "includeNodeModules": false,
+      "distDir": "./dist",
+      "source": "./src/bmap.ts",
+      "outputFormat": "esmodule",
+      "engines": {
+        "node": ">= 12"
+      },
+      "isLibrary": false
+    }
+  },
   "scripts": {
     "serve": "npm run build && node ./node_modules/ws/index.js",
     "clean": "yarn cache clean && rimraf dist/",
-    "build": "rimraf dist/ && parcel build src/browser.ts -o bmap.js",
+    "build": "rimraf dist/ && parcel build .",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
     "testonly": "jest --collectCoverage",
@@ -18,9 +41,8 @@
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testwatch",
     "check": "./node_modules/.bin/npm-check -u",
-    "prepare": "npm run clean && npm run lint && npm run test && npm run build",
     "pub": "./node_modules/.bin/np || true",
-    "build-public": "npm run build && ncp dist/bmap.js public/bmap.js && ncp dist/bmap.js.map public/bmap.js.map",
+    "build-public": "set NODE_ENV=production&&npm run build && ncp dist/bmap.js public/bmap.js && ncp dist/bmap.js.map public/bmap.js.map && ncp dist/bmap.module.js public/bmap.module.js && ncp dist/bmap.module.js.map public/bmap.module.js.map",
     "build-all": "npm run lint && npm run build-public",
     "watch": "parcel-watch",
     "publish": "npm run build-public && npm publish",
@@ -40,10 +62,13 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.20.7",
+    "@parcel/config-default": "^2.8.2",
+    "@parcel/core": "^2.8.2",
+    "@parcel/resolver-default": "^2.8.2",
+    "@parcel/transformer-typescript-tsc": "^2.8.2",
     "@types/jest": "^29.2.4",
     "@types/node": "^18.11.18",
     "@types/node-fetch": "^2.6.2",
-    "@types/parcel-bundler": "^1.12.5",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
     "babel-jest": "^29.3.1",
@@ -58,7 +83,7 @@
     "jest-environment-node": "29.3.1",
     "jest-preset-ts": "^1.0.1",
     "np": "2.20.1",
-    "parcel-bundler": "^1.12.5",
+    "parcel": "^2.8.2",
     "pre-commit": "^1.2.2",
     "prettier": "^2.8.1",
     "regenerator-runtime": "^0.12.1",
@@ -68,9 +93,6 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4",
     "ws": "^7.4.3"
-  },
-  "peerDependencies": {
-    "npm-check": "^6.0.1"
   },
   "author": "Satchmo",
   "license": "MIT",
@@ -82,7 +104,10 @@
     "@moneybutton/paymail-client": "^0.38.4",
     "@msgpack/msgpack": "^1.11.0",
     "@ts-bitcoin/core": "^2.2.0",
+    "buffer": "^6.0.3",
     "ncp": "^2.0.0",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "stream-browserify": "^3.0.0",
+    "yarn": "^1.22.19"
   }
 }

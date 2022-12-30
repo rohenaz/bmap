@@ -17,7 +17,7 @@ import { METANET } from './protocols/metanet'
 import { PSP } from './protocols/psp'
 import { checkOpFalseOpReturn, saveProtocolData } from './utils'
 
-const protocolMap = new Map<string, string>()
+const protocolMap = new Map<string, string>([])
 const protocolHandlers = new Map<string, Handler>()
 const protocolQuerySchemas = new Map<string, Object[]>()
 
@@ -28,7 +28,7 @@ const protocolQuerySchemas = new Map<string, Object[]>()
 })
 
 // Takes a BOB formatted op_return transaction
-export default class bmap {
+export class BMAP {
     protocolMap: Map<string, string>
 
     protocolHandlers: Map<string, Handler>
@@ -168,9 +168,7 @@ export default class bmap {
     }
 }
 
-const TransformTx = async (tx: BobTx) => {
-    const b = new bmap()
+export const TransformTx = async (tx: BobTx) => {
+    const b = new BMAP()
     return b.transformTx(tx)
 }
-
-export { TransformTx }

@@ -1,5 +1,7 @@
+import { Buffer } from 'buffer'
 import { webcrypto } from 'crypto'
 import { BobTx, Cell, Tape } from '../types/common'
+
 /**
  * returns the BOB cell value for a given encoding
  *

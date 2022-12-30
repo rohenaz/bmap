@@ -1,4 +1,5 @@
 import { decode } from '@msgpack/msgpack'
+import { Buffer } from 'buffer'
 import { Cell, HandlerProps } from '../../types/common'
 import { MAP as MAPType } from '../../types/protocols/map'
 import { saveProtocolData } from '../utils'

@@ -1,7 +1,9 @@
 import { Address, Bsm, Script } from '@ts-bitcoin/core'
+import { Buffer } from 'buffer'
 import fetch from 'node-fetch'
 import { BobTx, Cell, HandlerProps, Tape } from '../../types/common'
 import { AIP as AIPType } from '../../types/protocols/aip'
+
 import {
     cellValue,
     checkOpFalseOpReturn,

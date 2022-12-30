@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import { HandlerProps, MetaNet, MetanetNode } from '../../types/common'
 import { sha256 } from '../utils'
 

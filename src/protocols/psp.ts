@@ -1,4 +1,5 @@
 import { Address, Bsm, PubKey, Script } from '@ts-bitcoin/core'
+import { Buffer } from 'buffer'
 import { Cell, HandlerProps, Tape } from '../../types/common'
 import { PSP as PSPType } from '../../types/protocols/psp'
 import { verifyPaymailPublicKey } from '../paymail'
