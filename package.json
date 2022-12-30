@@ -1,12 +1,15 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.2",
+  "version": "0.4.0-beta.3",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
-  "types": "dist/index.d.ts",
-  "module": "dist/bmap.module.js",
+  "types": "dist/types.d.ts",
+  "server": "dist/bmap.module.js",
   "modern": "dist/bmap.js",
+  "main": "dist/main.js",
+  "source": "src/bmap.ts",
   "targets": {
-    "main": false,
+    "main": {},
+    "types": {},
     "modern": {
       "includeNodeModules": true,
       "distDir": "./dist",
@@ -18,22 +21,22 @@
         "browsers": "Chrome 80"
       }
     },
-    "module": {
+    "server": {
       "context": "node",
       "includeNodeModules": false,
       "distDir": "./dist",
       "source": "./src/bmap.ts",
       "outputFormat": "esmodule",
-      "engines": {
-        "node": ">= 12"
-      },
-      "isLibrary": false
+      "isLibrary": true
     }
+  },
+  "engines": {
+    "node": ">= 12"
   },
   "scripts": {
     "serve": "npm run build && node ./node_modules/ws/index.js",
-    "clean": "yarn cache clean && rimraf dist/",
-    "build": "rimraf dist/ && parcel build .",
+    "clean": "yarn cache clean && rimraf dist/ .parcel-cache",
+    "build": "rimraf dist/ && parcel build . --target types --target modern --target server",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
     "testonly": "jest --collectCoverage",
@@ -66,6 +69,7 @@
     "@parcel/core": "^2.8.2",
     "@parcel/resolver-default": "^2.8.2",
     "@parcel/transformer-typescript-tsc": "^2.8.2",
+    "@parcel/transformer-typescript-types": "^2.8.2",
     "@types/jest": "^29.2.4",
     "@types/node": "^18.11.18",
     "@types/node-fetch": "^2.6.2",
