@@ -5,7 +5,12 @@
             "jest.config.ts": "cjs"
         }
     },
-    "include": ["src/**/*.ts", "types/**/*.d.ts", "tests/**/*.test.ts"],
+    "include": [
+        "src/**/*.ts",
+        "types/**/*.d.ts",
+        "types/**/**/*.d.ts",
+        "tests/**/*.test.ts"
+    ],
     "exclude": ["coverage", "functions", "tests", "node_modules"],
     "compileOnSave": true,
     "compilerOptions": {
