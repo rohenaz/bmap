@@ -18,6 +18,7 @@
     ],
     "plugins": ["@typescript-eslint", "prettier"],
     "rules": {
+        "no-unused-declaration": true,
         "no-extra-semi": 0,
         "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/consistent-type-definitions": ["error", "type"]

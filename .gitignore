@@ -13,3 +13,4 @@ firebase.json
 coverage
 .parcel-cache
 .cache
+parcel-bundle-reports

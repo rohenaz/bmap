@@ -23,7 +23,7 @@
         "types": ["node", "jest"],
         "resolveJsonModule": true,
         "declarationMap": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
