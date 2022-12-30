@@ -35,16 +35,14 @@ var BMAP = require('bmapjs')
 or
 
 ```js
-import { TransformTx }} from 'bmapjs';
+import { TransformTx } from 'bmapjs'
 ```
-
-````
 
 or in the browser:
 
 ```html
 <script src="bmap.js"></script>
-````
+```
 
 # Other languages
 
@@ -420,4 +418,8 @@ const BMAP = require('bmapjs')
     let bmap = bmapjs.TransformTx(bob);
   ...
   })()
+```
+
+```
+
 ```
