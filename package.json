@@ -3,31 +3,22 @@
   "version": "0.4.0-beta.4",
   "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
   "types": "dist/types.d.ts",
-  "server": "dist/bmap.module.js",
-  "modern": "dist/bmap.js",
-  "main": "dist/main.js",
+  "legacy": "dist/bmap.cjs",
+  "main": "dist/bmap.js",
   "source": "src/bmap.ts",
   "targets": {
     "main": {},
     "types": {},
-    "modern": {
+    "legacy": {
       "includeNodeModules": true,
       "distDir": "./dist",
       "source": "./src/browser.ts",
       "scopeHoist": true,
       "context": "browser",
-      "outputFormat": "global",
+      "outputFormat": "commonjs",
       "engines": {
         "browsers": "Chrome 80"
       }
-    },
-    "server": {
-      "context": "node",
-      "includeNodeModules": false,
-      "distDir": "./dist",
-      "source": "./src/bmap.ts",
-      "outputFormat": "esmodule",
-      "isLibrary": true
     }
   },
   "engines": {
@@ -36,7 +27,7 @@
   "scripts": {
     "serve": "npm run build && node ./node_modules/ws/index.js",
     "clean": "yarn cache clean && rimraf dist/ .parcel-cache",
-    "build": "rimraf dist/ && parcel build . --target types --target modern --target server",
+    "build": "rimraf dist/ && parcel build . --target types --target main --target legacy",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
     "testonly": "jest --collectCoverage",
@@ -45,7 +36,7 @@
     "test-watch": "npm run testwatch",
     "check": "./node_modules/.bin/npm-check -u",
     "pub": "./node_modules/.bin/np || true",
-    "build-public": "set NODE_ENV=production&&npm run build && ncp dist/bmap.js public/bmap.js && ncp dist/bmap.js.map public/bmap.js.map && ncp dist/bmap.module.js public/bmap.module.js && ncp dist/bmap.module.js.map public/bmap.module.js.map",
+    "build-public": "set NODE_ENV=production&&npm run build && ncp dist/bmap.js public/bmap.js && ncp dist/bmap.js.map public/bmap.js.map && ncp dist/bmap.cjs public/bmap.cjs && ncp dist/bmap.cjs.map public/bmap.cjs.map",
     "build-all": "npm run lint && npm run build-public",
     "watch": "parcel-watch",
     "publish": "npm run build-public && npm publish",
