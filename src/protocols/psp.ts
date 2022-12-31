@@ -1,6 +1,6 @@
 import { Address, Bsm, PubKey, Script } from '@ts-bitcoin/core'
 import { Buffer } from 'buffer'
-import { Cell, HandlerProps, Tape } from '../../types/common'
+import { Cell, HandlerProps, Protocol, Tape } from '../../types/common'
 import { PSP as PSPType } from '../../types/protocols/psp'
 import { verifyPaymailPublicKey } from '../paymail'
 import { checkOpFalseOpReturn, saveProtocolData } from '../utils'
@@ -109,7 +109,7 @@ const handler = async function ({ dataObj, cell, tape }: HandlerProps) {
     saveProtocolData(dataObj, 'PSP', pspObj)
 }
 
-export const PSP = {
+export const PSP: Protocol = {
     name: 'PSP',
     address,
     querySchema,

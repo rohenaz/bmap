@@ -27,11 +27,12 @@ describe('bap', () => {
         const tape = validBobTransaction.out[0].tape as Tape[]
         const tx = {} as BobTx
         BAP.handler({ dataObj, cell, tape, tx })
+        expect(Array.isArray(dataObj.BAP)).toBe(true)
         expect(typeof dataObj.BAP).toEqual('object')
-        expect(dataObj.BAP[0].type).toEqual('ATTEST')
-        expect(dataObj.BAP[0].hash).toEqual(
+        expect(dataObj.BAP && dataObj.BAP[0].type).toEqual('ATTEST')
+        expect(dataObj.BAP && dataObj.BAP[0].hash).toEqual(
             'cf39fc55da24dc23eff1809e6e6cf32a0fe6aecc81296543e9ac84b8c501bac5'
         )
-        expect(dataObj.BAP[0].sequence).toEqual('0')
+        expect(dataObj.BAP && dataObj.BAP[0].sequence).toEqual('0')
     })
 })

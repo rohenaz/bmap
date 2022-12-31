@@ -1,5 +1,10 @@
 import { Buffer } from 'buffer'
-import { HandlerProps, MetaNet, MetanetNode } from '../../types/common'
+import {
+    HandlerProps,
+    MetaNet,
+    MetanetNode,
+    Protocol,
+} from '../../types/common'
 import { sha256 } from '../utils'
 
 const address = 'meta'
@@ -58,7 +63,7 @@ const handler = async ({ dataObj, cell, tx }: HandlerProps) => {
     } as MetaNet)
 }
 
-export const METANET = {
+export const METANET: Protocol = {
     name: 'METANET',
     address,
     querySchema,

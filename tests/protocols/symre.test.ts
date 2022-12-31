@@ -26,8 +26,8 @@ describe('symre', () => {
         const tx = symreTransactions[0]
 
         SYMRE.handler({ dataObj, cell, tx })
-        expect(typeof dataObj.SYMRE[0]).toEqual('object')
-        expect(dataObj.SYMRE[0].url).toEqual(
+        expect(dataObj.SYMRE && typeof dataObj.SYMRE[0]).toEqual('object')
+        expect(dataObj.SYMRE && dataObj.SYMRE[0].url).toEqual(
             'https://medium.com/@Stas33496115/bitcoin-script-engineering-part-ii-ba8095f093c0'
         )
     })

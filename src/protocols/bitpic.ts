@@ -1,11 +1,16 @@
 import { Address, Bsm, PubKey } from '@ts-bitcoin/core'
 import { Buffer } from 'buffer'
-import { HandlerProps } from '../../types/common'
+import { HandlerProps, Protocol } from '../../types/common'
+import { BITPIC as BITPICType } from '../../types/protocols/bitpic'
 import { saveProtocolData, sha256 } from '../utils'
 
 const protocolAddress = '18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p'
 
-const querySchema = [{ paymail: 'string' }, { signature: 'string' }]
+const querySchema = [
+    { paymail: 'string' },
+    { pubkey: 'binary' },
+    { signature: 'string' },
+]
 
 const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
     // Validation
@@ -16,22 +21,38 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
         !cell[3] ||
         !cell[1].s ||
         !cell[2].b ||
-        !cell[3].b ||
+        !cell[3].s ||
         !tape
     ) {
         throw new Error(`Invalid BITPIC record: ${tx}`)
     }
 
-    const bitpicObj = {
+    const bitpicObj: BITPICType = {
         paymail: cell[1].s,
-        pubkey: cell[2].h,
-        signature: cell[3].b,
+        pubkey: Buffer.from(cell[2].b, 'base64').toString('hex'),
+        signature: cell[3].s || '',
         verified: false,
     }
 
     const b = tape[1].cell
     if (b[0].s === '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut') {
-        // verify aip signature
+        // verify bitpic signature
+
+        // TODO: Verification
+        // const pubkey = Buffer.from(cell[2].b, 'base64').toString('hex')
+        // const address = Address.fromPubKey(PubKey.fromString(pubkey)).toString()
+        // const hex = Buffer.from(hash, 'hex')
+        // const verified = Message.verify(hex, address, expected)
+        // return verified
+
+        // const expected = res.cell[3].s
+        // const paymail = res.cell[1].s
+        // const pubkey = Buffer.from(res.cell[2].b, "base64").toString("hex")
+        // const address = new bsv.PublicKey(pubkey).toAddress().toString()
+        // const hex = Buffer.from(res.hash, "hex")
+        // const verified = Message.verify(hex, address, expected)
+        // return verified
+
         try {
             // TODO: bob transactions are missing this binary part, cannot verify signature
             const bin = (cell[1].lb || cell[1].b) as string
@@ -55,7 +76,7 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
     saveProtocolData(dataObj, 'BITPIC', bitpicObj)
 }
 
-export const BITPIC = {
+export const BITPIC: Protocol = {
     name: 'BITPIC',
     address: protocolAddress,
     querySchema,

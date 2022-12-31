@@ -1,4 +1,4 @@
-import { HandlerProps } from '../../types/common'
+import { HandlerProps, Protocol } from '../../types/common'
 import { saveProtocolData } from '../utils'
 
 const address = '1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1'
@@ -32,7 +32,7 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps) {
     })
 }
 
-export const RON = {
+export const RON: Protocol = {
     name: 'RON',
     address,
     querySchema,

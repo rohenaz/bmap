@@ -1,8 +1,9 @@
 import { Address, Bsm, Script } from '@ts-bitcoin/core'
 import { Buffer } from 'buffer'
 import fetch from 'node-fetch'
-import { BobTx, Cell, HandlerProps, Tape } from '../../types/common'
+import { BobTx, Cell, HandlerProps, Protocol, Tape } from '../../types/common'
 import { AIP as AIPType } from '../../types/protocols/aip'
+import { HAIP as HAIPType } from '../../types/protocols/haip'
 
 import {
     cellValue,
@@ -34,7 +35,7 @@ const getFileBuffer = async function (bitfsRef: string) {
 }
 
 const validateSignature = async function (
-    aipObj: Partial<AIPType>,
+    aipObj: Partial<AIPType | HAIPType>,
     cell: Cell[],
     tape: Tape[]
 ): Promise<boolean> {
@@ -132,13 +133,15 @@ const validateSignature = async function (
         messageBuffer = Buffer.concat([...signatureBufferStatements])
     }
 
+    // AIOP uses address, HAIP uses signing_address field names
+    const adressString =
+        (aipObj as AIPType).address || (aipObj as HAIPType).signing_address
     // verify aip signature
     try {
         aipObj.verified = Bsm.verify(
             messageBuffer,
             aipObj.signature || '',
-            Address.fromString(aipObj.address || '') ||
-                Address.fromString(aipObj.signing_address || '')
+            Address.fromString(adressString)
         )
     } catch (e) {
         aipObj.verified = false
@@ -161,9 +164,7 @@ const validateSignature = async function (
             aipObj.verified = Bsm.verify(
                 messageBuffer,
                 aipObj.signature || '',
-                Address.fromString(
-                    aipObj.address || aipObj.signing_address || ''
-                )
+                Address.fromString(adressString)
             )
         } catch (e) {
             aipObj.verified = false
@@ -173,9 +174,15 @@ const validateSignature = async function (
     return aipObj.verified || false
 }
 
+export const enum SIGPROTO {
+    HAIP = 'HAIP',
+    AIP = 'AIP',
+    BITCOM_HASHED = 'BITCOM_HASHED',
+}
+
 export const AIPhandler = async function (
     useQuerySchema: Object[],
-    protocolName: string,
+    protocol: SIGPROTO,
     dataObj: Object,
     cell: Cell[],
     tape: Tape[],
@@ -233,7 +240,7 @@ export const AIPhandler = async function (
         // throw new Error('AIP requires a valid signature', tx);
     }
 
-    saveProtocolData(dataObj, protocolName, aipObj)
+    saveProtocolData(dataObj, protocol, aipObj)
 }
 
 const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
@@ -243,10 +250,10 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
     if (!tx) {
         throw new Error('Invalid AIP transaction. tx is required')
     }
-    return await AIPhandler(querySchema, 'AIP', dataObj, cell, tape, tx)
+    return await AIPhandler(querySchema, SIGPROTO.AIP, dataObj, cell, tape, tx)
 }
 
-export const AIP = {
+export const AIP: Protocol = {
     name: 'AIP',
     address,
     querySchema,

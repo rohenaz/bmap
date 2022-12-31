@@ -1,22 +1,25 @@
 import { describe, expect, test } from '@jest/globals'
 import { BMAP, TransformTx } from '../src/bmap'
+import { BOOST } from '../src/protocols/boost'
+import { _21E8 } from '../src/protocols/_21e8'
 import { BobTx, Handler, HandlerProps } from '../types/common'
 import indexedTransaction from './data/b-aip-transaction-with-indexes.json'
 import validBobTransaction from './data/bap-transaction.json'
+import boostTransaction from './data/boost-transaction.json'
 import mapTransactions from './data/map-transactions.json'
 
 describe('bmap', () => {
     test('class init', () => {
         const bmap = new BMAP()
         expect(typeof bmap.protocolMap).toEqual('object')
-        expect(bmap.protocolMap.size).toEqual(7)
+        expect(bmap.protocolMap.size).toEqual(5)
         expect(bmap.protocolMap.get('meta')).toEqual('METANET')
         expect(
             bmap.protocolMap.get('15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
         ).toEqual('AIP')
 
         expect(typeof bmap.protocolHandlers).toEqual('object')
-        expect(bmap.protocolHandlers.size).toEqual(7)
+        expect(bmap.protocolHandlers.size).toEqual(5)
     })
 
     test('add handler', () => {
@@ -36,7 +39,7 @@ describe('bmap', () => {
         })
 
         expect(typeof bmap.protocolHandlers).toEqual('object')
-        expect(bmap.protocolHandlers.size).toEqual(8)
+        expect(bmap.protocolHandlers.size).toEqual(6)
         expect(bmap.protocolMap.get('123TEST')).toEqual('test')
     })
 
@@ -55,20 +58,20 @@ describe('bmap', () => {
             '744a55a8637aa191aa058630da51803abbeadc2de3d65b4acace1f5f10789c5b'
         )
 
-        expect(parseTx.AIP[0].algorithm).toEqual('BITCOIN_ECDSA')
-        expect(parseTx.AIP[0].address).toEqual(
+        expect(parseTx.AIP && parseTx.AIP[0].algorithm).toEqual('BITCOIN_ECDSA')
+        expect(parseTx.AIP && parseTx.AIP[0].address).toEqual(
             '134a6TXxzgQ9Az3w8BcvgdZyA5UqRL89da'
         )
-        expect(parseTx.AIP[0].signature).toEqual(
+        expect(parseTx.AIP && parseTx.AIP[0].signature).toEqual(
             'H+lubfcz5Z2oG8B7HwmP8Z+tALP+KNOPgedo7UTXwW8LBpMkgCgatCdpvbtf7wZZQSIMz83emmAvVS4S3F5X1wo='
         )
-        expect(parseTx.AIP[0].verified).toEqual(true)
+        expect(parseTx.AIP && parseTx.AIP[0].verified).toEqual(true)
 
-        expect(parseTx.BAP[0].type).toEqual('ATTEST')
-        expect(parseTx.BAP[0].hash).toEqual(
+        expect(parseTx.BAP && parseTx.BAP[0].type).toEqual('ATTEST')
+        expect(parseTx.BAP && parseTx.BAP[0].hash).toEqual(
             'cf39fc55da24dc23eff1809e6e6cf32a0fe6aecc81296543e9ac84b8c501bac5'
         )
-        expect(parseTx.BAP[0].sequence).toEqual('0')
+        expect(parseTx.BAP && parseTx.BAP[0].sequence).toEqual('0')
     })
 
     test('parse twetch tx', async () => {
@@ -108,19 +111,20 @@ describe('bmap', () => {
         )
 
         expect(Array.isArray(parseTx.AIP)).toEqual(true)
-        expect(parseTx.AIP[0].address).toEqual(
+        expect(parseTx.AIP && parseTx.AIP[0].address).toEqual(
             '1EXhSbGFiEAZCE5eeBvUxT6cBVHhrpPWXz'
         )
-        expect(parseTx.AIP[0].verified).toEqual(true)
-        expect(parseTx.AIP[1].address).toEqual(
+        expect(parseTx.AIP && parseTx.AIP[0].verified).toEqual(true)
+        expect(parseTx.AIP && parseTx.AIP[1].address).toEqual(
             '19nknLhRnGKRR3hobeFuuqmHUMiNTKZHsR'
         )
-        expect(parseTx.AIP[1].verified).toEqual(true)
+        expect(parseTx.AIP && parseTx.AIP[1].verified).toEqual(true)
 
-        expect(parseTx.B[0].content).toEqual('Hello world!')
-        expect(parseTx.B[0]['content-type']).toEqual('text/plain')
-        expect(parseTx.B[0].encoding).toEqual('utf-8')
-        expect(parseTx.B[0].filename).toEqual('\u0000')
+        expect(Array.isArray(parseTx.B)).toBe(true)
+        expect(parseTx.B && parseTx.B[0].content).toEqual('Hello world!')
+        expect(parseTx.B && parseTx.B[0]['content-type']).toEqual('text/plain')
+        expect(parseTx.B && parseTx.B[0].encoding).toEqual('utf-8')
+        expect(parseTx.B && parseTx.B[0].filename).toEqual('\u0000')
     })
 
     test('parse meta double map tx', async () => {
@@ -132,12 +136,36 @@ describe('bmap', () => {
             'ba7a5ac78fe11e8dc92f1c48b1707cdc49d91317062465aad9ae0a36c059f3cc'
         )
 
-        expect(typeof parseTx.METANET[0]).toEqual('object')
+        expect(Array.isArray(parseTx.METANET)).toBe(true)
+        expect(parseTx.METANET && typeof parseTx.METANET[0]).toEqual('object')
         // rest is checked in metanet.test.js
-        expect(Array.isArray(parseTx.MAP)).toEqual(true)
-        expect(parseTx.MAP.length).toEqual(2)
-        expect(parseTx.MAP[0].cmd).toEqual('SET')
-        expect(parseTx.MAP[1].cmd).toEqual('ADD')
+
+        expect(Array.isArray(parseTx.MAP)).toBe(true)
+        expect(parseTx.MAP && parseTx.MAP.length).toEqual(2)
+        expect(parseTx.MAP && parseTx.MAP[0].cmd).toEqual('SET')
+        expect(parseTx.MAP && parseTx.MAP[1].cmd).toEqual('ADD')
         // rest is checked in map.test.js
+    })
+
+    test('parse boost double 21e8 tx', async () => {
+        const bmap = new BMAP()
+        bmap.addProtocolHandler(_21E8)
+        bmap.addProtocolHandler(BOOST)
+        const parseTx = await bmap.transformTx(boostTransaction as BobTx)
+
+        console.log({ parseTx })
+        expect(parseTx.tx.h).toEqual(
+            '6bb713a65d0735cbe581ac66458ab83b557a58c198af2e2b5a2228d1b7ff8b87'
+        )
+
+        expect(Array.isArray(parseTx.BOOST)).toBe(true)
+        expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual('object')
+        // rest is checked in boost.test.js
+
+        expect(Array.isArray(parseTx['21E8'])).toBe(true)
+        expect(parseTx['21E8'] && parseTx['21E8'].length).toEqual(2)
+        expect(parseTx['21E8'] && parseTx['21E8'][0].value).toEqual(700)
+        expect(parseTx['21E8'] && parseTx['21E8'][1].value).toEqual(700)
+        // rest is checked in and _21e8.test.js
     })
 })

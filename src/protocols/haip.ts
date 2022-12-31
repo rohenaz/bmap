@@ -1,5 +1,5 @@
-import { HandlerProps } from '../../types/common'
-import { AIPhandler } from './aip'
+import { HandlerProps, Protocol } from '../../types/common'
+import { AIPhandler, SIGPROTO } from './aip'
 
 const address = '1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3'
 
@@ -20,10 +20,10 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
     if (!tx) {
         throw new Error(`Invalid HAIP tx.`)
     }
-    return await AIPhandler(querySchema, 'HAIP', dataObj, cell, tape, tx)
+    return await AIPhandler(querySchema, SIGPROTO.HAIP, dataObj, cell, tape, tx)
 }
 
-export const HAIP = {
+export const HAIP: Protocol = {
     name: 'HAIP',
     address,
     querySchema,

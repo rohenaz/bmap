@@ -35,11 +35,15 @@ describe('b', () => {
                 const tx = indexedTransaction as BobTx
 
                 B.handler({ dataObj, cell, tape, tx })
-                expect(typeof dataObj.B).toEqual('object')
-                expect(dataObj.B[0].content).toEqual('Hello world!')
-                expect(dataObj.B[0]['content-type']).toEqual('text/plain')
-                expect(dataObj.B[0].encoding).toEqual('utf-8')
-                expect(dataObj.B[0].filename).toEqual('\u0000')
+                expect(dataObj.B && typeof dataObj.B).toEqual('object')
+                expect(dataObj.B && dataObj.B[0].content).toEqual(
+                    'Hello world!'
+                )
+                expect(dataObj.B && dataObj.B[0]['content-type']).toEqual(
+                    'text/plain'
+                )
+                expect(dataObj.B && dataObj.B[0].encoding).toEqual('utf-8')
+                expect(dataObj.B && dataObj.B[0].filename).toEqual('\u0000')
             }
         } else {
             throw new Error(`Invalid transaction`)
@@ -59,11 +63,11 @@ describe('b', () => {
         const tx = indexedTransaction as unknown as BmapTx
 
         B.handler({ dataObj, cell, tape, tx })
-        expect(typeof dataObj.B[0]).toEqual('object')
-        expect(dataObj.B[0].content).toEqual('Hello world!')
-        expect(dataObj.B[0]['content-type']).toEqual('text/plain')
-        expect(dataObj.B[0].encoding).toEqual('utf-8')
-        expect(dataObj.B[0].filename).toEqual('\u0000')
+        expect(dataObj.B && typeof dataObj.B[0]).toEqual('object')
+        expect(dataObj.B && dataObj.B[0].content).toEqual('Hello world!')
+        expect(dataObj.B && dataObj.B[0]['content-type']).toEqual('text/plain')
+        expect(dataObj.B && dataObj.B[0].encoding).toEqual('utf-8')
+        expect(dataObj.B && dataObj.B[0].filename).toEqual('\u0000')
     })
 
     test('parse tx with too many fields for schema', () => {
@@ -92,11 +96,11 @@ describe('b', () => {
         const tx = indexedTransaction
 
         B.handler({ dataObj, cell, tape, tx })
-        expect(typeof dataObj.B[0]).toEqual('object')
-        expect(dataObj.B[0].content).toEqual('Hello world!')
-        expect(dataObj.B[0]['content-type']).toEqual('text/plain')
-        expect(dataObj.B[0].encoding).toEqual('utf-8')
-        expect(dataObj.B[0].filename).toEqual('')
+        expect(dataObj.B && typeof dataObj.B[0]).toEqual('object')
+        expect(dataObj.B && dataObj.B[0].content).toEqual('Hello world!')
+        expect(dataObj.B && dataObj.B[0]['content-type']).toEqual('text/plain')
+        expect(dataObj.B && dataObj.B[0].encoding).toEqual('utf-8')
+        expect(dataObj.B && dataObj.B[0].filename).toEqual('')
     })
 
     test('parse bitpic', () => {
@@ -106,13 +110,15 @@ describe('b', () => {
         if (tape) {
             const { cell } = tape[1]
             B.handler({ dataObj, cell, tape, tx })
-            expect(typeof dataObj.B[0]).toEqual('object')
-            expect(dataObj.B[0].content).toEqual(
+            expect(dataObj.B && typeof dataObj.B[0]).toEqual('object')
+            expect(dataObj.B && dataObj.B[0].content).toEqual(
                 'bitfs://7fde64ea6989985719b72032c77fd2042428fb2f94958fdbba1ec2ae8044e5cc.out.0.3'
             )
-            expect(dataObj.B[0]['content-type']).toEqual('image/jpeg')
-            expect(dataObj.B[0].encoding).toEqual('binary')
-            expect(dataObj.B[0].filename).toEqual(undefined)
+            expect(dataObj.B && dataObj.B[0]['content-type']).toEqual(
+                'image/jpeg'
+            )
+            expect(dataObj.B && dataObj.B[0].encoding).toEqual('binary')
+            expect(dataObj.B && dataObj.B[0].filename).toEqual(undefined)
         }
     })
 
@@ -122,13 +128,13 @@ describe('b', () => {
         const { tape } = tx.out[0]
         const { cell } = tape[1]
         B.handler({ dataObj, cell, tape, tx })
-        expect(typeof dataObj.B[0]).toEqual('object')
-        expect(dataObj.B[0].content).toEqual(
+        expect(dataObj.B && typeof dataObj.B[0]).toEqual('object')
+        expect(dataObj.B && dataObj.B[0].content).toEqual(
             'bitfs://868e663652556fa133878539b6c65093e36bef1a6497e511bdf0655b2ce1c935.out.0.3'
         )
-        expect(dataObj.B[0]['content-type']).toEqual('image/jpeg')
-        expect(dataObj.B[0].encoding).toEqual(undefined)
-        expect(dataObj.B[0].filename).toEqual(undefined)
+        expect(dataObj.B && dataObj.B[0]['content-type']).toEqual('image/jpeg')
+        expect(dataObj.B && dataObj.B[0].encoding).toEqual(undefined)
+        expect(dataObj.B && dataObj.B[0].filename).toEqual(undefined)
     })
 
     test('bsocial tx with image - no encoding', () => {
@@ -140,11 +146,13 @@ describe('b', () => {
             const { cell } = tape[2]
             B.handler({ dataObj, cell, tape, tx })
 
-            expect(typeof dataObj.B[0]).toEqual('object')
-            expect(dataObj.B[0].content).toEqual('')
-            expect(dataObj.B[0]['content-type']).toEqual('image/png')
-            expect(dataObj.B[0].encoding).toEqual('binary')
-            expect(dataObj.B[0].filename).toEqual(undefined)
+            expect(dataObj.B && typeof dataObj.B[0]).toEqual('object')
+            expect(dataObj.B && dataObj.B[0].content).toEqual('')
+            expect(dataObj.B && dataObj.B[0]['content-type']).toEqual(
+                'image/png'
+            )
+            expect(dataObj.B && dataObj.B[0].encoding).toEqual('binary')
+            expect(dataObj.B && dataObj.B[0].filename).toEqual(undefined)
         }
     })
 })

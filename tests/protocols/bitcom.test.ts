@@ -24,24 +24,26 @@ describe('bitcom', () => {
         const cell = bitcomTransactions[0].out[0].tape[1].cell as Cell[]
 
         BITCOM.handler({ dataObj, cell })
-        expect(typeof dataObj.BITCOM[0]).toEqual('object')
-        expect(dataObj.BITCOM[0][0]).toEqual('$')
-        expect(dataObj.BITCOM[0][1]).toEqual('useradd')
-        expect(dataObj.BITCOM[0][2]).toEqual(
+        expect(Array.isArray(dataObj.BITCOM)).toBe(true)
+        expect(dataObj.BITCOM && Array.isArray(dataObj.BITCOM[0])).toBe(true)
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][0]).toEqual('$')
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][1]).toEqual('useradd')
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][2]).toEqual(
             '188PLHvKNaEWHVZZFrX23maw5TtsnmgSSE'
         )
     })
 
     test('parse echo tx', () => {
         const dataObj = {} as BmapTx
-        const cell = bitcomTransactions[1].out[0].tape[1].cell
+        const cell = bitcomTransactions[1].out[0].tape[1].cell as Cell[]
 
         BITCOM.handler({ dataObj, cell })
-        expect(typeof dataObj.BITCOM[0]).toEqual('object')
-        expect(dataObj.BITCOM[0][0]).toEqual('$')
-        expect(dataObj.BITCOM[0][1]).toEqual('echo')
-        expect(dataObj.BITCOM[0][2]).toEqual('genesis')
-        expect(dataObj.BITCOM[0][3]).toEqual('to')
-        expect(dataObj.BITCOM[0][4]).toEqual('name')
+        expect(Array.isArray(dataObj.BITCOM)).toBe(true)
+        expect(dataObj.BITCOM && Array.isArray(dataObj.BITCOM[0])).toBe(true)
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][0]).toEqual('$')
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][1]).toEqual('echo')
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][2]).toEqual('genesis')
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][3]).toEqual('to')
+        expect(dataObj.BITCOM && dataObj.BITCOM[0][4]).toEqual('name')
     })
 })

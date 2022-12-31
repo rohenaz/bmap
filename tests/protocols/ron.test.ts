@@ -27,11 +27,13 @@ describe('ron', () => {
         const tx = ronTransactions[0]
 
         RON.handler({ dataObj, cell, tape, tx })
-        expect(typeof dataObj.RON[0]).toEqual('object')
-        expect(dataObj.RON[0].pair).toEqual({ USDZAR: '14.751981' })
-        expect(dataObj.RON[0].address).toEqual(
+        expect(dataObj.RON && typeof dataObj.RON[0]).toEqual('object')
+        expect(dataObj.RON && dataObj.RON[0].pair).toEqual({
+            USDZAR: '14.751981',
+        })
+        expect(dataObj.RON && dataObj.RON[0].address).toEqual(
             '1DRfVXbQTATHefCHTSKxniEEHySTi7CvKH'
         )
-        expect(dataObj.RON[0].timestamp).toEqual(1574689916)
+        expect(dataObj.RON && dataObj.RON[0].timestamp).toEqual(1574689916)
     })
 })

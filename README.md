@@ -1,12 +1,24 @@
 # BMAPjs
 
-BMAPjs is a BOB parser for `B | MAP` OP_RETURN protocols. It processes transaction outputs and transforms them into self
+[![npm](https://img.shields.io/npm/v/bmapjs.svg)](https://www.npmjs.com/package/bmapjs)
+[![downloads](https://img.shields.io/npm/dt/bmapjs.svg)](https://www.npmjs.com/package/bmap)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+![GitHub](https://img.shields.io/github/license/rohenaz/bmap)
+
+BMAPjs is a transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP. Supports multiple outputs, signature verification, and multiple instances in a single OP_RETURN.
+
+It processes BOB formatted transactions for `B | MAP` OP_RETURN protocols. It processes transaction outputs and transforms them into self
 descriptive js objects based on the OP_RETURN protocols it discovers in the data.
 
 It supports B, MAP, AIP, METANET and a list of other popular protocols It ingests structured JSON objects in
 both [BOB](https://bob.planaria.network/) and [MOM](https://mom.planaria.network/) formats.
 
 It is written in typescript and can be used both as an esm module or in the browser as commonjs via script tag. See the `dist` folder for compiled outputs.
+
+## Why this exists
+
+BOB format is a great way to express Bitcoin transaction outputs, especially those containing data protocols, but there are some problems. For example, each field has multiple options to choose from, be it a base64 encoded binary representation in the b field, a string value in the s field, or a hex value in the h field. Depending on the protocol and the specific field you might choose one or another. This means you have to have a full understanding of the protocol you're trying to use. That's where bmapjs comes in. It can recognize many protocols, structure the data according to their individual protocols, and provide an easy to use BMAP transaction object with no mysteries about the data.
 
 # Pre-requisites
 
@@ -92,31 +104,66 @@ or in the browser:
 const bmapTx = await bmap.TransformTx(bob_or_mom_tx_object)
 ```
 
-## The BmapTx object
+## BMAP (Transaction object)
 
 After transforming the object will contain a key for each protocol found within the transaction. Each value will be an array. Most of the time the array will have only one value indicating the protocol was detected only once. However, in some cases where protocols will be used multiple times in the same transaction, the array will contain one object for each protocol instance detected.
 
 ```json
 {
+  "tx": {
+    "h": [TRANSACTION HASH],
+    "r": [RAW TRANSACTION]
+  },
+  "blk" {
+    "i": [BLOCK INDEX],
+    "h": [BLOCK HASH],
+    "t": [BLOCK TIME]
+  },
+  "in": [
+    INPUT1,
+    INPUT2,
+    INPUT3,
+    ...
+  ],
+  "out": [
+    OUTPUT1,
+    OUTPUT2,
+    OUTPUT3,
+    ...
+  ],
+  "coinbase": [COINBASE]
+
+  // array of transaction inputs
+  in: [{
+    // index
+    i: 0,
+    e: {
+        // transaction
+    }
+  }],
+  // transaction outputs
+  out: [ ...],
+  //
   "AIP": [{
     ...
   }],
   "B": [{
-    // B output 1
-    ...
+    // B protocol - output 1
+    // ...
   }, {
-    // B output 2
-    ...
+    // B protocol - output 2
+    // ...
   }],
   "BAP": [{
-    ...
+    // Bitcoin Attestation Protocol
+    // ...
   }],
   "MAP": [{
-    // map output 1
-    ...
+    // Magic Attribute Protocol - output 1
+    // ...
   }, {
-    // map output 2
-    ...
+    // Magic Attribute Protocol - output 2
+    // ...
   }],
   "1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo": [{
     ...
@@ -431,6 +478,7 @@ on the response object:
 
 # Support Checklist
 
+-   [ ] 21E8
 -   [x] AIP
 -   [x] AIP validation
 -   [x] B
@@ -439,12 +487,15 @@ on the response object:
 -   [x] Bitcom
 -   [x] Bitkey
 -   [x] Bitpic
+-   [ ] Bitpic validation
+-   [x] BOOST
 -   [ ] D
 -   [x] HAIP
 -   [ ] HAIP validation
 -   [x] MAP v1
 -   [ ] MAP v2
 -   [x] MetaNet
+-   [ ] ORDER LOCK
 -   [x] PSP
 -   [x] RON
 -   [x] SymRe

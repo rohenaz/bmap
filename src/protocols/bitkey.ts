@@ -1,6 +1,6 @@
 import { Address, Bsm, PubKey } from '@ts-bitcoin/core'
 import { Buffer } from 'buffer'
-import { HandlerProps } from '../../types/common'
+import { HandlerProps, Protocol } from '../../types/common'
 import { cellValue, saveProtocolData, sha256 } from '../utils'
 
 const address = '13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC'
@@ -57,7 +57,7 @@ const handler = async ({ dataObj, cell }: HandlerProps) => {
     saveProtocolData(dataObj, 'BITKEY', bitkeyObj)
 }
 
-export const BITKEY = {
+export const BITKEY: Protocol = {
     name: 'BITKEY',
     address,
     querySchema,

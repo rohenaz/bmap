@@ -1,7 +1,7 @@
-import { HandlerProps } from '../../types/common'
+import { HandlerProps, Protocol } from '../../types/common'
 import { saveProtocolData } from '../utils'
 
-const address = '$'
+const protocolAddress = '$'
 
 const querySchema = [
     {
@@ -34,14 +34,16 @@ const handler = ({ dataObj, cell }: HandlerProps) => {
     if (!cell.length || !cell.every((c) => c.s)) {
         throw new Error('Invalid Bitcom tx')
     }
+
+    // gather up the string values
     const bitcomObj = cell.map((c) => (c && c.s ? c.s : ''))
 
     saveProtocolData(dataObj, 'BITCOM', bitcomObj)
 }
 
-export const BITCOM = {
+export const BITCOM: Protocol = {
     name: 'BITCOM',
-    address,
+    address: protocolAddress,
     querySchema,
     handler,
 }

@@ -27,14 +27,19 @@ describe('bitpic', () => {
         const tx = bitpicTransactions[0] as BobTx
 
         await BITPIC.handler({ dataObj, cell, tape, tx })
-        expect(typeof dataObj.BITPIC[0]).toEqual('object')
-        expect(dataObj.BITPIC[0].paymail).toEqual('644@moneybutton.com')
-        expect(dataObj.BITPIC[0].pubkey).toEqual(
+
+        expect(Array.isArray(dataObj.BITPIC)).toBe(true)
+
+        expect(dataObj.BITPIC && typeof dataObj.BITPIC[0]).toEqual('object')
+        expect(dataObj.BITPIC && dataObj.BITPIC[0].paymail).toEqual(
+            '644@moneybutton.com'
+        )
+        expect(dataObj.BITPIC && dataObj.BITPIC[0].pubkey).toEqual(
             '03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c'
         )
-        expect(dataObj.BITPIC[0].signature).toEqual(
-            'SUpBTHhHdFgyS3MrWGlCQ2h2UXZOWHN2Vkg1RUJGblVYRkx2ckZzVVRQd3RLcmtmUFRaaldSODhtMlJJa1cwb0VxaEtxaDFKa3FiQUZtL0c5U2JzQS8wPQ=='
+        expect(dataObj.BITPIC && dataObj.BITPIC[0].signature).toEqual(
+            'IJALxGtX2Ks+XiBChvQvNXsvVH5EBFnUXFLvrFsUTPwtKrkfPTZjWR88m2RIkW0oEqhKqh1JkqbAFm/G9SbsA/0='
         )
-        //expect(dataObj.BITPIC.verified).toEqual(true);
+        // expect(dataObj.BITPIC && dataObj.BITPIC[0].verified).toEqual(true)
     })
 })

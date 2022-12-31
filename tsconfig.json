@@ -11,28 +11,38 @@
         "types/**/**/*.d.ts",
         "tests/**/*.test.ts"
     ],
-    "exclude": ["coverage", "functions", "tests", "node_modules"],
+    "exclude": [
+        "coverage",
+        "functions",
+        "tests",
+        ".parcel-cache",
+        "node_modules"
+    ],
+    "files": ["jest.config.ts"],
     "compileOnSave": true,
     "compilerOptions": {
-        "lib": ["es2017", "dom"],
+        "removeComments": true,
         "declaration": true,
         "target": "es5",
-        "allowJs": true,
         "moduleResolution": "node",
-        "typeRoots": ["./", "./node_modules/@types", "./types"],
+        "typeRoots": [
+            "./node_modules/@types",
+            "./types",
+            "./types/protocols",
+            "./types/@moneybutton__paymail-client"
+        ],
         "types": ["node", "jest"],
         "resolveJsonModule": true,
+        "inlineSourceMap": true,
         "declarationMap": true,
-        "sourceMap": false,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
-        "isolatedModules": false,
+        "isolatedModules": true,
         "skipLibCheck": true,
         "module": "es6"
     },
-    "files": ["src/bmap.ts"],
     "paths": {
         "stream": ["./node_modules/stream-browserify"],
         "crypto": ["./node_modules/crypto-browserify"]

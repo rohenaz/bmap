@@ -84,7 +84,6 @@ export const bmapQuerySchemaHandler = function (
     querySchema: Object[],
     dataObj: Object,
     cell: Cell[],
-    tape: Tape[],
     tx: BobTx
 ) {
     // loop over the schema
@@ -123,28 +122,6 @@ export const isBase64 = function (data: string) {
 
 // hashes a message buffer, returns the hash as a buffer
 export const sha256 = async (msgBuffer: Buffer) => {
-    // what mbn was doing
-    // $.checkArgument(Buffer.isBuffer(buf))
-    // return crypto.createHash('sha256').update(buf).digest()
-    // and from there...
-    // createHash('sha256').update(buf).digest()
-
-    // original call from bmap
-    // bsv.crypto.Hash.sha256(Buffer.from(dataBuffer.toString('hex'))).toString('hex');
-
-    // Convert Buffer to ArrayBuffer
-    // let ab = msgBuffer.buffer.slice(
-    //     msgBuffer.byteOffset,
-    //     msgBuffer.byteOffset + msgBuffer.byteLength
-    // )
-
-    // const hashBuffer = await webcrypto.subtle.digest(
-    //     'SHA-256',
-    //     Buffer.from(msgBuffer.toString('hex'))
-    // )
-
-    // final?
-
     const hash = await (webcrypto || window.crypto).subtle.digest(
         'SHA-256',
         msgBuffer

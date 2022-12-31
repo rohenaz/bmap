@@ -27,7 +27,7 @@ describe('map', () => {
         if (tape) {
             const { cell } = tape[1]
             MAP.handler({ dataObj, cell, tape, tx })
-            expect(dataObj.MAP[0]).toEqual({
+            expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
                 cmd: 'SET',
                 app: '2paymail',
                 paymail: 'hagbard@moneybutton.com',
@@ -49,7 +49,7 @@ describe('map', () => {
         if (tape) {
             const { cell } = tape[3]
             MAP.handler({ dataObj, cell, tape, tx })
-            expect(dataObj.MAP[0]).toEqual({
+            expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
                 cmd: 'SET',
                 type: 'content',
                 cost: 'free',
@@ -71,7 +71,7 @@ describe('map', () => {
         const { tape } = tx.out[0]
         const { cell } = tape[4]
         MAP.handler({ dataObj, cell, tape, tx })
-        expect(dataObj.MAP[0]).toEqual({
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
             cmd: 'ADD',
             tags: ['BSV', 'Apps', 'Earning'],
         })
@@ -83,7 +83,7 @@ describe('map', () => {
         const { tape } = tx.out[0]
         const { cell } = tape[0]
         MAP.handler({ dataObj, cell, tape, tx })
-        expect(dataObj.MAP[0]).toEqual({
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
             cmd: 'REMOVE',
             key: 'public_key',
         })
@@ -95,7 +95,7 @@ describe('map', () => {
         const { tape } = tx.out[0]
         const { cell } = tape[0]
         MAP.handler({ dataObj, cell, tape, tx })
-        expect(dataObj.MAP[0]).toEqual({
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
             cmd: 'DELETE',
             public_key: [
                 '02c89b6790eb605062a31f124250594bd0fd02988da2541b3d25e7ef3937fb4ae0',
@@ -109,7 +109,7 @@ describe('map', () => {
         const { tape } = tx.out[0]
         const { cell } = tape[0]
         MAP.handler({ dataObj, cell, tape, tx })
-        expect(dataObj.MAP[0]).toEqual({})
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({})
     })
 
     test('parse JSON', () => {
@@ -118,7 +118,7 @@ describe('map', () => {
         const { tape } = tx.out[0]
         const { cell } = tape[0]
         MAP.handler({ dataObj, cell, tape, tx })
-        expect(dataObj.MAP[0]).toEqual({})
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({})
     })
 
     // advanced tests
@@ -135,7 +135,7 @@ describe('map', () => {
             },
         ] as Cell[]
         MAP.handler({ dataObj, cell, tape: [] as Tape[], tx: {} as BmapTx })
-        expect(dataObj.MAP[0]).toEqual({
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
             cmd: 'DELETE',
             public_key: [
                 '02c89b6790eb605062a31f124250594bd0fd02988da2541b3d25e7ef3937fb4ae0',
@@ -157,7 +157,7 @@ describe('map', () => {
             { s: 'social', i: 8 },
         ] as Cell[]
         MAP.handler({ dataObj, cell, tape: [], tx: {} as BmapTx })
-        expect(dataObj.MAP[0]).toEqual({
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
             cmd: 'SET',
             app: 'social',
             tag: ['bitcoin', 'social'],
@@ -180,7 +180,7 @@ describe('map', () => {
             { s: 'social', i: 10 },
         ] as Cell[]
         MAP.handler({ dataObj, cell, tape: [] as Tape[], tx: {} as BmapTx })
-        expect(dataObj.MAP[0]).toEqual({
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
             cmd: 'SET',
             app: 'social',
             type: 'poll',
@@ -203,7 +203,7 @@ describe('map', () => {
             { s: 'bitcoin', i: 9 },
         ] as Cell[]
         MAP.handler({ dataObj, cell, tape: [] as Tape[], tx: {} as BmapTx })
-        expect(dataObj.MAP[0]).toEqual({
+        expect(dataObj.MAP && dataObj.MAP[0]).toEqual({
             cmd: 'SET',
             app: 'social',
             type: 'vote',

@@ -1,4 +1,4 @@
-import { HandlerProps } from '../../types/common'
+import { HandlerProps, Protocol } from '../../types/common'
 import { bmapQuerySchemaHandler } from '../utils'
 
 const address = '1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT'
@@ -9,17 +9,14 @@ const querySchema = [
     { sequence: 'string' },
 ]
 
-export const handler = ({ dataObj, cell, tape, tx }: HandlerProps) => {
-    if (!tape) {
-        throw new Error(`Invalid BAP tx, tape required`)
-    }
+export const handler = ({ dataObj, cell, tx }: HandlerProps) => {
     if (!tx) {
         throw new Error(`Invalid BAP tx, tx required`)
     }
-    bmapQuerySchemaHandler('BAP', querySchema, dataObj, cell, tape, tx)
+    bmapQuerySchemaHandler('BAP', querySchema, dataObj, cell, tx)
 }
 
-export const BAP = {
+export const BAP: Protocol = {
     name: 'BAP',
     address,
     querySchema,
