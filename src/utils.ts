@@ -18,7 +18,14 @@ export const cellValue = (
     } else if (schemaEncoding === 'string') {
         return pushData['s'] ? pushData.s : pushData.ls || ''
     } else if (schemaEncoding === 'hex') {
-        return pushData['h'] ? pushData.h : pushData.lh || ''
+        return pushData['h']
+            ? pushData.h
+            : pushData.lh ||
+                  (pushData['b']
+                      ? Buffer.from(pushData.b, 'base64').toString('hex')
+                      : pushData.lb &&
+                        Buffer.from(pushData.lb, 'base64').toString('hex')) ||
+                  ''
     } else if (schemaEncoding === 'number') {
         return parseInt(pushData['h'] ? pushData.h : pushData.lh || '0', 16)
     } else if (schemaEncoding === 'file') {

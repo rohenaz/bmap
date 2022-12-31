@@ -19,16 +19,17 @@ import { METANET } from './protocols/metanet'
 import { check21e8, _21E8 } from './protocols/_21e8'
 import { checkOpFalseOpReturn, saveProtocolData } from './utils'
 
-const protocolMap = new Map<string, string>([])
-const protocolHandlers = new Map<string, Handler>()
+const enabledProtocols = new Map<string, string>([])
+const protocolHandlers = new Map<string, Handler>([])
 const protocolQuerySchemas = new Map<string, Object[]>()
 
-const defaultProtocols = [AIP, B, BAP, MAP, METANET]
+export const allProtocols = [AIP, B, BAP, MAP, METANET, BOOST, _21E8]
+export const defaultProtocols = [AIP, B, BAP, MAP, METANET]
 
 // prepare protocol map, handlers and schemas
 defaultProtocols.forEach((protocol) => {
     if (protocol.address) {
-        protocolMap.set(protocol.address, protocol.name)
+        enabledProtocols.set(protocol.address, protocol.name)
     }
     protocolHandlers.set(protocol.name, protocol.handler)
     if (protocol.querySchema) {
@@ -38,7 +39,7 @@ defaultProtocols.forEach((protocol) => {
 
 // Takes a BOB formatted op_return transaction
 export class BMAP {
-    protocolMap: Map<string, string>
+    enabledProtocols: Map<string, string>
 
     protocolHandlers: Map<string, Handler>
 
@@ -46,14 +47,14 @@ export class BMAP {
 
     constructor() {
         // initial default protocol handlers in this instantiation
-        this.protocolMap = protocolMap
+        this.enabledProtocols = enabledProtocols
         this.protocolHandlers = protocolHandlers
         this.protocolQuerySchemas = protocolQuerySchemas
     }
 
     addProtocolHandler({ name, address, querySchema, handler }: Protocol) {
         if (address) {
-            this.protocolMap.set(address, name)
+            this.enabledProtocols.set(address, name)
         }
         this.protocolHandlers.set(name, handler)
         if (querySchema) {
@@ -91,7 +92,7 @@ export class BMAP {
                             const prefix = cell[0].s
 
                             await this.process(
-                                this.protocolMap.get(prefix || '') || '',
+                                this.enabledProtocols.get(prefix || '') || '',
                                 {
                                     cell,
                                     dataObj: dataObj as BmapTx,
@@ -227,7 +228,21 @@ export class BMAP {
     }
 }
 
-export const TransformTx = async (tx: BobTx) => {
+export const TransformTx = async (tx: BobTx, protocols?: string[]) => {
     const b = new BMAP()
+
+    // if protocols are specified
+    if (protocols) {
+        // wipe out defaults
+        enabledProtocols.clear()
+
+        // set enabled protocols
+        for (const protocol of allProtocols) {
+            if (protocols?.includes(protocol.name)) {
+                b.addProtocolHandler(protocol)
+            }
+        }
+    }
+
     return b.transformTx(tx)
 }

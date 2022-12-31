@@ -12,6 +12,8 @@ function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
 
+$parcel$export(module.exports, "allProtocols", () => $d4689e6be4abd8e2$export$6b22fa9a84a4797f);
+$parcel$export(module.exports, "defaultProtocols", () => $d4689e6be4abd8e2$export$4f34a1c822988d11);
 $parcel$export(module.exports, "BMAP", () => $d4689e6be4abd8e2$export$894a720e71f90b3c);
 $parcel$export(module.exports, "TransformTx", () => $d4689e6be4abd8e2$export$b2a90e318402f6bc);
 // import default protocols
@@ -23,7 +25,7 @@ $parcel$export(module.exports, "TransformTx", () => $d4689e6be4abd8e2$export$b2a
 const $ad115897f795de9e$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
     if (!pushData) throw new Error(`cannot get cell value of: ${pushData}`);
     else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
-    else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || "";
+    else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || (pushData["b"] ? (0, $iP6iL$buffer.Buffer).from(pushData.b, "base64").toString("hex") : pushData.lb && (0, $iP6iL$buffer.Buffer).from(pushData.lb, "base64").toString("hex")) || "";
     else if (schemaEncoding === "number") return parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
     else if (schemaEncoding === "file") return `bitfs://${pushData["f"] ? pushData.f : pushData.lf}`;
     return (pushData["b"] ? pushData.b : pushData.lb) || "";
@@ -63,8 +65,7 @@ const $ad115897f795de9e$export$ca4d6504ca148ae4 = function(data) {
     return new RegExp(`^${regex}$`, "gi").test(data);
 };
 const $ad115897f795de9e$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
-    const hash = await (!!window ? window.crypto : (0, $iP6iL$crypto.webcrypto)).subtle.digest(// const hash = await (webcrypto || window.crypto).subtle.digest(
-    "SHA-256", msgBuffer);
+    const hash = await ((0, $iP6iL$crypto.webcrypto) || window.crypto).subtle.digest("SHA-256", msgBuffer);
     return (0, $iP6iL$buffer.Buffer).from(hash);
 };
 
@@ -347,7 +348,6 @@ const $a657c906f7aff940$export$5935ea4bf04c4453 = {
 
 
 
-
 const $cc0bec57c0a70920$var$protocolIdentifier = "boostpow";
 const $cc0bec57c0a70920$export$a52badcaecf73796 = (cell)=>{
     // protocol identifier always in first pushdata
@@ -355,13 +355,19 @@ const $cc0bec57c0a70920$export$a52badcaecf73796 = (cell)=>{
 };
 const $cc0bec57c0a70920$var$handler = ({ dataObj: dataObj , cell: cell , out: out , tx: tx  })=>{
     if (!tx || !cell[0] || !out) throw new Error(`Invalid BOOST tx. dataObj, cell, out and tx are required.`);
-    console.log({
-        Buffer: $iP6iL$buffer.Buffer
-    });
     // build ASM from either op codes and script chunks
-    const asm = cell.map((c)=>c.ops ? c.ops : c.h || "").join(" ");
+    const asm = cell.map((c)=>c.ops ? c.ops : (0, $ad115897f795de9e$export$b691916706e0e9cc)(c, "hex") || "").join(" ");
     if (asm) {
+        console.log("get it", {
+            asm: asm,
+            txid: tx.tx.h,
+            vout: out.i,
+            value: out.e.v
+        });
         const boostJob = (0, $iP6iL$boostpow.BoostPowJob).fromASM(asm, tx.tx.h, out.i, out.e.v).toObject();
+        console.log({
+            boostJob: boostJob
+        });
         (0, $ad115897f795de9e$export$23dbc584560299c3)(dataObj, "BOOST", boostJob);
     }
 };
@@ -653,8 +659,8 @@ const $24d0e6454775ab7d$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
     // make sure first piece matches a txid
     // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
     // next
-    const txid = (0, $ad115897f795de9e$export$b691916706e0e9cc)(cell[0], "hex");
-    const target = (0, $ad115897f795de9e$export$b691916706e0e9cc)(cell[1], "hex");
+    const txid = (0, $ad115897f795de9e$export$b691916706e0e9cc)(cell[0], "binary");
+    const target = (0, $ad115897f795de9e$export$b691916706e0e9cc)(cell[1], "binary");
     if (!target) throw new Error(`Invalid 21e8 target.` + JSON.stringify(cell[0], null, 2));
     const difficulty = Buffer.from(target, "hex").byteLength;
     const _21e8Obj = {
@@ -672,10 +678,19 @@ const $24d0e6454775ab7d$export$85479a00ad164ad6 = {
 
 
 
-const $d4689e6be4abd8e2$var$protocolMap = new Map([]);
-const $d4689e6be4abd8e2$var$protocolHandlers = new Map();
+const $d4689e6be4abd8e2$var$enabledProtocols = new Map([]);
+const $d4689e6be4abd8e2$var$protocolHandlers = new Map([]);
 const $d4689e6be4abd8e2$var$protocolQuerySchemas = new Map();
-const $d4689e6be4abd8e2$var$defaultProtocols = [
+const $d4689e6be4abd8e2$export$6b22fa9a84a4797f = [
+    (0, $69628e315d1a24a5$export$474d593e43f12abd),
+    (0, $ba0e169d28d08495$export$ef35774e6d314e91),
+    (0, $a657c906f7aff940$export$5935ea4bf04c4453),
+    (0, $6e436a2e9e168a78$export$ce970371e0e850bc),
+    (0, $0ca33a82c6135f7e$export$7830a85a59ca4593),
+    (0, $cc0bec57c0a70920$export$13c3c8ee12090ebc),
+    (0, $24d0e6454775ab7d$export$85479a00ad164ad6)
+];
+const $d4689e6be4abd8e2$export$4f34a1c822988d11 = [
     (0, $69628e315d1a24a5$export$474d593e43f12abd),
     (0, $ba0e169d28d08495$export$ef35774e6d314e91),
     (0, $a657c906f7aff940$export$5935ea4bf04c4453),
@@ -683,20 +698,20 @@ const $d4689e6be4abd8e2$var$defaultProtocols = [
     (0, $0ca33a82c6135f7e$export$7830a85a59ca4593)
 ];
 // prepare protocol map, handlers and schemas
-$d4689e6be4abd8e2$var$defaultProtocols.forEach((protocol)=>{
-    if (protocol.address) $d4689e6be4abd8e2$var$protocolMap.set(protocol.address, protocol.name);
+$d4689e6be4abd8e2$export$4f34a1c822988d11.forEach((protocol)=>{
+    if (protocol.address) $d4689e6be4abd8e2$var$enabledProtocols.set(protocol.address, protocol.name);
     $d4689e6be4abd8e2$var$protocolHandlers.set(protocol.name, protocol.handler);
     if (protocol.querySchema) $d4689e6be4abd8e2$var$protocolQuerySchemas.set(protocol.name, protocol.querySchema);
 });
 class $d4689e6be4abd8e2$export$894a720e71f90b3c {
     constructor(){
         // initial default protocol handlers in this instantiation
-        this.protocolMap = $d4689e6be4abd8e2$var$protocolMap;
+        this.enabledProtocols = $d4689e6be4abd8e2$var$enabledProtocols;
         this.protocolHandlers = $d4689e6be4abd8e2$var$protocolHandlers;
         this.protocolQuerySchemas = $d4689e6be4abd8e2$var$protocolQuerySchemas;
     }
     addProtocolHandler({ name: name , address: address , querySchema: querySchema , handler: handler  }) {
-        if (address) this.protocolMap.set(address, name);
+        if (address) this.enabledProtocols.set(address, name);
         this.protocolHandlers.set(name, handler);
         if (querySchema) this.protocolQuerySchemas.set(name, querySchema);
     }
@@ -715,7 +730,7 @@ class $d4689e6be4abd8e2$export$894a720e71f90b3c {
                     const { cell: cell  } = cellContainer;
                     if (!cell) throw new Error("empty cell while parsing");
                     const prefix = cell[0].s;
-                    await this.process(this.protocolMap.get(prefix || "") || "", {
+                    await this.process(this.enabledProtocols.get(prefix || "") || "", {
                         cell: cell,
                         dataObj: dataObj,
                         tape: tape,
@@ -804,8 +819,15 @@ class $d4689e6be4abd8e2$export$894a720e71f90b3c {
         } else (0, $ad115897f795de9e$export$23dbc584560299c3)(dataObj, protocolName, cell);
     };
 }
-const $d4689e6be4abd8e2$export$b2a90e318402f6bc = async (tx)=>{
+const $d4689e6be4abd8e2$export$b2a90e318402f6bc = async (tx, protocols)=>{
     const b = new $d4689e6be4abd8e2$export$894a720e71f90b3c();
+    // if protocols are specified
+    if (protocols) {
+        // wipe out defaults
+        $d4689e6be4abd8e2$var$enabledProtocols.clear();
+        // set enabled protocols
+        for (const protocol of $d4689e6be4abd8e2$export$6b22fa9a84a4797f)if (protocols === null || protocols === void 0 ? void 0 : protocols.includes(protocol.name)) b.addProtocolHandler(protocol);
+    }
     return b.transformTx(tx);
 };
 

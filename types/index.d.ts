@@ -1,6 +1,8 @@
 import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Out, Protocol } from "../types/common";
+export const allProtocols: Protocol[];
+export const defaultProtocols: Protocol[];
 export class BMAP {
-    protocolMap: Map<string, string>;
+    enabledProtocols: Map<string, string>;
     protocolHandlers: Map<string, Handler>;
     protocolQuerySchemas: Map<string, Object[]>;
     constructor();
@@ -9,6 +11,6 @@ export class BMAP {
     processUnknown: (key: string, dataObj: Partial<BmapTx>, out: Out) => void;
     process: (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => Promise<void>;
 }
-export const TransformTx: (tx: BobTx) => Promise<BmapTx>;
+export const TransformTx: (tx: BobTx, protocols?: string[]) => Promise<BmapTx>;
 
 //# sourceMappingURL=index.d.ts.map

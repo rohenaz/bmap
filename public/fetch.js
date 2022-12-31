@@ -41,7 +41,12 @@ const load = async (ex) => {
         console.log('before transform:', tx);
         let bmapTx;
         try {
-          bmapTx = await bmap.TransformTx(tx);
+          bmapTx = await bmap.TransformTx(tx, bmap.supportedProtocols)
+          // const bm = new bmap.BMAP()
+          // // Add non default handlers
+          
+          // bm.addProtocolHandler(bmap.protocolMap.get('BOOST'))
+          // bmapTx = await bm.transformTx(tx);
         } catch (e) {
           console.warn('error', e);
           // break;

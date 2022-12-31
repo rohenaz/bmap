@@ -1,7 +1,6 @@
 import { BoostPowJob } from 'boostpow'
-import { Buffer } from 'buffer'
 import { Cell, HandlerProps, Protocol } from '../../types/common'
-import { saveProtocolData } from '../utils'
+import { cellValue, saveProtocolData } from '../utils'
 
 const protocolIdentifier = 'boostpow'
 
@@ -30,17 +29,26 @@ const handler = ({ dataObj, cell, out, tx }: HandlerProps): void => {
         )
     }
 
-    console.log({ Buffer })
     // build ASM from either op codes and script chunks
-    const asm = cell.map((c) => (c.ops ? c.ops : c.h || '')).join(' ')
+    const asm = cell
+        .map((c) => (c.ops ? c.ops : cellValue(c, 'hex') || ''))
+        .join(' ')
 
     if (asm) {
+        console.log('get it', {
+            asm,
+            txid: tx.tx.h,
+            vout: out.i,
+            value: out.e.v,
+        })
         const boostJob = BoostPowJob.fromASM(
             asm,
             tx.tx.h,
             out.i,
             out.e.v
         ).toObject()
+
+        console.log({ boostJob })
 
         saveProtocolData(dataObj, 'BOOST', boostJob)
     }

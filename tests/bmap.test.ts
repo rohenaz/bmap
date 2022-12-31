@@ -11,11 +11,11 @@ import mapTransactions from './data/map-transactions.json'
 describe('bmap', () => {
     test('class init', () => {
         const bmap = new BMAP()
-        expect(typeof bmap.protocolMap).toEqual('object')
-        expect(bmap.protocolMap.size).toEqual(5)
-        expect(bmap.protocolMap.get('meta')).toEqual('METANET')
+        expect(typeof bmap.enabledProtocols).toEqual('object')
+        expect(bmap.enabledProtocols.size).toEqual(5)
+        expect(bmap.enabledProtocols.get('meta')).toEqual('METANET')
         expect(
-            bmap.protocolMap.get('15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
+            bmap.enabledProtocols.get('15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva')
         ).toEqual('AIP')
 
         expect(typeof bmap.protocolHandlers).toEqual('object')
@@ -40,7 +40,7 @@ describe('bmap', () => {
 
         expect(typeof bmap.protocolHandlers).toEqual('object')
         expect(bmap.protocolHandlers.size).toEqual(6)
-        expect(bmap.protocolMap.get('123TEST')).toEqual('test')
+        expect(bmap.enabledProtocols.get('123TEST')).toEqual('test')
     })
 
     test('invalid tx', async () => {
