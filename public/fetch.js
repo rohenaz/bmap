@@ -1,13 +1,60 @@
 const load = async (ex) => {
+
+  let currentProtocol = localStorage.getItem('protocol') || 'B';
+
+
   const examples = ex;
+
+    const matchingExamples = examples.filter((e) => e.protocols.includes(currentProtocol))
+
+  for (const protocol of bmap.supportedProtocols) {
+    console.log('checking', protocol);
+    const button = document.createElement('button');
+
+
+    const matchingThis = examples.filter((e) => e.protocols.includes(protocol))
+
+    button.id = protocol;
+    button.innerHTML = `${protocol} (${matchingThis.length})`;
+
+    button.addEventListener('click', (e) => {
+      localStorage.setItem('protocol', e.target.id);
+      localStorage.setItem('example', undefined);
+
+      document.location.reload();
+    });
+
+    document.querySelector('nav')
+      .appendChild(button);
+
+
+
+  }
+
+  let i = 1
+  for (const e of matchingExamples) {
+    const button = document.createElement('button');
+
+    button.id = e.txid;
+    button.innerHTML = `Example ${i++}`;
+
+    button.addEventListener('click', (e) => {
+      localStorage.setItem('example', e.target.id);
+      document.location.reload();
+    });
+
+
+    document.getElementById('subnav')
+    .appendChild(button);
+  }
 
   let currentExample = localStorage.getItem('example');
   if (!currentExample) {
-    currentExample = Object.keys(examples)[0];
-    localStorage.setItem('example', Object.keys(examples)[0]);
+    currentExample = examples.filter((e) => e.protocols.includes(currentProtocol) && e.txid === currentExample)[0]
+    localStorage.setItem('example', currentExample);
   }
 
-  let txs = examples[localStorage.getItem('example')];
+  let txs = examples.filter((e) => e.protocols.includes(currentProtocol)).map((e) => e.txid);
 
   let decodePlugin = false;
   const parts = window.location.pathname.split('/')
@@ -42,11 +89,7 @@ const load = async (ex) => {
         let bmapTx;
         try {
           bmapTx = await bmap.TransformTx(tx, bmap.supportedProtocols)
-          // const bm = new bmap.BMAP()
-          // // Add non default handlers
-          
-          // bm.addProtocolHandler(bmap.protocolMap.get('BOOST'))
-          // bmapTx = await bm.transformTx(tx);
+
         } catch (e) {
           console.warn('error', e);
           // break;
@@ -94,22 +137,9 @@ const load = async (ex) => {
     });
 
   // Set page title
-  document.getElementById('currentExample').innerHTML = currentExample;
+  document.getElementById('currentExample').innerHTML = currentProtocol;
 
-  for (const key in examples) {
-    console.log('checking', key);
-    const button = document.createElement('button');
-    button.id = key;
-    button.innerHTML = key;
 
-    button.addEventListener('click', (e) => {
-      localStorage.setItem('example', e.target.id);
-      document.location.reload();
-    });
-
-    document.querySelector('nav')
-      .appendChild(button);
-  }
 
 };
 
@@ -119,6 +149,9 @@ const load = async (ex) => {
     fetch('./data/example-txids.json')
       .then((response) => { return response.json(); })
       .then((json) => {
+
+
+        
         load(json);
         return console.log(json);
       });
