@@ -6,7 +6,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 ![GitHub](https://img.shields.io/github/license/rohenaz/bmap)
 
-BMAPjs is a transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP. Supports multiple outputs, signature verification, and multiple instances in a single OP_RETURN.
+BMAPjs is a transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP. Supports multiple outputs, signature verification, and multiple instances in a single OP_RETURN. It also has support for some Script based protocols like [Boost POW](https://pow.co) and [21e8](https://21e8.network)
 
 It processes BOB formatted transactions for `B | MAP` OP_RETURN protocols. It processes transaction outputs and transforms them into self
 descriptive js objects based on the OP_RETURN protocols it discovers in the data.

@@ -11,13 +11,7 @@
         "types/**/**/*.d.ts",
         "tests/**/*.test.ts"
     ],
-    "exclude": [
-        "coverage",
-        "functions",
-        "tests",
-        ".parcel-cache",
-        "node_modules"
-    ],
+    "exclude": ["coverage", "functions", "tests", ".parcel-cache"],
     "files": ["jest.config.ts"],
     "compileOnSave": true,
     "compilerOptions": {

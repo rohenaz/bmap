@@ -3,7 +3,7 @@ import { PSP } from '../../src/protocols/psp'
 import { BmapTx, BobTx, Cell, Out, Tape } from '../../types/common'
 import mapTransactions from '../data/map-transactions.json'
 
-describe('bitpic', () => {
+describe('p2p', () => {
     test('protocol definition', () => {
         expect(typeof PSP.name).toEqual('string')
         expect(typeof PSP.address).toEqual('string')

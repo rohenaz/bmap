@@ -1,4 +1,5 @@
 import { BoostPowJob } from 'boostpow'
+import { Buffer } from 'buffer'
 import { Cell, HandlerProps, Protocol } from '../../types/common'
 import { saveProtocolData } from '../utils'
 
@@ -29,6 +30,7 @@ const handler = ({ dataObj, cell, out, tx }: HandlerProps): void => {
         )
     }
 
+    console.log({ Buffer })
     // build ASM from either op codes and script chunks
     const asm = cell.map((c) => (c.ops ? c.ops : c.h || '')).join(' ')
 

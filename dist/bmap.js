@@ -63,7 +63,8 @@ const $ad115897f795de9e$export$ca4d6504ca148ae4 = function(data) {
     return new RegExp(`^${regex}$`, "gi").test(data);
 };
 const $ad115897f795de9e$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
-    const hash = await ((0, $iP6iL$crypto.webcrypto) || window.crypto).subtle.digest("SHA-256", msgBuffer);
+    const hash = await (window ? window.crypto : (0, $iP6iL$crypto.webcrypto)).subtle.digest(// const hash = await (webcrypto || window.crypto).subtle.digest(
+    "SHA-256", msgBuffer);
     return (0, $iP6iL$buffer.Buffer).from(hash);
 };
 
@@ -346,6 +347,7 @@ const $a657c906f7aff940$export$5935ea4bf04c4453 = {
 
 
 
+
 const $cc0bec57c0a70920$var$protocolIdentifier = "boostpow";
 const $cc0bec57c0a70920$export$a52badcaecf73796 = (cell)=>{
     // protocol identifier always in first pushdata
@@ -353,6 +355,9 @@ const $cc0bec57c0a70920$export$a52badcaecf73796 = (cell)=>{
 };
 const $cc0bec57c0a70920$var$handler = ({ dataObj: dataObj , cell: cell , out: out , tx: tx  })=>{
     if (!tx || !cell[0] || !out) throw new Error(`Invalid BOOST tx. dataObj, cell, out and tx are required.`);
+    console.log({
+        Buffer: $iP6iL$buffer.Buffer
+    });
     // build ASM from either op codes and script chunks
     const asm = cell.map((c)=>c.ops ? c.ops : c.h || "").join(" ");
     if (asm) {
