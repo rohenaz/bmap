@@ -13,7 +13,7 @@ const _21e8Script =
 
 export const check21e8 = (cell: Cell[]) => {
     if (cell.length !== 12) {
-        console.log('not 21e8 wrong length', cell.length)
+        // wrong length
         return false
     }
 
@@ -26,8 +26,8 @@ export const check21e8 = (cell: Cell[]) => {
 
     // replace the placeholder opcode with actual
     ops[1] = `OP_${targetOpSize}`
+    _21e8Script[1] = `OP_${targetOpSize}`
 
-    console.log('compare', ops.length, _21e8Script.length)
     // protocol identifier always in first pushdata
     return ops.join() === _21e8Script.join()
 }

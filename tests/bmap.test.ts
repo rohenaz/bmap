@@ -153,7 +153,6 @@ describe('bmap', () => {
         bmap.addProtocolHandler(BOOST)
         const parseTx = await bmap.transformTx(boostTransaction as BobTx)
 
-        console.log({ parseTx })
         expect(parseTx.tx.h).toEqual(
             '6bb713a65d0735cbe581ac66458ab83b557a58c198af2e2b5a2228d1b7ff8b87'
         )

@@ -346,8 +346,7 @@ const $a657c906f7aff940$export$5935ea4bf04c4453 = {
 
 
 
-// matche the hex encoded string "boostpow"
-const $cc0bec57c0a70920$var$protocolIdentifier = "626F6F7374706F77";
+const $cc0bec57c0a70920$var$protocolIdentifier = "boostpow";
 const $cc0bec57c0a70920$export$a52badcaecf73796 = (cell)=>{
     // protocol identifier always in first pushdata
     return cell[0].s === $cc0bec57c0a70920$var$protocolIdentifier;
@@ -628,10 +627,8 @@ const $0ca33a82c6135f7e$export$7830a85a59ca4593 = {
 // TODO - the OP_X_PLACEHOLDER is the number of bytes to push onto the stack and must match difficulty size
 const $24d0e6454775ab7d$var$_21e8Script = "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(" ");
 const $24d0e6454775ab7d$export$35263eb1836849b4 = (cell)=>{
-    if (cell.length !== 12) {
-        console.log("not 21e8 wrong length", cell.length);
-        return false;
-    }
+    if (cell.length !== 12) // wrong length
+    return false;
     // match exact script
     const ops = [
         ...cell
@@ -641,7 +638,7 @@ const $24d0e6454775ab7d$export$35263eb1836849b4 = (cell)=>{
     const targetOpSize = Buffer.from(target).byteLength;
     // replace the placeholder opcode with actual
     ops[1] = `OP_${targetOpSize}`;
-    console.log("compare", ops.length, $24d0e6454775ab7d$var$_21e8Script.length);
+    $24d0e6454775ab7d$var$_21e8Script[1] = `OP_${targetOpSize}`;
     // protocol identifier always in first pushdata
     return ops.join() === $24d0e6454775ab7d$var$_21e8Script.join();
 };
@@ -712,7 +709,8 @@ class $d4689e6be4abd8e2$export$894a720e71f90b3c {
                     if ((0, $ad115897f795de9e$export$238b4e54af8fe886)(cellContainer)) continue;
                     const { cell: cell  } = cellContainer;
                     if (!cell) throw new Error("empty cell while parsing");
-                    await this.process({
+                    const prefix = cell[0].s;
+                    await this.process(this.protocolMap.get(prefix || "") || "", {
                         cell: cell,
                         dataObj: dataObj,
                         tape: tape,
@@ -725,32 +723,29 @@ class $d4689e6be4abd8e2$export$894a720e71f90b3c {
                     // Check for boostpow and 21e8
                     if (tape === null || tape === void 0 ? void 0 : tape.some((cc)=>{
                         const { cell: cell  } = cc;
-                        if (this.protocolMap.has("BOOST") && (0, $cc0bec57c0a70920$export$a52badcaecf73796)(cell)) return true;
-                        if (this.protocolMap.has("21E8") && (0, $24d0e6454775ab7d$export$35263eb1836849b4)(cell)) return true;
+                        if (this.protocolHandlers.has((0, $cc0bec57c0a70920$export$13c3c8ee12090ebc).name) && (0, $cc0bec57c0a70920$export$a52badcaecf73796)(cell)) // 'found boost'
+                        return true;
+                        if (this.protocolHandlers.has((0, $24d0e6454775ab7d$export$85479a00ad164ad6).name) && (0, $24d0e6454775ab7d$export$35263eb1836849b4)(cell)) // 'found 21e8'
+                        return true;
                     })) // find the cell array
                     // loop over tape
                     for (const cellContainer1 of tape){
                         const { cell: cell1  } = cellContainer1;
                         // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                        if ((0, $cc0bec57c0a70920$export$a52badcaecf73796)(cell1) || (0, $24d0e6454775ab7d$export$35263eb1836849b4)(cell1)) {
-                            if (!cell1) throw new Error("empty cell while parsing");
-                            this.process({
-                                tx: tx,
-                                cell: cell1,
-                                dataObj: dataObj,
-                                tape: tape,
-                                out: out
-                            });
-                        }
-                    }
-                    else {
-                        // no known non-OP_RETURN scripts
-                        if (key && !dataObj[key]) dataObj[key] = [];
-                        dataObj[key].push({
-                            i: out.i,
-                            e: out.e
+                        if (!cell1) throw new Error("empty cell while parsing");
+                        let protocolName = "";
+                        if ((0, $cc0bec57c0a70920$export$a52badcaecf73796)(cell1)) protocolName = (0, $cc0bec57c0a70920$export$13c3c8ee12090ebc).name;
+                        else if ((0, $24d0e6454775ab7d$export$35263eb1836849b4)(cell1)) protocolName = (0, $24d0e6454775ab7d$export$85479a00ad164ad6).name;
+                        else continue;
+                        this.process(protocolName, {
+                            tx: tx,
+                            cell: cell1,
+                            dataObj: dataObj,
+                            tape: tape,
+                            out: out
                         });
                     }
+                    else this.processUnknown(key, dataObj, out);
                 }
             }
             else if (key === "in") // TODO: Boost check inputs to see if this is a tx solving a puzzle
@@ -783,10 +778,15 @@ class $d4689e6be4abd8e2$export$894a720e71f90b3c {
         }
         return dataObj;
     };
-    process = async ({ cell: cell , dataObj: dataObj , tape: tape , out: out , tx: tx  })=>{
-        // Get protocol name from prefix
-        const prefix = cell[0].s;
-        const protocolName = this.protocolMap.get(prefix) || prefix;
+    processUnknown = (key, dataObj, out)=>{
+        // no known non-OP_RETURN scripts
+        if (key && !dataObj[key]) dataObj[key] = [];
+        dataObj[key].push({
+            i: out.i,
+            e: out.e
+        });
+    };
+    process = async (protocolName, { cell: cell , dataObj: dataObj , tape: tape , out: out , tx: tx  })=>{
         if (this.protocolHandlers.has(protocolName) && typeof this.protocolHandlers.get(protocolName) === "function") {
             const handler = this.protocolHandlers.get(protocolName);
             if (handler) /* eslint-disable no-await-in-loop */ await handler({

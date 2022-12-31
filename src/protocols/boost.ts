@@ -2,8 +2,7 @@ import { BoostPowJob } from 'boostpow'
 import { Cell, HandlerProps, Protocol } from '../../types/common'
 import { saveProtocolData } from '../utils'
 
-// matche the hex encoded string "boostpow"
-const protocolIdentifier = '626F6F7374706F77'
+const protocolIdentifier = 'boostpow'
 
 /*
 {

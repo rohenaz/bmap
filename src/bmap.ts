@@ -13,10 +13,10 @@ import {
 import { AIP } from './protocols/aip'
 import { B } from './protocols/b'
 import { BAP } from './protocols/bap'
-import { checkBoostpow } from './protocols/boost'
+import { BOOST, checkBoostpow } from './protocols/boost'
 import { MAP } from './protocols/map'
 import { METANET } from './protocols/metanet'
-import { check21e8 } from './protocols/_21e8'
+import { check21e8, _21E8 } from './protocols/_21e8'
 import { checkOpFalseOpReturn, saveProtocolData } from './utils'
 
 const protocolMap = new Map<string, string>([])
@@ -88,13 +88,18 @@ export class BMAP {
                                 throw new Error('empty cell while parsing')
                             }
 
-                            await this.process({
-                                cell,
-                                dataObj: dataObj as BmapTx,
-                                tape,
-                                out,
-                                tx,
-                            })
+                            const prefix = cell[0].s
+
+                            await this.process(
+                                this.protocolMap.get(prefix || '') || '',
+                                {
+                                    cell,
+                                    dataObj: dataObj as BmapTx,
+                                    tape,
+                                    out,
+                                    tx,
+                                }
+                            )
                         }
                     } else {
                         // No OP_RETURN in this tape
@@ -104,15 +109,17 @@ export class BMAP {
                             tape?.some((cc) => {
                                 const { cell } = cc
                                 if (
-                                    this.protocolMap.has('BOOST') &&
+                                    this.protocolHandlers.has(BOOST.name) &&
                                     checkBoostpow(cell)
                                 ) {
+                                    // 'found boost'
                                     return true
                                 }
                                 if (
-                                    this.protocolMap.has('21E8') &&
+                                    this.protocolHandlers.has(_21E8.name) &&
                                     check21e8(cell)
                                 ) {
+                                    // 'found 21e8'
                                     return true
                                 }
                             })
@@ -122,31 +129,29 @@ export class BMAP {
                             for (const cellContainer of tape) {
                                 const { cell } = cellContainer
                                 // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                                if (checkBoostpow(cell) || check21e8(cell)) {
-                                    if (!cell) {
-                                        throw new Error(
-                                            'empty cell while parsing'
-                                        )
-                                    }
-                                    this.process({
-                                        tx,
-                                        cell,
-                                        dataObj: dataObj as BmapTx,
-                                        tape,
-                                        out,
-                                    })
+                                if (!cell) {
+                                    throw new Error('empty cell while parsing')
                                 }
+                                let protocolName = ''
+                                if (checkBoostpow(cell)) {
+                                    protocolName = BOOST.name
+                                } else if (check21e8(cell)) {
+                                    protocolName = _21E8.name
+                                } else {
+                                    // nothing found
+                                    continue
+                                }
+
+                                this.process(protocolName, {
+                                    tx,
+                                    cell,
+                                    dataObj: dataObj as BmapTx,
+                                    tape,
+                                    out,
+                                })
                             }
                         } else {
-                            // no known non-OP_RETURN scripts
-                            if (key && !dataObj[key]) {
-                                dataObj[key] = []
-                            }
-
-                            ;(dataObj[key] as Out[]).push({
-                                i: out.i,
-                                e: out.e,
-                            })
+                            this.processUnknown(key, dataObj, out)
                         }
                     }
                 }
@@ -185,12 +190,22 @@ export class BMAP {
         return dataObj as BmapTx
     }
 
-    process = async ({ cell, dataObj, tape, out, tx }: HandlerProps) => {
-        // Get protocol name from prefix
-        const prefix = cell[0].s as string
+    processUnknown = (key: string, dataObj: Partial<BmapTx>, out: Out) => {
+        // no known non-OP_RETURN scripts
+        if (key && !dataObj[key]) {
+            dataObj[key] = []
+        }
 
-        const protocolName = this.protocolMap.get(prefix) || prefix
+        ;(dataObj[key] as Out[]).push({
+            i: out.i,
+            e: out.e,
+        })
+    }
 
+    process = async (
+        protocolName: string,
+        { cell, dataObj, tape, out, tx }: HandlerProps
+    ) => {
         if (
             this.protocolHandlers.has(protocolName) &&
             typeof this.protocolHandlers.get(protocolName) === 'function'
