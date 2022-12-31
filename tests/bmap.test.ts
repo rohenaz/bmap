@@ -167,4 +167,28 @@ describe('bmap', () => {
         expect(parseTx['21E8'] && parseTx['21E8'][1].value).toEqual(700)
         // rest is checked in and _21e8.test.js
     })
+
+    test('test TransformTx - override protocol list', async () => {
+        const parseTx = await TransformTx(boostTransaction as BobTx, [
+            'BOOST',
+            'AIP',
+        ])
+
+        expect(parseTx.tx.h).toEqual(
+            '6bb713a65d0735cbe581ac66458ab83b557a58c198af2e2b5a2228d1b7ff8b87'
+        )
+
+        expect(Array.isArray(parseTx.BOOST)).toBe(true)
+        expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual('object')
+        // rest is checked in boost.test.js
+
+        expect(Array.isArray(parseTx['21E8'])).toBe(true)
+        expect(parseTx['21E8'] && parseTx['21E8'].length).toEqual(2)
+        expect(parseTx['21E8'] && parseTx['21E8'][0].value).toEqual(700)
+        expect(parseTx['21E8'] && parseTx['21E8'][1].value).toEqual(700)
+        // rest is checked in and _21e8.test.js
+
+        //MAP should not be available
+        expect(!!parseTx['MAP']).toBe(false)
+    })
 })
