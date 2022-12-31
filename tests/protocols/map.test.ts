@@ -7,7 +7,7 @@ describe('map', () => {
     test('protocol definition', () => {
         expect(typeof MAP.name).toEqual('string')
         expect(typeof MAP.address).toEqual('string')
-        expect(typeof MAP.querySchema).toEqual('object')
+        expect(typeof MAP.opReturnSchema).toEqual('object')
         expect(typeof MAP.handler).toEqual('function')
     })
 

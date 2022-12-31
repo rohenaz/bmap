@@ -7,7 +7,7 @@ describe('ron', () => {
     test('protocol definition', () => {
         expect(typeof RON.name).toEqual('string')
         expect(typeof RON.address).toEqual('string')
-        expect(typeof RON.querySchema).toEqual('object')
+        expect(typeof RON.opReturnSchema).toEqual('object')
         expect(typeof RON.handler).toEqual('function')
     })
 

@@ -15,7 +15,7 @@ import {
 
 const address = '15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva'
 
-const querySchema = [
+const opReturnSchema = [
     { algorithm: 'string' },
     { address: 'string' },
     { signature: 'binary' },
@@ -181,7 +181,7 @@ export const enum SIGPROTO {
 }
 
 export const AIPhandler = async function (
-    useQuerySchema: Object[],
+    useOpReturnSchema: Object[],
     protocol: SIGPROTO,
     dataObj: Object,
     cell: Cell[],
@@ -198,7 +198,7 @@ export const AIPhandler = async function (
         )
     }
 
-    for (const [idx, schemaField] of Object.entries(useQuerySchema)) {
+    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)) {
         const x = parseInt(idx, 10)
 
         let schemaEncoding
@@ -250,12 +250,19 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
     if (!tx) {
         throw new Error('Invalid AIP transaction. tx is required')
     }
-    return await AIPhandler(querySchema, SIGPROTO.AIP, dataObj, cell, tape, tx)
+    return await AIPhandler(
+        opReturnSchema,
+        SIGPROTO.AIP,
+        dataObj,
+        cell,
+        tape,
+        tx
+    )
 }
 
 export const AIP: Protocol = {
     name: 'AIP',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

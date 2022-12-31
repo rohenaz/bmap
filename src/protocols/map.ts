@@ -6,7 +6,7 @@ import { saveProtocolData } from '../utils'
 
 const address = '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5'
 
-const querySchema = [
+const opReturnSchema = [
     {
         cmd: {
             SET: [{ key: 'string' }, { val: 'string' }],
@@ -168,7 +168,7 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps) {
     }
 
     // Get the MAP command key name from the query schema
-    const mapCmdKey = Object.keys(querySchema[0])[0]
+    const mapCmdKey = Object.keys(opReturnSchema[0])[0]
 
     // Add the firt MAP command in the response object
     mapObj[mapCmdKey] = commands[0][0].s
@@ -229,6 +229,6 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps) {
 export const MAP: Protocol = {
     name: 'MAP',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

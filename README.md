@@ -195,18 +195,18 @@ You can also easily add new handlers for processing any type of bitcom output.
 import { BMAP } from 'bmapjs'
 
 const bmap = new BMAP()
-const querySchema = {} // optional
+const opReturnSchema = [{}] // optional
 const handler = function (dataObj, cell, tape, tx) {
     // dataObj is the object that all data is added to
     // cell is the current cell being processed
     // tape is the tape the cell is in
     // tx is the total transaction
 }
-// addProtocolHandler(name, address, querySchema, handler);
+// addProtocolHandler(name, address, opReturnSchema, handler);
 bmap.addProtocolHandler({
     name: 'TEST',
     address: '1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ',
-    querySchema,
+    opReturnSchema,
     handler,
 })
 
@@ -227,26 +227,26 @@ OP_FALSE OP_RETURN
 
 ```javascript
 import { BMAP } from 'bmapjs';
-import { bmapQuerySchemaHandler } from './utils';
+import { bmapOpReturnSchemaHandler } from './utils';
 
 const bmap = new BMAP();
-const querySchema = {
+const opReturnSchema = [{
   { type: 'string' },
   { hash: 'string' },
   { sequence: 'string' },
-};
+}];
 
-const handler = bmapQuerySchemaHandler.bind(this, 'TEST', querySchema);
+const handler = bmapOpReturnSchemaHandler.bind(this, 'TEST', opReturnSchema);
 // or
 const handler2 = function(dataObj, cell, tape, tx) {
-  bmapQuerySchemaHandler('TEST', querySchema, dataObj, cell, tape, tx);
+  bmapOpReturnSchemaHandler('TEST', opReturnSchema, dataObj, cell, tape, tx);
 }
 
-// addProtocolHandler(name, address, querySchema, handler);
+// addProtocolHandler(name, address, opReturnSchema, handler);
 bmap.addProtocolHandler({
   name: 'TEST',
   address: '1FJrobAYoQ6qSVJH7yiawfaUmZ3G13q9iJ',
-  querySchema,
+  opReturnSchema,
   handler,
 });
 

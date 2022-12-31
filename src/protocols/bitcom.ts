@@ -3,7 +3,7 @@ import { saveProtocolData } from '../utils'
 
 const protocolAddress = '$'
 
-const querySchema = [
+const opReturnSchema = [
     {
         su: [
             { pubkey: 'string' },
@@ -44,6 +44,6 @@ const handler = ({ dataObj, cell }: HandlerProps) => {
 export const BITCOM: Protocol = {
     name: 'BITCOM',
     address: protocolAddress,
-    querySchema,
+    opReturnSchema,
     handler,
 }

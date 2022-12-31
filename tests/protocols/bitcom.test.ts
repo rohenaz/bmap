@@ -7,7 +7,7 @@ describe('bitcom', () => {
     test('protocol definition', () => {
         expect(typeof BITCOM.name).toEqual('string')
         expect(typeof BITCOM.address).toEqual('string')
-        expect(typeof BITCOM.querySchema).toEqual('object')
+        expect(typeof BITCOM.opReturnSchema).toEqual('object')
         expect(typeof BITCOM.handler).toEqual('function')
     })
 

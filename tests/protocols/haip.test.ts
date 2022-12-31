@@ -6,7 +6,7 @@ describe('haip', () => {
     test('protocol definition', () => {
         expect(typeof HAIP.name).toEqual('string')
         expect(typeof HAIP.address).toEqual('string')
-        expect(typeof HAIP.querySchema).toEqual('object')
+        expect(typeof HAIP.opReturnSchema).toEqual('object')
         expect(typeof HAIP.handler).toEqual('function')
     })
 

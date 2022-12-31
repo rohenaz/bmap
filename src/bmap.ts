@@ -9,21 +9,49 @@ import {
     MomTx,
     Out,
     Protocol,
+    ScriptChecker,
 } from '../types/common'
 import { AIP } from './protocols/aip'
 import { B } from './protocols/b'
 import { BAP } from './protocols/bap'
-import { BOOST, checkBoostpow } from './protocols/boost'
+import { BITCOM } from './protocols/bitcom'
+import { BITCOM_HASHED } from './protocols/bitcomHashed'
+import { BITKEY } from './protocols/bitkey'
+import { BITPIC } from './protocols/bitpic'
+import { BOOST } from './protocols/boost'
+import { HAIP } from './protocols/haip'
 import { MAP } from './protocols/map'
 import { METANET } from './protocols/metanet'
-import { check21e8, _21E8 } from './protocols/_21e8'
+import { PSP } from './protocols/psp'
+import { RON } from './protocols/ron'
+import { _21E8 } from './protocols/_21e8'
 import { checkOpFalseOpReturn, saveProtocolData } from './utils'
 
+// Names of enabled protocols
 const enabledProtocols = new Map<string, string>([])
+// Protocol Handlers
 const protocolHandlers = new Map<string, Handler>([])
-const protocolQuerySchemas = new Map<string, Object[]>()
+// Script checkers are intentionally minimalistic detection functions for identifying matching scripts for a given protocol. Only if a checker returns true is a handler called for processing.
+const protocolScriptCheckers = new Map<string, ScriptChecker>([])
+const protocolOpReturnSchemas = new Map<string, Object[]>()
 
-export const allProtocols = [AIP, B, BAP, MAP, METANET, BOOST, _21E8]
+export const allProtocols = [
+    AIP,
+    B,
+    BAP,
+    MAP,
+    METANET,
+    BOOST,
+    _21E8,
+    BITCOM,
+    BITKEY,
+    BITPIC,
+    HAIP,
+    BITCOM_HASHED,
+    PSP,
+    RON,
+]
+
 export const defaultProtocols = [AIP, B, BAP, MAP, METANET]
 
 // prepare protocol map, handlers and schemas
@@ -32,8 +60,11 @@ defaultProtocols.forEach((protocol) => {
         enabledProtocols.set(protocol.address, protocol.name)
     }
     protocolHandlers.set(protocol.name, protocol.handler)
-    if (protocol.querySchema) {
-        protocolQuerySchemas.set(protocol.name, protocol.querySchema)
+    if (protocol.opReturnSchema) {
+        protocolOpReturnSchemas.set(protocol.name, protocol.opReturnSchema)
+    }
+    if (protocol.scriptChecker) {
+        protocolScriptCheckers.set(protocol.name, protocol.scriptChecker)
     }
 })
 
@@ -43,22 +74,34 @@ export class BMAP {
 
     protocolHandlers: Map<string, Handler>
 
-    protocolQuerySchemas: Map<string, Object[]>
+    protocolScriptCheckers: Map<string, ScriptChecker>
+
+    protocolOpReturnSchemas: Map<string, Object[]>
 
     constructor() {
         // initial default protocol handlers in this instantiation
         this.enabledProtocols = enabledProtocols
         this.protocolHandlers = protocolHandlers
-        this.protocolQuerySchemas = protocolQuerySchemas
+        this.protocolScriptCheckers = protocolScriptCheckers
+        this.protocolOpReturnSchemas = protocolOpReturnSchemas
     }
 
-    addProtocolHandler({ name, address, querySchema, handler }: Protocol) {
+    addProtocolHandler({
+        name,
+        address,
+        opReturnSchema,
+        handler,
+        scriptChecker,
+    }: Protocol) {
         if (address) {
             this.enabledProtocols.set(address, name)
         }
         this.protocolHandlers.set(name, handler)
-        if (querySchema) {
-            this.protocolQuerySchemas.set(name, querySchema)
+        if (opReturnSchema) {
+            this.protocolOpReturnSchemas.set(name, opReturnSchema)
+        }
+        if (scriptChecker) {
+            this.protocolScriptCheckers.set(name, scriptChecker)
         }
     }
 
@@ -105,21 +148,22 @@ export class BMAP {
                     } else {
                         // No OP_RETURN in this tape
 
+                        const boostChecker = this.protocolScriptCheckers.get(
+                            BOOST.name
+                        )
+                        const _21e8Checker = this.protocolScriptCheckers.get(
+                            _21E8.name
+                        )
+
                         // Check for boostpow and 21e8
                         if (
                             tape?.some((cc) => {
                                 const { cell } = cc
-                                if (
-                                    this.protocolHandlers.has(BOOST.name) &&
-                                    checkBoostpow(cell)
-                                ) {
+                                if (boostChecker && boostChecker(cell)) {
                                     // 'found boost'
                                     return true
                                 }
-                                if (
-                                    this.protocolHandlers.has(_21E8.name) &&
-                                    check21e8(cell)
-                                ) {
+                                if (_21e8Checker && _21e8Checker(cell)) {
                                     // 'found 21e8'
                                     return true
                                 }
@@ -134,9 +178,9 @@ export class BMAP {
                                     throw new Error('empty cell while parsing')
                                 }
                                 let protocolName = ''
-                                if (checkBoostpow(cell)) {
+                                if (boostChecker && boostChecker(cell)) {
                                     protocolName = BOOST.name
-                                } else if (check21e8(cell)) {
+                                } else if (_21e8Checker && _21e8Checker(cell)) {
                                     protocolName = _21E8.name
                                 } else {
                                     // nothing found

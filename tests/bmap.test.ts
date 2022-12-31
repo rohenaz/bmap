@@ -24,7 +24,7 @@ describe('bmap', () => {
 
     test('add handler', () => {
         const bmap = new BMAP()
-        const querySchema: Object[] = []
+        const opReturnSchema: Object[] = []
         const protocolHandler: Handler = function ({
             dataObj,
             cell,
@@ -34,7 +34,7 @@ describe('bmap', () => {
         bmap.addProtocolHandler({
             name: 'test',
             address: '123TEST',
-            querySchema,
+            opReturnSchema,
             handler: protocolHandler,
         })
 

@@ -7,7 +7,7 @@ describe('bap', () => {
     test('protocol definition', () => {
         expect(typeof BAP.name).toEqual('string')
         expect(typeof BAP.address).toEqual('string')
-        expect(typeof BAP.querySchema).toEqual('object')
+        expect(typeof BAP.opReturnSchema).toEqual('object')
         expect(typeof BAP.handler).toEqual('function')
     })
 

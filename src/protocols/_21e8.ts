@@ -11,7 +11,7 @@ const _21e8Script =
         ' '
     )
 
-export const check21e8 = (cell: Cell[]) => {
+const scriptChecker = (cell: Cell[]) => {
     if (cell.length !== 12) {
         // wrong length
         return false
@@ -66,4 +66,5 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
 export const _21E8: Protocol = {
     name: '21E8',
     handler,
+    scriptChecker,
 }

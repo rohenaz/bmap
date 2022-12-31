@@ -3,7 +3,7 @@ import { AIPhandler, SIGPROTO } from './aip'
 
 const address = '15igChEkUWgx4dsEcSuPitcLNZmNDfUvgA'
 
-const querySchema = [
+const opReturnSchema = [
     { address: 'string' },
     { unknown_hex: 'string' },
     { unknown_binary: 'string' },
@@ -20,7 +20,7 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
         throw new Error(`Invalid BITCOM_HASHED tx.`)
     }
     return await AIPhandler(
-        querySchema,
+        opReturnSchema,
         SIGPROTO.BITCOM_HASHED,
         dataObj,
         cell,
@@ -32,6 +32,6 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
 export const BITCOM_HASHED: Protocol = {
     name: 'BITCOM_HASHED',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

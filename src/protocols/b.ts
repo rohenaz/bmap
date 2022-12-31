@@ -3,7 +3,7 @@ import { cellValue, saveProtocolData } from '../utils'
 
 const address = '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut'
 
-const querySchema = [
+const opReturnSchema = [
     { content: ['string', 'binary', 'file'] },
     { 'content-type': 'string' },
     { encoding: 'string' }, // we use this field to determine content character encoding. If encoding is not a valid character encoding (gzip), we assume it is binary
@@ -24,7 +24,7 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps): void {
     }
 
     // Check pushdata length + 1 for protocol prefix
-    if (cell.length > querySchema.length + 1) {
+    if (cell.length > opReturnSchema.length + 1) {
         throw new Error('Invalid B tx. Too many fields.')
     }
 
@@ -32,7 +32,7 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps): void {
 
     const bObj: { [key: string]: string | number | undefined } = {}
     // loop over the schema
-    for (const [idx, schemaField] of Object.entries(querySchema)) {
+    for (const [idx, schemaField] of Object.entries(opReturnSchema)) {
         const x = parseInt(idx, 10)
         const bField = Object.keys(schemaField)[0]
         let schemaEncoding = Object.values(schemaField)[0]
@@ -94,6 +94,6 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps): void {
 export const B: Protocol = {
     name: 'B',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

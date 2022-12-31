@@ -7,7 +7,7 @@ describe('bitpic', () => {
     test('protocol definition', () => {
         expect(typeof BITPIC.name).toEqual('string')
         expect(typeof BITPIC.address).toEqual('string')
-        expect(typeof BITPIC.querySchema).toEqual('object')
+        expect(typeof BITPIC.opReturnSchema).toEqual('object')
         expect(typeof BITPIC.handler).toEqual('function')
     })
 

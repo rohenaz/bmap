@@ -5,7 +5,7 @@ import { cellValue, saveProtocolData, sha256 } from '../utils'
 
 const address = '13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC'
 
-const querySchema = [
+const opReturnSchema = [
     { bitkey_signature: 'string' },
     { user_signature: 'string' },
     { paymail: 'string' },
@@ -22,7 +22,7 @@ const handler = async ({ dataObj, cell }: HandlerProps) => {
     const bitkeyObj: { [key: string]: string | boolean } = {}
 
     // loop over the schema
-    for (const [idx, schemaField] of Object.entries(querySchema)) {
+    for (const [idx, schemaField] of Object.entries(opReturnSchema)) {
         const x = parseInt(idx, 10)
         const bitkeyField = Object.keys(schemaField)[0]
         const schemaEncoding = Object.values(schemaField)[0]
@@ -60,6 +60,6 @@ const handler = async ({ dataObj, cell }: HandlerProps) => {
 export const BITKEY: Protocol = {
     name: 'BITKEY',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

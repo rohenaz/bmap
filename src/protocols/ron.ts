@@ -3,7 +3,7 @@ import { saveProtocolData } from '../utils'
 
 const address = '1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1'
 
-const querySchema = [
+const opReturnSchema = [
     { pair: 'json' },
     { address: 'string' },
     { timestamp: 'string' },
@@ -35,6 +35,6 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps) {
 export const RON: Protocol = {
     name: 'RON',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

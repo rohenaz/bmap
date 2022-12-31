@@ -7,7 +7,7 @@ describe('bitkey', () => {
     test('protocol definition', () => {
         expect(typeof BITKEY.name).toEqual('string')
         expect(typeof BITKEY.address).toEqual('string')
-        expect(typeof BITKEY.querySchema).toEqual('object')
+        expect(typeof BITKEY.opReturnSchema).toEqual('object')
         expect(typeof BITKEY.handler).toEqual('function')
     })
 

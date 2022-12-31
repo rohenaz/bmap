@@ -7,7 +7,7 @@ describe('symre', () => {
     test('protocol definition', () => {
         expect(typeof SYMRE.name).toEqual('string')
         expect(typeof SYMRE.address).toEqual('string')
-        expect(typeof SYMRE.querySchema).toEqual('object')
+        expect(typeof SYMRE.opReturnSchema).toEqual('object')
         expect(typeof SYMRE.handler).toEqual('function')
     })
 

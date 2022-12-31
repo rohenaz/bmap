@@ -17,7 +17,7 @@ const protocolIdentifier = 'boostpow'
 }
 */
 
-export const checkBoostpow = (cell: Cell[]) => {
+const scriptChecker = (cell: Cell[]) => {
     // protocol identifier always in first pushdata
     return cell[0].s === protocolIdentifier
 }
@@ -58,4 +58,5 @@ export const BOOST: Protocol = {
     name: 'BOOST',
     handler,
     address: protocolIdentifier,
+    scriptChecker,
 }

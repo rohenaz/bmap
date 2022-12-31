@@ -11,7 +11,7 @@ describe('b', () => {
     test('protocol definition', () => {
         expect(typeof B.name).toEqual('string')
         expect(typeof B.address).toEqual('string')
-        expect(typeof B.querySchema).toEqual('object')
+        expect(typeof B.opReturnSchema).toEqual('object')
         expect(typeof B.handler).toEqual('function')
     })
 

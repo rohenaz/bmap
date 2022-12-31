@@ -7,7 +7,7 @@ describe('p2p', () => {
     test('protocol definition', () => {
         expect(typeof PSP.name).toEqual('string')
         expect(typeof PSP.address).toEqual('string')
-        expect(typeof PSP.querySchema).toEqual('object')
+        expect(typeof PSP.opReturnSchema).toEqual('object')
         expect(typeof PSP.handler).toEqual('function')
     })
 

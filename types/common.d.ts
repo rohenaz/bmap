@@ -20,6 +20,7 @@ export type HandlerProps = {
 }
 
 export type Handler = (handlerProps: HandlerProps) => any
+export type ScriptChecker = (cell: Cell[]) => boolean
 
 type Cell = {
     op?: number
@@ -114,5 +115,6 @@ export type Protocol = {
     name: string
     handler: Handler
     address?: string
-    querySchema?: Object[]
+    opReturnSchema?: Object[]
+    scriptChecker?: ScriptChecker
 }

@@ -12,7 +12,7 @@ describe('aip', () => {
     test('protocol definition', async () => {
         expect(typeof AIP.name).toEqual('string')
         expect(typeof AIP.address).toEqual('string')
-        expect(typeof AIP.querySchema).toEqual('object')
+        expect(typeof AIP.opReturnSchema).toEqual('object')
         expect(typeof AIP.handler).toEqual('function')
     })
 

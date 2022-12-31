@@ -7,7 +7,7 @@ import { checkOpFalseOpReturn, saveProtocolData } from '../utils'
 
 const address = '1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4'
 
-const querySchema = [
+const opReturnSchema = [
     { signature: 'string' },
     { pubkey: 'string' },
     { paymail: 'string' },
@@ -112,6 +112,6 @@ const handler = async function ({ dataObj, cell, tape }: HandlerProps) {
 export const PSP: Protocol = {
     name: 'PSP',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

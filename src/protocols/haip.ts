@@ -3,7 +3,7 @@ import { AIPhandler, SIGPROTO } from './aip'
 
 const address = '1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3'
 
-const querySchema = [
+const opReturnSchema = [
     { hashing_algorithm: 'string' },
     { signing_algorithm: 'string' },
     { signing_address: 'string' },
@@ -20,12 +20,19 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
     if (!tx) {
         throw new Error(`Invalid HAIP tx.`)
     }
-    return await AIPhandler(querySchema, SIGPROTO.HAIP, dataObj, cell, tape, tx)
+    return await AIPhandler(
+        opReturnSchema,
+        SIGPROTO.HAIP,
+        dataObj,
+        cell,
+        tape,
+        tx
+    )
 }
 
 export const HAIP: Protocol = {
     name: 'HAIP',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }

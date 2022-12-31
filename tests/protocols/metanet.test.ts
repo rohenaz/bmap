@@ -8,7 +8,7 @@ describe('metanet', () => {
     test('protocol definition', () => {
         expect(typeof METANET.name).toEqual('string')
         expect(typeof METANET.address).toEqual('string')
-        expect(typeof METANET.querySchema).toEqual('object')
+        expect(typeof METANET.opReturnSchema).toEqual('object')
         expect(typeof METANET.handler).toEqual('function')
     })
 

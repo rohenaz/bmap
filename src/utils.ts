@@ -79,16 +79,16 @@ export const saveProtocolData = (
 /**
  * BMAP default handler to work with query schema's
  *
- * @param querySchema
+ * @param opReturnSchema
  * @param protocolName
  * @param dataObj
  * @param cell
  * @param tape
  * @param tx
  */
-export const bmapQuerySchemaHandler = function (
+export const bmapOpReturnSchemaHandler = function (
     protocolName: string,
-    querySchema: Object[],
+    opReturnSchema: Object[],
     dataObj: Object,
     cell: Cell[],
     tx: BobTx
@@ -97,14 +97,14 @@ export const bmapQuerySchemaHandler = function (
     const obj: { [key: string]: any } = {}
 
     // Does not have the required number of fields
-    const length = querySchema.length + 1
+    const length = opReturnSchema.length + 1
     if (cell.length < length) {
         throw new Error(
             `${protocolName} requires at least ${length} fields including the prefix: ${tx.tx.h}`
         )
     }
 
-    for (const [idx, schemaField] of Object.entries(querySchema)) {
+    for (const [idx, schemaField] of Object.entries(opReturnSchema)) {
         const x = parseInt(idx, 10)
 
         const [field] = Object.keys(schemaField)

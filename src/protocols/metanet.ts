@@ -9,7 +9,7 @@ import { sha256 } from '../utils'
 
 const address = 'meta'
 
-const querySchema = [
+const opReturnSchema = [
     { address: 'string' },
     { parent: 'string' },
     { name: 'string' },
@@ -66,6 +66,6 @@ const handler = async ({ dataObj, cell, tx }: HandlerProps) => {
 export const METANET: Protocol = {
     name: 'METANET',
     address,
-    querySchema,
+    opReturnSchema,
     handler,
 }
