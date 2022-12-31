@@ -1,9 +1,15 @@
+let examples
+let currentProtocol = localStorage.getItem('protocol') || 'B';
+
+const getExample = (txid) => {
+  return examples.filter((e) => e.protocols.includes(currentProtocol) && e.txid === txid)[0]
+}
+
 const load = async (ex) => {
 
-  let currentProtocol = localStorage.getItem('protocol') || 'B';
 
 
-  const examples = ex;
+    examples = ex;
 
     const matchingExamples = examples.filter((e) => e.protocols.includes(currentProtocol))
 
@@ -48,10 +54,11 @@ const load = async (ex) => {
     .appendChild(button);
   }
 
-  let currentExample = localStorage.getItem('example');
-  if (!currentExample) {
-    currentExample = examples.filter((e) => e.protocols.includes(currentProtocol) && e.txid === currentExample)[0]
-    localStorage.setItem('example', currentExample);
+  let currentTxid = localStorage.getItem('example');
+  let currentExample
+  if (!currentTxid) {
+    currentExample = getExample(currentTxid)
+    localStorage.setItem('example', currentExample.txid);
   }
 
   let txs = examples.filter((e) => e.protocols.includes(currentProtocol)).map((e) => e.txid);
@@ -102,13 +109,21 @@ const load = async (ex) => {
         }
         const item = document.createElement('div');
 
-        const txHeading = document.createElement('h5');
+        // Show txid link
+        const txHeading = document.createElement('h4');
         txHeading.innerHTML = 'TxID: <a target="_blank" href="https://whatsonchain.com/tx/'
           + bmapTx.tx.h
           + '">'
           + bmapTx.tx.h
           + '</a>';
         item.appendChild(txHeading);
+
+        // list protocols
+        const txSubHeading = document.createElement('h5');
+        const currentExample = getExample(currentTxid)
+        console.log({currentExample})
+        txSubHeading.innerHTML = `Protocols Detected: ${currentExample?.protocols.join(', ').replace(/, $/, '')}`;
+        item.appendChild(txSubHeading);
 
         const json = JSON.stringify(bmapTx, null, '\t');
         const edt = document.createElement('div');
@@ -117,7 +132,7 @@ const load = async (ex) => {
         list.appendChild(item);
       //}
 
-      document.body.appendChild(list);
+      document.getElementById("example-container").appendChild(list);
       let editor;
       //  editor.setTheme('ace/theme/idle_fingers')
       const editors = document.querySelectorAll('.editor');
@@ -125,7 +140,7 @@ const load = async (ex) => {
       for (const e of editors) {
         editor = ace.edit(e);
         editor.getSession().setMode('ace/mode/json');
-        editor.setTheme('ace/theme/mono_industrial');
+        editor.setTheme('ace/theme/vibrant_ink');
         editor.setShowPrintMargin(false);
         editor.setOptions({
           maxLines: 25,
@@ -151,7 +166,8 @@ const load = async (ex) => {
       .then((json) => {
 
 
-        
+        document.getElementById('supported_protocols').innerHTML = bmap.supportedProtocols.join(', ').replace(/, $/, '')
+
         load(json);
         return console.log(json);
       });

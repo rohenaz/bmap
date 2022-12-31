@@ -7,6 +7,7 @@ import indexedTransaction from './data/b-aip-transaction-with-indexes.json'
 import validBobTransaction from './data/bap-transaction.json'
 import boostTransaction from './data/boost-transaction.json'
 import mapTransactions from './data/map-transactions.json'
+import unknownBitcom from './data/unknown-bitcom.json'
 
 describe('bmap', () => {
     test('class init', () => {
@@ -190,5 +191,26 @@ describe('bmap', () => {
 
         //MAP should not be available
         expect(!!parseTx['MAP']).toBe(false)
+    })
+
+    test('test unknown bitcom', async () => {
+        const parseTx = await TransformTx(unknownBitcom as BobTx)
+
+        expect(parseTx.tx.h).toEqual(
+            'cdfe7ae5c91afe4dc3a5db383e0ca948ec3d51dc2954a9d18ca464db7c9d5d3d'
+        )
+
+        expect(
+            parseTx['1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo'] &&
+                Array.isArray(parseTx['1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo'])
+        ).toBe(true)
+        // expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual('object')
+        // // rest is checked in boost.test.js
+
+        // expect(Array.isArray(parseTx['21E8'])).toBe(true)
+        // expect(parseTx['21E8'] && parseTx['21E8'].length).toEqual(2)
+        // expect(parseTx['21E8'] && parseTx['21E8'][0].value).toEqual(700)
+        // expect(parseTx['21E8'] && parseTx['21E8'][1].value).toEqual(700)
+        // rest is checked in and _21e8.test.js
     })
 })

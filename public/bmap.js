@@ -1012,6 +1012,27 @@ const $727ccb17f24b5bd1$export$2839d627b6f3bcfe = {
 
 
 
+const $6dfa6a4e51495f17$var$address = "1SymRe7erxM46GByucUWnB9fEEMgo7spd";
+const $6dfa6a4e51495f17$var$opReturnSchema = [
+    {
+        url: "string"
+    }
+];
+const $6dfa6a4e51495f17$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+    if (cell[0].s !== $6dfa6a4e51495f17$var$address || !cell[1] || !cell[1].s) throw new Error(`Invalid SymRe tx: ${tx}`);
+    (0, $ad115897f795de9e$export$23dbc584560299c3)(dataObj, "SYMRE", {
+        url: cell[1].s
+    });
+};
+const $6dfa6a4e51495f17$export$33455cbcda538c68 = {
+    name: "SYMRE",
+    address: $6dfa6a4e51495f17$var$address,
+    opReturnSchema: $6dfa6a4e51495f17$var$opReturnSchema,
+    handler: $6dfa6a4e51495f17$var$handler
+};
+
+
+
 // 21e8 does not use the first pushdata for id
 // in fact there is no id since the 21e8 is designed for difficulty and can be changed
 // instead we use the static part of the script to indentfy the transaction
@@ -1080,7 +1101,8 @@ const $d4689e6be4abd8e2$export$6b22fa9a84a4797f = [
     (0, $3023f8a69a2a3516$export$12815d889fe90b8),
     (0, $9e8f8cef5932bd1b$export$f069e857381ef4b9),
     (0, $9e49651737ac299e$export$bd49ff9d0c7fbe97),
-    (0, $727ccb17f24b5bd1$export$2839d627b6f3bcfe)
+    (0, $727ccb17f24b5bd1$export$2839d627b6f3bcfe),
+    (0, $6dfa6a4e51495f17$export$33455cbcda538c68)
 ];
 const $d4689e6be4abd8e2$export$4f34a1c822988d11 = [
     (0, $69628e315d1a24a5$export$474d593e43f12abd),
@@ -1125,7 +1147,7 @@ class $d4689e6be4abd8e2$export$894a720e71f90b3c {
                     const { cell: cell  } = cellContainer;
                     if (!cell) throw new Error("empty cell while parsing");
                     const prefix = cell[0].s;
-                    await this.process(this.enabledProtocols.get(prefix || "") || "", {
+                    await this.process(this.enabledProtocols.get(prefix || "") || prefix || "", {
                         cell: cell,
                         dataObj: dataObj,
                         tape: tape,

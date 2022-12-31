@@ -1,5 +1,9 @@
 <html>
   <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto+Slab&display=swap" rel="stylesheet">
     <link
       href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
       rel="stylesheet"
@@ -12,20 +16,84 @@
         font-family: 'Roboto', sans-serif;
       }
 
-      a {
-        color: lightblue;
+      .ace_editor {
+        border-radius: .5rem;
+        font-family: 'Roboto Mono', sans-serif;
       }
 
+      .ace_scrollbar::-webkit-scrollbar {
+          height: 7px;
+      }
+
+      .ace_scrollbar::-webkit-scrollbar-track
+      {
+          box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+          background-color: #111;
+      }
+
+      .ace_scrollbar::-webkit-scrollbar-thumb {
+          background-color: rgb(88, 88, 88);
+          outline: 1px solid #444;
+      }
+
+
+      h1, h2 {
+        font-family: 'Roboto Slab', sans-serif;
+        color: lightseagreen;
+      }
+
+      h5, h4 {
+        font-family: 'Roboto Mono', sans-serif;
+      }
+
+      h4 {
+        color: slategray;
+      }
+
+      a {
+        color: steelblue !important;
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: lightseagreen !important;
+      }
+
+
       a:visited {
-        color: slateblue;
+        color: lightgray !important;
+      }
+
+      hr {
+        border: 0;
+        background-color: #111;
+        width: 100%;
+        height:2px;
       }
 
       button {
+        border-radius: .25rem;
         padding: 0.5rem;
         margin: 0.5rem;
-        background-color: #333;
+        background-color: #222;
         border: 0;
         color: #fff;
+      }
+
+      button:hover {
+        cursor: pointer;
+        background-color: darkseagreen;
+        color: #000
+      }
+
+      .tonicpow-widget {
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      main {
+        max-width: 1024px;
+        margin: auto;
       }
 
       #tx-list {
@@ -55,66 +123,73 @@
     <script src="./fetch.js"></script>
   </head>
   <body>
-    <h1>BMAPjs</h1>
-    <p>
-      A BOB! transaction parser that makes many BSV OP_RETURN protocols easier to
-      work with. BMAPjs knows about each supported protocol and will transform
-      BOB transactions into readable, easy to understand objects.
-    </p>
-    <p>
-      Supported protocols: B, MAP, BAP, MetaNet, Bitcom, AIP, HAIP, SymRe,
-      Bitkey, RON, and BitPic. All other protocol prefixes will retain their
-      original BOB format.
-    </p>
-    <p>The parser, which uses the Open BSV license, is available on github.</p>
-    <a href="https://github.com/rohenaz/bmap">Github</a>
-    <p>
-      BMAPjs is used by the BMAP-Planaria which provides a simple search query
-      syntax:
-      <a
-        href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJ0d2V0Y2giCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
-        >Twetch</a
-      >,
-      <a
-        href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJtZXRhbGVucyIKICAgIH0sCiAgICAibGltaXQiOiAxMAogIH0KfQ=="
-        >MetaLens</a
-      >,
-      <a
-        href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUS0VZLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
-        >BitKey</a
-      >,
-      <a
-        href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
-        >BitPic</a
-      >
-      >,
-      <a
-        href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
-        >Hona</a
-      >
-      >,
-      <a
-        href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
-        >Jamify</a
-      >
-    </p>
 
-    <div>
-      <script
-        async
-        defer
-        type="application/javascript"
-        src="https://tonicpow.com/scripts/tonicpow.js"
-      ></script>
-      <div
-        class="tonicpow-widget"
-        data-widget-id="82e5864bef31fa1783c2146ceec0a88af8558e288328ab2d022a54a9e8adcd59"
-      />
-    </div>
-    <h2>Examples By Protocol</h2>
-    
-    <nav id="nav"></nav>
-    <h1 id="currentExample"></h1>
-    <nav id="subnav"></nav>
+    <main>
+
+      <h1>BMAPjs</h1>
+      <h2>A transaction parser for Bitcoin data protocols</h2>
+  
+      <p>
+        BMAPjs makes Bitcoin protocols easier to work with. BMAPjs knows about several OP_RETURN and script based protocols and will transform
+        transactions into readable, easy to understand objects.
+      </p>
+      <p>
+        Supported protocols: <span id="supported_protocols"></span>. All other protocol prefixes will retain their
+        original BOB format.
+      </p>
+      <p>The parser, which uses the Open BSV license, is available on github. See the readme for more information.</p>
+      <a href="https://github.com/rohenaz/bmap">Github</a>
+      <h2>BMAP API</h2>
+      <p>
+        BMAPjs powers the BMAP-API which provides a simple search inmterface for supported Bitcoin data. Check out some examples:
+        <a
+          href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJ0d2V0Y2giCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
+          >Twetch</a
+        >,
+        <a
+          href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiTUFQLmFwcCI6ICJtZXRhbGVucyIKICAgIH0sCiAgICAibGltaXQiOiAxMAogIH0KfQ=="
+          >MetaLens</a
+        >,
+        <a
+          href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUS0VZLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
+          >BitKey</a
+        >,
+        <a
+          href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
+          >BitPic</a
+        >
+        <a
+          href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
+          >Hona</a
+        >
+        <a
+          href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
+          >Jamify</a
+        >
+      </p>
+  
+      <h2>Examples By Protocol</h2>
+      
+      <nav id="nav"></nav>
+      <h1 id="currentExample"></h1>
+      <hr />
+      <nav id="subnav"></nav>
+      <div id="example-container"></div>
+      <hr />
+      <div>
+        <script
+          async
+          defer
+          type="application/javascript"
+          src="https://tonicpow.com/scripts/tonicpow.js"
+        ></script>
+        <div
+          class="tonicpow-widget"
+          data-widget-id="82e5864bef31fa1783c2146ceec0a88af8558e288328ab2d022a54a9e8adcd59"
+        />
+      </div>
+    </main>
+
+
   </body>
 </html>

@@ -24,6 +24,7 @@ import { MAP } from './protocols/map'
 import { METANET } from './protocols/metanet'
 import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
+import { SYMRE } from './protocols/symre'
 import { _21E8 } from './protocols/_21e8'
 import { checkOpFalseOpReturn, saveProtocolData } from './utils'
 
@@ -50,6 +51,7 @@ export const allProtocols = [
     BITCOM_HASHED,
     PSP,
     RON,
+    SYMRE,
 ]
 
 export const defaultProtocols = [AIP, B, BAP, MAP, METANET]
@@ -135,7 +137,9 @@ export class BMAP {
                             const prefix = cell[0].s
 
                             await this.process(
-                                this.enabledProtocols.get(prefix || '') || '',
+                                this.enabledProtocols.get(prefix || '') ||
+                                    prefix ||
+                                    '',
                                 {
                                     cell,
                                     dataObj: dataObj as BmapTx,

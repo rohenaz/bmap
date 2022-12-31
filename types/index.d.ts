@@ -1,5 +1,12 @@
 import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Out, Protocol, ScriptChecker } from "../types/common";
-export const allProtocols: Protocol[];
+export const allProtocols: (Protocol | {
+    name: string;
+    address: string;
+    opReturnSchema: {
+        url: string;
+    }[];
+    handler: ({ dataObj, cell, tx }: HandlerProps) => void;
+})[];
 export const defaultProtocols: Protocol[];
 export class BMAP {
     enabledProtocols: Map<string, string>;
