@@ -15,7 +15,7 @@
     "node": "16"
   },
   "dependencies": {
-    "bmapjs": "^0.4.0-beta.7",
+    "bmapjs": "^0.4.0-beta.8",
     "bpu": "0.0.13",
     "cors-async": "^0.2.1",
     "firebase": "^9.15.0",

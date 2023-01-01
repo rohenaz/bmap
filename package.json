@@ -1,18 +1,27 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.8",
+  "version": "0.4.0-beta.9",
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
   "legacy": "dist/bmap.cjs",
+  "module": "dist/bmap.module.js",
   "main": "dist/bmap.js",
   "type": "module",
   "targets": {
-    "main": {
+    "module": {
       "isLibrary": true,
       "context": "node",
       "source": "src/bmap.ts",
       "engines": {
         "node": ">=12"
+      }
+    },
+    "main": {
+      "isLibrary": true,
+      "context": "browser",
+      "source": "src/bmap.ts",
+      "engines": {
+        "browsers": "Chrome 80"
       }
     },
     "types": {
@@ -46,12 +55,8 @@
     "test-watch": "npm run testwatch",
     "check": "./node_modules/.bin/npm-check -u",
     "pub": "./node_modules/.bin/np || true",
-    "build-public": "set NODE_ENV=production&&npm run build && ncp dist/bmap.js public/bmap.js && ncp dist/bmap.js.map public/bmap.js.map && ncp dist/bmap.cjs public/bmap.cjs && ncp dist/bmap.cjs.map public/bmap.cjs.map",
     "build-all": "npm run lint && npm run build-public",
-    "watch": "parcel-watch",
-    "public": "yarn build-public && cd public && ws --http2",
-    "publish": "npm run build-public && npm publish",
-    "publish-beta": "git tag beta && npm run build-public && npm publish --tag beta"
+    "watch": "parcel-watch"
   },
   "repository": {
     "type": "git",
