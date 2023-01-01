@@ -5,6 +5,7 @@
   "types": "types/index.d.ts",
   "legacy": "dist/bmap.cjs",
   "main": "dist/bmap.js",
+  "type": "module",
   "targets": {
     "main": {
       "isLibrary": true,
