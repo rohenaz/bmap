@@ -2,6 +2,22 @@ import { Buffer } from 'buffer'
 import { webcrypto } from 'crypto'
 import { BobTx, Cell, Tape } from '../types/common'
 
+export const isStringArray = (arr: Array<any>): boolean => {
+    return (
+        arr.length > 0 &&
+        arr.every((value) => {
+            return typeof value === 'string'
+        })
+    )
+}
+export const isObjectArray = (arr: Array<any>): boolean => {
+    return (
+        arr.length > 0 &&
+        arr.every((value) => {
+            return value === 'object'
+        })
+    )
+}
 /**
  * returns the BOB cell value for a given encoding
  *

@@ -7,6 +7,7 @@ export const allProtocols: (Protocol | {
     }[];
     handler: ({ dataObj, cell, tx }: HandlerProps) => void;
 })[];
+export const supportedProtocols: string[];
 export const defaultProtocols: Protocol[];
 export class BMAP {
     enabledProtocols: Map<string, string>;
@@ -19,6 +20,6 @@ export class BMAP {
     processUnknown: (key: string, dataObj: Partial<BmapTx>, out: Out) => void;
     process: (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => Promise<void>;
 }
-export const TransformTx: (tx: BobTx, protocols?: string[]) => Promise<BmapTx>;
+export const TransformTx: (tx: BobTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;
 
 //# sourceMappingURL=index.d.ts.map

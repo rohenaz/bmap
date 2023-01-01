@@ -5,3 +5,4 @@ dist
 package.json
 package-lock.json
 coverage
+./functions/*

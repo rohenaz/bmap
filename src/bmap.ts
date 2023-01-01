@@ -26,7 +26,12 @@ import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
 import { SYMRE } from './protocols/symre'
 import { _21E8 } from './protocols/_21e8'
-import { checkOpFalseOpReturn, saveProtocolData } from './utils'
+import {
+    checkOpFalseOpReturn,
+    isObjectArray,
+    isStringArray,
+    saveProtocolData,
+} from './utils'
 
 // Names of enabled protocols
 const enabledProtocols = new Map<string, string>([])
@@ -54,6 +59,7 @@ export const allProtocols = [
     SYMRE,
 ]
 
+export const supportedProtocols = allProtocols.map((p) => p.name)
 export const defaultProtocols = [AIP, B, BAP, MAP, METANET]
 
 // prepare protocol map, handlers and schemas
@@ -276,19 +282,34 @@ export class BMAP {
     }
 }
 
-export const TransformTx = async (tx: BobTx, protocols?: string[]) => {
+export const TransformTx = async (
+    tx: BobTx,
+    protocols?: string[] | Protocol[]
+) => {
     const b = new BMAP()
 
     // if protocols are specified
     if (protocols) {
         // wipe out defaults
-        enabledProtocols.clear()
-
-        // set enabled protocols
-        for (const protocol of allProtocols) {
-            if (protocols?.includes(protocol.name)) {
-                b.addProtocolHandler(protocol)
+        b.enabledProtocols.clear()
+        if (isStringArray(protocols)) {
+            // set enabled protocols
+            for (const protocol of allProtocols) {
+                if ((protocols as string[])?.includes(protocol.name)) {
+                    b.addProtocolHandler(protocol)
+                }
             }
+        } else if (isObjectArray(protocols)) {
+            for (const p of protocols) {
+                const protocol = p as Protocol
+                if (protocol) {
+                    b.addProtocolHandler(protocol)
+                }
+            }
+        } else {
+            throw new Error(
+                `Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).`
+            )
         }
     }
 

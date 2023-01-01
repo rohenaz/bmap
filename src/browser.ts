@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { allProtocols, BMAP, TransformTx } from './bmap'
+import { BMAP, supportedProtocols, TransformTx } from './bmap'
 
 // import { BOOST } from './protocols/boost'
 
@@ -15,7 +15,7 @@ if (typeof window !== 'undefined') {
     window.bmap = {
         BMAP,
         TransformTx,
-        supportedProtocols: allProtocols.map((p) => p.name),
+        supportedProtocols,
     }
     // const bm = new BMAP()
     // bm.addProtocolHandler(BOOST)

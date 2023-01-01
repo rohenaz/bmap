@@ -13,6 +13,16 @@ import {decode as $a6mis$decode} from "@msgpack/msgpack";
 
 
 
+const $8c5e6215e1bd1bd5$export$f6e922e536d8305c = (arr)=>{
+    return arr.length > 0 && arr.every((value)=>{
+        return typeof value === "string";
+    });
+};
+const $8c5e6215e1bd1bd5$export$37b8d83213de0f5f = (arr)=>{
+    return arr.length > 0 && arr.every((value)=>{
+        return value === "object";
+    });
+};
 const $8c5e6215e1bd1bd5$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
     if (!pushData) throw new Error(`cannot get cell value of: ${pushData}`);
     else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
@@ -1098,6 +1108,7 @@ const $5662655d7032e480$export$6b22fa9a84a4797f = [
     (0, $da321a7b0ed8b49b$export$2839d627b6f3bcfe),
     (0, $ba3299f8714dec0f$export$33455cbcda538c68)
 ];
+const $5662655d7032e480$export$63e9417ed8d8533a = $5662655d7032e480$export$6b22fa9a84a4797f.map((p)=>p.name);
 const $5662655d7032e480$export$4f34a1c822988d11 = [
     (0, $6e4f14d1954af30e$export$474d593e43f12abd),
     (0, $7aa111bfe3605772$export$ef35774e6d314e91),
@@ -1237,13 +1248,19 @@ const $5662655d7032e480$export$b2a90e318402f6bc = async (tx, protocols)=>{
     // if protocols are specified
     if (protocols) {
         // wipe out defaults
-        $5662655d7032e480$var$enabledProtocols.clear();
-        // set enabled protocols
-        for (const protocol of $5662655d7032e480$export$6b22fa9a84a4797f)if (protocols === null || protocols === void 0 ? void 0 : protocols.includes(protocol.name)) b.addProtocolHandler(protocol);
+        b.enabledProtocols.clear();
+        if ((0, $8c5e6215e1bd1bd5$export$f6e922e536d8305c)(protocols)) {
+            // set enabled protocols
+            for (const protocol of $5662655d7032e480$export$6b22fa9a84a4797f)if (protocols === null || protocols === void 0 ? void 0 : protocols.includes(protocol.name)) b.addProtocolHandler(protocol);
+        } else if ((0, $8c5e6215e1bd1bd5$export$37b8d83213de0f5f)(protocols)) for (const p of protocols){
+            const protocol1 = p;
+            if (protocol1) b.addProtocolHandler(protocol1);
+        }
+        else throw new Error(`Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).`);
     }
     return b.transformTx(tx);
 };
 
 
-export {$5662655d7032e480$export$6b22fa9a84a4797f as allProtocols, $5662655d7032e480$export$4f34a1c822988d11 as defaultProtocols, $5662655d7032e480$export$894a720e71f90b3c as BMAP, $5662655d7032e480$export$b2a90e318402f6bc as TransformTx};
+export {$5662655d7032e480$export$6b22fa9a84a4797f as allProtocols, $5662655d7032e480$export$63e9417ed8d8533a as supportedProtocols, $5662655d7032e480$export$4f34a1c822988d11 as defaultProtocols, $5662655d7032e480$export$894a720e71f90b3c as BMAP, $5662655d7032e480$export$b2a90e318402f6bc as TransformTx};
 //# sourceMappingURL=bmap.js.map

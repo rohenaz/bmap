@@ -20,6 +20,14 @@ describe('bitcom hashed', () => {
         ).rejects.toThrow('Invalid BITCOM_HASHED tx. Bad tape')
     })
 
+    // export type BITCOM_HASHED = [
+    //     { address: string },
+    //     { h: string },
+    //     { b64: string },
+    //     { b: string },
+    //     { paymail: string }
+    // ]
+
     test('parse tx - out 1', async () => {
         const dataObj = {} as BmapTx
         const tx = bitcomHashedTransaction as BobTx

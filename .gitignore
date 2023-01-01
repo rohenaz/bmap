@@ -1,15 +1,10 @@
 node_modules/
 node_test/node_modules
 node_test/yarn.lock
-firebase.json
+functions/ui-debug.log
 .firebaserc
 .firebase
-
-public/fromscript.html
-public/js/bson
 .DS_STORE
-functions/
-firebase.json
 coverage
 .parcel-cache
 .cache

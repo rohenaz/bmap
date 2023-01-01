@@ -19,12 +19,7 @@
         "declaration": true,
         "target": "es5",
         "moduleResolution": "node",
-        "typeRoots": [
-            "./node_modules/@types",
-            "./types",
-            "./types/protocols",
-            "./types/@moneybutton__paymail-client"
-        ],
+        "typeRoots": ["./node_modules/@types", "./types"],
         "types": ["node", "jest"],
         "resolveJsonModule": true,
         "inlineSourceMap": true,

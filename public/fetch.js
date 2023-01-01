@@ -2,7 +2,6 @@ let examples
 let currentTxid = localStorage.getItem('example');
 let currentProtocol = localStorage.getItem('protocol') || 'B';
 
-
 const getExample = (txid, protocol) => {
       if(txid) {
         return examples.filter((e) => e.protocols.includes(protocol) && e.txid === txid)[0]
@@ -34,6 +33,7 @@ const load = async (ex) => {
       button.classList.add('subselected');
     }
     button.innerHTML = `${protocol}`;
+
     button.addEventListener('click', (e) => {
       localStorage.setItem('protocol', e.target.id);
       const example = getExample(undefined, e.target.id);
@@ -105,6 +105,20 @@ const load = async (ex) => {
         }
 
 
+        if (currentProtocol === 'MAP') {
+          console.log("do i have the example?", bmapTx)
+          const mapCoreKeys = bmapTx.MAP?.map((m) => { return {cmd: m.cmd, app: m.app, type: m.type}} )
+      
+          for (let k of mapCoreKeys) {
+      
+            const mapKeysEle = document.createElement('div')
+            mapKeysEle.classList.add('map-keys')
+            mapKeysEle.innerHTML = `<span>Cmd: ${k.cmd || 'NOT SET!'} App: ${k.app || 'NOT SET!'} Type: ${k.type}</span>`
+      
+            exampleEle.parentNode.insertBefore(mapKeysEle, exampleEle.nextSibling);
+          }
+        }
+
         const item = document.createElement('div');
         item.style.padding = '1rem';
         // Show txid link
@@ -159,8 +173,9 @@ const load = async (ex) => {
     });
 
   // Set page title
-  document.getElementById('currentExample').innerHTML = currentProtocol;
-
+  const exampleEle = document.getElementById('currentExample')
+  exampleEle.innerHTML = currentProtocol;
+  
 
 
 };
