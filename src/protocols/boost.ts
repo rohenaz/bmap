@@ -35,20 +35,12 @@ const handler = ({ dataObj, cell, out, tx }: HandlerProps): void => {
         .join(' ')
 
     if (asm) {
-        console.log('get it', {
-            asm,
-            txid: tx.tx.h,
-            vout: out.i,
-            value: out.e.v,
-        })
         const boostJob = BoostPowJob.fromASM(
             asm,
             tx.tx.h,
             out.i,
             out.e.v
         ).toObject()
-
-        console.log({ boostJob })
 
         saveProtocolData(dataObj, 'BOOST', boostJob)
     }

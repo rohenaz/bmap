@@ -2,10 +2,10 @@ var $iP6iL$tsbitcoincore = require("@ts-bitcoin/core");
 var $iP6iL$buffer = require("buffer");
 var $iP6iL$nodefetch = require("node-fetch");
 var $iP6iL$crypto = require("crypto");
-var $iP6iL$boostpow = require("boostpow");
-var $iP6iL$msgpackmsgpack = require("@msgpack/msgpack");
 var $iP6iL$moneybuttonpaymailclient = require("@moneybutton/paymail-client");
 var $iP6iL$dns = require("dns");
+var $iP6iL$boostpow = require("boostpow");
+var $iP6iL$msgpackmsgpack = require("@msgpack/msgpack");
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
@@ -195,6 +195,7 @@ let $69628e315d1a24a5$export$6c117c038f18b127;
     SIGPROTO["HAIP"] = "HAIP";
     SIGPROTO["AIP"] = "AIP";
     SIGPROTO["BITCOM_HASHED"] = "BITCOM_HASHED";
+    SIGPROTO["PSP"] = "PSP";
 })($69628e315d1a24a5$export$6c117c038f18b127 || ($69628e315d1a24a5$export$6c117c038f18b127 = {}));
 const $69628e315d1a24a5$export$f0079d0908cdbf96 = async function(useOpReturnSchema, protocol, dataObj, cell, tape, tx) {
     // loop over the schema
@@ -421,29 +422,127 @@ const $a68ad92042ecd541$export$c19e3a57d69468ea = {
 
 
 
-const $9e8f8cef5932bd1b$var$address = "15igChEkUWgx4dsEcSuPitcLNZmNDfUvgA";
-const $9e8f8cef5932bd1b$var$opReturnSchema = [
+
+
+
+
+
+const $74f0d7828fd989f0$export$fe8725667d42151 = async function(paymail, publicKey) {
+    const client = new (0, $iP6iL$moneybuttonpaymailclient.PaymailClient)((0, ($parcel$interopDefault($iP6iL$dns))), (0, ($parcel$interopDefault($iP6iL$nodefetch))));
+    return client.verifyPubkeyOwner(publicKey, paymail);
+};
+
+
+
+
+const $9e49651737ac299e$var$address = "1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4";
+const $9e49651737ac299e$var$opReturnSchema = [
     {
-        address: "string"
+        signature: "string"
     },
     {
-        unknown_hex: "string"
-    },
-    {
-        unknown_binary: "string"
-    },
-    {
-        unknown_binary: "binary"
+        pubkey: "string"
     },
     {
         paymail: "string"
     }
 ];
-// https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
-const $9e8f8cef5932bd1b$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+const $9e49651737ac299e$var$validateSignature = (pspObj, cell, tape)=>{
+    if (!Array.isArray(tape) || tape.length < 3) throw new Error("PSP requires at least 3 cells including the prefix");
+    let cellIndex = -1;
+    tape.forEach((cc, index)=>{
+        if (cc.cell === cell) cellIndex = index;
+    });
+    if (cellIndex === -1) throw new Error("PSP could not find cell in tape");
+    const signatureBufferStatements = [];
+    for(let i = 0; i < cellIndex; i++){
+        const cellContainer = tape[i];
+        if (!(0, $ad115897f795de9e$export$238b4e54af8fe886)(cellContainer)) {
+            cellContainer.cell.forEach((statement)=>{
+                // add the value as hex
+                let value = statement.h;
+                if (!value) value = (0, $iP6iL$buffer.Buffer).from(statement.b, "base64").toString("hex");
+                if (!value) value = (0, $iP6iL$buffer.Buffer).from(statement.s).toString("hex");
+                signatureBufferStatements.push((0, $iP6iL$buffer.Buffer).from(value, "hex"));
+            });
+            signatureBufferStatements.push((0, $iP6iL$buffer.Buffer).from("7c", "hex")) // | hex ????
+            ;
+        }
+    }
+    const dataScript = (0, $iP6iL$tsbitcoincore.Script).fromSafeDataArray(signatureBufferStatements);
+    const messageBuffer = (0, $iP6iL$buffer.Buffer).from(dataScript.toHex(), "hex");
+    // verify psp signature
+    const publicKey = (0, $iP6iL$tsbitcoincore.PubKey).fromString(pspObj.pubkey);
+    const signingAddress = (0, $iP6iL$tsbitcoincore.Address).fromPubKey(publicKey);
+    try {
+        pspObj.verified = (0, $iP6iL$tsbitcoincore.Bsm).verify(messageBuffer, pspObj.signature, signingAddress);
+    } catch (e) {
+        pspObj.verified = false;
+    }
+    return pspObj.verified;
+};
+const $9e49651737ac299e$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
+    // Paymail Signature Protocol
+    // Validation
+    if (!cell.length || cell[0].s !== $9e49651737ac299e$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error(`Invalid Paymail Signature Protocol record`);
+    return await $9e49651737ac299e$export$c3c3eee1546d651a($9e49651737ac299e$var$opReturnSchema, (0, $69628e315d1a24a5$export$6c117c038f18b127).PSP, dataObj, cell, tape);
+};
+const $9e49651737ac299e$export$c3c3eee1546d651a = async (useOpReturnSchema, protocol, dataObj, cell, tape)=>{
+    // loop over the schema
+    const pspObj = {
+        verified: false
+    };
+    // Does not have the required number of fields
+    if (cell.length < 4) throw new Error("PSP requires at least 4 fields including the prefix " + cell);
+    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
+        const x = parseInt(idx, 10);
+        const [pspField] = Object.keys(schemaField);
+        const [schemaEncoding] = Object.values(schemaField);
+        pspObj[pspField] = (0, $ad115897f795de9e$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
+    }
+    if (!pspObj.signature) throw new Error("PSP requires a signature " + cell);
+    //  TODO: we can only check on PSP until we figure out the BITCOM_HASHED fields
+    //  verify signature
+    if (protocol === (0, $69628e315d1a24a5$export$6c117c038f18b127).PSP && !$9e49651737ac299e$var$validateSignature(pspObj, cell, tape)) throw new Error("PSP requires a valid signature " + pspObj);
+    // check the paymail public key
+    if (pspObj.pubkey && pspObj.paymail) {
+        const paymailPublicKeyVerified = await (0, $74f0d7828fd989f0$export$fe8725667d42151)(pspObj.paymail, pspObj.pubkey);
+        pspObj.verified = pspObj.verified && paymailPublicKeyVerified;
+    }
+    (0, $ad115897f795de9e$export$23dbc584560299c3)(dataObj, protocol, pspObj);
+};
+const $9e49651737ac299e$export$bd49ff9d0c7fbe97 = {
+    name: "PSP",
+    address: $9e49651737ac299e$var$address,
+    opReturnSchema: $9e49651737ac299e$var$opReturnSchema,
+    handler: $9e49651737ac299e$var$handler
+};
+
+
+const $9e8f8cef5932bd1b$var$address = "15igChEkUWgx4dsEcSuPitcLNZmNDfUvgA";
+// should be very similar to PSP
+// see https://bsvalias.org/05-verify-public-key-owner.html
+// TODO: Really need some documentation ro to verify what these fields are
+const $9e8f8cef5932bd1b$var$opReturnSchema = [
+    {
+        hash: "string"
+    },
+    {
+        signature: "string"
+    },
+    {
+        pubkey: "binary"
+    },
+    {
+        paymail: "string"
+    }
+];
+const $9e8f8cef5932bd1b$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
+    console.log({
+        cell: cell
+    });
     if (!tape) throw new Error(`Invalid BITCOM_HASHED tx. Bad tape`);
-    if (!tx) throw new Error(`Invalid BITCOM_HASHED tx.`);
-    return await (0, $69628e315d1a24a5$export$f0079d0908cdbf96)($9e8f8cef5932bd1b$var$opReturnSchema, (0, $69628e315d1a24a5$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape, tx);
+    return await (0, $9e49651737ac299e$export$c3c3eee1546d651a)($9e8f8cef5932bd1b$var$opReturnSchema, (0, $69628e315d1a24a5$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
 };
 const $9e8f8cef5932bd1b$export$f069e857381ef4b9 = {
     name: "BITCOM_HASHED",
@@ -585,16 +684,7 @@ const $cc0bec57c0a70920$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
     // build ASM from either op codes and script chunks
     const asm = cell.map((c)=>c.ops ? c.ops : (0, $ad115897f795de9e$export$b691916706e0e9cc)(c, "hex") || "").join(" ");
     if (asm) {
-        console.log("get it", {
-            asm: asm,
-            txid: tx.tx.h,
-            vout: out.i,
-            value: out.e.v
-        });
         const boostJob = (0, $iP6iL$boostpow.BoostPowJob).fromASM(asm, tx.tx.h, out.i, out.e.v).toObject();
-        console.log({
-            boostJob: boostJob
-        });
         (0, $ad115897f795de9e$export$23dbc584560299c3)(dataObj, "BOOST", boostJob);
     }
 };
@@ -899,88 +989,6 @@ const $0ca33a82c6135f7e$export$7830a85a59ca4593 = {
 
 
 
-
-
-
-const $74f0d7828fd989f0$export$fe8725667d42151 = async function(paymail, publicKey) {
-    const client = new (0, $iP6iL$moneybuttonpaymailclient.PaymailClient)((0, ($parcel$interopDefault($iP6iL$dns))), (0, ($parcel$interopDefault($iP6iL$nodefetch))));
-    return client.verifyPubkeyOwner(publicKey, paymail);
-};
-
-
-
-const $9e49651737ac299e$var$address = "1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4";
-const $9e49651737ac299e$var$opReturnSchema = [
-    {
-        signature: "string"
-    },
-    {
-        pubkey: "string"
-    },
-    {
-        paymail: "string"
-    }
-];
-const $9e49651737ac299e$var$validateSignature = function(pspObj, cell, tape) {
-    if (!Array.isArray(tape) || tape.length < 3) throw new Error("PSP requires at least 3 cells including the prefix");
-    let cellIndex = -1;
-    tape.forEach((cc, index)=>{
-        if (cc.cell === cell) cellIndex = index;
-    });
-    if (cellIndex === -1) throw new Error("PSP could not find cell in tape");
-    const signatureBufferStatements = [];
-    for(let i = 0; i < cellIndex; i++){
-        const cellContainer = tape[i];
-        if (!(0, $ad115897f795de9e$export$238b4e54af8fe886)(cellContainer)) {
-            cellContainer.cell.forEach((statement)=>{
-                // add the value as hex
-                let value = statement.h;
-                if (!value) value = (0, $iP6iL$buffer.Buffer).from(statement.b, "base64").toString("hex");
-                if (!value) value = (0, $iP6iL$buffer.Buffer).from(statement.s).toString("hex");
-                signatureBufferStatements.push((0, $iP6iL$buffer.Buffer).from(value, "hex"));
-            });
-            signatureBufferStatements.push((0, $iP6iL$buffer.Buffer).from("7c", "hex")) // | hex ????
-            ;
-        }
-    }
-    const dataScript = (0, $iP6iL$tsbitcoincore.Script).fromSafeDataArray(signatureBufferStatements);
-    const messageBuffer = (0, $iP6iL$buffer.Buffer).from(dataScript.toHex(), "hex");
-    // verify psp signature
-    const publicKey = (0, $iP6iL$tsbitcoincore.PubKey).fromString(pspObj.pubkey);
-    const signingAddress = (0, $iP6iL$tsbitcoincore.Address).fromPubKey(publicKey);
-    try {
-        pspObj.verified = (0, $iP6iL$tsbitcoincore.Bsm).verify(messageBuffer, pspObj.signature, signingAddress);
-    } catch (e) {
-        pspObj.verified = false;
-    }
-    return pspObj.verified;
-};
-const $9e49651737ac299e$var$handler = async function({ dataObj: dataObj , cell: cell , tape: tape  }) {
-    // Paymail Signature Protocol
-    // Validation
-    if (!cell.length || cell[0].s !== $9e49651737ac299e$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error(`Invalid Paymail Signature Protocol record`);
-    const pspObj = {
-        signature: cell[1].s,
-        pubkey: cell[2].s,
-        paymail: cell[3].s,
-        verified: false
-    };
-    // verify signature
-    $9e49651737ac299e$var$validateSignature(pspObj, cell, tape);
-    // check the paymail public key
-    const paymailPublicKeyVerified = await (0, $74f0d7828fd989f0$export$fe8725667d42151)(pspObj.paymail, pspObj.pubkey);
-    pspObj.verified = pspObj.verified && paymailPublicKeyVerified;
-    (0, $ad115897f795de9e$export$23dbc584560299c3)(dataObj, "PSP", pspObj);
-};
-const $9e49651737ac299e$export$bd49ff9d0c7fbe97 = {
-    name: "PSP",
-    address: $9e49651737ac299e$var$address,
-    opReturnSchema: $9e49651737ac299e$var$opReturnSchema,
-    handler: $9e49651737ac299e$var$handler
-};
-
-
-
 const $727ccb17f24b5bd1$var$address = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1";
 const $727ccb17f24b5bd1$var$opReturnSchema = [
     {
@@ -994,7 +1002,12 @@ const $727ccb17f24b5bd1$var$opReturnSchema = [
     }
 ];
 const $727ccb17f24b5bd1$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
-    if (cell[0].s !== $727ccb17f24b5bd1$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) throw new Error(`Invalid RON record ${tx === null || tx === void 0 ? void 0 : tx.tx.h}`);
+    if (cell[0].s !== $727ccb17f24b5bd1$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) {
+        console.log({
+            cell: cell
+        });
+        throw new Error(`Invalid RON record ${tx === null || tx === void 0 ? void 0 : tx.tx.h}`);
+    }
     const pair = JSON.parse(cell[1].s);
     const timestamp = Number(cell[3].s);
     (0, $ad115897f795de9e$export$23dbc584560299c3)(dataObj, "RON", {

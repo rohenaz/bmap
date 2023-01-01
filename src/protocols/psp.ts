@@ -1,9 +1,11 @@
 import { Address, Bsm, PubKey, Script } from '@ts-bitcoin/core'
 import { Buffer } from 'buffer'
 import { Cell, HandlerProps, Protocol, Tape } from '../../types/common'
+import { BITCOM_HASHED } from '../../types/protocols/bitcomHashed'
 import { PSP as PSPType } from '../../types/protocols/psp'
 import { verifyPaymailPublicKey } from '../paymail'
-import { checkOpFalseOpReturn, saveProtocolData } from '../utils'
+import { cellValue, checkOpFalseOpReturn, saveProtocolData } from '../utils'
+import { SIGPROTO } from './aip'
 
 const address = '1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4'
 
@@ -13,11 +15,7 @@ const opReturnSchema = [
     { paymail: 'string' },
 ]
 
-const validateSignature = function (
-    pspObj: PSPType,
-    cell: Cell[],
-    tape: Tape[]
-) {
+const validateSignature = (pspObj: PSPType, cell: Cell[], tape: Tape[]) => {
     if (!Array.isArray(tape) || tape.length < 3) {
         throw new Error('PSP requires at least 3 cells including the prefix')
     }
@@ -72,7 +70,7 @@ const validateSignature = function (
     return pspObj.verified
 }
 
-const handler = async function ({ dataObj, cell, tape }: HandlerProps) {
+const handler = async ({ dataObj, cell, tape }: HandlerProps) => {
     // Paymail Signature Protocol
     // Validation
     if (
@@ -89,26 +87,64 @@ const handler = async function ({ dataObj, cell, tape }: HandlerProps) {
         throw new Error(`Invalid Paymail Signature Protocol record`)
     }
 
-    const pspObj = {
-        signature: cell[1].s,
-        pubkey: cell[2].s,
-        paymail: cell[3].s,
-        verified: false,
-    } as PSPType
-
-    // verify signature
-    validateSignature(pspObj, cell, tape)
-
-    // check the paymail public key
-    const paymailPublicKeyVerified = await verifyPaymailPublicKey(
-        pspObj.paymail,
-        pspObj.pubkey
-    )
-    pspObj.verified = pspObj.verified && paymailPublicKeyVerified
-
-    saveProtocolData(dataObj, 'PSP', pspObj)
+    return await PSPhandler(opReturnSchema, SIGPROTO.PSP, dataObj, cell, tape)
 }
 
+export const PSPhandler = async (
+    useOpReturnSchema: Object[],
+    protocol: SIGPROTO,
+    dataObj: Object,
+    cell: Cell[],
+    tape: Tape[]
+) => {
+    // loop over the schema
+    const pspObj: Partial<PSPType | BITCOM_HASHED> = {
+        verified: false,
+    }
+
+    // Does not have the required number of fields
+    if (cell.length < 4) {
+        throw new Error(
+            'PSP requires at least 4 fields including the prefix ' + cell
+        )
+    }
+
+    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)) {
+        const x = parseInt(idx, 10)
+
+        const [pspField] = Object.keys(schemaField) as (keyof PSPType)[]
+        const [schemaEncoding] = Object.values(schemaField) as string[]
+
+        ;(pspObj as any)[pspField] = cellValue(cell[x + 1], schemaEncoding)
+    }
+
+    if (!pspObj.signature) {
+        throw new Error('PSP requires a signature ' + cell)
+    }
+
+    //  TODO: we can only check on PSP until we figure out the BITCOM_HASHED fields
+    //  verify signature
+    if (
+        protocol === SIGPROTO.PSP &&
+        !validateSignature(pspObj as PSPType, cell, tape)
+    ) {
+        throw new Error('PSP requires a valid signature ' + pspObj)
+    }
+
+    // check the paymail public key
+    if (pspObj.pubkey && pspObj.paymail) {
+        const paymailPublicKeyVerified = await verifyPaymailPublicKey(
+            pspObj.paymail,
+            pspObj.pubkey
+        )
+        pspObj.verified = (pspObj.verified &&
+            paymailPublicKeyVerified) as boolean
+    }
+
+    saveProtocolData(dataObj, protocol, pspObj)
+}
+
+// TODO: Add concept of validators so they can be passed in / reused more easily
 export const PSP: Protocol = {
     name: 'PSP',
     address,

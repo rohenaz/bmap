@@ -1,17 +1,19 @@
 let examples
+let currentTxid = localStorage.getItem('example');
 let currentProtocol = localStorage.getItem('protocol') || 'B';
 
-const getExample = (txid) => {
-  return examples.filter((e) => e.protocols.includes(currentProtocol) && e.txid === txid)[0]
+
+const getExample = (txid, protocol) => {
+      if(txid) {
+        return examples.filter((e) => e.protocols.includes(protocol) && e.txid === txid)[0]
+      } else {
+        return examples.filter((e) => e.protocols.includes(protocol))[0]
+      }
 }
 
 const load = async (ex) => {
-
-
-
     examples = ex;
 
-    const matchingExamples = examples.filter((e) => e.protocols.includes(currentProtocol))
 
   for (const protocol of bmap.supportedProtocols) {
     console.log('checking', protocol);
@@ -21,21 +23,26 @@ const load = async (ex) => {
     const matchingThis = examples.filter((e) => e.protocols.includes(protocol))
 
     button.id = protocol;
+    if (protocol === currentProtocol) {
+      button.classList.add('selected');
+    }
     button.innerHTML = `${protocol} (${matchingThis.length})`;
 
     button.addEventListener('click', (e) => {
       localStorage.setItem('protocol', e.target.id);
-      localStorage.setItem('example', undefined);
-
+      const example = getExample(undefined, e.target.id);
+      console.log('example', example)
+      localStorage.setItem('example', example.txid);
       document.location.reload();
     });
 
     document.querySelector('nav')
       .appendChild(button);
-
-
-
   }
+
+
+
+  const matchingExamples = examples.filter((e) => e.protocols.includes(currentProtocol))
 
   let i = 1
   for (const e of matchingExamples) {
@@ -43,6 +50,10 @@ const load = async (ex) => {
 
     button.id = e.txid;
     button.innerHTML = `Example ${i++}`;
+
+    if (currentTxid === e.txid) {
+      button.classList.add('selected')
+    }
 
     button.addEventListener('click', (e) => {
       localStorage.setItem('example', e.target.id);
@@ -54,25 +65,9 @@ const load = async (ex) => {
     .appendChild(button);
   }
 
-  let currentTxid = localStorage.getItem('example');
-  let currentExample
-  if (!currentTxid) {
-    currentExample = getExample(currentTxid)
-    localStorage.setItem('example', currentExample.txid);
-  }
+  // let txs = examples.filter((e) => e.protocols.includes(currentProtocol)).map((e) => e.txid);
 
-  let txs = examples.filter((e) => e.protocols.includes(currentProtocol)).map((e) => e.txid);
-
-  let decodePlugin = false;
-  const parts = window.location.pathname.split('/')
-    .slice(1);
-  if (parts[0] === 'tx' && parts[1].length === 64) {
-    // fetch it
-    txs = [parts[1]];
-    decodePlugin = true;
-  }
-
-  const url = `https://bmapjs.com/tx/${txs[0]}/bob`
+  const url = `https://bmapjs.com/tx/${currentTxid}/bob`
   
   list = document.createElement('div');
   list.id = 'tx-list';
@@ -103,10 +98,7 @@ const load = async (ex) => {
           return
         }
 
-        if (decodePlugin) {
-          document.body.innerHTML = bmapTx;
-          return;
-        }
+
         const item = document.createElement('div');
 
         // Show txid link
@@ -120,7 +112,15 @@ const load = async (ex) => {
 
         // list protocols
         const txSubHeading = document.createElement('h5');
-        const currentExample = getExample(currentTxid)
+
+        let currentExample
+        if (currentProtocol && !currentTxid) {
+          currentExample = getExample(undefined, currentProtocol)
+          localStorage.setItem('example', currentExample.txid);
+        } else {
+          currentExample = getExample(currentTxid, currentProtocol)
+        }
+
         console.log({currentExample})
         txSubHeading.innerHTML = `Protocols Detected: ${currentExample?.protocols.join(', ').replace(/, $/, '')}`;
         item.appendChild(txSubHeading);
