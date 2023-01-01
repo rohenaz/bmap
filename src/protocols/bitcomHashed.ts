@@ -16,7 +16,6 @@ const opReturnSchema = [
 ]
 
 const handler = async ({ dataObj, cell, tape }: HandlerProps) => {
-    console.log({ cell })
     if (!tape) {
         throw new Error(`Invalid BITCOM_HASHED tx. Bad tape`)
     }

@@ -527,9 +527,6 @@ const $6cb5742cd91204d2$var$opReturnSchema = [
     }
 ];
 const $6cb5742cd91204d2$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
-    console.log({
-        cell: cell
-    });
     if (!tape) throw new Error(`Invalid BITCOM_HASHED tx. Bad tape`);
     return await (0, $541801f53125a663$export$c3c3eee1546d651a)($6cb5742cd91204d2$var$opReturnSchema, (0, $6e4f14d1954af30e$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
 };
@@ -991,12 +988,7 @@ const $da321a7b0ed8b49b$var$opReturnSchema = [
     }
 ];
 const $da321a7b0ed8b49b$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
-    if (cell[0].s !== $da321a7b0ed8b49b$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) {
-        console.log({
-            cell: cell
-        });
-        throw new Error(`Invalid RON record ${tx === null || tx === void 0 ? void 0 : tx.tx.h}`);
-    }
+    if (cell[0].s !== $da321a7b0ed8b49b$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) throw new Error(`Invalid RON record ${tx === null || tx === void 0 ? void 0 : tx.tx.h}`);
     const pair = JSON.parse(cell[1].s);
     const timestamp = Number(cell[3].s);
     (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "RON", {

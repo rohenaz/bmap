@@ -2,11 +2,13 @@ import { AIP } from './protocols/aip'
 import { B } from './protocols/b'
 import { BAP } from './protocols/bap'
 import { BITCOM } from './protocols/bitcom'
+import { BITCOM_HASHED } from './protocols/bitcomHashed'
 import { BITKEY } from './protocols/bitkey'
 import { BITPIC } from './protocols/bitpic'
 import { BOOST } from './protocols/boost'
 import { HAIP } from './protocols/haip'
 import { MAP } from './protocols/map'
+import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
 import { SYMRE } from './protocols/symre'
 import { _21E8 } from './protocols/_21e8'
@@ -74,6 +76,7 @@ export type BobTx = {
         h: string
     }
     lock?: number
+    [key: string]: any
 }
 
 export type MetanetNode = {
@@ -108,7 +111,6 @@ export interface BmapTx extends BobTx {
     RON?: RON[]
     HAIP?: HAIP[]
     BITCOM_HASHED?: BITCOM_HASHED[]
-    [key: string]: Object[]
 }
 
 export type Protocol = {

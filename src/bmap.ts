@@ -113,7 +113,7 @@ export class BMAP {
         }
 
         // This will become our nicely formatted response object
-        const dataObj: Partial<BmapTx> = {}
+        const dataObj: Partial<BobTx> = {}
 
         for (const [key, val] of Object.entries(tx)) {
             if (key === 'out') {

@@ -19,7 +19,6 @@ const handler = function ({ dataObj, cell, tx }: HandlerProps) {
         !cell[2].s ||
         !cell[3].s
     ) {
-        console.log({ cell })
         throw new Error(`Invalid RON record ${tx?.tx.h}`)
     }
 
