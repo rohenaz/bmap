@@ -15,19 +15,25 @@ const load = async (ex) => {
     examples = ex;
 
 
-  for (const protocol of bmap.supportedProtocols) {
-    console.log('checking', protocol);
+  for (const protocol of bmap.supportedProtocols.sort((a, b) => a < b ? -1 : 1)) {
     const button = document.createElement('button');
 
 
-    const matchingThis = examples.filter((e) => e.protocols.includes(protocol))
 
     button.id = protocol;
-    if (protocol === currentProtocol) {
-      button.classList.add('selected');
-    }
-    button.innerHTML = `${protocol} (${matchingThis.length})`;
 
+    // examples.some((e) => e.protocols.includes(protocol) && e.protocols.includes(currentProtocol))
+    let example = getExample(currentTxid, currentProtocol)
+    button.classList.add('protocol-button');
+
+    if (currentProtocol === protocol) {
+      button.classList.add('selected');
+    } else if (example?.protocols.includes(protocol)) {
+
+    // if current example supports this protocol
+      button.classList.add('subselected');
+    }
+    button.innerHTML = `${protocol}`;
     button.addEventListener('click', (e) => {
       localStorage.setItem('protocol', e.target.id);
       const example = getExample(undefined, e.target.id);
@@ -100,10 +106,11 @@ const load = async (ex) => {
 
 
         const item = document.createElement('div');
-
+        item.style.padding = '1rem';
         // Show txid link
-        const txHeading = document.createElement('h4');
-        txHeading.innerHTML = 'TxID: <a target="_blank" href="https://whatsonchain.com/tx/'
+        const txHeading = document.createElement('small');
+        txHeading.style.fontSize = '.8rem'
+        txHeading.innerHTML = 'Treansaction ID:<br /><br /><a target="_blank" href="https://whatsonchain.com/tx/'
           + bmapTx.tx.h
           + '">'
           + bmapTx.tx.h
@@ -140,7 +147,7 @@ const load = async (ex) => {
       for (const e of editors) {
         editor = ace.edit(e);
         editor.getSession().setMode('ace/mode/json');
-        editor.setTheme('ace/theme/vibrant_ink');
+        editor.setTheme('ace/theme/kr_theme');
         editor.setShowPrintMargin(false);
         editor.setOptions({
           maxLines: 25,
@@ -166,7 +173,7 @@ const load = async (ex) => {
       .then((json) => {
 
 
-        document.getElementById('supported_protocols').innerHTML = bmap.supportedProtocols.join(', ').replace(/, $/, '')
+        document.getElementById('supported_protocols').innerHTML = bmap.supportedProtocols.join(', ').replace(/, $/, '\n')
 
         load(json);
         return console.log(json);

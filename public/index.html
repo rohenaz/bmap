@@ -1,19 +1,57 @@
 <html>
   <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto+Slab&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto+Slab&display=swap" rel="stylesheet">
+    <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:creator" content="@wildsatchmo" />
+        <meta name="twitter:title" content="BMAPjs" />
+        <meta
+          name="twitter:description"
+          content="A transaction parser for data data protocols."
+        />
+        <meta
+          name="twitter:image"
+          content="https://bmapjs.com/images/screen.png"
+        />
+        <meta property="og:url" content="https://bmapjs.com" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="BMAPjs" />
+        <meta
+          property="og:description"
+          content="A transaction parser for data data protocols."
+        />
+        <meta
+          property="og:image"
+          content="https://bmapjs.com/images/screen.png"
+        />
     <link
       href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
       rel="stylesheet"
     />
     <style type="text/css">
-      body {
+      html {
         background-color: #000;
+      }
+
+      body {
         color: #fff;
-        padding: 4rem;
         font-family: 'Roboto', sans-serif;
+      }
+
+      #bg_image {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        opacity: 50%;
+        background: url("./images/what-the-hex-dark.webp");
+      }
+
+      main {
+        position: relative;
+        padding: 4rem;
+        z-index: 2;
       }
 
       .ace_editor {
@@ -37,6 +75,14 @@
       }
 
 
+      h1 {
+        font-size: 3rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
       h1, h2 {
         font-family: 'Roboto Slab', sans-serif;
         color: lightseagreen;
@@ -56,7 +102,7 @@
       }
 
       a:hover {
-        color: lightseagreen !important;
+        color: seagreen !important;
       }
 
 
@@ -64,6 +110,11 @@
         color: lightgray !important;
       }
 
+      p {
+        line-height: 2;
+        font-size: 1.1rem;
+        letter-spacing: .06rem;
+      }
       hr {
         border: 0;
         background-color: #111;
@@ -75,17 +126,26 @@
         border-radius: .25rem;
         padding: 0.5rem;
         margin: 0.5rem;
-        background-color: #222;
+        background-color: #111;
         border: 0;
-        color: #eee;
+        color: #AAA;
         font-size: .75rem;
         letter-spacing: .075rem;;
       }
       
+      .protocol-button {
+        font-size: 1rem;
+      }
       button.selected {
-        background-color: darkseagreen !important;
+        background-color: rgb(20, 216, 105) !important;
         color: #000;
         font-weight: 700;
+      }
+
+      button.subselected {
+        color: #000;
+
+        background-color: rgb(58, 75, 58) !important;
       }
 
       button:hover {
@@ -114,6 +174,12 @@
         width: 100%;
       }
 
+      #supported_protocols {
+        background: #111;
+        padding: 1rem;
+        border-radius: 0.25rem;
+
+      }
       .keyname {
         color: #333;
         font-size: 0.8rem;
@@ -131,7 +197,8 @@
     <script src="./fetch.js"></script>
   </head>
   <body>
-
+    <div id="bg_image">&nbsp;</div>
+  
     <main>
 
       <h1>BMAPjs</h1>
@@ -142,11 +209,31 @@
         transactions into readable, easy to understand objects.
       </p>
       <p>
-        Supported protocols: <span id="supported_protocols"></span>. All other protocol prefixes will retain their
+        Supported protocols: 
+      </p>
+      <pre id="supported_protocols"></pre>
+      <p>
+        All other protocol prefixes will retain their
         original BOB format.
       </p>
-      <p>The parser, which uses the Open BSV license, is available on github. See the readme for more information.</p>
-      <a href="https://github.com/rohenaz/bmap">Github</a>
+      <p>It is open source and available on github. See the readme for more information.</p>
+
+      <a href="https://github.com/rohenaz/bmap" target="_blank">
+        <div style="display: flex; align-items: center; font-size: 1.25rem;">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24px" style="margin-right: .5rem;"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.463 2 11.97c0 4.404 2.865 8.14 6.839 9.458.5.092.682-.216.682-.48 0-.236-.008-.864-.013-1.695-2.782.602-3.369-1.337-3.369-1.337-.454-1.151-1.11-1.458-1.11-1.458-.908-.618.069-.606.069-.606 1.003.07 1.531 1.027 1.531 1.027.892 1.524 2.341 1.084 2.91.828.092-.643.35-1.083.636-1.332-2.22-.251-4.555-1.107-4.555-4.927 0-1.088.39-1.979 1.029-2.675-.103-.252-.446-1.266.098-2.638 0 0 .84-.268 2.75 1.022A9.606 9.606 0 0112 6.82c.85.004 1.705.114 2.504.336 1.909-1.29 2.747-1.022 2.747-1.022.546 1.372.202 2.386.1 2.638.64.696 1.028 1.587 1.028 2.675 0 3.83-2.339 4.673-4.566 4.92.359.307.678.915.678 1.846 0 1.332-.012 2.407-.012 2.734 0 .267.18.577.688.48C19.137 20.107 22 16.373 22 11.969 22 6.463 17.522 2 12 2z"></path></svg>
+          Github
+        </div>
+      </a>
+    
+  
+      <h2>Examples By Protocol</h2>
+      
+      <nav id="nav"></nav>
+      <h1 id="currentExample"></h1>
+      <hr />
+      <nav id="subnav"></nav>
+      <div id="example-container"></div>
+      <hr />
       <h2>BMAP API</h2>
       <p>
         BMAPjs powers the BMAP-API which provides a simple search inmterface for supported Bitcoin data. Check out some examples:
@@ -165,25 +252,25 @@
         <a
           href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
           >BitPic</a
-        >
+        >,
         <a
           href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
           >Hona</a
-        >
+        >, and 
         <a
           href="https://b.map.sv/query/ewogICJ2IjogMywKICAicSI6IHsKICAgICJmaW5kIjogewogICAgICAiQklUUElDLnBheW1haWwiOiAic2F0Y2htb0Btb25leWJ1dHRvbi5jb20iCiAgICB9LAogICAgImxpbWl0IjogMTAKICB9Cn0="
           >Jamify</a
-        >
+        >, and many others.
       </p>
-  
-      <h2>Examples By Protocol</h2>
-      
-      <nav id="nav"></nav>
-      <h1 id="currentExample"></h1>
       <hr />
-      <nav id="subnav"></nav>
-      <div id="example-container"></div>
-      <hr />
+      <h2>Other Implementations</h2>
+      <p>
+
+        There is currently one other implementation written in Go.  It has most of the features of BMAPjs but may not be in perfect parity with this library at times. Make sure to check the release notes and examples for more information.
+      </p>
+      <div>
+        <a href="https://github.com/bitcoinschema/go-bmap" target="_blank"><button>go-bmap</button>
+      </div>
       <div>
         <script
           async
