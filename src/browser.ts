@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import crypto from 'node:crypto'
+import crypto from 'crypto'
 import { BMAP, supportedProtocols, TransformTx } from './bmap'
 
 // import { BOOST } from './protocols/boost'

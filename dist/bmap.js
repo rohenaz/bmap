@@ -1,5 +1,5 @@
 import {Buffer as $7QDub$Buffer} from "buffer";
-import $7QDub$nodecrypto from "node:crypto";
+import $7QDub$crypto from "crypto";
 
 var $parcel$global =
 typeof globalThis !== 'undefined'
@@ -50,7 +50,7 @@ const $9bdd8cec732fb4b1$var$bmap = {
 };
 if (typeof window !== "undefined") {
     window.bmap = $9bdd8cec732fb4b1$var$bmap;
-    if ((0, $7QDub$nodecrypto) && !window.crypto) window.crypto = (0, $7QDub$nodecrypto);
+    if ((0, $7QDub$crypto) && !window.crypto) window.crypto = (0, $7QDub$crypto);
     // const bm = new BMAP()
     // bm.addProtocolHandler(BOOST)
     // window.bmap.bmap = bm

@@ -67,14 +67,6 @@ const $69f57829bdd71afa$export$ca4d6504ca148ae4 = function(data) {
 };
 const $69f57829bdd71afa$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
     let hash;
-    // if (window) {
-    //     console.log('using webcrypto')
-    //     if (crypto.webcrypto?.subtle) {
-    //         hash = await webcrypto.subtle.digest('SHA-256', msgBuffer)
-    //         return Buffer.from(hash)
-    //     }
-    // } else if (crypto) {
-    console.log("using crypto");
     if ((0, $jsFbQ$crypto).subtle) {
         hash = await (0, $jsFbQ$crypto).subtle.digest("SHA-256", msgBuffer);
         return (0, $jsFbQ$Buffer).from(hash);
