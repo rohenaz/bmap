@@ -44,7 +44,7 @@ type Out = {
     i: number
     e: {
         i: number
-        a: string
+        a: string | false
         v: number
     }
 }

@@ -66,8 +66,21 @@ const $7341ca75afce06d0$export$ca4d6504ca148ae4 = function(data) {
     return new RegExp(`^${regex}$`, "gi").test(data);
 };
 const $7341ca75afce06d0$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
-    const hash = await ((0, $6aSy9$webcrypto) || window.crypto).subtle.digest("SHA-256", msgBuffer);
-    return (0, $6aSy9$Buffer).from(hash);
+    let hash;
+    if (0, $6aSy9$webcrypto) {
+        console.log("using webcrypto");
+        if ((0, $6aSy9$webcrypto).subtle) {
+            hash = await (0, $6aSy9$webcrypto).subtle.digest("SHA-256", msgBuffer);
+            return (0, $6aSy9$Buffer).from(hash);
+        }
+    } else if (0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039) {
+        console.log("using crypto");
+        if ((0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039).subtle) {
+            hash = await (0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039).subtle.digest("SHA-256", msgBuffer);
+            return (0, $6aSy9$Buffer).from(hash);
+        }
+    }
+    return (0, $6aSy9$Buffer).from(new ArrayBuffer(0));
 };
 
 

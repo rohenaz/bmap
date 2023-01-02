@@ -11,10 +11,7 @@
     "module": {
       "isLibrary": true,
       "context": "node",
-      "source": "src/bmap.ts",
-      "engines": {
-        "node": ">=12"
-      }
+      "source": "src/bmap.ts"
     },
     "main": {
       "isLibrary": true,
@@ -41,7 +38,7 @@
     }
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 14"
   },
   "scripts": {
     "serve": "npm run build && node ./node_modules/ws/index.js",
@@ -49,7 +46,7 @@
     "build": "rimraf parcel-bundle-reports dist/ types/index.d.ts && parcel build . --target types --target main --target legacy --target module --reporter @parcel/reporter-bundle-analyzer",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
-    "testonly": "set NODE_OPTIONS=--openssl-legacy-provider&&jest --collectCoverage",
+    "testonly": "jest --collectCoverage",
     "testwatch": "./node_modules/.bin/jest --watchAll --collectCoverage",
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testwatch",
@@ -58,6 +55,7 @@
     "build-all": "npm run lint && npm run build-public",
     "watch": "parcel-watch"
   },
+  "typings": "types/idnex",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rohenaz/bmap.git"
@@ -89,6 +87,7 @@
     "jest": "^29.3.1",
     "jest-cli": "29.3.1",
     "jest-config": "29.3.1",
+    "jest-environment-jsdom": "^29.3.1",
     "ncp": "^2.0.0",
     "np": "2.20.1",
     "parcel": "^2.8.2",

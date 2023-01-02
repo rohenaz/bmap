@@ -4,9 +4,12 @@ import { defaults } from 'jest-config'
 const config: Config.InitialOptions = {
     preset: 'ts-jest',
     verbose: true,
-    testEnvironment: 'node',
+    projects: [
+        '<rootDir>/tests/browser/jest.config.ts',
+        '<rootDir>/tests/node/jest.config.ts',
+        '<rootDir>/tests/protocols/configs/jest.config.ts',
+    ],
     moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
-    testMatch: ['**/tests/**/*.test.ts'],
     transform: {
         '^.+\\.ts?$': 'ts-jest',
     },

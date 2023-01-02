@@ -1,13 +1,13 @@
 import { describe, expect, test } from '@jest/globals'
-import { BMAP, TransformTx } from '../src/bmap'
-import { BOOST } from '../src/protocols/boost'
-import { _21E8 } from '../src/protocols/_21e8'
-import { BobTx, Handler, HandlerProps } from '../types/common'
-import indexedTransaction from './data/b-aip-transaction-with-indexes.json'
-import validBobTransaction from './data/bap-transaction.json'
-import boostTransaction from './data/boost-transaction.json'
-import mapTransactions from './data/map-transactions.json'
-import unknownBitcom from './data/unknown-bitcom.json'
+import { BMAP, TransformTx } from '../../src/bmap'
+import { BOOST } from '../../src/protocols/boost'
+import { _21E8 } from '../../src/protocols/_21e8'
+import { BobTx, Handler, HandlerProps } from '../../types/common'
+import indexedTransaction from '../data/b-aip-transaction-with-indexes.json'
+import validBobTransaction from '../data/bap-transaction.json'
+import boostTransaction from '../data/boost-transaction.json'
+import mapTransactions from '../data/map-transactions.json'
+import unknownBitcom from '../data/unknown-bitcom.json'
 
 describe('bmap', () => {
     test('class init', () => {
