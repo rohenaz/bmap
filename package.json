@@ -4,11 +4,18 @@
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
   "legacy": "dist/bmap.cjs",
+  "main": "dist/bmap.js",
   "module": "dist/bmap.js",
   "type": "module",
   "targets": {
-    "types": {
+    "module": {
+      "isLibrary": true,
       "source": "src/bmap.ts"
+    },
+    "types": {
+      "source": [
+        "src/bmap.ts"
+      ]
     },
     "legacy": {
       "includeNodeModules": true,
