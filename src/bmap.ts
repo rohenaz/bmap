@@ -1,4 +1,5 @@
 // import default protocols
+import BPU from 'bpu'
 import {
     BmapTx,
     BobTx,
@@ -282,10 +283,65 @@ export class BMAP {
     }
 }
 
+export const fetchRawTx = async (txid: string): Promise<string> => {
+    // TODO: This should not use woc lol
+    const url = 'https://api.whatsonchain.com/v1/bsv/main/tx/' + txid + '/hex'
+
+    console.log('hitting', url)
+
+    const res = await fetch(url)
+    return await res.text()
+}
+
+const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
+    return await BPU.parse({
+        tx: { r: rawTx },
+        split: [
+            {
+                token: { op: 106 },
+                include: 'l',
+            },
+            {
+                token: { op: 0 },
+                include: 'l',
+            },
+            {
+                token: { s: '|' },
+            },
+        ],
+    })
+}
+
 export const TransformTx = async (
-    tx: BobTx,
+    tx: BobTx | string | MomTx | BmapTx,
     protocols?: string[] | Protocol[]
 ) => {
+    if (typeof tx === 'string') {
+        let rawTx: string | undefined
+        // if it a txid or  complete transaction hex?
+        if (tx.length === 64) {
+            // txid - fetch raw tx
+            rawTx = await fetchRawTx(tx)
+        }
+
+        if (Buffer.from(tx).byteLength <= 146) {
+            throw new Error('Invalid rawTx')
+        }
+
+        if (!rawTx) {
+            rawTx = tx
+        }
+
+        // TODO: Double check 146 is intended to be minimum possible byte length for a tx
+        const bobTx = await bobFromRawTx(rawTx)
+
+        if (bobTx) {
+            tx = bobTx
+        } else {
+            throw new Error(`Invalid txid`)
+        }
+    }
+
     const b = new BMAP()
 
     // if protocols are specified

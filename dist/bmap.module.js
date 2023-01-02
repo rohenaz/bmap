@@ -1,3 +1,4 @@
+import $lNmOP$bpu from "bpu";
 import {Script as $lNmOP$Script, Bsm as $lNmOP$Bsm, Address as $lNmOP$Address, PubKey as $lNmOP$PubKey} from "@ts-bitcoin/core";
 import {Buffer as $lNmOP$Buffer} from "buffer";
 import $lNmOP$nodefetch from "node-fetch";
@@ -8,6 +9,7 @@ import {BoostPowJob as $lNmOP$BoostPowJob} from "boostpow";
 import {decode as $lNmOP$decode} from "@msgpack/msgpack";
 
 // import default protocols
+
 
 
 
@@ -1255,7 +1257,52 @@ class $fe0e4fc54cef5adf$export$894a720e71f90b3c {
         } else (0, $69f57829bdd71afa$export$23dbc584560299c3)(dataObj, protocolName, cell);
     };
 }
+const $fe0e4fc54cef5adf$export$54850c299f4a06d8 = async (txid)=>{
+    // TODO: This should not use woc lol
+    const url = "https://api.whatsonchain.com/v1/bsv/main/tx/" + txid + "/hex";
+    console.log("hitting", url);
+    const res = await fetch(url);
+    return await res.text();
+};
+const $fe0e4fc54cef5adf$var$bobFromRawTx = async (rawTx)=>{
+    return await (0, $lNmOP$bpu).parse({
+        tx: {
+            r: rawTx
+        },
+        split: [
+            {
+                token: {
+                    op: 106
+                },
+                include: "l"
+            },
+            {
+                token: {
+                    op: 0
+                },
+                include: "l"
+            },
+            {
+                token: {
+                    s: "|"
+                }
+            }
+        ]
+    });
+};
 const $fe0e4fc54cef5adf$export$b2a90e318402f6bc = async (tx, protocols)=>{
+    if (typeof tx === "string") {
+        let rawTx;
+        // if it a txid or  complete transaction hex?
+        if (tx.length === 64) // txid - fetch raw tx
+        rawTx = await $fe0e4fc54cef5adf$export$54850c299f4a06d8(tx);
+        if (Buffer.from(tx).byteLength <= 146) throw new Error("Invalid rawTx");
+        if (!rawTx) rawTx = tx;
+        // TODO: Double check 146 is intended to be minimum possible byte length for a tx
+        const bobTx = await $fe0e4fc54cef5adf$var$bobFromRawTx(rawTx);
+        if (bobTx) tx = bobTx;
+        else throw new Error(`Invalid txid`);
+    }
     const b = new $fe0e4fc54cef5adf$export$894a720e71f90b3c();
     // if protocols are specified
     if (protocols) {
@@ -1274,5 +1321,5 @@ const $fe0e4fc54cef5adf$export$b2a90e318402f6bc = async (tx, protocols)=>{
 };
 
 
-export {$fe0e4fc54cef5adf$export$6b22fa9a84a4797f as allProtocols, $fe0e4fc54cef5adf$export$63e9417ed8d8533a as supportedProtocols, $fe0e4fc54cef5adf$export$4f34a1c822988d11 as defaultProtocols, $fe0e4fc54cef5adf$export$894a720e71f90b3c as BMAP, $fe0e4fc54cef5adf$export$b2a90e318402f6bc as TransformTx};
+export {$fe0e4fc54cef5adf$export$6b22fa9a84a4797f as allProtocols, $fe0e4fc54cef5adf$export$63e9417ed8d8533a as supportedProtocols, $fe0e4fc54cef5adf$export$4f34a1c822988d11 as defaultProtocols, $fe0e4fc54cef5adf$export$894a720e71f90b3c as BMAP, $fe0e4fc54cef5adf$export$54850c299f4a06d8 as fetchRawTx, $fe0e4fc54cef5adf$export$b2a90e318402f6bc as TransformTx};
 //# sourceMappingURL=bmap.module.js.map

@@ -1,6 +1,6 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.21",
+  "version": "0.4.0-beta.22",
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
   "legacy": "dist/bmap.cjs",
@@ -78,7 +78,6 @@
     "@types/node-fetch": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
-    "bpu": "^0.0.13",
     "buffer": "^5.5.0",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
@@ -91,6 +90,7 @@
     "np": "2.20.1",
     "parcel": "^2.8.2",
     "prettier": "^2.8.1",
+    "punycode": "^1.4.1",
     "rimraf": "2.6.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
@@ -103,7 +103,7 @@
     "url": "https://github.com/rohenaz/bmap/issues"
   },
   "alias": {
-    "bsv": "@ts-bitcoin/core"
+    "bsv@^2.0.0": "@ts-bitcoin/core"
   },
   "homepage": "https://github.com/rohenaz/bmap#readme",
   "dependencies": {
@@ -111,6 +111,7 @@
     "@msgpack/msgpack": "^2.8.0",
     "@ts-bitcoin/core": "^2.2.0",
     "boostpow": "^1.8.1",
+    "bpu": "^0.0.13",
     "node-fetch": "^2.6.1",
     "stream-browserify": "^3.0.0"
   }

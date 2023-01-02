@@ -109,20 +109,6 @@ const bobFromPlanariaByTxid = async (txid) => {
     }
 }
 
-const rawTxFromTxid = async (txid) => {
-    // get rawtx for txid
-    let url = 'https://api.whatsonchain.com/v1/bsv/main/tx/' + txid + '/hex'
-
-    console.log('hitting', url)
-    try {
-        // let res = await fetch(url, header)
-        let res = await fetch(url)
-        return await res.text()
-    } catch (e) {
-        throw e
-    }
-}
-
 const jsonFromTxid = async (txid) => {
     // get rawtx for txid
     let url = 'https://api.whatsonchain.com/v1/bsv/main/tx/' + txid

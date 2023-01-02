@@ -20,6 +20,7 @@ export class BMAP {
     processUnknown: (key: string, dataObj: Partial<BmapTx>, out: Out) => void;
     process: (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => Promise<void>;
 }
-export const TransformTx: (tx: BobTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;
+export const fetchRawTx: (txid: string) => Promise<string>;
+export const TransformTx: (tx: BobTx | string | MomTx | BmapTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;
 
 //# sourceMappingURL=index.d.ts.map

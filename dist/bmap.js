@@ -1,3 +1,4 @@
+var $71XCL$bpu = require("bpu");
 var $71XCL$tsbitcoincore = require("@ts-bitcoin/core");
 var $71XCL$buffer = require("buffer");
 var $71XCL$nodefetch = require("node-fetch");
@@ -7,19 +8,21 @@ var $71XCL$dns = require("dns");
 var $71XCL$boostpow = require("boostpow");
 var $71XCL$msgpackmsgpack = require("@msgpack/msgpack");
 
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
+}
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
 
 $parcel$export(module.exports, "allProtocols", () => $0bef5cd148f6f4f7$export$6b22fa9a84a4797f);
 $parcel$export(module.exports, "supportedProtocols", () => $0bef5cd148f6f4f7$export$63e9417ed8d8533a);
 $parcel$export(module.exports, "defaultProtocols", () => $0bef5cd148f6f4f7$export$4f34a1c822988d11);
 $parcel$export(module.exports, "BMAP", () => $0bef5cd148f6f4f7$export$894a720e71f90b3c);
+$parcel$export(module.exports, "fetchRawTx", () => $0bef5cd148f6f4f7$export$54850c299f4a06d8);
 $parcel$export(module.exports, "TransformTx", () => $0bef5cd148f6f4f7$export$b2a90e318402f6bc);
 // import default protocols
+
 
 
 
@@ -1267,7 +1270,52 @@ class $0bef5cd148f6f4f7$export$894a720e71f90b3c {
         } else (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocolName, cell);
     };
 }
+const $0bef5cd148f6f4f7$export$54850c299f4a06d8 = async (txid)=>{
+    // TODO: This should not use woc lol
+    const url = "https://api.whatsonchain.com/v1/bsv/main/tx/" + txid + "/hex";
+    console.log("hitting", url);
+    const res = await fetch(url);
+    return await res.text();
+};
+const $0bef5cd148f6f4f7$var$bobFromRawTx = async (rawTx)=>{
+    return await (0, ($parcel$interopDefault($71XCL$bpu))).parse({
+        tx: {
+            r: rawTx
+        },
+        split: [
+            {
+                token: {
+                    op: 106
+                },
+                include: "l"
+            },
+            {
+                token: {
+                    op: 0
+                },
+                include: "l"
+            },
+            {
+                token: {
+                    s: "|"
+                }
+            }
+        ]
+    });
+};
 const $0bef5cd148f6f4f7$export$b2a90e318402f6bc = async (tx, protocols)=>{
+    if (typeof tx === "string") {
+        let rawTx;
+        // if it a txid or  complete transaction hex?
+        if (tx.length === 64) // txid - fetch raw tx
+        rawTx = await $0bef5cd148f6f4f7$export$54850c299f4a06d8(tx);
+        if (Buffer.from(tx).byteLength <= 146) throw new Error("Invalid rawTx");
+        if (!rawTx) rawTx = tx;
+        // TODO: Double check 146 is intended to be minimum possible byte length for a tx
+        const bobTx = await $0bef5cd148f6f4f7$var$bobFromRawTx(rawTx);
+        if (bobTx) tx = bobTx;
+        else throw new Error(`Invalid txid`);
+    }
     const b = new $0bef5cd148f6f4f7$export$894a720e71f90b3c();
     // if protocols are specified
     if (protocols) {
