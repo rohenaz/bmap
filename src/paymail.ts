@@ -6,9 +6,10 @@ export const verifyPaymailPublicKey = async function (
     paymail: string,
     publicKey: string
 ): Promise<boolean> {
-    if (window) {
+    if (typeof window !== 'undefined') {
         // Paymail client will use BrowserDns if dns is null here
-        const client = new PaymailClient(null, fetch)
+        // and isomorphic-fetch if fetch is null
+        const client = new PaymailClient(null, null)
         return client.verifyPubkeyOwner(publicKey, paymail)
     } else {
         const client = new PaymailClient(dns, fetch)

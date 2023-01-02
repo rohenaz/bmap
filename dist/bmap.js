@@ -1,7 +1,7 @@
 import {Script as $6aSy9$Script, Bsm as $6aSy9$Bsm, Address as $6aSy9$Address, PubKey as $6aSy9$PubKey} from "@ts-bitcoin/core";
 import {Buffer as $6aSy9$Buffer} from "buffer";
 import $6aSy9$nodefetch from "node-fetch";
-import {webcrypto as $6aSy9$webcrypto} from "crypto";
+import "crypto";
 import {PaymailClient as $6aSy9$PaymailClient} from "@moneybutton/paymail-client";
 import $6aSy9$dns from "dns";
 import {BoostPowJob as $6aSy9$BoostPowJob} from "boostpow";
@@ -67,19 +67,19 @@ const $7341ca75afce06d0$export$ca4d6504ca148ae4 = function(data) {
 };
 const $7341ca75afce06d0$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
     let hash;
-    if (0, $6aSy9$webcrypto) {
-        console.log("using webcrypto");
-        if ((0, $6aSy9$webcrypto).subtle) {
-            hash = await (0, $6aSy9$webcrypto).subtle.digest("SHA-256", msgBuffer);
-            return (0, $6aSy9$Buffer).from(hash);
-        }
-    } else if (0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039) {
-        console.log("using crypto");
-        if ((0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039).subtle) {
-            hash = await (0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039).subtle.digest("SHA-256", msgBuffer);
-            return (0, $6aSy9$Buffer).from(hash);
-        }
+    // if (window) {
+    //     console.log('using webcrypto')
+    //     if (crypto.webcrypto?.subtle) {
+    //         hash = await webcrypto.subtle.digest('SHA-256', msgBuffer)
+    //         return Buffer.from(hash)
+    //     }
+    // } else if (crypto) {
+    console.log("using crypto");
+    if ((0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039).subtle) {
+        hash = await (0, $7341ca75afce06d0$import$7effb53edfc7fa2d$2e2bcd8739ae039).subtle.digest("SHA-256", msgBuffer);
+        return (0, $6aSy9$Buffer).from(hash);
     }
+    // }
     return (0, $6aSy9$Buffer).from(new ArrayBuffer(0));
 };
 
@@ -440,9 +440,10 @@ const $c922214843a74a8e$export$c19e3a57d69468ea = {
 
 
 const $e49991d27b6fd037$export$fe8725667d42151 = async function(paymail, publicKey) {
-    if (window) {
+    if (typeof window !== "undefined") {
         // Paymail client will use BrowserDns if dns is null here
-        const client = new (0, $6aSy9$PaymailClient)(null, (0, $6aSy9$nodefetch));
+        // and isomorphic-fetch if fetch is null
+        const client = new (0, $6aSy9$PaymailClient)(null, null);
         return client.verifyPubkeyOwner(publicKey, paymail);
     } else {
         const client1 = new (0, $6aSy9$PaymailClient)((0, $6aSy9$dns), (0, $6aSy9$nodefetch));

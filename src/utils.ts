@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import crypto, { webcrypto } from 'crypto'
+import crypto from 'crypto'
 import { BobTx, Cell, Tape } from '../types/common'
 
 export const isStringArray = (arr: Array<any>): boolean => {
@@ -146,19 +146,19 @@ export const isBase64 = function (data: string) {
 // hashes a message buffer, returns the hash as a buffer
 export const sha256 = async (msgBuffer: Buffer) => {
     let hash: ArrayBuffer
-    if (webcrypto) {
-        console.log('using webcrypto')
+    // if (window) {
+    //     console.log('using webcrypto')
 
-        if (webcrypto.subtle) {
-            hash = await webcrypto.subtle.digest('SHA-256', msgBuffer)
-            return Buffer.from(hash)
-        }
-    } else if (crypto) {
-        console.log('using crypto')
-        if (crypto.subtle) {
-            hash = await crypto.subtle.digest('SHA-256', msgBuffer)
-            return Buffer.from(hash)
-        }
+    //     if (crypto.webcrypto?.subtle) {
+    //         hash = await webcrypto.subtle.digest('SHA-256', msgBuffer)
+    //         return Buffer.from(hash)
+    //     }
+    // } else if (crypto) {
+    console.log('using crypto')
+    if (crypto.subtle) {
+        hash = await crypto.subtle.digest('SHA-256', msgBuffer)
+        return Buffer.from(hash)
     }
+    // }
     return Buffer.from(new ArrayBuffer(0))
 }
