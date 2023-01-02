@@ -1,10 +1,9 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.16",
+  "version": "0.4.0-beta.17",
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
   "legacy": "dist/bmap.cjs",
-  "main": "dist/bmap.js",
   "module": "dist/bmap.js",
   "type": "module",
   "targets": {
@@ -36,7 +35,7 @@
   "scripts": {
     "serve": "npm run build && node ./node_modules/ws/index.js",
     "clean": "yarn cache clean && rimraf dist/ types/index.d.ts parcel-bundle-reports .parcel-cache",
-    "build": "rimraf parcel-bundle-reports dist/ types/index.d.ts && parcel build . --target types --target main --target legacy --reporter @parcel/reporter-bundle-analyzer",
+    "build": "rimraf parcel-bundle-reports dist/ types/index.d.ts && parcel build . --target types --target module --target legacy --reporter @parcel/reporter-bundle-analyzer",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
     "testonly": "jest --collectCoverage",
