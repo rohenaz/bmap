@@ -1,24 +1,12 @@
-import {Buffer as $7QDub$Buffer} from "buffer";
-import $7QDub$crypto from "crypto";
-import {Script as $7QDub$Script, Bsm as $7QDub$Bsm, Address as $7QDub$Address, PubKey as $7QDub$PubKey} from "@ts-bitcoin/core";
-import $7QDub$nodefetch from "node-fetch";
-import {PaymailClient as $7QDub$PaymailClient} from "@moneybutton/paymail-client";
-import $7QDub$dns from "dns";
-import {BoostPowJob as $7QDub$BoostPowJob} from "boostpow";
-import {decode as $7QDub$decode} from "@msgpack/msgpack";
+import {Script as $lNmOP$Script, Bsm as $lNmOP$Bsm, Address as $lNmOP$Address, PubKey as $lNmOP$PubKey} from "@ts-bitcoin/core";
+import {Buffer as $lNmOP$Buffer} from "buffer";
+import $lNmOP$nodefetch from "node-fetch";
+import $lNmOP$crypto from "crypto";
+import {PaymailClient as $lNmOP$PaymailClient} from "@moneybutton/paymail-client";
+import $lNmOP$dns from "dns";
+import {BoostPowJob as $lNmOP$BoostPowJob} from "boostpow";
+import {decode as $lNmOP$decode} from "@msgpack/msgpack";
 
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
-
-
-var $fe0e4fc54cef5adf$exports = {};
-
-$parcel$export($fe0e4fc54cef5adf$exports, "allProtocols", () => $fe0e4fc54cef5adf$export$6b22fa9a84a4797f);
-$parcel$export($fe0e4fc54cef5adf$exports, "supportedProtocols", () => $fe0e4fc54cef5adf$export$63e9417ed8d8533a);
-$parcel$export($fe0e4fc54cef5adf$exports, "defaultProtocols", () => $fe0e4fc54cef5adf$export$4f34a1c822988d11);
-$parcel$export($fe0e4fc54cef5adf$exports, "BMAP", () => $fe0e4fc54cef5adf$export$894a720e71f90b3c);
-$parcel$export($fe0e4fc54cef5adf$exports, "TransformTx", () => $fe0e4fc54cef5adf$export$b2a90e318402f6bc);
 // import default protocols
 
 
@@ -38,7 +26,7 @@ const $69f57829bdd71afa$export$37b8d83213de0f5f = (arr)=>{
 const $69f57829bdd71afa$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
     if (!pushData) throw new Error(`cannot get cell value of: ${pushData}`);
     else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
-    else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || (pushData["b"] ? (0, $7QDub$Buffer).from(pushData.b, "base64").toString("hex") : pushData.lb && (0, $7QDub$Buffer).from(pushData.lb, "base64").toString("hex")) || "";
+    else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || (pushData["b"] ? (0, $lNmOP$Buffer).from(pushData.b, "base64").toString("hex") : pushData.lb && (0, $lNmOP$Buffer).from(pushData.lb, "base64").toString("hex")) || "";
     else if (schemaEncoding === "number") return parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
     else if (schemaEncoding === "file") return `bitfs://${pushData["f"] ? pushData.f : pushData.lf}`;
     return (pushData["b"] ? pushData.b : pushData.lb) || "";
@@ -79,12 +67,12 @@ const $69f57829bdd71afa$export$ca4d6504ca148ae4 = function(data) {
 };
 const $69f57829bdd71afa$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
     let hash;
-    if ((0, $7QDub$crypto).subtle) {
-        hash = await (0, $7QDub$crypto).subtle.digest("SHA-256", msgBuffer);
-        return (0, $7QDub$Buffer).from(hash);
+    if ((0, $lNmOP$crypto).subtle) {
+        hash = await (0, $lNmOP$crypto).subtle.digest("SHA-256", msgBuffer);
+        return (0, $lNmOP$Buffer).from(hash);
     }
     // }
-    return (0, $7QDub$Buffer).from(new ArrayBuffer(0));
+    return (0, $lNmOP$Buffer).from(new ArrayBuffer(0));
 };
 
 
@@ -106,9 +94,9 @@ const $2bd9d69ae9f49db2$var$opReturnSchema = [
     ]
 ];
 const $2bd9d69ae9f49db2$var$getFileBuffer = async function(bitfsRef) {
-    let fileBuffer = (0, $7QDub$Buffer).from("");
+    let fileBuffer = (0, $lNmOP$Buffer).from("");
     try {
-        const result = await (0, $7QDub$nodefetch)(`https://x.bitfs.network/${bitfsRef}`, {});
+        const result = await (0, $lNmOP$nodefetch)(`https://x.bitfs.network/${bitfsRef}`, {});
         fileBuffer = await result.buffer();
     } catch (e) {
         console.error(e);
@@ -139,8 +127,8 @@ const $2bd9d69ae9f49db2$var$validateSignature = async function(aipObj, cell, tap
                     const fileBuffer = await $2bd9d69ae9f49db2$var$getFileBuffer(statement.f);
                     signatureValues.push(fileBuffer.toString("hex"));
                 } else if (statement.b) // no hex? try base64
-                signatureValues.push((0, $7QDub$Buffer).from(statement.b, "base64").toString("hex"));
-                else if (statement.s) signatureValues.push((0, $7QDub$Buffer).from(statement.s).toString("hex"));
+                signatureValues.push((0, $lNmOP$Buffer).from(statement.b, "base64").toString("hex"));
+                else if (statement.s) signatureValues.push((0, $lNmOP$Buffer).from(statement.s).toString("hex"));
             }
             signatureValues.push("7c") // | hex
             ;
@@ -160,32 +148,32 @@ const $2bd9d69ae9f49db2$var$validateSignature = async function(aipObj, cell, tap
     const signatureBufferStatements = [];
     // check whether we need to only sign some indexes
     if (usingIndexes.length > 0) usingIndexes.forEach((index)=>{
-        signatureBufferStatements.push((0, $7QDub$Buffer).from(signatureValues[index], "hex"));
+        signatureBufferStatements.push((0, $lNmOP$Buffer).from(signatureValues[index], "hex"));
     });
     else // add all the values to the signature buffer
     signatureValues.forEach((statement)=>{
-        signatureBufferStatements.push((0, $7QDub$Buffer).from(statement, "hex"));
+        signatureBufferStatements.push((0, $lNmOP$Buffer).from(statement, "hex"));
     });
     let messageBuffer;
     if (aipObj.hashing_algorithm) {
         // this is actually Hashed-AIP (HAIP) and works a bit differently
         if (!aipObj.index_unit_size) // remove OP_RETURN - will be added by Script.buildDataOut
         signatureBufferStatements.shift();
-        const dataScript = (0, $7QDub$Script).fromSafeDataArray(signatureBufferStatements);
-        let dataBuffer = (0, $7QDub$Buffer).from(dataScript.toHex(), "hex");
+        const dataScript = (0, $lNmOP$Script).fromSafeDataArray(signatureBufferStatements);
+        let dataBuffer = (0, $lNmOP$Buffer).from(dataScript.toHex(), "hex");
         if (aipObj.index_unit_size) // the indexed buffer should not contain the OP_RETURN opcode, but this
         // is added by the buildDataOut function automatically. Remove it.
         dataBuffer = dataBuffer.slice(1);
-        messageBuffer = await (0, $69f57829bdd71afa$export$bced8d2aada2d1c9)((0, $7QDub$Buffer).from(dataBuffer.toString("hex")));
+        messageBuffer = await (0, $69f57829bdd71afa$export$bced8d2aada2d1c9)((0, $lNmOP$Buffer).from(dataBuffer.toString("hex")));
     } else // regular AIP
-    messageBuffer = (0, $7QDub$Buffer).concat([
+    messageBuffer = (0, $lNmOP$Buffer).concat([
         ...signatureBufferStatements
     ]);
     // AIOP uses address, HAIP uses signing_address field names
     const adressString = aipObj.address || aipObj.signing_address;
     // verify aip signature
     try {
-        aipObj.verified = (0, $7QDub$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $7QDub$Address).fromString(adressString));
+        aipObj.verified = (0, $lNmOP$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $lNmOP$Address).fromString(adressString));
     } catch (e) {
         aipObj.verified = false;
     }
@@ -193,13 +181,13 @@ const $2bd9d69ae9f49db2$var$validateSignature = async function(aipObj, cell, tap
     if (!aipObj.verified) {
         // Twetch signs a UTF-8 buffer of the hex string of a sha256 hash of the message
         // Without 0x06 (OP_RETURN) and without 0x7c at the end, the trailing pipe ("|")
-        messageBuffer = (0, $7QDub$Buffer).concat([
+        messageBuffer = (0, $lNmOP$Buffer).concat([
             ...signatureBufferStatements.slice(1, signatureBufferStatements.length - 1)
         ]);
         const buff = await (0, $69f57829bdd71afa$export$bced8d2aada2d1c9)(messageBuffer);
-        messageBuffer = (0, $7QDub$Buffer).from(buff.toString("hex"));
+        messageBuffer = (0, $lNmOP$Buffer).from(buff.toString("hex"));
         try {
-            aipObj.verified = (0, $7QDub$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $7QDub$Address).fromString(adressString));
+            aipObj.verified = (0, $lNmOP$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $lNmOP$Address).fromString(adressString));
         } catch (e1) {
             aipObj.verified = false;
         }
@@ -447,10 +435,10 @@ const $b7e65d97cc04cb07$export$fe8725667d42151 = async function(paymail, publicK
     if (typeof window !== "undefined") {
         // Paymail client will use BrowserDns if dns is null here
         // and isomorphic-fetch if fetch is null
-        const client = new (0, $7QDub$PaymailClient)();
+        const client = new (0, $lNmOP$PaymailClient)();
         return client.verifyPubkeyOwner(publicKey, paymail);
     } else {
-        const client1 = new (0, $7QDub$PaymailClient)((0, $7QDub$dns), (0, $7QDub$nodefetch));
+        const client1 = new (0, $lNmOP$PaymailClient)((0, $lNmOP$dns), (0, $lNmOP$nodefetch));
         return client1.verifyPubkeyOwner(publicKey, paymail);
     }
 };
@@ -484,21 +472,21 @@ const $7b115585d0ffd9d8$var$validateSignature = (pspObj, cell, tape)=>{
             cellContainer.cell.forEach((statement)=>{
                 // add the value as hex
                 let value = statement.h;
-                if (!value) value = (0, $7QDub$Buffer).from(statement.b, "base64").toString("hex");
-                if (!value) value = (0, $7QDub$Buffer).from(statement.s).toString("hex");
-                signatureBufferStatements.push((0, $7QDub$Buffer).from(value, "hex"));
+                if (!value) value = (0, $lNmOP$Buffer).from(statement.b, "base64").toString("hex");
+                if (!value) value = (0, $lNmOP$Buffer).from(statement.s).toString("hex");
+                signatureBufferStatements.push((0, $lNmOP$Buffer).from(value, "hex"));
             });
-            signatureBufferStatements.push((0, $7QDub$Buffer).from("7c", "hex")) // | hex ????
+            signatureBufferStatements.push((0, $lNmOP$Buffer).from("7c", "hex")) // | hex ????
             ;
         }
     }
-    const dataScript = (0, $7QDub$Script).fromSafeDataArray(signatureBufferStatements);
-    const messageBuffer = (0, $7QDub$Buffer).from(dataScript.toHex(), "hex");
+    const dataScript = (0, $lNmOP$Script).fromSafeDataArray(signatureBufferStatements);
+    const messageBuffer = (0, $lNmOP$Buffer).from(dataScript.toHex(), "hex");
     // verify psp signature
-    const publicKey = (0, $7QDub$PubKey).fromString(pspObj.pubkey);
-    const signingAddress = (0, $7QDub$Address).fromPubKey(publicKey);
+    const publicKey = (0, $lNmOP$PubKey).fromString(pspObj.pubkey);
+    const signingAddress = (0, $lNmOP$Address).fromPubKey(publicKey);
     try {
-        pspObj.verified = (0, $7QDub$Bsm).verify(messageBuffer, pspObj.signature, signingAddress);
+        pspObj.verified = (0, $lNmOP$Bsm).verify(messageBuffer, pspObj.signature, signingAddress);
     } catch (e) {
         pspObj.verified = false;
     }
@@ -602,14 +590,14 @@ const $5bad0dce333ed95b$var$handler = async ({ dataObj: dataObj , cell: cell  })
         const schemaEncoding = Object.values(schemaField)[0];
         bitkeyObj[bitkeyField] = (0, $69f57829bdd71afa$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
     }
-    const userAddress = (0, $7QDub$Address).fromPubKey((0, $7QDub$PubKey).fromString(bitkeyObj.pubkey)).toString();
+    const userAddress = (0, $lNmOP$Address).fromPubKey((0, $lNmOP$PubKey).fromString(bitkeyObj.pubkey)).toString();
     // sha256( hex(paymail(USER)) | hex(pubkey(USER)) )
-    const paymailHex = (0, $7QDub$Buffer).from(bitkeyObj.paymail).toString("hex");
-    const pubkeyHex = (0, $7QDub$Buffer).from(bitkeyObj.pubkey).toString("hex");
+    const paymailHex = (0, $lNmOP$Buffer).from(bitkeyObj.paymail).toString("hex");
+    const pubkeyHex = (0, $lNmOP$Buffer).from(bitkeyObj.pubkey).toString("hex");
     const concatenated = paymailHex + pubkeyHex;
-    const bitkeySignatureBuffer = await (0, $69f57829bdd71afa$export$bced8d2aada2d1c9)((0, $7QDub$Buffer).from(concatenated, "hex"));
-    const bitkeySignatureVerified = (0, $7QDub$Bsm).verify(bitkeySignatureBuffer, bitkeyObj.bitkey_signature, (0, $7QDub$Address).fromString("13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC"));
-    const userSignatureVerified = (0, $7QDub$Bsm).verify((0, $7QDub$Buffer).from(bitkeyObj.pubkey), bitkeyObj.user_signature, (0, $7QDub$Address).fromString(userAddress));
+    const bitkeySignatureBuffer = await (0, $69f57829bdd71afa$export$bced8d2aada2d1c9)((0, $lNmOP$Buffer).from(concatenated, "hex"));
+    const bitkeySignatureVerified = (0, $lNmOP$Bsm).verify(bitkeySignatureBuffer, bitkeyObj.bitkey_signature, (0, $lNmOP$Address).fromString("13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC"));
+    const userSignatureVerified = (0, $lNmOP$Bsm).verify((0, $lNmOP$Buffer).from(bitkeyObj.pubkey), bitkeyObj.user_signature, (0, $lNmOP$Address).fromString(userAddress));
     bitkeyObj.verified = bitkeySignatureVerified && userSignatureVerified;
     (0, $69f57829bdd71afa$export$23dbc584560299c3)(dataObj, "BITKEY", bitkeyObj);
 };
@@ -641,7 +629,7 @@ const $f2db843663565876$var$handler = async ({ dataObj: dataObj , cell: cell , t
     if (cell[0].s !== $f2db843663565876$var$protocolAddress || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].s || !tape) throw new Error(`Invalid BITPIC record: ${tx}`);
     const bitpicObj = {
         paymail: cell[1].s,
-        pubkey: (0, $7QDub$Buffer).from(cell[2].b, "base64").toString("hex"),
+        pubkey: (0, $lNmOP$Buffer).from(cell[2].b, "base64").toString("hex"),
         signature: cell[3].s || "",
         verified: false
     };
@@ -663,10 +651,10 @@ const $f2db843663565876$var$handler = async ({ dataObj: dataObj , cell: cell , t
     try {
         // TODO: bob transactions are missing this binary part, cannot verify signature
         const bin = cell[1].lb || cell[1].b;
-        const buf = (0, $7QDub$Buffer).from(bin, "base64");
+        const buf = (0, $lNmOP$Buffer).from(bin, "base64");
         const hashBuff = await (0, $69f57829bdd71afa$export$bced8d2aada2d1c9)(buf);
-        const address = (0, $7QDub$Address).fromPubKey((0, $7QDub$PubKey).fromString(bitpicObj.pubkey));
-        bitpicObj.verified = (0, $7QDub$Bsm).verify(hashBuff, bitpicObj.signature, address);
+        const address = (0, $lNmOP$Address).fromPubKey((0, $lNmOP$PubKey).fromString(bitpicObj.pubkey));
+        bitpicObj.verified = (0, $lNmOP$Bsm).verify(hashBuff, bitpicObj.signature, address);
     } catch (e) {
         // failed verification
         bitpicObj.verified = false;
@@ -704,7 +692,7 @@ const $d821e4307ef5193f$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
     // build ASM from either op codes and script chunks
     const asm = cell.map((c)=>c.ops ? c.ops : (0, $69f57829bdd71afa$export$b691916706e0e9cc)(c, "hex") || "").join(" ");
     if (asm) {
-        const boostJob = (0, $7QDub$BoostPowJob).fromASM(asm, tx.tx.h, out.i, out.e.v).toObject();
+        const boostJob = (0, $lNmOP$BoostPowJob).fromASM(asm, tx.tx.h, out.i, out.e.v).toObject();
         (0, $69f57829bdd71afa$export$23dbc584560299c3)(dataObj, "BOOST", boostJob);
     }
 };
@@ -852,9 +840,9 @@ const $714a456a73c34cc4$var$processMSGPACK = function(cell, mapObj) {
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
         if (pushdataContainer.i === 2) try {
-            if (!(0, $7QDub$decode)) throw new Error("Msgpack is required but not loaded");
-            const buff = (0, $7QDub$Buffer).from(pushdataContainer.b, "base64");
-            mapObj = (0, $7QDub$decode)(buff);
+            if (!(0, $lNmOP$decode)) throw new Error("Msgpack is required but not loaded");
+            const buff = (0, $lNmOP$Buffer).from(pushdataContainer.b, "base64");
+            mapObj = (0, $lNmOP$decode)(buff);
         } catch (e) {
             mapObj = {};
         }
@@ -969,7 +957,7 @@ const $1e51425d10743037$var$opReturnSchema = [
 ];
 const $1e51425d10743037$export$3eb18141230d6532 = async function(a, tx) {
     // Calculate the node ID
-    const buf = (0, $7QDub$Buffer).from(a + tx);
+    const buf = (0, $lNmOP$Buffer).from(a + tx);
     const hashBuf = await (0, $69f57829bdd71afa$export$bced8d2aada2d1c9)(buf);
     return hashBuf.toString("hex");
 };
@@ -1286,21 +1274,5 @@ const $fe0e4fc54cef5adf$export$b2a90e318402f6bc = async (tx, protocols)=>{
 };
 
 
-const $9bdd8cec732fb4b1$var$bmap = {
-    BMAP: $fe0e4fc54cef5adf$export$894a720e71f90b3c,
-    TransformTx: $fe0e4fc54cef5adf$export$b2a90e318402f6bc,
-    supportedProtocols: $fe0e4fc54cef5adf$export$63e9417ed8d8533a
-};
-if (typeof window !== "undefined") {
-    window.bmap = $9bdd8cec732fb4b1$var$bmap;
-    if ((0, $7QDub$crypto) && !window.crypto) window.crypto = (0, $7QDub$crypto);
-    // const bm = new BMAP()
-    // bm.addProtocolHandler(BOOST)
-    // window.bmap.bmap = bm
-    if (!window.Buffer) window.Buffer = (0, $7QDub$Buffer);
-}
-var $9bdd8cec732fb4b1$export$2e2bcd8739ae039 = $9bdd8cec732fb4b1$var$bmap;
-
-
-export {$9bdd8cec732fb4b1$export$2e2bcd8739ae039 as default};
-//# sourceMappingURL=bmap.js.map
+export {$fe0e4fc54cef5adf$export$6b22fa9a84a4797f as allProtocols, $fe0e4fc54cef5adf$export$63e9417ed8d8533a as supportedProtocols, $fe0e4fc54cef5adf$export$4f34a1c822988d11 as defaultProtocols, $fe0e4fc54cef5adf$export$894a720e71f90b3c as BMAP, $fe0e4fc54cef5adf$export$b2a90e318402f6bc as TransformTx};
+//# sourceMappingURL=bmap.module.js.map
