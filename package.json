@@ -1,10 +1,9 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.12",
+  "version": "0.4.0-beta.13",
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
   "legacy": "dist/bmap.cjs",
-  "module": "dist/bmap.module.js",
   "main": "dist/bmap.js",
   "type": "module",
   "targets": {
@@ -15,11 +14,8 @@
     },
     "main": {
       "isLibrary": true,
-      "context": "browser",
-      "source": "src/bmap.ts",
-      "engines": {
-        "browsers": "Chrome 80"
-      }
+      "context": "node",
+      "source": "src/browser.ts"
     },
     "peerDependencies": {},
     "types": {

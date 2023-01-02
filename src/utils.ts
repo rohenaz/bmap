@@ -146,15 +146,7 @@ export const isBase64 = function (data: string) {
 // hashes a message buffer, returns the hash as a buffer
 export const sha256 = async (msgBuffer: Buffer) => {
     let hash: ArrayBuffer
-    // if (window) {
-    //     console.log('using webcrypto')
 
-    //     if (crypto.webcrypto?.subtle) {
-    //         hash = await webcrypto.subtle.digest('SHA-256', msgBuffer)
-    //         return Buffer.from(hash)
-    //     }
-    // } else if (crypto) {
-    console.log('using crypto')
     if (crypto.subtle) {
         hash = await crypto.subtle.digest('SHA-256', msgBuffer)
         return Buffer.from(hash)

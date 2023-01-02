@@ -13,17 +13,6 @@ describe('bmapjs', () => {
         jest.resetModules()
     })
 
-    test('test require module', async () => {
-        const { mocked } = jest.mock<bmapjs>('../../dist/bmap.module.js', () =>
-            require('../../dist/bmap.module.js')
-        )
-        mocked((bmjs: bmapjs) => {
-            expect(typeof bmjs).toBe('object')
-            expect(typeof bmjs.TransformTx).toBe('object')
-            expect(typeof bmjs.supportedProtocols).toBe('object')
-        })
-    })
-
     test('test require main', async () => {
         const { mocked } = jest.mock<bmapjs>('../../dist/bmap.js', () =>
             require('../../dist/bmap.js')
