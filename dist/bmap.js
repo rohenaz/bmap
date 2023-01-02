@@ -440,8 +440,14 @@ const $c922214843a74a8e$export$c19e3a57d69468ea = {
 
 
 const $e49991d27b6fd037$export$fe8725667d42151 = async function(paymail, publicKey) {
-    const client = new (0, $6aSy9$PaymailClient)((0, $6aSy9$dns), (0, $6aSy9$nodefetch));
-    return client.verifyPubkeyOwner(publicKey, paymail);
+    if (window) {
+        // Paymail client will use BrowserDns if dns is null here
+        const client = new (0, $6aSy9$PaymailClient)(null, (0, $6aSy9$nodefetch));
+        return client.verifyPubkeyOwner(publicKey, paymail);
+    } else {
+        const client1 = new (0, $6aSy9$PaymailClient)((0, $6aSy9$dns), (0, $6aSy9$nodefetch));
+        return client1.verifyPubkeyOwner(publicKey, paymail);
+    }
 };
 
 
