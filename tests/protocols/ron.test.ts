@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import * as BPU from 'bpu'
+import BPU from 'bpu-ts'
 import { RON } from '../../src/protocols/ron'
 import { BmapTx, BobTx, Cell } from '../../types/common'
 import ronTransactions from '../data/ron-transactions.json'
@@ -62,7 +62,7 @@ describe('ron', () => {
         const dataObj = {} as BmapTx
         let cell = tx.out[1].tape[1].cell as Cell[]
 
-        RON.handler({ dataObj, cell, tx })
+        RON.handler({ dataObj, cell, tx: tx as BobTx })
         expect(dataObj.RON && typeof dataObj.RON[0]).toEqual('object')
         expect(dataObj.RON && dataObj.RON[0].pair).toEqual({
             USDCAD: '1.323125',

@@ -1,5 +1,4 @@
-// import default protocols
-import BPU from 'bpu'
+import BPU from 'bpu-ts/src'
 import {
     BmapTx,
     BobTx,
@@ -294,7 +293,7 @@ export const fetchRawTx = async (txid: string): Promise<string> => {
 }
 
 const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
-    return await BPU.parse({
+    const bpuTx = await BPU.parse({
         tx: { r: rawTx },
         split: [
             {
@@ -310,6 +309,7 @@ const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
             },
         ],
     })
+    return bpuTx as BobTx
 }
 
 export const TransformTx = async (

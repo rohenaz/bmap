@@ -9,7 +9,6 @@
         "src/**/*.ts",
         "types/**/*.d.ts",
         "types/**/**/*.d.ts",
-        "types/**/**/*.d.ts",
         "tests/**/*.test.ts"
     ],
     "exclude": ["coverage", "functions", "tests", ".parcel-cache"],

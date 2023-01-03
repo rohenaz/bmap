@@ -1,4 +1,4 @@
-import $lNmOP$bpu from "bpu";
+import $lNmOP$bputssrc from "bpu-ts/src";
 import {Script as $lNmOP$Script, Bsm as $lNmOP$Bsm, Address as $lNmOP$Address, PubKey as $lNmOP$PubKey} from "@ts-bitcoin/core";
 import {Buffer as $lNmOP$Buffer} from "buffer";
 import $lNmOP$nodefetch from "node-fetch";
@@ -8,7 +8,6 @@ import $lNmOP$dns from "dns";
 import {BoostPowJob as $lNmOP$BoostPowJob} from "boostpow";
 import {decode as $lNmOP$decode} from "@msgpack/msgpack";
 
-// import default protocols
 
 
 
@@ -1265,7 +1264,7 @@ const $fe0e4fc54cef5adf$export$54850c299f4a06d8 = async (txid)=>{
     return await res.text();
 };
 const $fe0e4fc54cef5adf$var$bobFromRawTx = async (rawTx)=>{
-    return await (0, $lNmOP$bpu).parse({
+    const bpuTx = await (0, $lNmOP$bputssrc).parse({
         tx: {
             r: rawTx
         },
@@ -1289,6 +1288,7 @@ const $fe0e4fc54cef5adf$var$bobFromRawTx = async (rawTx)=>{
             }
         ]
     });
+    return bpuTx;
 };
 const $fe0e4fc54cef5adf$export$b2a90e318402f6bc = async (tx, protocols)=>{
     if (typeof tx === "string") {

@@ -1,4 +1,4 @@
-var $71XCL$bpu = require("bpu");
+var $71XCL$bputssrc = require("bpu-ts/src");
 var $71XCL$tsbitcoincore = require("@ts-bitcoin/core");
 var $71XCL$buffer = require("buffer");
 var $71XCL$nodefetch = require("node-fetch");
@@ -21,7 +21,6 @@ $parcel$export(module.exports, "defaultProtocols", () => $0bef5cd148f6f4f7$expor
 $parcel$export(module.exports, "BMAP", () => $0bef5cd148f6f4f7$export$894a720e71f90b3c);
 $parcel$export(module.exports, "fetchRawTx", () => $0bef5cd148f6f4f7$export$54850c299f4a06d8);
 $parcel$export(module.exports, "TransformTx", () => $0bef5cd148f6f4f7$export$b2a90e318402f6bc);
-// import default protocols
 
 
 
@@ -1278,7 +1277,7 @@ const $0bef5cd148f6f4f7$export$54850c299f4a06d8 = async (txid)=>{
     return await res.text();
 };
 const $0bef5cd148f6f4f7$var$bobFromRawTx = async (rawTx)=>{
-    return await (0, ($parcel$interopDefault($71XCL$bpu))).parse({
+    const bpuTx = await (0, ($parcel$interopDefault($71XCL$bputssrc))).parse({
         tx: {
             r: rawTx
         },
@@ -1302,6 +1301,7 @@ const $0bef5cd148f6f4f7$var$bobFromRawTx = async (rawTx)=>{
             }
         ]
     });
+    return bpuTx;
 };
 const $0bef5cd148f6f4f7$export$b2a90e318402f6bc = async (tx, protocols)=>{
     if (typeof tx === "string") {

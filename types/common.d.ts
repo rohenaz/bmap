@@ -1,3 +1,4 @@
+import { BpuTx } from 'bpu-ts'
 import { AIP } from './protocols/aip'
 import { B } from './protocols/b'
 import { BAP } from './protocols/bap'
@@ -64,7 +65,7 @@ type Tape = {
     i: number
 }
 
-export type BobTx = {
+interface BobTx extends BpuTx {
     blk?: {
         t: number
         i: number
