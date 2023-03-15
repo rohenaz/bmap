@@ -22,6 +22,7 @@ import { BOOST } from './protocols/boost'
 import { HAIP } from './protocols/haip'
 import { MAP } from './protocols/map'
 import { METANET } from './protocols/metanet'
+import { Ord } from './protocols/ord'
 import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
 import { SYMRE } from './protocols/symre'
@@ -57,10 +58,11 @@ export const allProtocols = [
     PSP,
     RON,
     SYMRE,
+    Ord,
 ]
 
 export const supportedProtocols = allProtocols.map((p) => p.name)
-export const defaultProtocols = [AIP, B, BAP, MAP, METANET]
+export const defaultProtocols = [AIP, B, BAP, MAP, METANET, Ord]
 
 // prepare protocol map, handlers and schemas
 defaultProtocols.forEach((protocol) => {
@@ -156,13 +158,15 @@ export class BMAP {
                             )
                         }
                     } else {
-                        // No OP_RETURN in this tape
-
+                        // No OP_FALSE OP_RETURN in this tape
                         const boostChecker = this.protocolScriptCheckers.get(
                             BOOST.name
                         )
                         const _21e8Checker = this.protocolScriptCheckers.get(
                             _21E8.name
+                        )
+                        const ordChecker = this.protocolScriptCheckers.get(
+                            Ord.name
                         )
 
                         // Check for boostpow and 21e8
@@ -175,6 +179,10 @@ export class BMAP {
                                 }
                                 if (_21e8Checker && _21e8Checker(cell)) {
                                     // 'found 21e8'
+                                    return true
+                                }
+                                if (ordChecker && ordChecker(cell)) {
+                                    // 'found 1sat ordinal'
                                     return true
                                 }
                             })
@@ -192,6 +200,8 @@ export class BMAP {
                                     protocolName = BOOST.name
                                 } else if (_21e8Checker && _21e8Checker(cell)) {
                                     protocolName = _21E8.name
+                                } else if (ordChecker && ordChecker(cell)) {
+                                    protocolName = Ord.name
                                 } else {
                                     // nothing found
                                     continue
