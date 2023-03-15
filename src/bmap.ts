@@ -1,4 +1,4 @@
-import BPU from 'bpu-ts/src'
+import { parse } from 'bpu-ts'
 import {
     BmapTx,
     BobTx,
@@ -283,7 +283,6 @@ export class BMAP {
 }
 
 export const fetchRawTx = async (txid: string): Promise<string> => {
-    // TODO: This should not use woc lol
     const url = 'https://api.whatsonchain.com/v1/bsv/main/tx/' + txid + '/hex'
 
     console.log('hitting', url)
@@ -292,8 +291,8 @@ export const fetchRawTx = async (txid: string): Promise<string> => {
     return await res.text()
 }
 
-const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
-    const bpuTx = await BPU.parse({
+export const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
+    const bpuTx = await parse({
         tx: { r: rawTx },
         split: [
             {
@@ -312,6 +311,11 @@ const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
     return bpuTx as BobTx
 }
 
+// TransformTx
+// tx - a raw hex string or a Bob/Bmap/Mom transaction object
+// protocols - the handlers you want to load and use to process the tx
+// reducing the number of supported protocols may improve transform speed
+// at the expense of detecting more data protocols
 export const TransformTx = async (
     tx: BobTx | string | MomTx | BmapTx,
     protocols?: string[] | Protocol[]

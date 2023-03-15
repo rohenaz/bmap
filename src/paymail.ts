@@ -1,4 +1,8 @@
+/// <reference path="../types/paymail-client/index.d.ts"/>
 import { PaymailClient } from '@moneybutton/paymail-client'
+/// <reference path="../types/paymail-client/index.d.ts"/>
+export { PaymailClient } from '@moneybutton/paymail-client'
+
 import dns from 'dns'
 import fetch from 'node-fetch'
 

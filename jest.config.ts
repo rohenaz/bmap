@@ -7,7 +7,7 @@ const config: Config.InitialOptions = {
     projects: [
         '<rootDir>/tests/browser/jest.config.ts',
         '<rootDir>/tests/node/jest.config.ts',
-        '<rootDir>/tests/protocols/configs/jest.config.ts',
+        '<rootDir>/tests/protocols/jest.config.ts',
     ],
     moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
     transform: {

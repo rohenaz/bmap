@@ -193,6 +193,11 @@ describe('bmap', () => {
         expect(!!parseTx['MAP']).toBe(false)
     })
 
+    test('test OP_RETURN without OP_FALSE', async () => {
+        // TODO: This is working but we should add a test anyway
+        // bap-op-return-no-op-false.json
+    })
+
     test('test unknown bitcom', async () => {
         const parseTx = await TransformTx(unknownBitcom as BobTx)
 

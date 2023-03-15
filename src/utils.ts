@@ -27,7 +27,7 @@ export const isObjectArray = (arr: Array<any>): boolean => {
  */
 export const cellValue = (
     pushData: Cell,
-    schemaEncoding: string
+    schemaEncoding?: string
 ): string | number => {
     if (!pushData) {
         throw new Error(`cannot get cell value of: ${pushData}`)

@@ -69,11 +69,13 @@
   "devDependencies": {
     "@jest/globals": "^29.3.1",
     "@jest/types": "^29.3.1",
-    "@parcel/compressor-brotli": "^2.8.2",
-    "@parcel/compressor-gzip": "^2.8.2",
-    "@parcel/config-default": "^2.8.2",
-    "@parcel/reporter-bundle-analyzer": "^2.8.2",
-    "@parcel/transformer-typescript-tsc": "^2.8.2",
+    "@parcel/compressor-brotli": "^2.8.3",
+    "@parcel/compressor-gzip": "^2.8.3",
+    "@parcel/config-default": "^2.8.3",
+    "@parcel/reporter-bundle-analyzer": "^2.8.3",
+    "@parcel/transformer-typescript-tsc": "^2.8.3",
+    "@parcel/transformer-typescript-types": "^2.8.3",
+    "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.18",
     "@types/node-fetch": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
@@ -111,7 +113,7 @@
     "@msgpack/msgpack": "^2.8.0",
     "@ts-bitcoin/core": "^2.2.0",
     "boostpow": "^1.8.1",
-    "bpu-ts": "^0.0.1",
+    "bpu-ts": "^0.0.5",
     "node-fetch": "^2.6.1",
     "stream-browserify": "^3.0.0"
   }
