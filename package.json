@@ -1,7 +1,7 @@
 {
   "name": "bmapjs",
   "version": "0.4.0-beta.22",
-  "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP.",
+  "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
   "module": "dist/bmap.module.js",
   "main": "dist/bmap.js",
@@ -59,6 +59,7 @@
     "@parcel/compressor-brotli": "^2.8.3",
     "@parcel/compressor-gzip": "^2.8.3",
     "@parcel/config-default": "^2.8.3",
+    "@parcel/packager-ts": "2.8.3",
     "@parcel/reporter-bundle-analyzer": "^2.8.3",
     "@parcel/transformer-typescript-tsc": "^2.8.3",
     "@parcel/transformer-typescript-types": "^2.8.3",
@@ -101,6 +102,7 @@
     "@ts-bitcoin/core": "^2.2.0",
     "boostpow": "^1.8.1",
     "bpu-ts": "^0.0.5",
+    "lodash": "^4.17.21",
     "node-fetch": "^2.6.1"
   }
 }
