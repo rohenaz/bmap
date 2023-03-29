@@ -1,24 +1,45 @@
 {
   "name": "bmapjs",
-  "version": "0.3.7",
-  "description": "A parser for BOB & MOM formatted transactions comprised of B, MAP, BAP, METANET and AIP/HAIP OP_RETURN protocols together in a single tx.",
+  "version": "0.4.0-beta.22",
+  "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, METANET and AIP/HAIP.",
+  "types": "types/index.d.ts",
+  "module": "dist/bmap.module.js",
   "main": "dist/bmap.js",
+  "targets": {
+    "main": {
+      "isLibrary": true,
+      "context": "node",
+      "source": "src/bmap.ts",
+      "engines": {
+        "node": ">=14"
+      }
+    },
+    "module": {
+      "isLibrary": true,
+      "context": "node",
+      "source": "src/bmap.ts"
+    },
+    "types": {
+      "source": "src/bmap.ts"
+    }
+  },
+  "engines": {
+    "node": ">= 14"
+  },
   "scripts": {
-    "buildold": "browserify -p tinyify bmap_node.js -o dist/bmap_node.js -t -t [ babelify --presets [ @babel/preset-env ] ]",
     "serve": "npm run build && node ./node_modules/ws/index.js",
-    "clean": "rimraf dist/",
-    "build": "rimraf dist/ && babel src/ --presets minify --out-dir dist/",
+    "clean": "yarn cache clean && rimraf dist/ types/index.d.ts parcel-bundle-reports .parcel-cache",
+    "build": "rimraf parcel-bundle-reports dist/ types/index.d.ts && parcel build . --target types --target module --target main --reporter @parcel/reporter-bundle-analyzer",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
-    "testonly": "./node_modules/.bin/jest --collectCoverage",
+    "testonly": "jest --collectCoverage",
     "testwatch": "./node_modules/.bin/jest --watchAll --collectCoverage",
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testwatch",
     "check": "./node_modules/.bin/npm-check -u",
-    "prepare": "npm run clean && npm run lint && npm run test && npm run build",
     "pub": "./node_modules/.bin/np || true",
-    "build-public": "npm run build && browserify dist/browser.js -o public/bmap.js",
-    "build-all": "npm run lint && npm run build-public"
+    "build-all": "npm run lint && npm run build-public",
+    "watch": "parcel-watch"
   },
   "repository": {
     "type": "git",
@@ -33,55 +54,55 @@
     "bsv"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.13.0",
-    "@babel/core": "^7.13.1",
-    "@babel/plugin-transform-runtime": "^7.13.7",
-    "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.13.5",
-    "@babel/register": "^7.13.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.6.3",
-    "babel-preset-minify": "^0.5.1",
-    "eslint": "^7.20.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.3.1",
-    "jest": "^26.6.3",
-    "jest-cli": "^26.6.3",
+    "@jest/globals": "^29.3.1",
+    "@jest/types": "^29.3.1",
+    "@parcel/compressor-brotli": "^2.8.3",
+    "@parcel/compressor-gzip": "^2.8.3",
+    "@parcel/config-default": "^2.8.3",
+    "@parcel/packager-ts": "2.8.3",
+    "@parcel/reporter-bundle-analyzer": "^2.8.3",
+    "@parcel/transformer-typescript-tsc": "^2.8.3",
+    "@parcel/transformer-typescript-types": "^2.8.3",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.18",
+    "@types/node-fetch": "^2.6.2",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "buffer": "^5.5.0",
+    "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.3.1",
+    "jest-cli": "29.3.1",
+    "jest-config": "29.3.1",
+    "jest-environment-jsdom": "^29.3.1",
+    "ncp": "^2.0.0",
     "np": "2.20.1",
-    "npm-check": "5.7.0",
-    "pre-commit": "^1.2.2",
-    "regenerator-runtime": "^0.12.1",
-    "rimraf": "2.6.2",
-    "run-sequence": "2.2.1",
-    "ws": "^7.4.3"
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "es5"
+    "parcel": "^2.8.2",
+    "prettier": "^2.8.1",
+    "punycode": "^1.4.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4",
+    "yarn": "^1.22.19"
   },
   "author": "Satchmo",
-  "license": "MIT",
+  "license": "Open BSV",
   "bugs": {
     "url": "https://github.com/rohenaz/bmap/issues"
   },
+  "alias": {
+    "bsv@^2.0.0": "@ts-bitcoin/core"
+  },
   "homepage": "https://github.com/rohenaz/bmap#readme",
   "dependencies": {
-    "@moneybutton/paymail-client": "^0.38.4",
-    "@msgpack/msgpack": "^1.11.0",
-    "bsv": "^1.5.4",
+    "@moneybutton/paymail-client": "^0.39.0",
+    "@msgpack/msgpack": "^2.8.0",
+    "@ts-bitcoin/core": "^2.2.0",
+    "boostpow": "^1.8.1",
+    "bpu-ts": "^0.0.5",
+    "lodash": "^4.17.21",
     "node-fetch": "^2.6.1"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "mjs",
-      "ts"
-    ],
-    "transform": {
-      "^.+\\.(mjs|jsx|js)$": "babel-jest"
-    }
   }
 }

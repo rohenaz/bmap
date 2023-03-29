@@ -1,0 +1,36 @@
+{
+    "ts-node": {
+        "transpileOnly": true,
+        "moduleTypes": {
+            "jest.config.ts": "cjs"
+        }
+    },
+    "include": [
+        "src/*.ts",
+        "src/**/*.ts",
+        "types/**/*.d.ts",
+        "types/**/**/*.d.ts",
+        "tests/**/*.test.ts"
+    ],
+    "exclude": ["coverage", "functions", "tests", ".parcel-cache"],
+    "files": ["jest.config.ts"],
+    "compileOnSave": true,
+    "compilerOptions": {
+        "removeComments": true,
+        "declaration": true,
+        "target": "es6",
+        "moduleResolution": "node",
+        "typeRoots": ["./node_modules/@types", "./types"],
+        "types": ["node", "jest"],
+        "resolveJsonModule": true,
+        "inlineSourceMap": true,
+        "declarationMap": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "isolatedModules": true,
+        "skipLibCheck": true,
+        "module": "es6"
+    }
+}
