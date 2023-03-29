@@ -3,7 +3,6 @@
   "version": "0.4.0-beta.22",
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
-  "legacy": "dist/bmap.cjs",
   "module": "dist/bmap.module.js",
   "main": "dist/bmap.js",
   "targets": {
@@ -22,18 +21,6 @@
     },
     "types": {
       "source": "src/bmap.ts"
-    },
-    "legacy": {
-      "includeNodeModules": true,
-      "distDir": "dist",
-      "source": "src/browser.ts",
-      "optimize": true,
-      "scopeHoist": true,
-      "context": "browser",
-      "outputFormat": "commonjs",
-      "engines": {
-        "browsers": "Chrome 80"
-      }
     }
   },
   "engines": {
@@ -42,7 +29,7 @@
   "scripts": {
     "serve": "npm run build && node ./node_modules/ws/index.js",
     "clean": "yarn cache clean && rimraf dist/ types/index.d.ts parcel-bundle-reports .parcel-cache",
-    "build": "rimraf parcel-bundle-reports dist/ types/index.d.ts && parcel build . --target types --target module --target main --target legacy --reporter @parcel/reporter-bundle-analyzer",
+    "build": "rimraf parcel-bundle-reports dist/ types/index.d.ts && parcel build . --target types --target module --target main --reporter @parcel/reporter-bundle-analyzer",
     "lint": "eslint ./src",
     "lintfix": "eslint ./src --fix",
     "testonly": "jest --collectCoverage",
@@ -114,7 +101,6 @@
     "@ts-bitcoin/core": "^2.2.0",
     "boostpow": "^1.8.1",
     "bpu-ts": "^0.0.5",
-    "node-fetch": "^2.6.1",
-    "stream-browserify": "^3.0.0"
+    "node-fetch": "^2.6.1"
   }
 }

@@ -18,7 +18,7 @@
     "compilerOptions": {
         "removeComments": true,
         "declaration": true,
-        "target": "es5",
+        "target": "es6",
         "moduleResolution": "node",
         "typeRoots": ["./node_modules/@types", "./types"],
         "types": ["node", "jest"],
@@ -32,9 +32,5 @@
         "isolatedModules": true,
         "skipLibCheck": true,
         "module": "es6"
-    },
-    "paths": {
-        "stream": ["./node_modules/stream-browserify"],
-        "crypto": ["./node_modules/crypto-browserify"]
     }
 }

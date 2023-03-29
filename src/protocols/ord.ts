@@ -22,9 +22,9 @@ const scriptChecker = (cell: Cell[]) => {
         (c, i) => i > startIdx && c.ops === 'OP_ENDIF'
     )
     const ordScript = cell.slice(startIdx, endIdx)
-
+    const prevCell = cell[startIdx - 1]
     return (
-        cell[startIdx - 1].ops === 'OP_FALSE' &&
+        prevCell?.ops === 'OP_FALSE' &&
         !!ordScript[0] &&
         !!ordScript[1] &&
         ordScript[1].s == 'ord'

@@ -5,7 +5,6 @@ const config: Config.InitialOptions = {
     preset: 'ts-jest',
     verbose: true,
     projects: [
-        '<rootDir>/tests/browser/jest.config.ts',
         '<rootDir>/tests/node/jest.config.ts',
         '<rootDir>/tests/protocols/jest.config.ts',
     ],

@@ -20,7 +20,7 @@ describe('bmap', () => {
         ).toEqual('AIP')
 
         expect(typeof bmap.protocolHandlers).toEqual('object')
-        expect(bmap.protocolHandlers.size).toEqual(5)
+        expect(bmap.protocolHandlers.size).toEqual(6)
     })
 
     test('add handler', () => {
@@ -40,7 +40,7 @@ describe('bmap', () => {
         })
 
         expect(typeof bmap.protocolHandlers).toEqual('object')
-        expect(bmap.protocolHandlers.size).toEqual(6)
+        expect(bmap.protocolHandlers.size).toEqual(7)
         expect(bmap.enabledProtocols.get('123TEST')).toEqual('test')
     })
 
