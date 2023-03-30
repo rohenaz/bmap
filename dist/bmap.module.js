@@ -7,7 +7,7 @@ import {PaymailClient as $jv79A$PaymailClient} from "@moneybutton/paymail-client
 import $jv79A$dns from "dns";
 import {BoostPowJob as $jv79A$BoostPowJob} from "boostpow";
 import {decode as $jv79A$decode} from "@msgpack/msgpack";
-import {findIndex as $jv79A$findIndex} from "lodash";
+import {findIndex as $jv79A$findIndex} from "lodash-es";
 
 
 

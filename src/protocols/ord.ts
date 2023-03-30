@@ -1,4 +1,4 @@
-import { findIndex } from 'lodash'
+import { findIndex } from 'lodash-es'
 import { Cell, HandlerProps, Protocol } from '../../types/common'
 import { Ord as OrdType } from '../../types/protocols/ord'
 import { cellValue, saveProtocolData } from '../utils'
@@ -16,10 +16,10 @@ const scriptChecker = (cell: Cell[]) => {
     }
 
     // Find OP_IF wrapper
-    const startIdx = findIndex(cell, (c) => c.ops === 'OP_IF')
+    const startIdx = findIndex(cell, (c: Cell) => c.ops === 'OP_IF')
     const endIdx = findIndex(
         cell,
-        (c, i) => i > startIdx && c.ops === 'OP_ENDIF'
+        (c: Cell, i: number) => i > startIdx && c.ops === 'OP_ENDIF'
     )
     const ordScript = cell.slice(startIdx, endIdx)
     const prevCell = cell[startIdx - 1]
@@ -44,10 +44,10 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
     // next
 
     // Find OP_IF wrapper
-    const startIdx = findIndex(cell, (c) => c.ops === 'OP_IF')
+    const startIdx = findIndex(cell, (c: Cell) => c.ops === 'OP_IF')
     const endIdx = findIndex(
         cell,
-        (c, i) => i > startIdx && c.ops === 'OP_ENDIF'
+        (c: Cell, i: number) => i > startIdx && c.ops === 'OP_ENDIF'
     )
     const ordScript = cell.slice(startIdx, endIdx)
 
