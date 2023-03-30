@@ -100,10 +100,8 @@
         "@moneybutton/paymail-client": "^0.39.0",
         "@msgpack/msgpack": "^2.8.0",
         "@ts-bitcoin/core": "^2.2.0",
-        "@types/lodash-es": "^4.17.7",
         "boostpow": "^1.8.1",
         "bpu-ts": "^0.0.5",
-        "lodash-es": "^4.17.21",
         "node-fetch": "^2.6.1"
     }
 }

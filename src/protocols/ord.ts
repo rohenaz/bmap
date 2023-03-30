@@ -1,4 +1,3 @@
-import { findIndex } from 'lodash-es'
 import { Cell, HandlerProps, Protocol } from '../../types/common'
 import { Ord as OrdType } from '../../types/protocols/ord'
 import { cellValue, saveProtocolData } from '../utils'
@@ -89,4 +88,40 @@ export const Ord: Protocol = {
     name: 'Ord',
     handler,
     scriptChecker,
+}
+
+function findIndex(array: any[], predicate: Function) {
+    return findLastIndex(array, predicate)
+}
+function findLastIndex(array: any[], predicate: Function, fromIndex?: number) {
+    const length = array == null ? 0 : array.length
+    if (!length) {
+        return -1
+    }
+    let index = length - 1
+    if (fromIndex !== undefined) {
+        index = fromIndex
+        index =
+            fromIndex < 0
+                ? Math.max(length + index, 0)
+                : Math.min(index, length - 1)
+    }
+    return baseFindIndex(array, predicate, index, true)
+}
+
+function baseFindIndex(
+    array: any[],
+    predicate: Function,
+    fromIndex: number,
+    fromRight: boolean
+) {
+    const { length } = array
+    let index = fromIndex + (fromRight ? 1 : -1)
+
+    while (fromRight ? index-- : ++index < length) {
+        if (predicate(array[index], index, array)) {
+            return index
+        }
+    }
+    return -1
 }

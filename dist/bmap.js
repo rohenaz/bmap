@@ -7,7 +7,6 @@ import {PaymailClient as $8KidA$PaymailClient} from "@moneybutton/paymail-client
 import $8KidA$dns from "dns";
 import {BoostPowJob as $8KidA$BoostPowJob} from "boostpow";
 import {decode as $8KidA$decode} from "@msgpack/msgpack";
-import {findIndex as $8KidA$findIndex} from "lodash-es";
 
 
 
@@ -1000,7 +999,6 @@ const $a7f4883f4c8614d1$export$7830a85a59ca4593 = {
 
 
 
-
 // const OrdScript =
 //     'OP_FALSE OP_IF 6F7264 OP_1 <CONTENT_TYPE_PLACEHOLDER> OP_0 <DATA_PLACEHOLDER> OP_ENDIF'.split(
 //         ' '
@@ -1010,8 +1008,8 @@ const $0f00262e8a6307c2$var$scriptChecker = (cell)=>{
     if (cell.length < 11) // wrong length
     return false;
     // Find OP_IF wrapper
-    const startIdx = (0, $8KidA$findIndex)(cell, (c)=>c.ops === "OP_IF");
-    const endIdx = (0, $8KidA$findIndex)(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
+    const startIdx = $0f00262e8a6307c2$var$findIndex(cell, (c)=>c.ops === "OP_IF");
+    const endIdx = $0f00262e8a6307c2$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
     const ordScript = cell.slice(startIdx, endIdx);
     const prevCell = cell[startIdx - 1];
     return prevCell?.ops === "OP_FALSE" && !!ordScript[0] && !!ordScript[1] && ordScript[1].s == "ord";
@@ -1023,8 +1021,8 @@ const $0f00262e8a6307c2$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
     // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
     // next
     // Find OP_IF wrapper
-    const startIdx = (0, $8KidA$findIndex)(cell, (c)=>c.ops === "OP_IF");
-    const endIdx = (0, $8KidA$findIndex)(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
+    const startIdx = $0f00262e8a6307c2$var$findIndex(cell, (c)=>c.ops === "OP_IF");
+    const endIdx = $0f00262e8a6307c2$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
     const ordScript = cell.slice(startIdx, endIdx);
     if (!ordScript[0] || !ordScript[1] || ordScript[1].s != "ord") throw new Error(`Invalid Ord tx. Prefix not found.`);
     console.log({
@@ -1051,6 +1049,27 @@ const $0f00262e8a6307c2$export$ee8aa95bfab51c5 = {
     handler: $0f00262e8a6307c2$var$handler,
     scriptChecker: $0f00262e8a6307c2$var$scriptChecker
 };
+function $0f00262e8a6307c2$var$findIndex(array, predicate) {
+    return $0f00262e8a6307c2$var$findLastIndex(array, predicate);
+}
+function $0f00262e8a6307c2$var$findLastIndex(array, predicate, fromIndex) {
+    const length = array == null ? 0 : array.length;
+    if (!length) return -1;
+    let index = length - 1;
+    if (fromIndex !== undefined) {
+        index = fromIndex;
+        index = fromIndex < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1);
+    }
+    return $0f00262e8a6307c2$var$baseFindIndex(array, predicate, index, true);
+}
+function $0f00262e8a6307c2$var$baseFindIndex(array, predicate, fromIndex, fromRight) {
+    const { length: length  } = array;
+    let index = fromIndex + (fromRight ? 1 : -1);
+    while(fromRight ? index-- : ++index < length){
+        if (predicate(array[index], index, array)) return index;
+    }
+    return -1;
+}
 
 
 
