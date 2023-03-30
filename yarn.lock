@@ -2040,10 +2040,10 @@ boxen@^1.2.1:
     term-size "^1.2.0"
     widest-line "^2.0.0"
 
-bpu-ts@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/bpu-ts/-/bpu-ts-0.0.7.tgz#23450a07c9f7c00a416e0363cf3b8d6d291caf53"
-  integrity sha512-2ozR67+m/Ux6BqM9Exf3s0SgGGLSxHmTrm45651q6GRiwmRb2MwwUAkXTIQaOJ0M6Q9aIkHra/NxPi+hwBP6aA==
+bpu-ts@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/bpu-ts/-/bpu-ts-0.0.8.tgz#3111bb288d640325b4b50682a74c8499cbf212e1"
+  integrity sha512-j1ky8uQxmzdA5JCmZ2ovnDct2i5FJ5IcWgf/O0ua7tTewuG1FbT0kXAakz3bj9BIM5H878Y6Ho+OTInSJjOoVA==
   dependencies:
     "@ts-bitcoin/core" "^2.2.0"
     bitcoind-rpc "^0.9.1"
