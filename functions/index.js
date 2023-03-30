@@ -2,6 +2,7 @@ import { allProtocols, TransformTx } from 'bmapjs'
 import * as functions from 'firebase-functions'
 import { createRequire } from 'module'
 import fetch from 'node-fetch'
+import { parse } from 'bpu-ts'
 
 const require = createRequire(import.meta.url)
 
@@ -10,7 +11,6 @@ const admin = require('firebase-admin')
 admin.initializeApp()
 
 const cors = require('cors-async')({ origin: true })
-const BPU = require('bpu')
 
 export const decode = functions.https.onRequest(async (req, res) => {
     await cors(req, res)
@@ -59,15 +59,11 @@ export const decode = functions.https.onRequest(async (req, res) => {
 })
 
 const bobFromRawTx = async (rawtx) => {
-    return await BPU.parse({
+    return await parse({
         tx: { r: rawtx },
         split: [
             {
                 token: { op: 106 },
-                include: 'l',
-            },
-            {
-                token: { op: 0 },
                 include: 'l',
             },
             {
