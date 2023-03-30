@@ -41,7 +41,7 @@ type Cell = {
 }
 
 type Out = {
-    tape?: Tape[]
+    tape: Tape[]
     i: number
     e: {
         i: number

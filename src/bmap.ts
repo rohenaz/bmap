@@ -264,6 +264,7 @@ export class BMAP {
         ;(dataObj[key] as Out[]).push({
             i: out.i,
             e: out.e,
+            tape: [],
         })
     }
 

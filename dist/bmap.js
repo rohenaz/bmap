@@ -1317,7 +1317,8 @@ class $0bef5cd148f6f4f7$export$894a720e71f90b3c {
         if (key && !dataObj[key]) dataObj[key] = [];
         dataObj[key].push({
             i: out.i,
-            e: out.e
+            e: out.e,
+            tape: []
         });
     };
     process = async (protocolName, { cell: cell , dataObj: dataObj , tape: tape , out: out , tx: tx  })=>{

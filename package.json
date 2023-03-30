@@ -1,6 +1,6 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.22",
+  "version": "0.4.0-beta.23",
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, METANET and AIP/HAIP.",
   "types": "types/index.d.ts",
   "module": "dist/bmap.module.js",
@@ -24,7 +24,7 @@
     }
   },
   "engines": {
-    "node": ">= 14"
+    "node": "18"
   },
   "scripts": {
     "serve": "npm run build && node ./node_modules/ws/index.js",
