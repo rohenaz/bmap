@@ -15,7 +15,7 @@
         "node": "18"
     },
     "dependencies": {
-        "bpu-ts": "^0.0.8",
+        "bpu-ts": "^0.0.9",
         "cors-async": "^0.2.1",
         "firebase": "^9.15.0",
         "firebase-admin": "^11.4.1",
