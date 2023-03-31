@@ -52,20 +52,24 @@ export const cellValue = (
 }
 
 /**
- * Check a cell starts with OP_FALSE OP_RETURN -or- OP_RETURN
- *
- * @param cc
- * @returns {boolean}
+ * Check if cells end with OP_RETURN
  */
-export const checkOpFalseOpReturn = function (cc: Tape) {
-    return (
-        (cc.cell[0] &&
-            cc.cell[1] &&
-            cc.cell[0].op === 0 &&
-            cc.cell[1].op &&
-            cc.cell[1].op === 106) ||
-        cc.cell[0].op === 106
-    )
+export const checkOpReturn = (cc: Tape): boolean => {
+    return cc.cell.some((c) => c.op === 106)
+}
+
+/**
+ * Check if cells end with OP_FALSE + OP_RETURN
+ */
+export const checkOpFalseOpReturn = (cc: Tape): boolean => {
+    if (cc.cell.length !== 2) {
+        return false
+    }
+    const opReturnIdx = cc.cell.findIndex((c) => c.op === 106)
+    if (opReturnIdx !== -1) {
+        return cc.cell[opReturnIdx - 1]?.op === 0
+    }
+    return false
 }
 
 /**
@@ -83,12 +87,7 @@ export const saveProtocolData = (
     if (!dataObj[protocolName]) {
         dataObj[protocolName] = [data]
     } else {
-        if (!Array.isArray(dataObj[protocolName])) {
-            const prevData = dataObj[protocolName]
-            dataObj[protocolName] = []
-            dataObj[protocolName][0] = prevData
-        }
-        dataObj[protocolName][dataObj[protocolName].length] = data
+        dataObj[protocolName].push(data)
     }
 }
 

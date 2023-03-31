@@ -1,9 +1,13 @@
 import { describe, expect, test } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
-import { allProtocols, BMAP, TransformTx } from '../../src/bmap'
-import { BOOST } from '../../src/protocols/boost'
+import { BMAP, TransformTx, allProtocols, bobFromRawTx } from '../../src/bmap'
 import { _21E8 } from '../../src/protocols/_21e8'
+import { AIP } from '../../src/protocols/aip'
+import { B } from '../../src/protocols/b'
+import { BOOST } from '../../src/protocols/boost'
+import { MAP } from '../../src/protocols/map'
+import { METANET } from '../../src/protocols/metanet'
 import { BobTx, Handler, HandlerProps } from '../../types/common'
 import indexedTransaction from '../data/b-aip-transaction-with-indexes.json'
 import validBobTransaction from '../data/bap-transaction.json'
@@ -15,6 +19,14 @@ export const ordHex = fs.readFileSync(
     path.resolve(
         __dirname,
         '../data/10f4465cd18c39fbc7aa4089268e57fc719bf19c8c24f2e09156f4a89a2809d6.hex'
+    ),
+    'utf8'
+)
+
+const ordMegaHex = fs.readFileSync(
+    path.resolve(
+        __dirname,
+        '../data/e17d7856c375640427943395d2341b6ed75f73afc8b22bb3681987278978a584.hex'
     ),
     'utf8'
 )
@@ -113,14 +125,17 @@ describe('bmap', () => {
     })
 
     test('parse double signed tx', async () => {
-        const bmap = new BMAP()
-        const parseTx = await bmap.transformTx(indexedTransaction as BobTx)
+        const parseTx = await TransformTx(indexedTransaction as BobTx, [
+            AIP.name,
+            B.name,
+        ])
 
         expect(parseTx._id).toEqual('5ee2aad74a4f6f397faf9971')
         expect(parseTx.tx.h).toEqual(
             'd4738845dc0d045a35c72fcacaa2d4dee19a3be1cbfcb0d333ce2aec6f0de311'
         )
 
+        expect(parseTx.AIP).toBeDefined()
         expect(Array.isArray(parseTx.AIP)).toEqual(true)
         expect(parseTx.AIP && parseTx.AIP[0].address).toEqual(
             '1EXhSbGFiEAZCE5eeBvUxT6cBVHhrpPWXz'
@@ -139,8 +154,10 @@ describe('bmap', () => {
     })
 
     test('parse meta double map tx', async () => {
-        const bmap = new BMAP()
-        const parseTx = await bmap.transformTx(mapTransactions[1] as BobTx)
+        const parseTx = await TransformTx(mapTransactions[1] as BobTx, [
+            METANET.name,
+            MAP.name,
+        ])
 
         expect(parseTx._id).toEqual('5ee5e9544a4f6f5fbb7d0ff0')
         expect(parseTx.tx.h).toEqual(
@@ -241,5 +258,20 @@ describe('Ord 2', () => {
             '10f4465cd18c39fbc7aa4089268e57fc719bf19c8c24f2e09156f4a89a2809d6'
         )
         expect(tx.ORD).toBeDefined()
+    })
+
+    test('parse tx - multiple outs w map collection', async () => {
+        const tx = await bobFromRawTx(ordMegaHex)
+        expect(tx).toBeTruthy()
+        expect(tx.tx?.h).toEqual(
+            'e17d7856c375640427943395d2341b6ed75f73afc8b22bb3681987278978a584'
+        )
+        const bmapTx = await TransformTx(tx)
+        expect(bmapTx['ORD']).toBeDefined()
+        expect(Array.isArray(bmapTx['ORD'])).toBe(true)
+        expect(bmapTx['ORD'] && bmapTx['ORD'][0].contentType).toBe('image/png')
+
+        expect(bmapTx['MAP']).toBeDefined()
+        expect(bmapTx['MAP'] && bmapTx['MAP'][0].collection).toBe('sMon')
     })
 })

@@ -7,7 +7,7 @@ import { HAIP as HAIPType } from '../../types/protocols/haip'
 
 import {
     cellValue,
-    checkOpFalseOpReturn,
+    checkOpReturn,
     isBase64,
     saveProtocolData,
     sha256,
@@ -57,7 +57,7 @@ const validateSignature = async function (
     const signatureValues = ['6a'] // OP_RETURN - is included in AIP
     for (let i = 0; i < cellIndex; i++) {
         const cellContainer = tape[i]
-        if (!checkOpFalseOpReturn(cellContainer)) {
+        if (!checkOpReturn(cellContainer)) {
             for (let nc = 0; nc < cellContainer.cell.length; nc++) {
                 const statement = cellContainer.cell[nc]
                 // add the value as hex

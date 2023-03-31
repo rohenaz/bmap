@@ -1,15 +1,12 @@
 import {parse as $jv79A$parse} from "bpu-ts";
-import {Script as $jv79A$Script, Bsm as $jv79A$Bsm, Address as $jv79A$Address, PubKey as $jv79A$PubKey} from "@ts-bitcoin/core";
 import {Buffer as $jv79A$Buffer} from "buffer";
-import $jv79A$nodefetch from "node-fetch";
 import $jv79A$crypto from "crypto";
+import {Script as $jv79A$Script, Bsm as $jv79A$Bsm, Address as $jv79A$Address, PubKey as $jv79A$PubKey} from "@ts-bitcoin/core";
+import $jv79A$nodefetch from "node-fetch";
 import {PaymailClient as $jv79A$PaymailClient} from "@moneybutton/paymail-client";
 import $jv79A$dns from "dns";
 import {BoostPowJob as $jv79A$BoostPowJob} from "boostpow";
 import {decode as $jv79A$decode} from "@msgpack/msgpack";
-
-
-
 
 
 
@@ -32,21 +29,20 @@ const $77262b005a06c166$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
     else if (schemaEncoding === "file") return `bitfs://${pushData["f"] ? pushData.f : pushData.lf}`;
     return (pushData["b"] ? pushData.b : pushData.lb) || "";
 };
-const $77262b005a06c166$export$238b4e54af8fe886 = function(cc) {
-    return cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].op && cc.cell[1].op === 106 || cc.cell[0].op === 106;
+const $77262b005a06c166$export$429a4e8902c23802 = (cc)=>{
+    return cc.cell.some((c)=>c.op === 106);
+};
+const $77262b005a06c166$export$238b4e54af8fe886 = (cc)=>{
+    if (cc.cell.length !== 2) return false;
+    const opReturnIdx = cc.cell.findIndex((c)=>c.op === 106);
+    if (opReturnIdx !== -1) return cc.cell[opReturnIdx - 1]?.op === 0;
+    return false;
 };
 const $77262b005a06c166$export$23dbc584560299c3 = (dataObj, protocolName, data)=>{
     if (!dataObj[protocolName]) dataObj[protocolName] = [
         data
     ];
-    else {
-        if (!Array.isArray(dataObj[protocolName])) {
-            const prevData = dataObj[protocolName];
-            dataObj[protocolName] = [];
-            dataObj[protocolName][0] = prevData;
-        }
-        dataObj[protocolName][dataObj[protocolName].length] = data;
-    }
+    else dataObj[protocolName].push(data);
 };
 const $77262b005a06c166$export$ee2a8bbe689a8ef5 = function(protocolName, opReturnSchema, dataObj, cell, tx) {
     // loop over the schema
@@ -75,6 +71,56 @@ const $77262b005a06c166$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
     // }
     return (0, $jv79A$Buffer).from(new ArrayBuffer(0));
 };
+
+
+// 21e8 does not use the first pushdata for id
+// in fact there is no id since the 21e8 is designed for difficulty and can be changed
+// instead we use the static part of the script to indentfy the transaction
+// TODO - the OP_X_PLACEHOLDER is the number of bytes to push onto the stack and must match difficulty size
+const $332ed5fa361e0a5d$var$_21e8Script = "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(" ");
+const $332ed5fa361e0a5d$var$scriptChecker = (cell)=>{
+    if (cell.length !== 12) // wrong length
+    return false;
+    // match exact script
+    const ops = [
+        ...cell
+    ].map((c)=>c.ops).splice(2, cell.length);
+    // calculate target byte length
+    const target = (0, $77262b005a06c166$export$b691916706e0e9cc)(cell[1], "hex");
+    const targetOpSize = Buffer.from(target).byteLength;
+    // replace the placeholder opcode with actual
+    ops[1] = `OP_${targetOpSize}`;
+    $332ed5fa361e0a5d$var$_21e8Script[1] = `OP_${targetOpSize}`;
+    // protocol identifier always in first pushdata
+    return ops.join() === $332ed5fa361e0a5d$var$_21e8Script.join();
+};
+const $332ed5fa361e0a5d$var$handler = ({ dataObj: dataObj , cell: cell , out: out  })=>{
+    if (!cell[0] || !out) throw new Error(`Invalid 21e8 tx. dataObj, cell, out and tx are required.`);
+    // assemble asm
+    // make sure first piece matches a txid
+    // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
+    // next
+    const txid = (0, $77262b005a06c166$export$b691916706e0e9cc)(cell[0], "hex");
+    const target = (0, $77262b005a06c166$export$b691916706e0e9cc)(cell[1], "hex");
+    if (!target) throw new Error(`Invalid 21e8 target.` + JSON.stringify(cell[0], null, 2));
+    const difficulty = Buffer.from(target, "hex").byteLength;
+    const _21e8Obj = {
+        target: target,
+        difficulty: difficulty,
+        value: out.e.v,
+        txid: txid
+    };
+    (0, $77262b005a06c166$export$23dbc584560299c3)(dataObj, "21E8", _21e8Obj);
+};
+const $332ed5fa361e0a5d$export$85479a00ad164ad6 = {
+    name: "21E8",
+    handler: $332ed5fa361e0a5d$var$handler,
+    scriptChecker: $332ed5fa361e0a5d$var$scriptChecker
+};
+
+
+
+
 
 
 const $61ba31d33606de34$var$address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
@@ -118,7 +164,7 @@ const $61ba31d33606de34$var$validateSignature = async function(aipObj, cell, tap
     ;
     for(let i = 0; i < cellIndex; i++){
         const cellContainer = tape[i];
-        if (!(0, $77262b005a06c166$export$238b4e54af8fe886)(cellContainer)) {
+        if (!(0, $77262b005a06c166$export$429a4e8902c23802)(cellContainer)) {
             for(let nc = 0; nc < cellContainer.cell.length; nc++){
                 const statement = cellContainer.cell[nc];
                 // add the value as hex
@@ -471,7 +517,7 @@ const $04d70d7a9e677064$var$validateSignature = (pspObj, cell, tape)=>{
     const signatureBufferStatements = [];
     for(let i = 0; i < cellIndex; i++){
         const cellContainer = tape[i];
-        if (!(0, $77262b005a06c166$export$238b4e54af8fe886)(cellContainer)) {
+        if (!(0, $77262b005a06c166$export$429a4e8902c23802)(cellContainer)) {
             cellContainer.cell.forEach((statement)=>{
                 // add the value as hex
                 let value = statement.h;
@@ -1021,16 +1067,16 @@ const $f38986b3415560cd$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
     // next
     // Find OP_IF wrapper
     const startIdx = $f38986b3415560cd$var$findIndex(cell, (c)=>c.ops === "OP_IF");
-    const endIdx = $f38986b3415560cd$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
+    const endIdx = $f38986b3415560cd$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF") + 1;
     const ordScript = cell.slice(startIdx, endIdx);
     if (!ordScript[0] || !ordScript[1] || ordScript[1].s != "ord") throw new Error(`Invalid Ord tx. Prefix not found.`);
     let data;
     let contentType;
     ordScript.forEach((push, idx, all)=>{
         // content-type
-        if (push.ops === "OP_1") contentType = (0, $77262b005a06c166$export$b691916706e0e9cc)(all[idx + 1], "string");
+        if (push.ops === "OP_1") contentType = all[idx + 1].s;
         // data
-        if (push.ops === "OP_0") data = (0, $77262b005a06c166$export$b691916706e0e9cc)(all[idx + 1]);
+        if (push.ops === "OP_0") data = all[idx + 1].b;
     });
     if (!data) throw new Error(`Invalid Ord data.`);
     if (!contentType) throw new Error(`Invalid Ord content type.`);
@@ -1122,53 +1168,6 @@ const $1a7c59a3fed0ea3a$export$33455cbcda538c68 = {
 
 
 
-// 21e8 does not use the first pushdata for id
-// in fact there is no id since the 21e8 is designed for difficulty and can be changed
-// instead we use the static part of the script to indentfy the transaction
-// TODO - the OP_X_PLACEHOLDER is the number of bytes to push onto the stack and must match difficulty size
-const $332ed5fa361e0a5d$var$_21e8Script = "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(" ");
-const $332ed5fa361e0a5d$var$scriptChecker = (cell)=>{
-    if (cell.length !== 12) // wrong length
-    return false;
-    // match exact script
-    const ops = [
-        ...cell
-    ].map((c)=>c.ops).splice(2, cell.length);
-    // calculate target byte length
-    const target = (0, $77262b005a06c166$export$b691916706e0e9cc)(cell[1], "hex");
-    const targetOpSize = Buffer.from(target).byteLength;
-    // replace the placeholder opcode with actual
-    ops[1] = `OP_${targetOpSize}`;
-    $332ed5fa361e0a5d$var$_21e8Script[1] = `OP_${targetOpSize}`;
-    // protocol identifier always in first pushdata
-    return ops.join() === $332ed5fa361e0a5d$var$_21e8Script.join();
-};
-const $332ed5fa361e0a5d$var$handler = ({ dataObj: dataObj , cell: cell , out: out  })=>{
-    if (!cell[0] || !out) throw new Error(`Invalid 21e8 tx. dataObj, cell, out and tx are required.`);
-    // assemble asm
-    // make sure first piece matches a txid
-    // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
-    // next
-    const txid = (0, $77262b005a06c166$export$b691916706e0e9cc)(cell[0], "hex");
-    const target = (0, $77262b005a06c166$export$b691916706e0e9cc)(cell[1], "hex");
-    if (!target) throw new Error(`Invalid 21e8 target.` + JSON.stringify(cell[0], null, 2));
-    const difficulty = Buffer.from(target, "hex").byteLength;
-    const _21e8Obj = {
-        target: target,
-        difficulty: difficulty,
-        value: out.e.v,
-        txid: txid
-    };
-    (0, $77262b005a06c166$export$23dbc584560299c3)(dataObj, "21E8", _21e8Obj);
-};
-const $332ed5fa361e0a5d$export$85479a00ad164ad6 = {
-    name: "21E8",
-    handler: $332ed5fa361e0a5d$var$handler,
-    scriptChecker: $332ed5fa361e0a5d$var$scriptChecker
-};
-
-
-
 // Names of enabled protocols
 const $1f08ee9f2ca932eb$var$enabledProtocols = new Map([]);
 // Protocol Handlers
@@ -1227,60 +1226,44 @@ class $1f08ee9f2ca932eb$export$894a720e71f90b3c {
     transformTx = async (tx)=>{
         if (!tx || !tx["in"] || !tx["out"]) throw new Error("Cannot process tx");
         // This will become our nicely formatted response object
-        const dataObj = {};
+        let dataObj = {};
         for (const [key, val] of Object.entries(tx)){
             if (key === "out") // loop over the outputs
             for (const out of tx.out){
                 const { tape: tape  } = out;
-                if (tape?.some((cc)=>(0, $77262b005a06c166$export$238b4e54af8fe886)(cc))) // loop over tape
+                // Process opReturn data
+                if (tape?.some((cc)=>(0, $77262b005a06c166$export$429a4e8902c23802)(cc))) dataObj = await this.processDataProtocols(tape, out, tx, dataObj);
+                // No OP_FALSE OP_RETURN in this tape
+                const boostChecker = this.protocolScriptCheckers.get((0, $0b0f3c626f422955$export$13c3c8ee12090ebc).name);
+                const _21e8Checker = this.protocolScriptCheckers.get((0, $332ed5fa361e0a5d$export$85479a00ad164ad6).name);
+                const ordChecker = this.protocolScriptCheckers.get((0, $f38986b3415560cd$export$a3deb2ff0da16a68).name);
+                // Check for boostpow, 21e8, and ords
+                if (tape?.some((cc)=>{
+                    const { cell: cell  } = cc;
+                    if (boostChecker && boostChecker(cell)) // 'found boost'
+                    return true;
+                    if (_21e8Checker && _21e8Checker(cell)) // 'found 21e8'
+                    return true;
+                    if (ordChecker && ordChecker(cell)) // 'found 1sat ordinal'
+                    return true;
+                })) // find the cell array
+                // loop over tape
                 for (const cellContainer of tape){
-                    // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                    if ((0, $77262b005a06c166$export$238b4e54af8fe886)(cellContainer)) continue;
                     const { cell: cell  } = cellContainer;
+                    // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
                     if (!cell) throw new Error("empty cell while parsing");
-                    const prefix = cell[0].s;
-                    await this.process(this.enabledProtocols.get(prefix || "") || prefix || "", {
+                    let protocolName = "";
+                    if (boostChecker && boostChecker(cell)) protocolName = (0, $0b0f3c626f422955$export$13c3c8ee12090ebc).name;
+                    else if (_21e8Checker && _21e8Checker(cell)) protocolName = (0, $332ed5fa361e0a5d$export$85479a00ad164ad6).name;
+                    else if (ordChecker && ordChecker(cell)) protocolName = (0, $f38986b3415560cd$export$a3deb2ff0da16a68).name;
+                    else continue;
+                    this.process(protocolName, {
+                        tx: tx,
                         cell: cell,
                         dataObj: dataObj,
                         tape: tape,
-                        out: out,
-                        tx: tx
+                        out: out
                     });
-                }
-                else {
-                    // No OP_FALSE OP_RETURN in this tape
-                    const boostChecker = this.protocolScriptCheckers.get((0, $0b0f3c626f422955$export$13c3c8ee12090ebc).name);
-                    const _21e8Checker = this.protocolScriptCheckers.get((0, $332ed5fa361e0a5d$export$85479a00ad164ad6).name);
-                    const ordChecker = this.protocolScriptCheckers.get((0, $f38986b3415560cd$export$a3deb2ff0da16a68).name);
-                    // Check for boostpow and 21e8
-                    if (tape?.some((cc)=>{
-                        const { cell: cell  } = cc;
-                        if (boostChecker && boostChecker(cell)) // 'found boost'
-                        return true;
-                        if (_21e8Checker && _21e8Checker(cell)) // 'found 21e8'
-                        return true;
-                        if (ordChecker && ordChecker(cell)) // 'found 1sat ordinal'
-                        return true;
-                    })) // find the cell array
-                    // loop over tape
-                    for (const cellContainer of tape){
-                        const { cell: cell  } = cellContainer;
-                        // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                        if (!cell) throw new Error("empty cell while parsing");
-                        let protocolName = "";
-                        if (boostChecker && boostChecker(cell)) protocolName = (0, $0b0f3c626f422955$export$13c3c8ee12090ebc).name;
-                        else if (_21e8Checker && _21e8Checker(cell)) protocolName = (0, $332ed5fa361e0a5d$export$85479a00ad164ad6).name;
-                        else if (ordChecker && ordChecker(cell)) protocolName = (0, $f38986b3415560cd$export$a3deb2ff0da16a68).name;
-                        else continue;
-                        this.process(protocolName, {
-                            tx: tx,
-                            cell: cell,
-                            dataObj: dataObj,
-                            tape: tape,
-                            out: out
-                        });
-                    }
-                    else this.processUnknown(key, dataObj, out);
                 }
             }
             else if (key === "in") // TODO: Boost check inputs to see if this is a tx solving a puzzle
@@ -1333,6 +1316,28 @@ class $1f08ee9f2ca932eb$export$894a720e71f90b3c {
                 tx: tx
             });
         } else (0, $77262b005a06c166$export$23dbc584560299c3)(dataObj, protocolName, cell);
+    };
+    processDataProtocols = async (tape, out, tx, dataObj)=>{
+        // loop over tape
+        for (const cellContainer of tape){
+            const { cell: cell  } = cellContainer;
+            if (!cell) throw new Error("empty cell while parsing");
+            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+            if ((0, $77262b005a06c166$export$238b4e54af8fe886)(cellContainer)) continue;
+            const prefix = cell[0].s;
+            if (prefix) {
+                const bitcomProtocol = this.enabledProtocols.get(prefix) || $1f08ee9f2ca932eb$export$4f34a1c822988d11.filter((p)=>p.name === prefix)[0]?.name;
+                if (bitcomProtocol) await this.process(bitcomProtocol, {
+                    cell: cell,
+                    dataObj: dataObj,
+                    tape: tape,
+                    out: out,
+                    tx: tx
+                });
+                else this.processUnknown(prefix, dataObj, out);
+            }
+        }
+        return dataObj;
     };
 }
 const $1f08ee9f2ca932eb$export$54850c299f4a06d8 = async (txid)=>{

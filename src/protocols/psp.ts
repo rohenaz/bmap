@@ -4,7 +4,7 @@ import { Cell, HandlerProps, Protocol, Tape } from '../../types/common'
 import { BITCOM_HASHED } from '../../types/protocols/bitcomHashed'
 import { PSP as PSPType } from '../../types/protocols/psp'
 import { verifyPaymailPublicKey } from '../paymail'
-import { cellValue, checkOpFalseOpReturn, saveProtocolData } from '../utils'
+import { cellValue, checkOpReturn, saveProtocolData } from '../utils'
 import { SIGPROTO } from './aip'
 
 const address = '1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4'
@@ -33,7 +33,7 @@ const validateSignature = (pspObj: PSPType, cell: Cell[], tape: Tape[]) => {
     const signatureBufferStatements = []
     for (let i = 0; i < cellIndex; i++) {
         const cellContainer = tape[i]
-        if (!checkOpFalseOpReturn(cellContainer)) {
+        if (!checkOpReturn(cellContainer)) {
             cellContainer.cell.forEach((statement) => {
                 // add the value as hex
                 let value = statement.h

@@ -1,3 +1,4 @@
+import { Tape } from "bpu-ts";
 import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Out, Protocol, ScriptChecker } from "../types/common";
 export { PaymailClient } from '@moneybutton/paymail-client';
 export const allProtocols: (Protocol | {
@@ -20,6 +21,7 @@ export class BMAP {
     transformTx: (tx: BobTx | MomTx) => Promise<BmapTx>;
     processUnknown: (key: string, dataObj: Partial<BmapTx>, out: Out) => void;
     process: (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => Promise<void>;
+    processDataProtocols: (tape: Tape[], out: Out, tx: BobTx, dataObj: Partial<BobTx>) => Promise<Partial<BobTx>>;
 }
 export const fetchRawTx: (txid: string) => Promise<string>;
 export const bobFromRawTx: (rawTx: string) => Promise<BobTx>;

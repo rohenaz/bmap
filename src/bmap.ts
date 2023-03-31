@@ -1,4 +1,4 @@
-import { parse } from 'bpu-ts'
+import { parse, Tape } from 'bpu-ts'
 import {
     BmapTx,
     BobTx,
@@ -11,6 +11,7 @@ import {
     Protocol,
     ScriptChecker,
 } from '../types/common'
+import { _21E8 } from './protocols/_21e8'
 import { AIP } from './protocols/aip'
 import { B } from './protocols/b'
 import { BAP } from './protocols/bap'
@@ -26,9 +27,9 @@ import { ORD } from './protocols/ord'
 import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
 import { SYMRE } from './protocols/symre'
-import { _21E8 } from './protocols/_21e8'
 import {
     checkOpFalseOpReturn,
+    checkOpReturn,
     isObjectArray,
     isStringArray,
     saveProtocolData,
@@ -121,7 +122,7 @@ export class BMAP {
         }
 
         // This will become our nicely formatted response object
-        const dataObj: Partial<BobTx> = {}
+        let dataObj: Partial<BobTx> = {}
 
         for (const [key, val] of Object.entries(tx)) {
             if (key === 'out') {
@@ -129,94 +130,70 @@ export class BMAP {
                 for (const out of tx.out) {
                     const { tape } = out
 
-                    if (tape?.some((cc) => checkOpFalseOpReturn(cc))) {
+                    // Process opReturn data
+                    if (tape?.some((cc) => checkOpReturn(cc))) {
+                        dataObj = await this.processDataProtocols(
+                            tape,
+                            out,
+                            tx,
+                            dataObj
+                        )
+                    }
+
+                    // No OP_FALSE OP_RETURN in this tape
+                    const boostChecker = this.protocolScriptCheckers.get(
+                        BOOST.name
+                    )
+                    const _21e8Checker = this.protocolScriptCheckers.get(
+                        _21E8.name
+                    )
+                    const ordChecker = this.protocolScriptCheckers.get(ORD.name)
+
+                    // Check for boostpow, 21e8, and ords
+                    if (
+                        tape?.some((cc) => {
+                            const { cell } = cc
+                            if (boostChecker && boostChecker(cell)) {
+                                // 'found boost'
+                                return true
+                            }
+                            if (_21e8Checker && _21e8Checker(cell)) {
+                                // 'found 21e8'
+                                return true
+                            }
+                            if (ordChecker && ordChecker(cell)) {
+                                // 'found 1sat ordinal'
+                                return true
+                            }
+                        })
+                    ) {
+                        // find the cell array
                         // loop over tape
                         for (const cellContainer of tape) {
-                            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                            if (checkOpFalseOpReturn(cellContainer)) {
-                                continue
-                            }
-
                             const { cell } = cellContainer
+                            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
                             if (!cell) {
                                 throw new Error('empty cell while parsing')
                             }
-
-                            const prefix = cell[0].s
-
-                            await this.process(
-                                this.enabledProtocols.get(prefix || '') ||
-                                    prefix ||
-                                    '',
-                                {
-                                    cell,
-                                    dataObj: dataObj as BmapTx,
-                                    tape,
-                                    out,
-                                    tx,
-                                }
-                            )
-                        }
-                    } else {
-                        // No OP_FALSE OP_RETURN in this tape
-                        const boostChecker = this.protocolScriptCheckers.get(
-                            BOOST.name
-                        )
-                        const _21e8Checker = this.protocolScriptCheckers.get(
-                            _21E8.name
-                        )
-                        const ordChecker = this.protocolScriptCheckers.get(
-                            ORD.name
-                        )
-
-                        // Check for boostpow and 21e8
-                        if (
-                            tape?.some((cc) => {
-                                const { cell } = cc
-                                if (boostChecker && boostChecker(cell)) {
-                                    // 'found boost'
-                                    return true
-                                }
-                                if (_21e8Checker && _21e8Checker(cell)) {
-                                    // 'found 21e8'
-                                    return true
-                                }
-                                if (ordChecker && ordChecker(cell)) {
-                                    // 'found 1sat ordinal'
-                                    return true
-                                }
-                            })
-                        ) {
-                            // find the cell array
-                            // loop over tape
-                            for (const cellContainer of tape) {
-                                const { cell } = cellContainer
-                                // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                                if (!cell) {
-                                    throw new Error('empty cell while parsing')
-                                }
-                                let protocolName = ''
-                                if (boostChecker && boostChecker(cell)) {
-                                    protocolName = BOOST.name
-                                } else if (_21e8Checker && _21e8Checker(cell)) {
-                                    protocolName = _21E8.name
-                                } else if (ordChecker && ordChecker(cell)) {
-                                    protocolName = ORD.name
-                                } else {
-                                    // nothing found
-                                    continue
-                                }
-
-                                this.process(protocolName, {
-                                    tx,
-                                    cell,
-                                    dataObj: dataObj as BmapTx,
-                                    tape,
-                                    out,
-                                })
+                            let protocolName = ''
+                            if (boostChecker && boostChecker(cell)) {
+                                protocolName = BOOST.name
+                            } else if (_21e8Checker && _21e8Checker(cell)) {
+                                protocolName = _21E8.name
+                            } else if (ordChecker && ordChecker(cell)) {
+                                protocolName = ORD.name
+                            } else {
+                                // nothing found
+                                continue
                             }
-                        } else {
-                            this.processUnknown(key, dataObj, out)
+
+                            this.process(protocolName, {
+                                tx,
+                                cell,
+                                dataObj: dataObj as BmapTx,
+                                tape,
+                                out,
+                            })
                         }
                     }
                 }
@@ -290,6 +267,46 @@ export class BMAP {
         } else {
             saveProtocolData(dataObj, protocolName, cell)
         }
+    }
+
+    processDataProtocols = async (
+        tape: Tape[],
+        out: Out,
+        tx: BobTx,
+        dataObj: Partial<BobTx>
+    ): Promise<Partial<BobTx>> => {
+        // loop over tape
+        for (const cellContainer of tape) {
+            const { cell } = cellContainer
+            if (!cell) {
+                throw new Error('empty cell while parsing')
+            }
+
+            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+            if (checkOpFalseOpReturn(cellContainer)) {
+                continue
+            }
+
+            const prefix = cell[0].s
+
+            if (prefix) {
+                const bitcomProtocol =
+                    this.enabledProtocols.get(prefix) ||
+                    defaultProtocols.filter((p) => p.name === prefix)[0]?.name
+                if (bitcomProtocol) {
+                    await this.process(bitcomProtocol, {
+                        cell,
+                        dataObj: dataObj as BmapTx,
+                        tape,
+                        out,
+                        tx,
+                    })
+                } else {
+                    this.processUnknown(prefix, dataObj, out)
+                }
+            }
+        }
+        return dataObj
     }
 }
 

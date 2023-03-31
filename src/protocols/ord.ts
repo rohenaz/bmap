@@ -1,6 +1,6 @@
 import { Cell, HandlerProps, Protocol } from '../../types/common'
 import { ORD as OrdType } from '../../types/protocols/ord'
-import { cellValue, saveProtocolData } from '../utils'
+import { saveProtocolData } from '../utils'
 
 // const OrdScript =
 //     'OP_FALSE OP_IF 6F7264 OP_1 <CONTENT_TYPE_PLACEHOLDER> OP_0 <DATA_PLACEHOLDER> OP_ENDIF'.split(
@@ -43,10 +43,11 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
 
     // Find OP_IF wrapper
     const startIdx = findIndex(cell, (c: Cell) => c.ops === 'OP_IF')
-    const endIdx = findIndex(
-        cell,
-        (c: Cell, i: number) => i > startIdx && c.ops === 'OP_ENDIF'
-    )
+    const endIdx =
+        findIndex(
+            cell,
+            (c: Cell, i: number) => i > startIdx && c.ops === 'OP_ENDIF'
+        ) + 1
     const ordScript = cell.slice(startIdx, endIdx)
 
     if (!ordScript[0] || !ordScript[1] || ordScript[1].s != 'ord') {
@@ -58,11 +59,11 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
     ordScript.forEach((push, idx, all) => {
         // content-type
         if (push.ops === 'OP_1') {
-            contentType = cellValue(all[idx + 1], 'string') as string
+            contentType = all[idx + 1].s
         }
         // data
         if (push.ops === 'OP_0') {
-            data = cellValue(all[idx + 1]) as string
+            data = all[idx + 1].b
         }
     })
 
