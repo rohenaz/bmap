@@ -8,8 +8,7 @@ import { cellValue, saveProtocolData } from '../utils'
 //     )
 
 const scriptChecker = (cell: Cell[]) => {
-    // TODO: What is the actual minimum length?
-    if (cell.length < 11) {
+    if (cell.length < 13) {
         // wrong length
         return false
     }
@@ -23,7 +22,7 @@ const scriptChecker = (cell: Cell[]) => {
     const ordScript = cell.slice(startIdx, endIdx)
     const prevCell = cell[startIdx - 1]
     return (
-        prevCell?.ops === 'OP_FALSE' &&
+        prevCell?.op === 0 &&
         !!ordScript[0] &&
         !!ordScript[1] &&
         ordScript[1].s == 'ord'

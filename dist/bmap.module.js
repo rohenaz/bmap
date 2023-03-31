@@ -1004,15 +1004,14 @@ const $7eb85189d07ccd6d$export$7830a85a59ca4593 = {
 //         ' '
 //     )
 const $f38986b3415560cd$var$scriptChecker = (cell)=>{
-    // TODO: What is the actual minimum length?
-    if (cell.length < 11) // wrong length
+    if (cell.length < 13) // wrong length
     return false;
     // Find OP_IF wrapper
     const startIdx = $f38986b3415560cd$var$findIndex(cell, (c)=>c.ops === "OP_IF");
     const endIdx = $f38986b3415560cd$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
     const ordScript = cell.slice(startIdx, endIdx);
     const prevCell = cell[startIdx - 1];
-    return prevCell?.ops === "OP_FALSE" && !!ordScript[0] && !!ordScript[1] && ordScript[1].s == "ord";
+    return prevCell?.op === 0 && !!ordScript[0] && !!ordScript[1] && ordScript[1].s == "ord";
 };
 const $f38986b3415560cd$var$handler = ({ dataObj: dataObj , cell: cell , out: out  })=>{
     if (!cell[0] || !out) throw new Error(`Invalid Ord tx. dataObj, cell, out and tx are required.`);

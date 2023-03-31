@@ -1,5 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
-import { BMAP, TransformTx } from '../../src/bmap'
+import fs from 'fs'
+import path from 'path'
+import { allProtocols, BMAP, TransformTx } from '../../src/bmap'
 import { BOOST } from '../../src/protocols/boost'
 import { _21E8 } from '../../src/protocols/_21e8'
 import { BobTx, Handler, HandlerProps } from '../../types/common'
@@ -8,6 +10,14 @@ import validBobTransaction from '../data/bap-transaction.json'
 import boostTransaction from '../data/boost-transaction.json'
 import mapTransactions from '../data/map-transactions.json'
 import unknownBitcom from '../data/unknown-bitcom.json'
+
+export const ordHex = fs.readFileSync(
+    path.resolve(
+        __dirname,
+        '../data/10f4465cd18c39fbc7aa4089268e57fc719bf19c8c24f2e09156f4a89a2809d6.hex'
+    ),
+    'utf8'
+)
 
 describe('bmap', () => {
     test('class init', () => {
@@ -217,5 +227,19 @@ describe('bmap', () => {
         // expect(parseTx['21E8'] && parseTx['21E8'][0].value).toEqual(700)
         // expect(parseTx['21E8'] && parseTx['21E8'][1].value).toEqual(700)
         // rest is checked in and _21e8.test.js
+    })
+})
+
+describe('Ord 2', () => {
+    test('parse tx - output TransformTx', async () => {
+        const tx = await TransformTx(
+            ordHex,
+            allProtocols.map((n) => n.name)
+        )
+        expect(tx).toBeTruthy()
+        expect(tx.tx?.h).toEqual(
+            '10f4465cd18c39fbc7aa4089268e57fc719bf19c8c24f2e09156f4a89a2809d6'
+        )
+        expect(tx.ORD).toBeDefined()
     })
 })
