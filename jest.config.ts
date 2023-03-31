@@ -9,9 +9,7 @@ const config: Config.InitialOptions = {
         '<rootDir>/tests/protocols/jest.config.ts',
     ],
     moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
-    transform: {
-        '^.+\\.ts?$': 'ts-jest',
-    },
+    transform: {},
     testPathIgnorePatterns: ['<rootDir>/node_modules/'],
 }
 export default config

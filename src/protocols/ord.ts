@@ -1,5 +1,5 @@
 import { Cell, HandlerProps, Protocol } from '../../types/common'
-import { Ord as OrdType } from '../../types/protocols/ord'
+import { ORD as OrdType } from '../../types/protocols/ord'
 import { cellValue, saveProtocolData } from '../utils'
 
 // const OrdScript =
@@ -54,8 +54,6 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
         throw new Error(`Invalid Ord tx. Prefix not found.`)
     }
 
-    console.log({ ordScript })
-
     let data: string | undefined
     let contentType: string | undefined
     ordScript.forEach((push, idx, all) => {
@@ -81,11 +79,11 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
         contentType,
     }
 
-    saveProtocolData(dataObj, 'Ord', OrdObj)
+    saveProtocolData(dataObj, 'ORD', OrdObj)
 }
 
-export const Ord: Protocol = {
-    name: 'Ord',
+export const ORD: Protocol = {
+    name: 'ORD',
     handler,
     scriptChecker,
 }

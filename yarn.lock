@@ -2040,10 +2040,10 @@ boxen@^1.2.1:
     term-size "^1.2.0"
     widest-line "^2.0.0"
 
-bpu-ts@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/bpu-ts/-/bpu-ts-0.0.8.tgz#3111bb288d640325b4b50682a74c8499cbf212e1"
-  integrity sha512-j1ky8uQxmzdA5JCmZ2ovnDct2i5FJ5IcWgf/O0ua7tTewuG1FbT0kXAakz3bj9BIM5H878Y6Ho+OTInSJjOoVA==
+bpu-ts@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/bpu-ts/-/bpu-ts-0.0.14.tgz#d87332dc6bd519935e97ba43701838e49e6ff41e"
+  integrity sha512-UOnUMKDKgUVh2oRFuh5OWPQW3ctVZH7nsOh3lxZXlAjgcuvhJ7K4X+Vulr/PohxUeN6q7BCoQpc4UPmr3sUJyQ==
   dependencies:
     "@ts-bitcoin/core" "^2.2.0"
     bitcoind-rpc "^0.9.1"
@@ -2252,9 +2252,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001449:
-  version "1.0.30001472"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001472.tgz#3f484885f2a2986c019dc416e65d9d62798cdd64"
-  integrity sha512-xWC/0+hHHQgj3/vrKYY0AAzeIUgr7L9wlELIcAvZdDUHlhL/kNxMdnQLOSOQfP8R51ZzPhmHdyMkI0MMpmxCfg==
+  version "1.0.30001473"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001473.tgz#3859898b3cab65fc8905bb923df36ad35058153c"
+  integrity sha512-ewDad7+D2vlyy+E4UJuVfiBsU69IL+8oVmTuZnH5Q6CIUbxNfI50uVpRHbUPDD6SUaN2o0Lh4DhTrvLG/Tn1yg==
 
 capture-stack-trace@^1.0.0:
   version "1.0.2"
@@ -2873,9 +2873,9 @@ duplexer3@^0.1.4:
   integrity sha512-1A8za6ws41LQgv9HrE/66jyC5yuSjQ3L/KOpFtoBilsAK2iA2wuS5rTt1OCzIvtS2V7nVmedsUU+DGRcjBmOYA==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.343"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.343.tgz#90f85c4c67aec42b3d076e597911b7b6a2d026fd"
-  integrity sha512-22C6pOljO+QQ/yeBZJkxewjsGwSKCXymng7dF8lir3m8iJGi6guoLVkK8jghCf3o0/tARFASAgLP8OzR9SKRCA==
+  version "1.4.347"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.347.tgz#4b72564912c3456c6704d4250918aa6a105d5dc3"
+  integrity sha512-LNi3+/9nV0vT6Bz1OsSoZ/w7IgNuWdefZ7mjKNjZxyRlI/ag6uMXxsxAy5Etvuixq3Q26exw2fc4bNYvYQqXSw==
 
 elegant-spinner@^1.0.1:
   version "1.0.1"

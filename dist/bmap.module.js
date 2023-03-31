@@ -1025,9 +1025,6 @@ const $f38986b3415560cd$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
     const endIdx = $f38986b3415560cd$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
     const ordScript = cell.slice(startIdx, endIdx);
     if (!ordScript[0] || !ordScript[1] || ordScript[1].s != "ord") throw new Error(`Invalid Ord tx. Prefix not found.`);
-    console.log({
-        ordScript: ordScript
-    });
     let data;
     let contentType;
     ordScript.forEach((push, idx, all)=>{
@@ -1042,10 +1039,10 @@ const $f38986b3415560cd$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
         data: data,
         contentType: contentType
     };
-    (0, $77262b005a06c166$export$23dbc584560299c3)(dataObj, "Ord", OrdObj);
+    (0, $77262b005a06c166$export$23dbc584560299c3)(dataObj, "ORD", OrdObj);
 };
-const $f38986b3415560cd$export$ee8aa95bfab51c5 = {
-    name: "Ord",
+const $f38986b3415560cd$export$a3deb2ff0da16a68 = {
+    name: "ORD",
     handler: $f38986b3415560cd$var$handler,
     scriptChecker: $f38986b3415560cd$var$scriptChecker
 };
@@ -1196,7 +1193,7 @@ const $1f08ee9f2ca932eb$export$6b22fa9a84a4797f = [
     (0, $04d70d7a9e677064$export$bd49ff9d0c7fbe97),
     (0, $4aa1b4adda120025$export$2839d627b6f3bcfe),
     (0, $1a7c59a3fed0ea3a$export$33455cbcda538c68),
-    (0, $f38986b3415560cd$export$ee8aa95bfab51c5)
+    (0, $f38986b3415560cd$export$a3deb2ff0da16a68)
 ];
 const $1f08ee9f2ca932eb$export$63e9417ed8d8533a = $1f08ee9f2ca932eb$export$6b22fa9a84a4797f.map((p)=>p.name);
 const $1f08ee9f2ca932eb$export$4f34a1c822988d11 = [
@@ -1205,7 +1202,7 @@ const $1f08ee9f2ca932eb$export$4f34a1c822988d11 = [
     (0, $e42beb934f07c56b$export$5935ea4bf04c4453),
     (0, $8a20cae9265ae409$export$ce970371e0e850bc),
     (0, $7eb85189d07ccd6d$export$7830a85a59ca4593),
-    (0, $f38986b3415560cd$export$ee8aa95bfab51c5)
+    (0, $f38986b3415560cd$export$a3deb2ff0da16a68)
 ];
 // prepare protocol map, handlers and schemas
 $1f08ee9f2ca932eb$export$4f34a1c822988d11.forEach((protocol)=>{
@@ -1255,7 +1252,7 @@ class $1f08ee9f2ca932eb$export$894a720e71f90b3c {
                     // No OP_FALSE OP_RETURN in this tape
                     const boostChecker = this.protocolScriptCheckers.get((0, $0b0f3c626f422955$export$13c3c8ee12090ebc).name);
                     const _21e8Checker = this.protocolScriptCheckers.get((0, $332ed5fa361e0a5d$export$85479a00ad164ad6).name);
-                    const ordChecker = this.protocolScriptCheckers.get((0, $f38986b3415560cd$export$ee8aa95bfab51c5).name);
+                    const ordChecker = this.protocolScriptCheckers.get((0, $f38986b3415560cd$export$a3deb2ff0da16a68).name);
                     // Check for boostpow and 21e8
                     if (tape?.some((cc)=>{
                         const { cell: cell  } = cc;
@@ -1274,7 +1271,7 @@ class $1f08ee9f2ca932eb$export$894a720e71f90b3c {
                         let protocolName = "";
                         if (boostChecker && boostChecker(cell)) protocolName = (0, $0b0f3c626f422955$export$13c3c8ee12090ebc).name;
                         else if (_21e8Checker && _21e8Checker(cell)) protocolName = (0, $332ed5fa361e0a5d$export$85479a00ad164ad6).name;
-                        else if (ordChecker && ordChecker(cell)) protocolName = (0, $f38986b3415560cd$export$ee8aa95bfab51c5).name;
+                        else if (ordChecker && ordChecker(cell)) protocolName = (0, $f38986b3415560cd$export$a3deb2ff0da16a68).name;
                         else continue;
                         this.process(protocolName, {
                             tx: tx,
@@ -1354,12 +1351,6 @@ const $1f08ee9f2ca932eb$export$2905b0423a229d9 = async (rawTx)=>{
             {
                 token: {
                     op: 106
-                },
-                include: "l"
-            },
-            {
-                token: {
-                    op: 0
                 },
                 include: "l"
             },

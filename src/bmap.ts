@@ -22,7 +22,7 @@ import { BOOST } from './protocols/boost'
 import { HAIP } from './protocols/haip'
 import { MAP } from './protocols/map'
 import { METANET } from './protocols/metanet'
-import { Ord } from './protocols/ord'
+import { ORD } from './protocols/ord'
 import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
 import { SYMRE } from './protocols/symre'
@@ -58,11 +58,11 @@ export const allProtocols = [
     PSP,
     RON,
     SYMRE,
-    Ord,
+    ORD,
 ]
 
 export const supportedProtocols = allProtocols.map((p) => p.name)
-export const defaultProtocols = [AIP, B, BAP, MAP, METANET, Ord]
+export const defaultProtocols = [AIP, B, BAP, MAP, METANET, ORD]
 
 // prepare protocol map, handlers and schemas
 defaultProtocols.forEach((protocol) => {
@@ -166,7 +166,7 @@ export class BMAP {
                             _21E8.name
                         )
                         const ordChecker = this.protocolScriptCheckers.get(
-                            Ord.name
+                            ORD.name
                         )
 
                         // Check for boostpow and 21e8
@@ -201,7 +201,7 @@ export class BMAP {
                                 } else if (_21e8Checker && _21e8Checker(cell)) {
                                     protocolName = _21E8.name
                                 } else if (ordChecker && ordChecker(cell)) {
-                                    protocolName = Ord.name
+                                    protocolName = ORD.name
                                 } else {
                                     // nothing found
                                     continue
@@ -308,10 +308,6 @@ export const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
         split: [
             {
                 token: { op: 106 },
-                include: 'l',
-            },
-            {
-                token: { op: 0 },
                 include: 'l',
             },
             {

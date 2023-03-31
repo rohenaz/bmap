@@ -18,7 +18,7 @@
     "compilerOptions": {
         "removeComments": true,
         "declaration": true,
-        "target": "es6",
+        "target": "es2018",
         "moduleResolution": "node",
         "typeRoots": ["./node_modules/@types", "./types"],
         "lib": ["dom"],
@@ -30,8 +30,8 @@
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
-        "isolatedModules": true,
+        "isolatedModules": false,
         "skipLibCheck": true,
-        "module": "es6"
+        "module": "CommonJS"
     }
 }

@@ -14,6 +14,7 @@ let bapHex = fs.readFileSync(
 describe('bob', () => {
     test('from raw tx', async () => {
         const tx = await bobFromRawTx(bapHex)
-        console.log({ outs: JSON.stringify(tx.out, null, 2) })
+        // console.log({ outs: JSON.stringify(tx.out, null, 2) })
+        console.log({ outs: tx.out.length })
     })
 })

@@ -9,6 +9,7 @@ import { BITPIC } from './protocols/bitpic'
 import { BOOST } from './protocols/boost'
 import { HAIP } from './protocols/haip'
 import { MAP } from './protocols/map'
+import { ORD } from './protocols/ord'
 import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
 import { SYMRE } from './protocols/symre'
@@ -104,6 +105,7 @@ export interface BmapTx extends BobTx {
     PSP?: PSP[]
     '21E8'?: _21E8[]
     BOOST?: BOOST[]
+    ORD?: ORD[]
     BITCOM?: BITCOM[]
     BITPIC?: BITPIC[]
     BITKEY?: BITKEY[]
