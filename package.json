@@ -1,6 +1,6 @@
 {
     "name": "bmapjs",
-    "version": "0.4.0-beta.37",
+    "version": "0.4.0-beta.40",
     "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, METANET and AIP/HAIP.",
     "types": "types/index.d.ts",
     "module": "dist/bmap.module.js",
@@ -33,7 +33,7 @@
         "build": "rimraf parcel-bundle-reports dist/ types/index.d.ts && parcel build . --target types --target module --target main --reporter @parcel/reporter-bundle-analyzer",
         "lint": "eslint ./src",
         "lintfix": "eslint ./src --fix",
-        "testonly": "yarn node --experimental-vm-modules $(yarn bin jest) --collectCoverage",
+        "testonly": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --collectCoverage",
         "testwatch": "./node_modules/.bin/jest --watchAll --collectCoverage",
         "test": "npm run lint && npm run testonly",
         "test-watch": "npm run testwatch",
@@ -69,6 +69,7 @@
         "@typescript-eslint/eslint-plugin": "^5.47.1",
         "@typescript-eslint/parser": "^5.47.1",
         "buffer": "^5.5.0",
+        "cross-env": "^7.0.3",
         "eslint": "^8.30.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-prettier": "^4.2.1",
@@ -101,7 +102,7 @@
         "@msgpack/msgpack": "^2.8.0",
         "@ts-bitcoin/core": "^2.2.0",
         "boostpow": "^1.8.1",
-        "bpu-ts": "^0.0.21",
+        "bpu-ts": "^0.0.24",
         "node-fetch": "^2.6.1"
     }
 }
