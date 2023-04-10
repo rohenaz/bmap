@@ -1,6 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { parse } from 'bpu-ts'
-import { Cell } from 'bpu-ts/src/types/common'
+import { Cell, parse } from 'bpu-ts'
 import { RON } from '../../src/protocols/ron'
 import { BmapTx, BobTx } from '../../types/common'
 import ronTransactions from '../data/ron-transactions.json'

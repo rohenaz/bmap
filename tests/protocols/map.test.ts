@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { Cell, Tape } from 'bpu-ts/src/types/common'
+import { Cell, Tape } from 'bpu-ts'
 import { MAP } from '../../src/protocols/map'
 import { BmapTx, BobTx } from '../../types/common'
 import mapTransactions from '../data/map-transactions.json'

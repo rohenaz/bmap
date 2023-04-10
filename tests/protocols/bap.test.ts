@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { Cell, Tape } from 'bpu-ts/src/types/common'
+import { Cell, Tape } from 'bpu-ts'
 import { BAP } from '../../src/protocols/bap'
 import { BmapTx, BobTx } from '../../types/common'
 

@@ -4,7 +4,7 @@ import path from 'path'
 import { bobFromRawTx } from '../../src/bmap'
 import { ORD } from '../../src/protocols/ord'
 
-import { Cell, Out } from 'bpu-ts/src/types/common'
+import { Cell, Out } from 'bpu-ts'
 import { BmapTx } from '../../types/common'
 
 let ordHex = fs.readFileSync(

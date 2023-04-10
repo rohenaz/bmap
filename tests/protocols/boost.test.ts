@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { BOOST } from '../../src/protocols/boost'
 
-import { Cell, Out, Tape } from 'bpu-ts/src/types/common'
+import { Cell, Out, Tape } from 'bpu-ts'
 import { BmapTx, BobTx } from '../../types/common'
 import boostTransaction from '../data/boost-transaction.json'
 

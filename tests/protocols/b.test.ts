@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { Cell } from 'bpu-ts/src/types/common'
+import { Cell } from 'bpu-ts'
 import { B } from '../../src/protocols/b'
 import { BmapTx, BobTx } from '../../types/common'
 import indexedTransaction from '../data/b-aip-transaction-with-indexes.json'

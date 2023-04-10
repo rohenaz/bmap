@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { Cell } from 'bpu-ts/src/types/common'
+import { Cell } from 'bpu-ts'
 import { HAIP } from '../../src/protocols/haip'
 import { BobTx } from '../../types/common'
 
