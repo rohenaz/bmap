@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell, Tape } from 'bpu-ts/src/types/common'
 import { BITPIC } from '../../src/protocols/bitpic'
-import { BmapTx, BobTx, Cell, Tape } from '../../types/common'
+import { BmapTx, BobTx } from '../../types/common'
 import bitpicTransactions from '../data/b-bitpic-transactions.json'
 
 describe('bitpic', () => {

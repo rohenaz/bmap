@@ -1,6 +1,6 @@
 {
     "name": "bmapjs",
-    "version": "0.4.0-beta.34",
+    "version": "0.4.0-beta.37",
     "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, METANET and AIP/HAIP.",
     "types": "types/index.d.ts",
     "module": "dist/bmap.module.js",
@@ -101,7 +101,7 @@
         "@msgpack/msgpack": "^2.8.0",
         "@ts-bitcoin/core": "^2.2.0",
         "boostpow": "^1.8.1",
-        "bpu-ts": "^0.0.20",
+        "bpu-ts": "^0.0.21",
         "node-fetch": "^2.6.1"
     }
 }

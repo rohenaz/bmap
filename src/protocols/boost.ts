@@ -1,5 +1,6 @@
 import { BoostPowJob } from 'boostpow'
-import { Cell, HandlerProps, Protocol } from '../../types/common'
+import { Cell } from 'bpu-ts/src/types/common'
+import { HandlerProps, Protocol } from '../../types/common'
 import { cellValue, saveProtocolData } from '../utils'
 
 const protocolIdentifier = 'boostpow'

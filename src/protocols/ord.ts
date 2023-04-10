@@ -1,4 +1,5 @@
-import { Cell, HandlerProps, Protocol } from '../../types/common'
+import { Cell } from 'bpu-ts/src/types/common'
+import { HandlerProps, Protocol } from '../../types/common'
 import { ORD as OrdType } from '../../types/protocols/ord'
 import { saveProtocolData } from '../utils'
 

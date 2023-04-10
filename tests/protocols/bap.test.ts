@@ -1,6 +1,8 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell, Tape } from 'bpu-ts/src/types/common'
 import { BAP } from '../../src/protocols/bap'
-import { BmapTx, BobTx, Cell, Tape } from '../../types/common'
+import { BmapTx, BobTx } from '../../types/common'
+
 import validBobTransaction from '../data/bap-transaction.json'
 
 describe('bap', () => {

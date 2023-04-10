@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell } from 'bpu-ts/src/types/common'
 import { HAIP } from '../../src/protocols/haip'
-import { BobTx, Cell } from '../../types/common'
+import { BobTx } from '../../types/common'
 
 describe('haip', () => {
     test('protocol definition', () => {

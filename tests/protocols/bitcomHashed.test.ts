@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell, Out, Tape } from 'bpu-ts/src/types/common'
 import { BITCOM_HASHED } from '../../src/protocols/bitcomHashed'
-import { BmapTx, BobTx, Cell, Out, Tape } from '../../types/common'
+import { BmapTx, BobTx } from '../../types/common'
 import bitcomHashedTransaction from '../data/bitcom-hashed.json'
 
 describe('bitcom hashed', () => {

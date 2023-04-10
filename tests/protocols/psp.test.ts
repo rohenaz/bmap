@@ -1,6 +1,8 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell, Out, Tape } from 'bpu-ts/src/types/common'
 import { PSP } from '../../src/protocols/psp'
-import { BmapTx, BobTx, Cell, Out, Tape } from '../../types/common'
+import { BmapTx, BobTx } from '../../types/common'
+
 import mapTransactions from '../data/map-transactions.json'
 
 describe('p2p', () => {

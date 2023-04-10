@@ -1,7 +1,8 @@
 import { Address, Bsm, Script } from '@ts-bitcoin/core'
+import { Cell, Tape } from 'bpu-ts/src/types/common'
 import { Buffer } from 'buffer'
 import fetch from 'node-fetch'
-import { BobTx, Cell, HandlerProps, Protocol, Tape } from '../../types/common'
+import { BobTx, HandlerProps, Protocol } from '../../types/common'
 import { AIP as AIPType } from '../../types/protocols/aip'
 import { HAIP as HAIPType } from '../../types/protocols/haip'
 

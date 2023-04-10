@@ -1,4 +1,6 @@
-import { BpuTx } from 'bpu-ts'
+export { BpuTx } from 'bpu-ts'
+import { Cell, In, Out, Tape } from 'bpu-ts/src/types/common'
+import { _21E8 } from './protocols/_21e8'
 import { AIP } from './protocols/aip'
 import { B } from './protocols/b'
 import { BAP } from './protocols/bap'
@@ -13,7 +15,6 @@ import { ORD } from './protocols/ord'
 import { PSP } from './protocols/psp'
 import { RON } from './protocols/ron'
 import { SYMRE } from './protocols/symre'
-import { _21E8 } from './protocols/_21e8'
 
 export type HandlerProps = {
     dataObj: BmapTx
@@ -26,47 +27,7 @@ export type HandlerProps = {
 export type Handler = (handlerProps: HandlerProps) => any
 export type ScriptChecker = (cell: Cell[]) => boolean
 
-type Cell = {
-    op?: number
-    ops?: string
-    b?: string
-    s?: string
-    ii: number
-    i: number
-    h?: string
-    f?: string
-    ls?: string
-    lh?: string
-    lf?: string
-    lb?: string
-}
-
-type Out = {
-    tape: Tape[]
-    i: number
-    e: {
-        i: number
-        a: string | false
-        v: number
-    }
-}
-
-type In = {
-    tape?: Tape[]
-    i: number
-    e: {
-        h: string
-        a: string
-        v?: number
-    }
-}
-
-type Tape = {
-    cell: Cell[]
-    i: number
-}
-
-interface BobTx extends BpuTx {
+export interface BobTx extends BpuTx {
     blk?: {
         t: number
         i: number

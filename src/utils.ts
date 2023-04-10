@@ -1,6 +1,7 @@
+import { Cell, Tape } from 'bpu-ts/src/types/common'
 import { Buffer } from 'buffer'
 import crypto from 'crypto'
-import { BobTx, Cell, Tape } from '../types/common'
+import { BobTx } from '../types/common'
 
 export const isStringArray = (arr: Array<any>): boolean => {
     return (

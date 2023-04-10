@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell } from 'bpu-ts/src/types/common'
 import { BITKEY } from '../../src/protocols/bitkey'
-import { BmapTx, Cell } from '../../types/common'
+import { BmapTx } from '../../types/common'
 import bitkeyTransactions from '../data/bitkey-transactions.json'
 
 describe('bitkey', () => {

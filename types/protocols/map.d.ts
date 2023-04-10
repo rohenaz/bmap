@@ -1,9 +1,13 @@
 export type MAP = {
     app: string
-    url?: string
-    context: string
-    subcontext?: string
     type: string
+    context?: string
+    subcontext?: string
+    collection?: string
+    url?: string
+    audio?: string
+    channel?: string
+    rarity?: string
     tx?: string
     videoID?: string
     provider?: string

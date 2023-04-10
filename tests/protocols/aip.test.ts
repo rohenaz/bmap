@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell, Tape } from 'bpu-ts/src/types/common'
 import { AIP } from '../../src/protocols/aip'
-import { BmapTx, BobTx, Cell, Tape } from '../../types/common'
+import { BmapTx, BobTx } from '../../types/common'
 import aipTransactions from '../data/aip-transactions.json'
 import indexedTransaction from '../data/b-aip-transaction-with-indexes.json'
 import validBobTransaction from '../data/bap-transaction.json'

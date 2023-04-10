@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell, Tape } from 'bpu-ts/src/types/common'
 import { METANET } from '../../src/protocols/metanet'
-import { BmapTx, BobTx, Cell, Tape } from '../../types/common'
+import { BmapTx, BobTx } from '../../types/common'
 import mapTransactions from '../data/map-transactions.json'
 import metanetTransactions from '../data/metanet-transactions.json'
 

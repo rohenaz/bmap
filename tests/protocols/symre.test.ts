@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
+import { Cell } from 'bpu-ts/src/types/common'
 import { SYMRE } from '../../src/protocols/symre'
-import { BmapTx, BobTx, Cell } from '../../types/common'
+import { BmapTx, BobTx } from '../../types/common'
 import symreTransactions from '../data/symre-haip-transactions.json'
 
 describe('symre', () => {

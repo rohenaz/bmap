@@ -1,7 +1,9 @@
 import { describe, expect, test } from '@jest/globals'
 import { _21E8 } from '../../src/protocols/_21e8'
 
-import { BmapTx, Cell, Out } from '../../types/common'
+import { Cell, Out } from 'bpu-ts/src/types/common'
+import { BmapTx } from '../../types/common'
+
 import boostTransaction from '../data/boost-transaction.json'
 
 describe('21e8', () => {

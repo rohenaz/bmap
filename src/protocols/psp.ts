@@ -1,6 +1,7 @@
 import { Address, Bsm, PubKey, Script } from '@ts-bitcoin/core'
+import { Cell, Tape } from 'bpu-ts/src/types/common'
 import { Buffer } from 'buffer'
-import { Cell, HandlerProps, Protocol, Tape } from '../../types/common'
+import { HandlerProps, Protocol } from '../../types/common'
 import { BITCOM_HASHED } from '../../types/protocols/bitcomHashed'
 import { PSP as PSPType } from '../../types/protocols/psp'
 import { verifyPaymailPublicKey } from '../paymail'

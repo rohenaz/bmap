@@ -1,13 +1,12 @@
-import { parse, Tape } from 'bpu-ts'
+import { parse } from 'bpu-ts'
+import { In, Out, Tape } from 'bpu-ts/src/types/common'
 import {
     BmapTx,
     BobTx,
     Handler,
     HandlerProps,
-    In,
     MetaNet,
     MomTx,
-    Out,
     Protocol,
     ScriptChecker,
 } from '../types/common'
@@ -201,9 +200,9 @@ export class BMAP {
                 // TODO: Boost check inputs to see if this is a tx solving a puzzle
                 // TODO: 21e8 check inputs to see if this is a tx solving a puzzle
                 dataObj[key] = val.map((v: In) => {
-                    const r = { ...v }
+                    const r = { ...v } as any
                     delete r.tape
-                    return r
+                    return r as In
                 })
             } else {
                 // known key, just write it retaining original type
