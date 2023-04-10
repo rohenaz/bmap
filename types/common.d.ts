@@ -1,5 +1,4 @@
-import { BpuTx } from 'bpu-ts'
-import { Cell, In, Out, Tape } from 'bpu-ts/src/types/common'
+import { BpuTx, Cell, In, Out, Tape } from 'bpu-ts'
 import { _21E8 } from './protocols/_21e8'
 import { AIP } from './protocols/aip'
 import { B } from './protocols/b'

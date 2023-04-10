@@ -1,5 +1,5 @@
 import { BoostPowJob } from 'boostpow'
-import { Cell } from 'bpu-ts/src/types/common'
+import { Cell } from 'bpu-ts'
 import { HandlerProps, Protocol } from '../../types/common'
 import { cellValue, saveProtocolData } from '../utils'
 

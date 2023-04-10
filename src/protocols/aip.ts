@@ -1,5 +1,5 @@
 import { Address, Bsm, Script } from '@ts-bitcoin/core'
-import { Cell, Tape } from 'bpu-ts/src/types/common'
+import { Cell, Tape } from 'bpu-ts'
 import { Buffer } from 'buffer'
 import fetch from 'node-fetch'
 import { BobTx, HandlerProps, Protocol } from '../../types/common'

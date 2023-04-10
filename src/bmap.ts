@@ -1,5 +1,4 @@
-import { parse } from 'bpu-ts'
-import { In, Out, Tape } from 'bpu-ts/src/types/common'
+import { In, Out, Tape, parse } from 'bpu-ts'
 import {
     BmapTx,
     BobTx,

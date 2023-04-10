@@ -1,5 +1,5 @@
 import { Address, Bsm, PubKey, Script } from '@ts-bitcoin/core'
-import { Cell, Tape } from 'bpu-ts/src/types/common'
+import { Cell, Tape } from 'bpu-ts'
 import { Buffer } from 'buffer'
 import { HandlerProps, Protocol } from '../../types/common'
 import { BITCOM_HASHED } from '../../types/protocols/bitcomHashed'

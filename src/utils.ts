@@ -1,4 +1,4 @@
-import { Cell, Tape } from 'bpu-ts/src/types/common'
+import { Cell, Tape } from 'bpu-ts'
 import { Buffer } from 'buffer'
 import crypto from 'crypto'
 import { BobTx } from '../types/common'
@@ -56,7 +56,7 @@ export const cellValue = (
  * Check if cells end with OP_RETURN
  */
 export const checkOpReturn = (cc: Tape): boolean => {
-    return cc.cell.some((c) => c.op === 106)
+    return cc.cell.some((c: Cell) => c.op === 106)
 }
 
 /**

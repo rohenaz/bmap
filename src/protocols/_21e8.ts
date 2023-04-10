@@ -1,4 +1,4 @@
-import { Cell } from 'bpu-ts/src/types/common'
+import { Cell } from 'bpu-ts'
 import { HandlerProps, Protocol } from '../../types/common'
 import { _21E8 as _21E8Type } from '../../types/protocols/_21e8'
 import { cellValue, saveProtocolData } from '../utils'

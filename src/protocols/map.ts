@@ -1,5 +1,5 @@
 import { decode } from '@msgpack/msgpack'
-import { Cell } from 'bpu-ts/src/types/common'
+import { Cell } from 'bpu-ts'
 import { Buffer } from 'buffer'
 import { HandlerProps, Protocol } from '../../types/common'
 import { MAP as MAPType } from '../../types/protocols/map'
