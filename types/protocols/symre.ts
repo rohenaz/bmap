@@ -1,3 +1,3 @@
 export type SYMRE = {
-    url: string
-}
+	url: string;
+};

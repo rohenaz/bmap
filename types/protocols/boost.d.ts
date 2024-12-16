@@ -1,15 +1,15 @@
 export type BOOST = {
-    hash?: string
-    content: string
-    bits: number
-    diff: number
-    metadataHash: string
-    time: number
-    category: number | string
-    additionalData: string // Buffer.from(`{ "foo": 1234, "metadata": "hello"}`, 'utf8').toString('hex')
-    userNonce: string // hex string
-    tag: string
-}
+	hash?: string;
+	content: string;
+	bits: number;
+	diff: number;
+	metadataHash: string;
+	time: number;
+	category: number | string;
+	additionalData: string; // Buffer.from(`{ "foo": 1234, "metadata": "hello"}`, 'utf8').toString('hex')
+	userNonce: string; // hex string
+	tag: string;
+};
 
 // Field Examples
 // additionalData:

@@ -1,21 +1,21 @@
-import { HandlerProps } from '../../types/common'
-import { saveProtocolData } from '../utils'
+import type { HandlerProps } from "../../types/common";
+import { saveProtocolData } from "../utils";
 
-const address = '1SymRe7erxM46GByucUWnB9fEEMgo7spd'
+const address = "1SymRe7erxM46GByucUWnB9fEEMgo7spd";
 
-const opReturnSchema = [{ url: 'string' }]
+const opReturnSchema = [{ url: "string" }];
 
-const handler = function ({ dataObj, cell, tx }: HandlerProps) {
-    if (cell[0].s !== address || !cell[1] || !cell[1].s) {
-        throw new Error(`Invalid SymRe tx: ${tx}`)
-    }
+const handler = ({ dataObj, cell, tx }: HandlerProps) => {
+	if (cell[0].s !== address || !cell[1] || !cell[1].s) {
+		throw new Error(`Invalid SymRe tx: ${tx}`);
+	}
 
-    saveProtocolData(dataObj, 'SYMRE', { url: cell[1].s })
-}
+	saveProtocolData(dataObj, "SYMRE", { url: cell[1].s });
+};
 
 export const SYMRE = {
-    name: 'SYMRE',
-    address,
-    opReturnSchema,
-    handler,
-}
+	name: "SYMRE",
+	address,
+	opReturnSchema,
+	handler,
+};

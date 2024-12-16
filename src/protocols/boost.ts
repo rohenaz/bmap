@@ -1,9 +1,9 @@
-import { BoostPowJob } from 'boostpow'
-import { Cell } from 'bpu-ts'
-import { HandlerProps, Protocol } from '../../types/common'
-import { cellValue, saveProtocolData } from '../utils'
+import { BoostPowJob } from "boostpow";
+import type { Cell } from "bpu-ts";
+import type { HandlerProps, Protocol } from "../../types/common";
+import { cellValue, saveProtocolData } from "../utils";
 
-const protocolIdentifier = 'boostpow'
+const protocolIdentifier = "boostpow";
 
 /*
 {
@@ -19,37 +19,37 @@ const protocolIdentifier = 'boostpow'
 */
 
 const scriptChecker = (cell: Cell[]) => {
-    // protocol identifier always in first pushdata
-    return cell[0].s === protocolIdentifier
-}
+	// protocol identifier always in first pushdata
+	return cell[0].s === protocolIdentifier;
+};
 
 const handler = ({ dataObj, cell, out, tx }: HandlerProps): void => {
-    if (!tx || !cell[0] || !out) {
-        throw new Error(
-            `Invalid BOOST tx. dataObj, cell, out and tx are required.`
-        )
-    }
+	if (!tx || !cell[0] || !out) {
+		throw new Error(
+			"Invalid BOOST tx. dataObj, cell, out and tx are required.",
+		);
+	}
 
-    // build ASM from either op codes and script chunks
-    const asm = cell
-        .map((c) => (c.ops ? c.ops : cellValue(c, 'hex') || ''))
-        .join(' ')
+	// build ASM from either op codes and script chunks
+	const asm = cell
+		.map((c) => (c.ops ? c.ops : cellValue(c, "hex") || ""))
+		.join(" ");
 
-    if (asm) {
-        const boostJob = BoostPowJob.fromASM(
-            asm,
-            tx.tx.h,
-            out.i,
-            out.e.v
-        ).toObject()
+	if (asm) {
+		const boostJob = BoostPowJob.fromASM(
+			asm,
+			tx.tx.h,
+			out.i,
+			out.e.v,
+		).toObject();
 
-        saveProtocolData(dataObj, 'BOOST', boostJob)
-    }
-}
+		saveProtocolData(dataObj, "BOOST", boostJob);
+	}
+};
 
 export const BOOST: Protocol = {
-    name: 'BOOST',
-    handler,
-    address: protocolIdentifier,
-    scriptChecker,
-}
+	name: "BOOST",
+	handler,
+	address: protocolIdentifier,
+	scriptChecker,
+};

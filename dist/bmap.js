@@ -4,13 +4,15 @@ var $71XCL$crypto = require("crypto");
 var $71XCL$tsbitcoincore = require("@ts-bitcoin/core");
 var $71XCL$nodefetch = require("node-fetch");
 var $71XCL$moneybuttonpaymailclient = require("@moneybutton/paymail-client");
-var $71XCL$dns = require("dns");
+var $71XCL$nodedns = require("node:dns");
 var $71XCL$boostpow = require("boostpow");
 var $71XCL$msgpackmsgpack = require("@msgpack/msgpack");
+
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -27,21 +29,21 @@ $parcel$export(module.exports, "TransformTx", () => $0bef5cd148f6f4f7$export$b2a
 
 const $caee5781971edf71$export$f6e922e536d8305c = (arr)=>{
     return arr.length > 0 && arr.every((value)=>{
-        return typeof value === "string";
+        return typeof value === 'string';
     });
 };
 const $caee5781971edf71$export$37b8d83213de0f5f = (arr)=>{
     return arr.length > 0 && arr.every((value)=>{
-        return value === "object";
+        return value === 'object';
     });
 };
 const $caee5781971edf71$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
     if (!pushData) throw new Error(`cannot get cell value of: ${pushData}`);
-    else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
-    else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || (pushData["b"] ? (0, $71XCL$buffer.Buffer).from(pushData.b, "base64").toString("hex") : pushData.lb && (0, $71XCL$buffer.Buffer).from(pushData.lb, "base64").toString("hex")) || "";
-    else if (schemaEncoding === "number") return parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
-    else if (schemaEncoding === "file") return `bitfs://${pushData["f"] ? pushData.f : pushData.lf}`;
-    return (pushData["b"] ? pushData.b : pushData.lb) || "";
+    else if (schemaEncoding === 'string') return pushData['s'] ? pushData.s : pushData.ls || '';
+    else if (schemaEncoding === 'hex') return pushData['h'] ? pushData.h : pushData.lh || (pushData['b'] ? (0, $71XCL$buffer.Buffer).from(pushData.b, 'base64').toString('hex') : pushData.lb && (0, $71XCL$buffer.Buffer).from(pushData.lb, 'base64').toString('hex')) || '';
+    else if (schemaEncoding === 'number') return parseInt(pushData['h'] ? pushData.h : pushData.lh || '0', 16);
+    else if (schemaEncoding === 'file') return `bitfs://${pushData['f'] ? pushData.f : pushData.lf}`;
+    return (pushData['b'] ? pushData.b : pushData.lb) || '';
 };
 const $caee5781971edf71$export$429a4e8902c23802 = (cc)=>{
     return cc.cell.some((c)=>c.op === 106);
@@ -73,13 +75,13 @@ const $caee5781971edf71$export$ee2a8bbe689a8ef5 = function(protocolName, opRetur
     $caee5781971edf71$export$23dbc584560299c3(dataObj, protocolName, obj);
 };
 const $caee5781971edf71$export$ca4d6504ca148ae4 = function(data) {
-    const regex = "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?";
-    return new RegExp(`^${regex}$`, "gi").test(data);
+    const regex = '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?';
+    return new RegExp(`^${regex}$`, 'gi').test(data);
 };
 const $caee5781971edf71$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
     let hash;
     if ((0, ($parcel$interopDefault($71XCL$crypto))).subtle) {
-        hash = await (0, ($parcel$interopDefault($71XCL$crypto))).subtle.digest("SHA-256", msgBuffer);
+        hash = await (0, ($parcel$interopDefault($71XCL$crypto))).subtle.digest('SHA-256', msgBuffer);
         return (0, $71XCL$buffer.Buffer).from(hash);
     }
     // }
@@ -108,15 +110,15 @@ const $370fc9f1fb64c5cc$var$scriptChecker = (cell)=>{
     // protocol identifier always in first pushdata
     return ops.join() === $370fc9f1fb64c5cc$var$_21e8Script.join();
 };
-const $370fc9f1fb64c5cc$var$handler = ({ dataObj: dataObj , cell: cell , out: out  })=>{
-    if (!cell[0] || !out) throw new Error(`Invalid 21e8 tx. dataObj, cell, out and tx are required.`);
+const $370fc9f1fb64c5cc$var$handler = ({ dataObj: dataObj, cell: cell, out: out })=>{
+    if (!cell[0] || !out) throw new Error("Invalid 21e8 tx. dataObj, cell, out and tx are required.");
     // assemble asm
     // make sure first piece matches a txid
     // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
     // next
     const txid = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[0], "hex");
     const target = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[1], "hex");
-    if (!target) throw new Error(`Invalid 21e8 target.` + JSON.stringify(cell[0], null, 2));
+    if (!target) throw new Error(`Invalid 21e8 target. ${JSON.stringify(cell[0], null, 2)}`);
     const difficulty = Buffer.from(target, "hex").byteLength;
     const _21e8Obj = {
         target: target,
@@ -154,7 +156,7 @@ const $9d2ad5acc773d924$var$opReturnSchema = [
         }
     ]
 ];
-const $9d2ad5acc773d924$var$getFileBuffer = async function(bitfsRef) {
+const $9d2ad5acc773d924$var$getFileBuffer = async (bitfsRef)=>{
     let fileBuffer = (0, $71XCL$buffer.Buffer).from("");
     try {
         const result = await (0, ($parcel$interopDefault($71XCL$nodefetch)))(`https://x.bitfs.network/${bitfsRef}`, {});
@@ -164,7 +166,7 @@ const $9d2ad5acc773d924$var$getFileBuffer = async function(bitfsRef) {
     }
     return fileBuffer;
 };
-const $9d2ad5acc773d924$var$validateSignature = async function(aipObj, cell, tape) {
+const $9d2ad5acc773d924$var$validateSignature = async (aipObj, cell, tape)=>{
     if (!Array.isArray(tape) || tape.length < 3) throw new Error("AIP requires at least 3 cells including the prefix");
     let cellIndex = -1;
     tape.forEach((cc, index)=>{
@@ -174,8 +176,7 @@ const $9d2ad5acc773d924$var$validateSignature = async function(aipObj, cell, tap
     let usingIndexes = aipObj.index || [];
     const signatureValues = [
         "6a"
-    ] // OP_RETURN - is included in AIP
-    ;
+    ]; // OP_RETURN - is included in AIP
     for(let i = 0; i < cellIndex; i++){
         const cellContainer = tape[i];
         if (!(0, $caee5781971edf71$export$429a4e8902c23802)(cellContainer)) {
@@ -191,8 +192,7 @@ const $9d2ad5acc773d924$var$validateSignature = async function(aipObj, cell, tap
                 signatureValues.push((0, $71XCL$buffer.Buffer).from(statement.b, "base64").toString("hex"));
                 else if (statement.s) signatureValues.push((0, $71XCL$buffer.Buffer).from(statement.s).toString("hex"));
             }
-            signatureValues.push("7c") // | hex
-            ;
+            signatureValues.push("7c"); // | hex
         }
     }
     if (aipObj.hashing_algorithm) // when using HAIP, we need to parse the indexes in a non standard way
@@ -208,13 +208,9 @@ const $9d2ad5acc773d924$var$validateSignature = async function(aipObj, cell, tap
     }
     const signatureBufferStatements = [];
     // check whether we need to only sign some indexes
-    if (usingIndexes.length > 0) usingIndexes.forEach((index)=>{
-        signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(signatureValues[index], "hex"));
-    });
+    if (usingIndexes.length > 0) for (const index of usingIndexes)signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(signatureValues[index], "hex"));
     else // add all the values to the signature buffer
-    signatureValues.forEach((statement)=>{
-        signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(statement, "hex"));
-    });
+    for (const statement of signatureValues)signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(statement, "hex"));
     let messageBuffer;
     if (aipObj.hashing_algorithm) {
         // this is actually Hashed-AIP (HAIP) and works a bit differently
@@ -255,29 +251,29 @@ const $9d2ad5acc773d924$var$validateSignature = async function(aipObj, cell, tap
     }
     return aipObj.verified || false;
 };
-let $9d2ad5acc773d924$export$6c117c038f18b127;
-(function(SIGPROTO) {
+var $9d2ad5acc773d924$export$6c117c038f18b127 = /*#__PURE__*/ function(SIGPROTO) {
     SIGPROTO["HAIP"] = "HAIP";
     SIGPROTO["AIP"] = "AIP";
     SIGPROTO["BITCOM_HASHED"] = "BITCOM_HASHED";
     SIGPROTO["PSP"] = "PSP";
-})($9d2ad5acc773d924$export$6c117c038f18b127 || ($9d2ad5acc773d924$export$6c117c038f18b127 = {}));
-const $9d2ad5acc773d924$export$f0079d0908cdbf96 = async function(useOpReturnSchema, protocol, dataObj, cell, tape, tx) {
+    return SIGPROTO;
+}({});
+const $9d2ad5acc773d924$export$f0079d0908cdbf96 = async (useOpReturnSchema, protocol, dataObj, cell, tape, tx)=>{
     // loop over the schema
     const aipObj = {};
     // Does not have the required number of fields
-    if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix " + tx);
+    if (cell.length < 4) throw new Error(`AIP requires at least 4 fields including the prefix ${tx}`);
     for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         let schemaEncoding;
         let aipField;
-        if (schemaField instanceof Array) {
+        if (Array.isArray(schemaField)) {
             // signature indexes are specified
             schemaEncoding = schemaField[0].index;
             [aipField] = Object.keys(schemaField[0]);
             // run through the rest of the fields in this cell, should be de indexes
             const fieldData = [];
-            for(let i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(parseInt(cell[i].h || "", 16));
+            for(let i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(Number.parseInt(cell[i].h || "", 16));
             aipObj[aipField] = fieldData;
             continue;
         } else {
@@ -291,11 +287,11 @@ const $9d2ad5acc773d924$export$f0079d0908cdbf96 = async function(useOpReturnSche
     // the signature will not be verified. When the signature is added in binary cell[3].s is
     // binary, otherwise cell[3].s contains the base64 signature and should be used.
     if (cell[0].s === $9d2ad5acc773d924$var$address && cell[3].s && (0, $caee5781971edf71$export$ca4d6504ca148ae4)(cell[3].s)) aipObj.signature = cell[3].s;
-    if (!aipObj.signature) throw new Error("AIP requires a signature " + tx);
+    if (!aipObj.signature) throw new Error(`AIP requires a signature ${tx}`);
     await $9d2ad5acc773d924$var$validateSignature(aipObj, cell, tape);
     (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocol, aipObj);
 };
-const $9d2ad5acc773d924$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+const $9d2ad5acc773d924$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
     if (!tape) throw new Error("Invalid AIP transaction. tape is required");
     if (!tx) throw new Error("Invalid AIP transaction. tx is required");
     return await $9d2ad5acc773d924$export$f0079d0908cdbf96($9d2ad5acc773d924$var$opReturnSchema, "AIP", dataObj, cell, tape, tx);
@@ -328,13 +324,11 @@ const $c5a475aecaa24150$var$opReturnSchema = [
         filename: "string"
     }
 ];
-const $c5a475aecaa24150$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $c5a475aecaa24150$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
     const encodingMap = new Map();
     encodingMap.set("utf8", "string");
-    encodingMap.set("text", "string") // invalid but people use it :(
-    ;
-    encodingMap.set("gzip", "binary") // invalid but people use it :(
-    ;
+    encodingMap.set("text", "string"); // invalid but people use it :(
+    encodingMap.set("gzip", "binary"); // invalid but people use it :(
     encodingMap.set("text/plain", "string");
     encodingMap.set("image/png", "binary");
     encodingMap.set("image/jpeg", "binary");
@@ -345,7 +339,7 @@ const $c5a475aecaa24150$var$handler = function({ dataObj: dataObj , cell: cell ,
     const bObj = {};
     // loop over the schema
     for (const [idx, schemaField] of Object.entries($c5a475aecaa24150$var$opReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         const bField = Object.keys(schemaField)[0];
         let schemaEncoding = Object.values(schemaField)[0];
         if (bField === "content") {
@@ -367,14 +361,14 @@ const $c5a475aecaa24150$var$handler = function({ dataObj: dataObj , cell: cell ,
                     ii: 0
                 };
                 cell[3].s = schemaEncoding === "string" ? "utf-8" : "binary";
-            } else schemaEncoding = cell[3] && cell[3].s ? encodingMap.get(cell[3].s.replace("-", "").toLowerCase()) : null;
+            } else schemaEncoding = cell[3]?.s ? encodingMap.get(cell[3].s.replace("-", "").toLowerCase()) : null;
         }
         // encoding is not required
         if (bField === "encoding" && !cell[x + 1]) continue;
         // filename is not required
         if (bField === "filename" && !cell[x + 1]) continue;
         // check for malformed syntax
-        if (!cell || !cell[x + 1]) throw new Error("malformed B syntax " + cell);
+        if (!cell || !cell[x + 1]) throw new Error(`malformed B syntax ${cell}`);
         // set field value from either s, b, ls, or lb depending on encoding and availability
         const data = cell[x + 1];
         bObj[bField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(data, schemaEncoding);
@@ -402,8 +396,8 @@ const $2519a10c9a0ebef2$var$opReturnSchema = [
         sequence: "string"
     }
 ];
-const $2519a10c9a0ebef2$export$c3c52e219617878 = ({ dataObj: dataObj , cell: cell , tx: tx  })=>{
-    if (!tx) throw new Error(`Invalid BAP tx, tx required`);
+const $2519a10c9a0ebef2$export$c3c52e219617878 = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
+    if (!tx) throw new Error("Invalid BAP tx, tx required");
     (0, $caee5781971edf71$export$ee2a8bbe689a8ef5)("BAP", $2519a10c9a0ebef2$var$opReturnSchema, dataObj, cell, tx);
 };
 const $2519a10c9a0ebef2$export$5935ea4bf04c4453 = {
@@ -472,10 +466,10 @@ const $44221962b60306bc$var$opReturnSchema = [
     }
 ];
 // const handler = function (dataObj, protocolName, cell, tape, tx) {
-const $44221962b60306bc$var$handler = ({ dataObj: dataObj , cell: cell  })=>{
+const $44221962b60306bc$var$handler = ({ dataObj: dataObj, cell: cell })=>{
     if (!cell.length || !cell.every((c)=>c.s)) throw new Error("Invalid Bitcom tx");
     // gather up the string values
-    const bitcomObj = cell.map((c)=>c && c.s ? c.s : "");
+    const bitcomObj = cell.map((c)=>c?.s ? c.s : "");
     (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "BITCOM", bitcomObj);
 };
 const $44221962b60306bc$export$c19e3a57d69468ea = {
@@ -493,17 +487,15 @@ const $44221962b60306bc$export$c19e3a57d69468ea = {
 
 
 
-
-const $9eb49630ba8b5c69$export$fe8725667d42151 = async function(paymail, publicKey) {
+const $9eb49630ba8b5c69$export$fe8725667d42151 = async (paymail, publicKey)=>{
     if (typeof window !== "undefined") {
         // Paymail client will use BrowserDns if dns is null here
         // and isomorphic-fetch if fetch is null
         const client = new (0, $71XCL$moneybuttonpaymailclient.PaymailClient)();
         return client.verifyPubkeyOwner(publicKey, paymail);
-    } else {
-        const client = new (0, $71XCL$moneybuttonpaymailclient.PaymailClient)((0, ($parcel$interopDefault($71XCL$dns))), (0, ($parcel$interopDefault($71XCL$nodefetch))));
-        return client.verifyPubkeyOwner(publicKey, paymail);
     }
+    const client = new (0, $71XCL$moneybuttonpaymailclient.PaymailClient)((0, ($parcel$interopDefault($71XCL$nodedns))), (0, ($parcel$interopDefault($71XCL$nodefetch))));
+    return client.verifyPubkeyOwner(publicKey, paymail);
 };
 
 
@@ -532,15 +524,14 @@ const $9ebb5cb5323e8959$var$validateSignature = (pspObj, cell, tape)=>{
     for(let i = 0; i < cellIndex; i++){
         const cellContainer = tape[i];
         if (!(0, $caee5781971edf71$export$429a4e8902c23802)(cellContainer)) {
-            cellContainer.cell.forEach((statement)=>{
+            for (const statement of cellContainer.cell){
                 // add the value as hex
                 let value = statement.h;
                 if (!value) value = (0, $71XCL$buffer.Buffer).from(statement.b, "base64").toString("hex");
                 if (!value) value = (0, $71XCL$buffer.Buffer).from(statement.s).toString("hex");
                 signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(value, "hex"));
-            });
-            signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from("7c", "hex")) // | hex ????
-            ;
+            }
+            signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from("7c", "hex")); // | hex ????
         }
     }
     const dataScript = (0, $71XCL$tsbitcoincore.Script).fromSafeDataArray(signatureBufferStatements);
@@ -555,10 +546,10 @@ const $9ebb5cb5323e8959$var$validateSignature = (pspObj, cell, tape)=>{
     }
     return pspObj.verified;
 };
-const $9ebb5cb5323e8959$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
+const $9ebb5cb5323e8959$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape })=>{
     // Paymail Signature Protocol
     // Validation
-    if (!cell.length || cell[0].s !== $9ebb5cb5323e8959$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error(`Invalid Paymail Signature Protocol record`);
+    if (!cell.length || cell[0].s !== $9ebb5cb5323e8959$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error("Invalid Paymail Signature Protocol record");
     return await $9ebb5cb5323e8959$export$c3c3eee1546d651a($9ebb5cb5323e8959$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).PSP, dataObj, cell, tape);
 };
 const $9ebb5cb5323e8959$export$c3c3eee1546d651a = async (useOpReturnSchema, protocol, dataObj, cell, tape)=>{
@@ -567,21 +558,23 @@ const $9ebb5cb5323e8959$export$c3c3eee1546d651a = async (useOpReturnSchema, prot
         verified: false
     };
     // Does not have the required number of fields
-    if (cell.length < 4) throw new Error("PSP requires at least 4 fields including the prefix " + cell);
+    if (cell.length < 4) throw new Error(`PSP requires at least 4 fields including the prefix ${cell}`);
     for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         const [pspField] = Object.keys(schemaField);
         const [schemaEncoding] = Object.values(schemaField);
         pspObj[pspField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
     }
-    if (!pspObj.signature) throw new Error("PSP requires a signature " + cell);
+    if (!pspObj.signature) throw new Error(`PSP requires a signature ${cell}`);
     //  TODO: we can only check on PSP until we figure out the BITCOM_HASHED fields
     //  verify signature
-    if (protocol === (0, $9d2ad5acc773d924$export$6c117c038f18b127).PSP && !$9ebb5cb5323e8959$var$validateSignature(pspObj, cell, tape)) throw new Error("PSP requires a valid signature " + pspObj);
+    if (protocol === (0, $9d2ad5acc773d924$export$6c117c038f18b127).PSP && !$9ebb5cb5323e8959$var$validateSignature(pspObj, cell, tape)) throw new Error(`PSP requires a valid signature ${pspObj}`);
     // check the paymail public key
-    if (pspObj.pubkey && pspObj.paymail) {
+    if (pspObj.pubkey && pspObj.paymail) try {
         const paymailPublicKeyVerified = await (0, $9eb49630ba8b5c69$export$fe8725667d42151)(pspObj.paymail, pspObj.pubkey);
         pspObj.verified = pspObj.verified && paymailPublicKeyVerified;
+    } catch  {
+        pspObj.verified = false;
     }
     (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocol, pspObj);
 };
@@ -611,8 +604,8 @@ const $d3ca5ef73768d058$var$opReturnSchema = [
         paymail: "string"
     }
 ];
-const $d3ca5ef73768d058$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
-    if (!tape) throw new Error(`Invalid BITCOM_HASHED tx. Bad tape`);
+const $d3ca5ef73768d058$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape })=>{
+    if (!tape) throw new Error("Invalid BITCOM_HASHED tx. Bad tape");
     return await (0, $9ebb5cb5323e8959$export$c3c3eee1546d651a)($d3ca5ef73768d058$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
 };
 const $d3ca5ef73768d058$export$f069e857381ef4b9 = {
@@ -643,12 +636,12 @@ const $d53bca867b0d5879$var$opReturnSchema = [
 ];
 // const handler = function (dataObj, cell, tape, tx) {
 // https://bitkey.network/how
-const $d53bca867b0d5879$var$handler = async ({ dataObj: dataObj , cell: cell  })=>{
+const $d53bca867b0d5879$var$handler = async ({ dataObj: dataObj, cell: cell })=>{
     if (!cell.length) throw new Error("Invalid Bitkey tx");
     const bitkeyObj = {};
     // loop over the schema
     for (const [idx, schemaField] of Object.entries($d53bca867b0d5879$var$opReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         const bitkeyField = Object.keys(schemaField)[0];
         const schemaEncoding = Object.values(schemaField)[0];
         bitkeyObj[bitkeyField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
@@ -687,7 +680,7 @@ const $7d567cbd150e6a61$var$opReturnSchema = [
         signature: "string"
     }
 ];
-const $7d567cbd150e6a61$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+const $7d567cbd150e6a61$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
     // Validation
     if (cell[0].s !== $7d567cbd150e6a61$var$protocolAddress || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].s || !tape) throw new Error(`Invalid BITPIC record: ${tx}`);
     const bitpicObj = {
@@ -750,8 +743,8 @@ const $8a284ac28b245560$var$protocolIdentifier = "boostpow";
     // protocol identifier always in first pushdata
     return cell[0].s === $8a284ac28b245560$var$protocolIdentifier;
 };
-const $8a284ac28b245560$var$handler = ({ dataObj: dataObj , cell: cell , out: out , tx: tx  })=>{
-    if (!tx || !cell[0] || !out) throw new Error(`Invalid BOOST tx. dataObj, cell, out and tx are required.`);
+const $8a284ac28b245560$var$handler = ({ dataObj: dataObj, cell: cell, out: out, tx: tx })=>{
+    if (!tx || !cell[0] || !out) throw new Error("Invalid BOOST tx. dataObj, cell, out and tx are required.");
     // build ASM from either op codes and script chunks
     const asm = cell.map((c)=>c.ops ? c.ops : (0, $caee5781971edf71$export$b691916706e0e9cc)(c, "hex") || "").join(" ");
     if (asm) {
@@ -792,9 +785,9 @@ const $969c5b61dd3c02f1$var$opReturnSchema = [
     ]
 ];
 // https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
-const $969c5b61dd3c02f1$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
-    if (!tape) throw new Error(`Invalid HAIP tx. Bad tape`);
-    if (!tx) throw new Error(`Invalid HAIP tx.`);
+const $969c5b61dd3c02f1$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
+    if (!tape) throw new Error("Invalid HAIP tx. Bad tape");
+    if (!tx) throw new Error("Invalid HAIP tx.");
     return await (0, $9d2ad5acc773d924$export$f0079d0908cdbf96)($969c5b61dd3c02f1$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).HAIP, dataObj, cell, tape, tx);
 };
 const $969c5b61dd3c02f1$export$12815d889fe90b8 = {
@@ -863,7 +856,7 @@ const $f735e67f61f64b89$var$opReturnSchema = [
         }
     }
 ];
-const $f735e67f61f64b89$var$processADD = function(cell, mapObj) {
+const $f735e67f61f64b89$var$processADD = (cell, mapObj)=>{
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -876,7 +869,7 @@ const $f735e67f61f64b89$var$processADD = function(cell, mapObj) {
         } else if (last && Array.isArray(mapObj[last])) mapObj[last].push(pushdata);
     }
 };
-const $f735e67f61f64b89$var$proccessDELETE = function(cell, mapObj) {
+const $f735e67f61f64b89$var$proccessDELETE = (cell, mapObj)=>{
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -889,7 +882,7 @@ const $f735e67f61f64b89$var$proccessDELETE = function(cell, mapObj) {
         } else if (last) mapObj[last].push(pushdata);
     }
 };
-const $f735e67f61f64b89$var$processSELECT = function(cell, mapObj) {
+const $f735e67f61f64b89$var$processSELECT = (cell, mapObj)=>{
     // TODO
     // console.log('MAP SELECT');
     for (const pushdataContainer of cell)// ignore MAP command
@@ -898,7 +891,7 @@ const $f735e67f61f64b89$var$processSELECT = function(cell, mapObj) {
         continue;
     }
 };
-const $f735e67f61f64b89$var$processMSGPACK = function(cell, mapObj) {
+const $f735e67f61f64b89$var$processMSGPACK = (cell, mapObj)=>{
     for (const pushdataContainer of cell){
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
@@ -912,7 +905,7 @@ const $f735e67f61f64b89$var$processMSGPACK = function(cell, mapObj) {
     }
     return mapObj;
 };
-const $f735e67f61f64b89$var$processJSON = function(cell, mapObj) {
+const $f735e67f61f64b89$var$processJSON = (cell, mapObj)=>{
     for (const pushdataContainer of cell){
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
@@ -924,7 +917,7 @@ const $f735e67f61f64b89$var$processJSON = function(cell, mapObj) {
     }
     return mapObj;
 };
-const $f735e67f61f64b89$var$processSET = function(cell, mapObj) {
+const $f735e67f61f64b89$var$processSET = (cell, mapObj)=>{
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -941,7 +934,7 @@ const $f735e67f61f64b89$var$processSET = function(cell, mapObj) {
         }
     }
 };
-const $f735e67f61f64b89$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $f735e67f61f64b89$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
     // Validate
     if (cell[0].s !== $f735e67f61f64b89$var$address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) throw new Error(`Invalid MAP record: ${tx}`);
     let mapObj = {};
@@ -958,7 +951,7 @@ const $f735e67f61f64b89$var$handler = function({ dataObj: dataObj , cell: cell ,
     const mapCmdKey = Object.keys($f735e67f61f64b89$var$opReturnSchema[0])[0];
     // Add the firt MAP command in the response object
     mapObj[mapCmdKey] = commands[0][0].s;
-    commands.forEach((cc)=>{
+    for (const cc of commands){
         // re-add the MAP address
         cc.unshift({
             s: $f735e67f61f64b89$var$address,
@@ -993,7 +986,7 @@ const $f735e67f61f64b89$var$handler = function({ dataObj: dataObj , cell: cell ,
                 break;
             default:
         }
-    });
+    }
     (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "MAP", mapObj);
 };
 const $f735e67f61f64b89$export$ce970371e0e850bc = {
@@ -1018,14 +1011,14 @@ const $23bc52f6d80ffa0b$var$opReturnSchema = [
         name: "string"
     }
 ];
-const $23bc52f6d80ffa0b$export$3eb18141230d6532 = async function(a, tx) {
+const $23bc52f6d80ffa0b$export$3eb18141230d6532 = async (a, tx)=>{
     // Calculate the node ID
     const buf = (0, $71XCL$buffer.Buffer).from(a + tx);
     const hashBuf = await (0, $caee5781971edf71$export$bced8d2aada2d1c9)(buf);
     return hashBuf.toString("hex");
 };
-const $23bc52f6d80ffa0b$var$handler = async ({ dataObj: dataObj , cell: cell , tx: tx  })=>{
-    if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error("Invalid Metanet tx " + tx);
+const $23bc52f6d80ffa0b$var$handler = async ({ dataObj: dataObj, cell: cell, tx: tx })=>{
+    if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error(`Invalid Metanet tx ${tx}`);
     // For now, we just copy from MOM keys later if available, or keep BOB format
     const nodeId = await $23bc52f6d80ffa0b$export$3eb18141230d6532(cell[1].s, tx.tx.h);
     // Described this node
@@ -1073,8 +1066,8 @@ const $cf02eb2496a3bc72$var$scriptChecker = (cell)=>{
     const prevCell = cell[startIdx - 1];
     return prevCell?.op === 0 && !!ordScript[0] && !!ordScript[1] && ordScript[1].s == "ord";
 };
-const $cf02eb2496a3bc72$var$handler = ({ dataObj: dataObj , cell: cell , out: out  })=>{
-    if (!cell[0] || !out) throw new Error(`Invalid Ord tx. dataObj, cell, out and tx are required.`);
+const $cf02eb2496a3bc72$var$handler = ({ dataObj: dataObj, cell: cell, out: out })=>{
+    if (!cell[0] || !out) throw new Error("Invalid Ord tx. dataObj, cell, out and tx are required.");
     // assemble asm
     // make sure first piece matches a txid
     // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
@@ -1083,7 +1076,7 @@ const $cf02eb2496a3bc72$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
     const startIdx = $cf02eb2496a3bc72$var$findIndex(cell, (c)=>c.ops === "OP_IF");
     const endIdx = $cf02eb2496a3bc72$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF") + 1;
     const ordScript = cell.slice(startIdx, endIdx);
-    if (!ordScript[0] || !ordScript[1] || ordScript[1].s != "ord") throw new Error(`Invalid Ord tx. Prefix not found.`);
+    if (!ordScript[0] || !ordScript[1] || ordScript[1].s !== "ord") throw new Error("Invalid Ord tx. Prefix not found.");
     let data;
     let contentType;
     ordScript.forEach((push, idx, all)=>{
@@ -1092,8 +1085,8 @@ const $cf02eb2496a3bc72$var$handler = ({ dataObj: dataObj , cell: cell , out: ou
         // data
         if (push.ops === "OP_0") data = all[idx + 1].b;
     });
-    if (!data) throw new Error(`Invalid Ord data.`);
-    if (!contentType) throw new Error(`Invalid Ord content type.`);
+    if (!data) throw new Error("Invalid Ord data.");
+    if (!contentType) throw new Error("Invalid Ord content type.");
     const OrdObj = {
         data: data,
         contentType: contentType
@@ -1119,7 +1112,7 @@ function $cf02eb2496a3bc72$var$findLastIndex(array, predicate, fromIndex) {
     return $cf02eb2496a3bc72$var$baseFindIndex(array, predicate, index, true);
 }
 function $cf02eb2496a3bc72$var$baseFindIndex(array, predicate, fromIndex, fromRight) {
-    const { length: length  } = array;
+    const { length: length } = array;
     let index = fromIndex + (fromRight ? 1 : -1);
     while(fromRight ? index-- : ++index < length){
         if (predicate(array[index], index, array)) return index;
@@ -1142,7 +1135,7 @@ const $6c2cab82920c5ead$var$opReturnSchema = [
         timestamp: "string"
     }
 ];
-const $6c2cab82920c5ead$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $6c2cab82920c5ead$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
     if (cell[0].s !== $6c2cab82920c5ead$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) throw new Error(`Invalid RON record ${tx?.tx.h}`);
     const pair = JSON.parse(cell[1].s);
     const timestamp = Number(cell[3].s);
@@ -1167,7 +1160,7 @@ const $49d2b3729450186e$var$opReturnSchema = [
         url: "string"
     }
 ];
-const $49d2b3729450186e$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $49d2b3729450186e$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
     if (cell[0].s !== $49d2b3729450186e$var$address || !cell[1] || !cell[1].s) throw new Error(`Invalid SymRe tx: ${tx}`);
     (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "SYMRE", {
         url: cell[1].s
@@ -1217,145 +1210,145 @@ const $0bef5cd148f6f4f7$export$4f34a1c822988d11 = [
     (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68)
 ];
 // prepare protocol map, handlers and schemas
-$0bef5cd148f6f4f7$export$4f34a1c822988d11.forEach((protocol)=>{
+for (const protocol of $0bef5cd148f6f4f7$export$4f34a1c822988d11){
     if (protocol.address) $0bef5cd148f6f4f7$var$enabledProtocols.set(protocol.address, protocol.name);
     $0bef5cd148f6f4f7$var$protocolHandlers.set(protocol.name, protocol.handler);
     if (protocol.opReturnSchema) $0bef5cd148f6f4f7$var$protocolOpReturnSchemas.set(protocol.name, protocol.opReturnSchema);
     if (protocol.scriptChecker) $0bef5cd148f6f4f7$var$protocolScriptCheckers.set(protocol.name, protocol.scriptChecker);
-});
+}
 class $0bef5cd148f6f4f7$export$894a720e71f90b3c {
     constructor(){
+        this.transformTx = async (tx)=>{
+            if (!tx || !tx.in || !tx.out) throw new Error("Cannot process tx");
+            // This will become our nicely formatted response object
+            let dataObj = {};
+            for (const [key, val] of Object.entries(tx)){
+                if (key === "out") // loop over the outputs
+                for (const out of tx.out){
+                    const { tape: tape } = out;
+                    // Process opReturn data
+                    if (tape?.some((cc)=>(0, $caee5781971edf71$export$429a4e8902c23802)(cc))) dataObj = await this.processDataProtocols(tape, out, tx, dataObj);
+                    // No OP_FALSE OP_RETURN in this tape
+                    const boostChecker = this.protocolScriptCheckers.get((0, $8a284ac28b245560$export$13c3c8ee12090ebc).name);
+                    const _21e8Checker = this.protocolScriptCheckers.get((0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name);
+                    const ordChecker = this.protocolScriptCheckers.get((0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name);
+                    // Check for boostpow, 21e8, and ords
+                    if (tape?.some((cc)=>{
+                        const { cell: cell } = cc;
+                        if (boostChecker?.(cell)) // 'found boost'
+                        return true;
+                        if (_21e8Checker?.(cell)) // 'found 21e8'
+                        return true;
+                        if (ordChecker?.(cell)) // 'found 1sat ordinal'
+                        return true;
+                    })) // find the cell array
+                    // loop over tape
+                    for (const cellContainer of tape){
+                        const { cell: cell } = cellContainer;
+                        // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+                        if (!cell) throw new Error("empty cell while parsing");
+                        let protocolName = "";
+                        if (boostChecker?.(cell)) protocolName = (0, $8a284ac28b245560$export$13c3c8ee12090ebc).name;
+                        else if (_21e8Checker?.(cell)) protocolName = (0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name;
+                        else if (ordChecker?.(cell)) protocolName = (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name;
+                        else continue;
+                        this.process(protocolName, {
+                            tx: tx,
+                            cell: cell,
+                            dataObj: dataObj,
+                            tape: tape,
+                            out: out
+                        });
+                    }
+                }
+                else if (key === "in") // TODO: Boost check inputs to see if this is a tx solving a puzzle
+                // TODO: 21e8 check inputs to see if this is a tx solving a puzzle
+                dataObj[key] = val.map((v)=>{
+                    const r = {
+                        ...v
+                    };
+                    delete r.tape;
+                    return r;
+                });
+                else // known key, just write it retaining original type
+                dataObj[key] = val;
+            }
+            // If this is a MOM planaria it will have metanet keys available
+            if (dataObj.METANET && tx.parent) {
+                const meta = {
+                    ancestor: tx.ancestor,
+                    parent: tx.parent,
+                    child: tx.child,
+                    head: tx.head
+                };
+                dataObj.METANET.push(meta);
+                // remove parent and node from root level for (MOM data)
+                delete dataObj.ancestor;
+                delete dataObj.child;
+                delete dataObj.parent;
+                delete dataObj.head;
+                delete dataObj.node;
+            }
+            return dataObj;
+        };
+        this.processUnknown = (key, dataObj, out)=>{
+            // no known non-OP_RETURN scripts
+            if (key && !dataObj[key]) dataObj[key] = [];
+            dataObj[key].push({
+                i: out.i,
+                e: out.e,
+                tape: []
+            });
+        };
+        this.process = async (protocolName, { cell: cell, dataObj: dataObj, tape: tape, out: out, tx: tx })=>{
+            if (this.protocolHandlers.has(protocolName) && typeof this.protocolHandlers.get(protocolName) === "function") {
+                const handler = this.protocolHandlers.get(protocolName);
+                if (handler) /* eslint-disable no-await-in-loop */ await handler({
+                    dataObj: dataObj,
+                    cell: cell,
+                    tape: tape,
+                    out: out,
+                    tx: tx
+                });
+            } else (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocolName, cell);
+        };
+        this.processDataProtocols = async (tape, out, tx, dataObj)=>{
+            // loop over tape
+            for (const cellContainer of tape){
+                const { cell: cell } = cellContainer;
+                if (!cell) throw new Error("empty cell while parsing");
+                // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+                if ((0, $caee5781971edf71$export$238b4e54af8fe886)(cellContainer)) continue;
+                const prefix = cell[0].s;
+                if (prefix) {
+                    const bitcomProtocol = this.enabledProtocols.get(prefix) || $0bef5cd148f6f4f7$export$4f34a1c822988d11.filter((p)=>p.name === prefix)[0]?.name;
+                    if (bitcomProtocol) await this.process(bitcomProtocol, {
+                        cell: cell,
+                        dataObj: dataObj,
+                        tape: tape,
+                        out: out,
+                        tx: tx
+                    });
+                    else this.processUnknown(prefix, dataObj, out);
+                }
+            }
+            return dataObj;
+        };
         // initial default protocol handlers in this instantiation
         this.enabledProtocols = $0bef5cd148f6f4f7$var$enabledProtocols;
         this.protocolHandlers = $0bef5cd148f6f4f7$var$protocolHandlers;
         this.protocolScriptCheckers = $0bef5cd148f6f4f7$var$protocolScriptCheckers;
         this.protocolOpReturnSchemas = $0bef5cd148f6f4f7$var$protocolOpReturnSchemas;
     }
-    addProtocolHandler({ name: name , address: address , opReturnSchema: opReturnSchema , handler: handler , scriptChecker: scriptChecker  }) {
+    addProtocolHandler({ name: name, address: address, opReturnSchema: opReturnSchema, handler: handler, scriptChecker: scriptChecker }) {
         if (address) this.enabledProtocols.set(address, name);
         this.protocolHandlers.set(name, handler);
         if (opReturnSchema) this.protocolOpReturnSchemas.set(name, opReturnSchema);
         if (scriptChecker) this.protocolScriptCheckers.set(name, scriptChecker);
     }
-    transformTx = async (tx)=>{
-        if (!tx || !tx["in"] || !tx["out"]) throw new Error("Cannot process tx");
-        // This will become our nicely formatted response object
-        let dataObj = {};
-        for (const [key, val] of Object.entries(tx)){
-            if (key === "out") // loop over the outputs
-            for (const out of tx.out){
-                const { tape: tape  } = out;
-                // Process opReturn data
-                if (tape?.some((cc)=>(0, $caee5781971edf71$export$429a4e8902c23802)(cc))) dataObj = await this.processDataProtocols(tape, out, tx, dataObj);
-                // No OP_FALSE OP_RETURN in this tape
-                const boostChecker = this.protocolScriptCheckers.get((0, $8a284ac28b245560$export$13c3c8ee12090ebc).name);
-                const _21e8Checker = this.protocolScriptCheckers.get((0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name);
-                const ordChecker = this.protocolScriptCheckers.get((0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name);
-                // Check for boostpow, 21e8, and ords
-                if (tape?.some((cc)=>{
-                    const { cell: cell  } = cc;
-                    if (boostChecker && boostChecker(cell)) // 'found boost'
-                    return true;
-                    if (_21e8Checker && _21e8Checker(cell)) // 'found 21e8'
-                    return true;
-                    if (ordChecker && ordChecker(cell)) // 'found 1sat ordinal'
-                    return true;
-                })) // find the cell array
-                // loop over tape
-                for (const cellContainer of tape){
-                    const { cell: cell  } = cellContainer;
-                    // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                    if (!cell) throw new Error("empty cell while parsing");
-                    let protocolName = "";
-                    if (boostChecker && boostChecker(cell)) protocolName = (0, $8a284ac28b245560$export$13c3c8ee12090ebc).name;
-                    else if (_21e8Checker && _21e8Checker(cell)) protocolName = (0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name;
-                    else if (ordChecker && ordChecker(cell)) protocolName = (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name;
-                    else continue;
-                    this.process(protocolName, {
-                        tx: tx,
-                        cell: cell,
-                        dataObj: dataObj,
-                        tape: tape,
-                        out: out
-                    });
-                }
-            }
-            else if (key === "in") // TODO: Boost check inputs to see if this is a tx solving a puzzle
-            // TODO: 21e8 check inputs to see if this is a tx solving a puzzle
-            dataObj[key] = val.map((v)=>{
-                const r = {
-                    ...v
-                };
-                delete r.tape;
-                return r;
-            });
-            else // known key, just write it retaining original type
-            dataObj[key] = val;
-        }
-        // If this is a MOM planaria it will have metanet keys available
-        if (dataObj["METANET"] && tx.parent) {
-            const meta = {
-                ancestor: tx.ancestor,
-                parent: tx.parent,
-                child: tx.child,
-                head: tx.head
-            };
-            dataObj.METANET.push(meta);
-            // remove parent and node from root level for (MOM data)
-            delete dataObj.ancestor;
-            delete dataObj.child;
-            delete dataObj.parent;
-            delete dataObj.head;
-            delete dataObj.node;
-        }
-        return dataObj;
-    };
-    processUnknown = (key, dataObj, out)=>{
-        // no known non-OP_RETURN scripts
-        if (key && !dataObj[key]) dataObj[key] = [];
-        dataObj[key].push({
-            i: out.i,
-            e: out.e,
-            tape: []
-        });
-    };
-    process = async (protocolName, { cell: cell , dataObj: dataObj , tape: tape , out: out , tx: tx  })=>{
-        if (this.protocolHandlers.has(protocolName) && typeof this.protocolHandlers.get(protocolName) === "function") {
-            const handler = this.protocolHandlers.get(protocolName);
-            if (handler) /* eslint-disable no-await-in-loop */ await handler({
-                dataObj: dataObj,
-                cell: cell,
-                tape: tape,
-                out: out,
-                tx: tx
-            });
-        } else (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocolName, cell);
-    };
-    processDataProtocols = async (tape, out, tx, dataObj)=>{
-        // loop over tape
-        for (const cellContainer of tape){
-            const { cell: cell  } = cellContainer;
-            if (!cell) throw new Error("empty cell while parsing");
-            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-            if ((0, $caee5781971edf71$export$238b4e54af8fe886)(cellContainer)) continue;
-            const prefix = cell[0].s;
-            if (prefix) {
-                const bitcomProtocol = this.enabledProtocols.get(prefix) || $0bef5cd148f6f4f7$export$4f34a1c822988d11.filter((p)=>p.name === prefix)[0]?.name;
-                if (bitcomProtocol) await this.process(bitcomProtocol, {
-                    cell: cell,
-                    dataObj: dataObj,
-                    tape: tape,
-                    out: out,
-                    tx: tx
-                });
-                else this.processUnknown(prefix, dataObj, out);
-            }
-        }
-        return dataObj;
-    };
 }
 const $0bef5cd148f6f4f7$export$54850c299f4a06d8 = async (txid)=>{
-    const url = "https://api.whatsonchain.com/v1/bsv/main/tx/" + txid + "/hex";
+    const url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`;
     console.log("hitting", url);
     const res = await fetch(url);
     return await res.text();
@@ -1392,7 +1385,7 @@ const $0bef5cd148f6f4f7$export$b2a90e318402f6bc = async (tx, protocols)=>{
         // TODO: Double check 146 is intended to be minimum possible byte length for a tx
         const bobTx = await $0bef5cd148f6f4f7$export$2905b0423a229d9(rawTx);
         if (bobTx) tx = bobTx;
-        else throw new Error(`Invalid txid`);
+        else throw new Error("Invalid txid");
     }
     const b = new $0bef5cd148f6f4f7$export$894a720e71f90b3c();
     // if protocols are specified
@@ -1406,7 +1399,7 @@ const $0bef5cd148f6f4f7$export$b2a90e318402f6bc = async (tx, protocols)=>{
             const protocol = p;
             if (protocol) b.addProtocolHandler(protocol);
         }
-        else throw new Error(`Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).`);
+        else throw new Error("Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).");
     }
     return b.transformTx(tx);
 };

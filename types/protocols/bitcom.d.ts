@@ -1,1 +1,1 @@
-export type BITCOM = string[]
+export type BITCOM = string[];

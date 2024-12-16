@@ -1,15 +1,13 @@
 {
-  "extends": "@parcel/config-default",
-  "transformers": {
-    "*.{ts}": [
-      "@parcel/transformer-typescript-tsc"
-    ]
-  },
-  "compressors": {
-    "*.{cjs.map,cjs}": [
-      "...",
-      "@parcel/compressor-gzip",
-      "@parcel/compressor-brotli"
-    ]
-  }
+	"extends": "@parcel/config-default",
+	"transformers": {
+		"*.{ts}": ["@parcel/transformer-typescript-tsc"]
+	},
+	"compressors": {
+		"*.{cjs.map,cjs}": [
+			"...",
+			"@parcel/compressor-gzip",
+			"@parcel/compressor-brotli"
+		]
+	}
 }
