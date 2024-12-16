@@ -505,7 +505,6 @@ on the response object:
 -   [x] BAP
 -   [ ] BCAT
 -   [x] Bitcom
--   [ ] BITCOM-HASHED (Relay Paymail Signatures)
 -   [x] Bitkey
 -   [x] Bitpic
 -   [ ] Bitpic validation
