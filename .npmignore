@@ -3,3 +3,10 @@ functions/
 coverage/
 node_test/
 tests/
+parccel-bundle-reports/
+.parcel-cache/
+.firebase/
+.vscode/
+playground-1.mongodb.js
+prompt.txt
+relevant_code.txt
