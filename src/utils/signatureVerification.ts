@@ -6,7 +6,7 @@ import { cellValue, checkOpReturn, saveProtocolData } from "../utils";
 
 const validateSignature = (signedObj: any, cell: Cell[], tape: Tape[]) => {
 	if (!Array.isArray(tape) || tape.length < 3) {
-		throw new Error("Signature validation requires at least 3 cells including the prefix");
+		throw new Error("PSP requires at least 3 cells including the prefix");
 	}
 
 	let cellIndex = -1;
@@ -16,7 +16,7 @@ const validateSignature = (signedObj: any, cell: Cell[], tape: Tape[]) => {
 		}
 	});
 	if (cellIndex === -1) {
-		throw new Error("Could not find cell in tape");
+		throw new Error("PSP could not find cell in tape");
 	}
 
 	const signatureBufferStatements = [];
@@ -34,7 +34,7 @@ const validateSignature = (signedObj: any, cell: Cell[], tape: Tape[]) => {
 				}
 				signatureBufferStatements.push(Buffer.from(value, "hex"));
 			}
-			signatureBufferStatements.push(Buffer.from("7c", "hex")); // pipe separator
+			signatureBufferStatements.push(Buffer.from("7c", "hex")); // | hex
 		}
 	}
 	const dataScript = Script.fromSafeDataArray(signatureBufferStatements);
@@ -68,33 +68,24 @@ export const signatureHandler = async (
 	};
 
 	// Does not have the required number of fields
-	if (cell.length < opReturnSchema.length + 1) {
+	if (cell.length < 4) {
 		throw new Error(
-			`Requires at least ${opReturnSchema.length + 1} fields including the prefix`,
+			`PSP requires at least 4 fields including the prefix ${cell}`,
 		);
 	}
 
-	// loop over schema
 	for (const [idx, schemaField] of Object.entries(opReturnSchema)) {
 		const x = Number.parseInt(idx, 10);
-		const key = Object.keys(schemaField)[0];
-		const type = schemaField[key];
-
-		// get the cell value
-		const val = cellValue(cell[x + 1], type);
-		if (val) {
-			obj[key] = val;
-		}
+		const [pspField] = Object.keys(schemaField);
+		const [schemaEncoding] = Object.values(schemaField) as string[];
+		(obj as any)[pspField] = cellValue(cell[x + 1], schemaEncoding);
 	}
 
 	if (!obj.signature) {
-		throw new Error(`Requires a signature`);
+		throw new Error(`PSP requires a signature ${cell}`);
 	}
 
-	// verify signature if we have all required fields
-	if (obj.signature && obj.pubkey && tape) {
-		validateSignature(obj, cell, tape);
-	}
+	validateSignature(obj, cell, tape);
 
 	saveProtocolData(dataObj, protocolName, obj);
 }; 

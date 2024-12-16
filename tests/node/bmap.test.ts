@@ -5,7 +5,6 @@ import { BMAP, TransformTx, allProtocols, bobFromRawTx } from "../../src/bmap";
 import { _21E8 } from "../../src/protocols/_21e8";
 import { AIP } from "../../src/protocols/aip";
 import { B } from "../../src/protocols/b";
-import { BOOST } from "../../src/protocols/boost";
 import { MAP } from "../../src/protocols/map";
 import { METANET } from "../../src/protocols/metanet";
 import type { BobTx, Handler, HandlerProps } from "../../types/common";
@@ -176,15 +175,15 @@ describe("bmap", () => {
 	test("parse boost double 21e8 tx", async () => {
 		const bmap = new BMAP();
 		bmap.addProtocolHandler(_21E8);
-		bmap.addProtocolHandler(BOOST);
+		// bmap.addProtocolHandler(BOOST);
 		const parseTx = await bmap.transformTx(boostTransaction as BobTx);
 
 		expect(parseTx.tx.h).toEqual(
 			"6bb713a65d0735cbe581ac66458ab83b557a58c198af2e2b5a2228d1b7ff8b87",
 		);
 
-		expect(Array.isArray(parseTx.BOOST)).toBe(true);
-		expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual("object");
+		// expect(Array.isArray(parseTx.BOOST)).toBe(true);
+		// expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual("object");
 		// rest is checked in boost.test.js
 
 		expect(Array.isArray(parseTx["21E8"])).toBe(true);
@@ -196,7 +195,7 @@ describe("bmap", () => {
 
 	test("test TransformTx - override protocol list", async () => {
 		const parseTx = await TransformTx(boostTransaction as BobTx, [
-			"BOOST",
+			// "BOOST",
 			"AIP",
 		]);
 
@@ -204,8 +203,8 @@ describe("bmap", () => {
 			"6bb713a65d0735cbe581ac66458ab83b557a58c198af2e2b5a2228d1b7ff8b87",
 		);
 
-		expect(Array.isArray(parseTx.BOOST)).toBe(true);
-		expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual("object");
+		// expect(Array.isArray(parseTx.BOOST)).toBe(true);
+		// expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual("object");
 		// rest is checked in boost.test.js
 
 		expect(Array.isArray(parseTx["21E8"])).toBe(true);

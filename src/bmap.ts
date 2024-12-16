@@ -14,7 +14,6 @@ import { AIP } from "./protocols/aip";
 import { B } from "./protocols/b";
 import { BAP } from "./protocols/bap";
 import { BITCOM } from "./protocols/bitcom";
-import { BITCOM_HASHED } from "./protocols/bitcomHashed";
 import { BITKEY } from "./protocols/bitkey";
 import { BITPIC } from "./protocols/bitpic";
 import { HAIP } from "./protocols/haip";
@@ -50,7 +49,6 @@ export const allProtocols = [
 	BITKEY,
 	BITPIC,
 	HAIP,
-	BITCOM_HASHED,
 	RON,
 	SYMRE,
 	ORD,

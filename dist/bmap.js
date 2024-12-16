@@ -251,8 +251,6 @@ const $9d2ad5acc773d924$var$validateSignature = async (aipObj, cell, tape)=>{
 var $9d2ad5acc773d924$export$6c117c038f18b127 = /*#__PURE__*/ function(SIGPROTO) {
     SIGPROTO["HAIP"] = "HAIP";
     SIGPROTO["AIP"] = "AIP";
-    SIGPROTO["BITCOM_HASHED"] = "BITCOM_HASHED";
-    SIGPROTO["PSP"] = "PSP";
     return SIGPROTO;
 }({});
 const $9d2ad5acc773d924$export$f0079d0908cdbf96 = async (useOpReturnSchema, protocol, dataObj, cell, tape, tx)=>{
@@ -474,94 +472,6 @@ const $44221962b60306bc$export$c19e3a57d69468ea = {
     address: $44221962b60306bc$var$protocolAddress,
     opReturnSchema: $44221962b60306bc$var$opReturnSchema,
     handler: $44221962b60306bc$var$handler
-};
-
-
-
-
-
-
-const $be1c52bca641c9a9$var$validateSignature = (signedObj, cell, tape)=>{
-    if (!Array.isArray(tape) || tape.length < 3) throw new Error("Signature validation requires at least 3 cells including the prefix");
-    let cellIndex = -1;
-    tape.forEach((cc, index)=>{
-        if (cc.cell === cell) cellIndex = index;
-    });
-    if (cellIndex === -1) throw new Error("Could not find cell in tape");
-    const signatureBufferStatements = [];
-    for(let i = 0; i < cellIndex; i++){
-        const cellContainer = tape[i];
-        if (!(0, $caee5781971edf71$export$429a4e8902c23802)(cellContainer)) {
-            for (const statement of cellContainer.cell){
-                // add the value as hex
-                let value = statement.h;
-                if (!value) value = (0, $71XCL$buffer.Buffer).from(statement.b, "base64").toString("hex");
-                if (!value) value = (0, $71XCL$buffer.Buffer).from(statement.s).toString("hex");
-                signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(value, "hex"));
-            }
-            signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from("7c", "hex")); // pipe separator
-        }
-    }
-    const dataScript = (0, $71XCL$tsbitcoincore.Script).fromSafeDataArray(signatureBufferStatements);
-    const messageBuffer = (0, $71XCL$buffer.Buffer).from(dataScript.toHex(), "hex");
-    // verify signature
-    const publicKey = (0, $71XCL$tsbitcoincore.PubKey).fromString(signedObj.pubkey);
-    const signingAddress = (0, $71XCL$tsbitcoincore.Address).fromPubKey(publicKey);
-    try {
-        signedObj.verified = (0, $71XCL$tsbitcoincore.Bsm).verify(messageBuffer, signedObj.signature, signingAddress);
-    } catch (e) {
-        signedObj.verified = false;
-    }
-    return signedObj.verified;
-};
-const $be1c52bca641c9a9$export$d11138549dba609b = async (opReturnSchema, protocolName, dataObj, cell, tape)=>{
-    const obj = {
-        verified: false
-    };
-    // Does not have the required number of fields
-    if (cell.length < opReturnSchema.length + 1) throw new Error(`Requires at least ${opReturnSchema.length + 1} fields including the prefix`);
-    // loop over schema
-    for (const [idx, schemaField] of Object.entries(opReturnSchema)){
-        const x = Number.parseInt(idx, 10);
-        const key = Object.keys(schemaField)[0];
-        const type = schemaField[key];
-        // get the cell value
-        const val = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], type);
-        if (val) obj[key] = val;
-    }
-    if (!obj.signature) throw new Error(`Requires a signature`);
-    // verify signature if we have all required fields
-    if (obj.signature && obj.pubkey && tape) $be1c52bca641c9a9$var$validateSignature(obj, cell, tape);
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocolName, obj);
-};
-
-
-const $d3ca5ef73768d058$var$address = "15igChEkUWgx4dsEcSuPitcLNZmNDfUvgA";
-// see https://bsvalias.org/05-verify-public-key-owner.html
-const $d3ca5ef73768d058$var$opReturnSchema = [
-    {
-        hash: "string"
-    },
-    {
-        signature: "string"
-    },
-    {
-        pubkey: "binary"
-    },
-    {
-        paymail: "string"
-    }
-];
-const $d3ca5ef73768d058$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape })=>{
-    if (!tape) throw new Error("Invalid BITCOM_HASHED tx. Bad tape");
-    if (!cell.length || cell[0].s !== $d3ca5ef73768d058$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[4]) throw new Error("Invalid BITCOM_HASHED record");
-    return await (0, $be1c52bca641c9a9$export$d11138549dba609b)($d3ca5ef73768d058$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
-};
-const $d3ca5ef73768d058$export$f069e857381ef4b9 = {
-    name: "BITCOM_HASHED",
-    address: $d3ca5ef73768d058$var$address,
-    opReturnSchema: $d3ca5ef73768d058$var$opReturnSchema,
-    handler: $d3ca5ef73768d058$var$handler
 };
 
 
@@ -1106,7 +1016,6 @@ const $0bef5cd148f6f4f7$export$6b22fa9a84a4797f = [
     (0, $d53bca867b0d5879$export$6a60f6b74bbaccb8),
     (0, $7d567cbd150e6a61$export$bbef9cc099c72f9d),
     (0, $969c5b61dd3c02f1$export$12815d889fe90b8),
-    (0, $d3ca5ef73768d058$export$f069e857381ef4b9),
     (0, $6c2cab82920c5ead$export$2839d627b6f3bcfe),
     (0, $49d2b3729450186e$export$33455cbcda538c68),
     (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68)
