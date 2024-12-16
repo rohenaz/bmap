@@ -6,12 +6,12 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 ![GitHub](https://img.shields.io/github/license/rohenaz/bmap)
 
-BMAPjs is a transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP. Supports multiple outputs, signature verification, and multiple instances in a single OP_RETURN. It also has support for some Script based protocols like [Boost POW](https://pow.co) and [21e8](https://21e8.network)
+BMAPjs is a transaction parser for Bitcoin data protocols like B, MAP, BAP, METANET and AIP/HAIP. Supports multiple outputs, signature verification, and multiple instances in a single OP_RETURN. It also has support for some Script based protocols like [21e8](https://21e8.network)
 
 It processes BOB formatted transactions for `B | MAP` OP_RETURN protocols. It processes transaction outputs and transforms them into self
 descriptive js objects based on the OP_RETURN protocols it discovers in the data.
 
-It supports B, MAP, AIP, METANET and a list of other popular protocols It ingests structured JSON objects in
+It supports B, MAP, AIP, METANET and a list of other popular protocols. It ingests structured JSON objects in
 both [BOB](https://bob.planaria.network/) and [MOM](https://mom.planaria.network/) formats.
 
 It is written in typescript and can be used both as an esm module or in the browser as commonjs via script tag. See the `dist` folder for compiled outputs.
@@ -509,7 +509,6 @@ on the response object:
 -   [x] Bitkey
 -   [x] Bitpic
 -   [ ] Bitpic validation
--   [x] BOOST
 -   [ ] D
 -   [x] HAIP
 -   [ ] HAIP validation
@@ -517,7 +516,6 @@ on the response object:
 -   [ ] MAP v2
 -   [x] MetaNet
 -   [ ] ORDER LOCK
--   [x] PSP
 -   [x] RON
 -   [x] SymRe
 

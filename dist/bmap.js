@@ -3,9 +3,6 @@ var $71XCL$buffer = require("buffer");
 var $71XCL$crypto = require("crypto");
 var $71XCL$tsbitcoincore = require("@ts-bitcoin/core");
 var $71XCL$nodefetch = require("node-fetch");
-var $71XCL$moneybuttonpaymailclient = require("@moneybutton/paymail-client");
-var $71XCL$nodedns = require("node:dns");
-var $71XCL$boostpow = require("boostpow");
 var $71XCL$msgpackmsgpack = require("@msgpack/msgpack");
 
 
@@ -483,43 +480,14 @@ const $44221962b60306bc$export$c19e3a57d69468ea = {
 
 
 
-/// <reference path="../types/paymail-client/index.d.ts"/>
 
-
-
-const $9eb49630ba8b5c69$export$fe8725667d42151 = async (paymail, publicKey)=>{
-    if (typeof window !== "undefined") {
-        // Paymail client will use BrowserDns if dns is null here
-        // and isomorphic-fetch if fetch is null
-        const client = new (0, $71XCL$moneybuttonpaymailclient.PaymailClient)();
-        return client.verifyPubkeyOwner(publicKey, paymail);
-    }
-    const client = new (0, $71XCL$moneybuttonpaymailclient.PaymailClient)((0, ($parcel$interopDefault($71XCL$nodedns))), (0, ($parcel$interopDefault($71XCL$nodefetch))));
-    return client.verifyPubkeyOwner(publicKey, paymail);
-};
-
-
-
-
-const $9ebb5cb5323e8959$var$address = "1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4";
-const $9ebb5cb5323e8959$var$opReturnSchema = [
-    {
-        signature: "string"
-    },
-    {
-        pubkey: "string"
-    },
-    {
-        paymail: "string"
-    }
-];
-const $9ebb5cb5323e8959$var$validateSignature = (pspObj, cell, tape)=>{
-    if (!Array.isArray(tape) || tape.length < 3) throw new Error("PSP requires at least 3 cells including the prefix");
+const $be1c52bca641c9a9$var$validateSignature = (signedObj, cell, tape)=>{
+    if (!Array.isArray(tape) || tape.length < 3) throw new Error("Signature validation requires at least 3 cells including the prefix");
     let cellIndex = -1;
     tape.forEach((cc, index)=>{
         if (cc.cell === cell) cellIndex = index;
     });
-    if (cellIndex === -1) throw new Error("PSP could not find cell in tape");
+    if (cellIndex === -1) throw new Error("Could not find cell in tape");
     const signatureBufferStatements = [];
     for(let i = 0; i < cellIndex; i++){
         const cellContainer = tape[i];
@@ -531,65 +499,45 @@ const $9ebb5cb5323e8959$var$validateSignature = (pspObj, cell, tape)=>{
                 if (!value) value = (0, $71XCL$buffer.Buffer).from(statement.s).toString("hex");
                 signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(value, "hex"));
             }
-            signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from("7c", "hex")); // | hex ????
+            signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from("7c", "hex")); // pipe separator
         }
     }
     const dataScript = (0, $71XCL$tsbitcoincore.Script).fromSafeDataArray(signatureBufferStatements);
     const messageBuffer = (0, $71XCL$buffer.Buffer).from(dataScript.toHex(), "hex");
-    // verify psp signature
-    const publicKey = (0, $71XCL$tsbitcoincore.PubKey).fromString(pspObj.pubkey);
+    // verify signature
+    const publicKey = (0, $71XCL$tsbitcoincore.PubKey).fromString(signedObj.pubkey);
     const signingAddress = (0, $71XCL$tsbitcoincore.Address).fromPubKey(publicKey);
     try {
-        pspObj.verified = (0, $71XCL$tsbitcoincore.Bsm).verify(messageBuffer, pspObj.signature, signingAddress);
+        signedObj.verified = (0, $71XCL$tsbitcoincore.Bsm).verify(messageBuffer, signedObj.signature, signingAddress);
     } catch (e) {
-        pspObj.verified = false;
+        signedObj.verified = false;
     }
-    return pspObj.verified;
+    return signedObj.verified;
 };
-const $9ebb5cb5323e8959$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape })=>{
-    // Paymail Signature Protocol
-    // Validation
-    if (!cell.length || cell[0].s !== $9ebb5cb5323e8959$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error("Invalid Paymail Signature Protocol record");
-    return await $9ebb5cb5323e8959$export$c3c3eee1546d651a($9ebb5cb5323e8959$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).PSP, dataObj, cell, tape);
-};
-const $9ebb5cb5323e8959$export$c3c3eee1546d651a = async (useOpReturnSchema, protocol, dataObj, cell, tape)=>{
-    // loop over the schema
-    const pspObj = {
+const $be1c52bca641c9a9$export$d11138549dba609b = async (opReturnSchema, protocolName, dataObj, cell, tape)=>{
+    const obj = {
         verified: false
     };
     // Does not have the required number of fields
-    if (cell.length < 4) throw new Error(`PSP requires at least 4 fields including the prefix ${cell}`);
-    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
+    if (cell.length < opReturnSchema.length + 1) throw new Error(`Requires at least ${opReturnSchema.length + 1} fields including the prefix`);
+    // loop over schema
+    for (const [idx, schemaField] of Object.entries(opReturnSchema)){
         const x = Number.parseInt(idx, 10);
-        const [pspField] = Object.keys(schemaField);
-        const [schemaEncoding] = Object.values(schemaField);
-        pspObj[pspField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
+        const key = Object.keys(schemaField)[0];
+        const type = schemaField[key];
+        // get the cell value
+        const val = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], type);
+        if (val) obj[key] = val;
     }
-    if (!pspObj.signature) throw new Error(`PSP requires a signature ${cell}`);
-    //  TODO: we can only check on PSP until we figure out the BITCOM_HASHED fields
-    //  verify signature
-    if (protocol === (0, $9d2ad5acc773d924$export$6c117c038f18b127).PSP && !$9ebb5cb5323e8959$var$validateSignature(pspObj, cell, tape)) throw new Error(`PSP requires a valid signature ${pspObj}`);
-    // check the paymail public key
-    if (pspObj.pubkey && pspObj.paymail) try {
-        const paymailPublicKeyVerified = await (0, $9eb49630ba8b5c69$export$fe8725667d42151)(pspObj.paymail, pspObj.pubkey);
-        pspObj.verified = pspObj.verified && paymailPublicKeyVerified;
-    } catch  {
-        pspObj.verified = false;
-    }
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocol, pspObj);
-};
-const $9ebb5cb5323e8959$export$bd49ff9d0c7fbe97 = {
-    name: "PSP",
-    address: $9ebb5cb5323e8959$var$address,
-    opReturnSchema: $9ebb5cb5323e8959$var$opReturnSchema,
-    handler: $9ebb5cb5323e8959$var$handler
+    if (!obj.signature) throw new Error(`Requires a signature`);
+    // verify signature if we have all required fields
+    if (obj.signature && obj.pubkey && tape) $be1c52bca641c9a9$var$validateSignature(obj, cell, tape);
+    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocolName, obj);
 };
 
 
 const $d3ca5ef73768d058$var$address = "15igChEkUWgx4dsEcSuPitcLNZmNDfUvgA";
-// should be very similar to PSP
 // see https://bsvalias.org/05-verify-public-key-owner.html
-// TODO: Really need some documentation ro to verify what these fields are
 const $d3ca5ef73768d058$var$opReturnSchema = [
     {
         hash: "string"
@@ -606,7 +554,8 @@ const $d3ca5ef73768d058$var$opReturnSchema = [
 ];
 const $d3ca5ef73768d058$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape })=>{
     if (!tape) throw new Error("Invalid BITCOM_HASHED tx. Bad tape");
-    return await (0, $9ebb5cb5323e8959$export$c3c3eee1546d651a)($d3ca5ef73768d058$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
+    if (!cell.length || cell[0].s !== $d3ca5ef73768d058$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[4]) throw new Error("Invalid BITCOM_HASHED record");
+    return await (0, $be1c52bca641c9a9$export$d11138549dba609b)($d3ca5ef73768d058$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
 };
 const $d3ca5ef73768d058$export$f069e857381ef4b9 = {
     name: "BITCOM_HASHED",
@@ -722,41 +671,6 @@ const $7d567cbd150e6a61$export$bbef9cc099c72f9d = {
     address: $7d567cbd150e6a61$var$protocolAddress,
     opReturnSchema: $7d567cbd150e6a61$var$opReturnSchema,
     handler: $7d567cbd150e6a61$var$handler
-};
-
-
-
-
-const $8a284ac28b245560$var$protocolIdentifier = "boostpow";
-/*
-{
-    hash: '0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc',
-    content: '00000000000000000000000000000000000000000048656c6c6f20776f726c64',
-    bits: 486604799,
-    difficulty: 1,
-    metadataHash: "acd8278e84b037c47565df65a981d72fb09be5262e8783d4cf4e42633615962a",
-    time: 1305200806,
-    nonce: 3698479534,
-    category: 1,
-}
-*/ const $8a284ac28b245560$var$scriptChecker = (cell)=>{
-    // protocol identifier always in first pushdata
-    return cell[0].s === $8a284ac28b245560$var$protocolIdentifier;
-};
-const $8a284ac28b245560$var$handler = ({ dataObj: dataObj, cell: cell, out: out, tx: tx })=>{
-    if (!tx || !cell[0] || !out) throw new Error("Invalid BOOST tx. dataObj, cell, out and tx are required.");
-    // build ASM from either op codes and script chunks
-    const asm = cell.map((c)=>c.ops ? c.ops : (0, $caee5781971edf71$export$b691916706e0e9cc)(c, "hex") || "").join(" ");
-    if (asm) {
-        const boostJob = (0, $71XCL$boostpow.BoostPowJob).fromASM(asm, tx.tx.h, out.i, out.e.v).toObject();
-        (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "BOOST", boostJob);
-    }
-};
-const $8a284ac28b245560$export$13c3c8ee12090ebc = {
-    name: "BOOST",
-    handler: $8a284ac28b245560$var$handler,
-    address: $8a284ac28b245560$var$protocolIdentifier,
-    scriptChecker: $8a284ac28b245560$var$scriptChecker
 };
 
 
@@ -1122,7 +1036,6 @@ function $cf02eb2496a3bc72$var$baseFindIndex(array, predicate, fromIndex, fromRi
 
 
 
-
 const $6c2cab82920c5ead$var$address = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1";
 const $6c2cab82920c5ead$var$opReturnSchema = [
     {
@@ -1188,14 +1101,12 @@ const $0bef5cd148f6f4f7$export$6b22fa9a84a4797f = [
     (0, $2519a10c9a0ebef2$export$5935ea4bf04c4453),
     (0, $f735e67f61f64b89$export$ce970371e0e850bc),
     (0, $23bc52f6d80ffa0b$export$7830a85a59ca4593),
-    (0, $8a284ac28b245560$export$13c3c8ee12090ebc),
     (0, $370fc9f1fb64c5cc$export$85479a00ad164ad6),
     (0, $44221962b60306bc$export$c19e3a57d69468ea),
     (0, $d53bca867b0d5879$export$6a60f6b74bbaccb8),
     (0, $7d567cbd150e6a61$export$bbef9cc099c72f9d),
     (0, $969c5b61dd3c02f1$export$12815d889fe90b8),
     (0, $d3ca5ef73768d058$export$f069e857381ef4b9),
-    (0, $9ebb5cb5323e8959$export$bd49ff9d0c7fbe97),
     (0, $6c2cab82920c5ead$export$2839d627b6f3bcfe),
     (0, $49d2b3729450186e$export$33455cbcda538c68),
     (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68)
@@ -1229,14 +1140,11 @@ class $0bef5cd148f6f4f7$export$894a720e71f90b3c {
                     // Process opReturn data
                     if (tape?.some((cc)=>(0, $caee5781971edf71$export$429a4e8902c23802)(cc))) dataObj = await this.processDataProtocols(tape, out, tx, dataObj);
                     // No OP_FALSE OP_RETURN in this tape
-                    const boostChecker = this.protocolScriptCheckers.get((0, $8a284ac28b245560$export$13c3c8ee12090ebc).name);
                     const _21e8Checker = this.protocolScriptCheckers.get((0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name);
                     const ordChecker = this.protocolScriptCheckers.get((0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name);
-                    // Check for boostpow, 21e8, and ords
+                    // Check for 21e8 and ords
                     if (tape?.some((cc)=>{
                         const { cell: cell } = cc;
-                        if (boostChecker?.(cell)) // 'found boost'
-                        return true;
                         if (_21e8Checker?.(cell)) // 'found 21e8'
                         return true;
                         if (ordChecker?.(cell)) // 'found 1sat ordinal'
@@ -1248,8 +1156,7 @@ class $0bef5cd148f6f4f7$export$894a720e71f90b3c {
                         // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
                         if (!cell) throw new Error("empty cell while parsing");
                         let protocolName = "";
-                        if (boostChecker?.(cell)) protocolName = (0, $8a284ac28b245560$export$13c3c8ee12090ebc).name;
-                        else if (_21e8Checker?.(cell)) protocolName = (0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name;
+                        if (_21e8Checker?.(cell)) protocolName = (0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name;
                         else if (ordChecker?.(cell)) protocolName = (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name;
                         else continue;
                         this.process(protocolName, {
@@ -1261,9 +1168,7 @@ class $0bef5cd148f6f4f7$export$894a720e71f90b3c {
                         });
                     }
                 }
-                else if (key === "in") // TODO: Boost check inputs to see if this is a tx solving a puzzle
-                // TODO: 21e8 check inputs to see if this is a tx solving a puzzle
-                dataObj[key] = val.map((v)=>{
+                else if (key === "in") dataObj[key] = val.map((v)=>{
                     const r = {
                         ...v
                     };

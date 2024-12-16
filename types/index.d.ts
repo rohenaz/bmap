@@ -1,6 +1,5 @@
 import { Out, Tape } from "bpu-ts";
 import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from "../types/common";
-export { PaymailClient } from "@moneybutton/paymail-client";
 export const allProtocols: (Protocol | {
     name: string;
     address: string;

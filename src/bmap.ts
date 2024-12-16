@@ -17,12 +17,10 @@ import { BITCOM } from "./protocols/bitcom";
 import { BITCOM_HASHED } from "./protocols/bitcomHashed";
 import { BITKEY } from "./protocols/bitkey";
 import { BITPIC } from "./protocols/bitpic";
-import { BOOST } from "./protocols/boost";
 import { HAIP } from "./protocols/haip";
 import { MAP } from "./protocols/map";
 import { METANET } from "./protocols/metanet";
 import { ORD } from "./protocols/ord";
-import { PSP } from "./protocols/psp";
 import { RON } from "./protocols/ron";
 import { SYMRE } from "./protocols/symre";
 import {
@@ -47,14 +45,12 @@ export const allProtocols = [
 	BAP,
 	MAP,
 	METANET,
-	BOOST,
 	_21E8,
 	BITCOM,
 	BITKEY,
 	BITPIC,
 	HAIP,
 	BITCOM_HASHED,
-	PSP,
 	RON,
 	SYMRE,
 	ORD,
@@ -134,18 +130,13 @@ export class BMAP {
 					}
 
 					// No OP_FALSE OP_RETURN in this tape
-					const boostChecker = this.protocolScriptCheckers.get(BOOST.name);
 					const _21e8Checker = this.protocolScriptCheckers.get(_21E8.name);
 					const ordChecker = this.protocolScriptCheckers.get(ORD.name);
 
-					// Check for boostpow, 21e8, and ords
+					// Check for 21e8 and ords
 					if (
 						tape?.some((cc) => {
 							const { cell } = cc;
-							if (boostChecker?.(cell)) {
-								// 'found boost'
-								return true;
-							}
 							if (_21e8Checker?.(cell)) {
 								// 'found 21e8'
 								return true;
@@ -165,9 +156,7 @@ export class BMAP {
 								throw new Error("empty cell while parsing");
 							}
 							let protocolName = "";
-							if (boostChecker?.(cell)) {
-								protocolName = BOOST.name;
-							} else if (_21e8Checker?.(cell)) {
+							if (_21e8Checker?.(cell)) {
 								protocolName = _21E8.name;
 							} else if (ordChecker?.(cell)) {
 								protocolName = ORD.name;
@@ -187,8 +176,6 @@ export class BMAP {
 					}
 				}
 			} else if (key === "in") {
-				// TODO: Boost check inputs to see if this is a tx solving a puzzle
-				// TODO: 21e8 check inputs to see if this is a tx solving a puzzle
 				dataObj[key] = val.map((v: In) => {
 					const r = { ...v } as any;
 					delete r.tape;
