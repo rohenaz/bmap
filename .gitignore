@@ -11,3 +11,5 @@ coverage
 .cache
 parcel-bundle-reports
 yarn-error.log
+prompt.txt
+relevant_code.txt
