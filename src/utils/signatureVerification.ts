@@ -1,91 +1,82 @@
-import { Address, Bsm, PubKey, Script } from "@ts-bitcoin/core";
-import { Cell, Tape } from "bpu-ts";
+import { BSM, PublicKey, Script, Signature, Utils } from "@bsv/sdk";
+import type { Cell, Tape } from "bpu-ts";
 import { Buffer } from "buffer";
 import type { BmapTx } from "../../types/common";
 import { cellValue, checkOpReturn, saveProtocolData } from "../utils";
 
+const { magicHash } = BSM;
+const { toArray } = Utils;
+
 const validateSignature = (signedObj: any, cell: Cell[], tape: Tape[]) => {
-	if (!Array.isArray(tape) || tape.length < 3) {
-		throw new Error("PSP requires at least 3 cells including the prefix");
-	}
+  if (!Array.isArray(tape) || tape.length < 3) {
+    throw new Error("PSP requires at least 3 cells including the prefix");
+  }
 
-	let cellIndex = -1;
-	tape.forEach((cc, index) => {
-		if (cc.cell === cell) {
-			cellIndex = index;
-		}
-	});
-	if (cellIndex === -1) {
-		throw new Error("PSP could not find cell in tape");
-	}
+  const cellIndex = tape.findIndex(cc => cc.cell === cell);
+  if (cellIndex === -1) {
+    throw new Error("PSP could not find cell in tape");
+  }
 
-	const signatureBufferStatements = [];
-	for (let i = 0; i < cellIndex; i++) {
-		const cellContainer = tape[i];
-		if (!checkOpReturn(cellContainer)) {
-			for (const statement of cellContainer.cell) {
-				// add the value as hex
-				let value = statement.h;
-				if (!value) {
-					value = Buffer.from(statement.b as string, "base64").toString("hex");
-				}
-				if (!value) {
-					value = Buffer.from(statement.s as string).toString("hex");
-				}
-				signatureBufferStatements.push(Buffer.from(value, "hex"));
-			}
-			signatureBufferStatements.push(Buffer.from("7c", "hex")); // | hex
-		}
-	}
-	const dataScript = Script.fromSafeDataArray(signatureBufferStatements);
-	const messageBuffer = Buffer.from(dataScript.toHex(), "hex");
+  const signatureBufferStatements: Buffer[] = [];
+  for (let i = 0; i < cellIndex; i++) {
+    const cellContainer = tape[i];
+    if (!checkOpReturn(cellContainer)) {
+      for (const statement of cellContainer.cell) {
+        let value = statement.h;
+        if (!value && statement.b) {
+          value = Buffer.from(statement.b, "base64").toString("hex");
+        }
+        if (!value && statement.s) {
+          value = Buffer.from(statement.s).toString("hex");
+        }
+        signatureBufferStatements.push(Buffer.from(value || "", "hex"));
+      }
+      // Append the '|' as hex 7c
+      signatureBufferStatements.push(Buffer.from("7c", "hex"));
+    }
+  }
 
-	// verify signature
-	const publicKey = PubKey.fromString(signedObj.pubkey);
-	const signingAddress = Address.fromPubKey(publicKey);
-	try {
-		signedObj.verified = Bsm.verify(
-			messageBuffer,
-			signedObj.signature,
-			signingAddress,
-		);
-	} catch (e) {
-		signedObj.verified = false;
-	}
+  // Replicate old behavior: build a script from data and get its hex representation
+  const dataArrays = signatureBufferStatements.map(b => toArray(b));
+  const script = Script.fromASM(`OP_FALSE  OP_RETURN ${dataArrays.join("")}`);
 
-	return signedObj.verified;
+  const sig = Signature.fromCompact(signedObj.signature, 'base64');
+  const pubkey = PublicKey.fromString(signedObj.pubkey);
+  const msgHash = magicHash(script.toBinary());
+
+  try {
+    signedObj.verified = BSM.verify(msgHash, sig, pubkey);
+  } catch (e) {
+    signedObj.verified = false;
+  }
+
+  return signedObj.verified;
 };
 
 export const signatureHandler = async (
-	opReturnSchema: any[],
-	protocolName: string,
-	dataObj: BmapTx,
-	cell: Cell[],
-	tape: Tape[],
+  opReturnSchema: any[],
+  protocolName: string,
+  dataObj: BmapTx,
+  cell: Cell[],
+  tape: Tape[],
 ) => {
-	const obj: { [key: string]: any } = {
-		verified: false,
-	};
+  const obj: { [key: string]: any } = { verified: false };
 
-	// Does not have the required number of fields
-	if (cell.length < 4) {
-		throw new Error(
-			`PSP requires at least 4 fields including the prefix ${cell}`,
-		);
-	}
+  if (cell.length < 4) {
+    throw new Error("PSP requires at least 4 fields including the prefix");
+  }
 
-	for (const [idx, schemaField] of Object.entries(opReturnSchema)) {
-		const x = Number.parseInt(idx, 10);
-		const [pspField] = Object.keys(schemaField);
-		const [schemaEncoding] = Object.values(schemaField) as string[];
-		(obj as any)[pspField] = cellValue(cell[x + 1], schemaEncoding);
-	}
+  for (const [idx, schemaField] of Object.entries(opReturnSchema)) {
+    const x = Number.parseInt(idx, 10);
+    const pspField = Object.keys(schemaField)[0];
+    const schemaEncoding = Object.values(schemaField)[0] as string;
+    obj[pspField] = cellValue(cell[x + 1], schemaEncoding);
+  }
 
-	if (!obj.signature) {
-		throw new Error(`PSP requires a signature ${cell}`);
-	}
+  if (!obj.signature) {
+    throw new Error(`PSP requires a signature`);
+  }
 
-	validateSignature(obj, cell, tape);
-
-	saveProtocolData(dataObj, protocolName, obj);
-}; 
+  validateSignature(obj, cell, tape);
+  saveProtocolData(dataObj, protocolName, obj);
+};
