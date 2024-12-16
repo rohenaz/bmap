@@ -1,0 +1,153 @@
+# Migrating from bitcoin-ts/core to @bsv/sdk
+
+This guide outlines the key differences and migration steps when moving from bitcoin-ts/core to @bsv/sdk, based on practical experience migrating a real codebase.
+
+## Key Concepts
+
+### 1. Signature Verification
+
+#### BSM (Bitcoin Signed Messages)
+- **Old**: Used `Message.verify()`
+- **New**: Uses `BSM.verify()` with `magicHash`
+```typescript
+// Old
+Message.verify(messageBuffer, signature, address)
+
+// New
+import { BSM, Signature, PublicKey } from "@bsv/sdk";
+const { magicHash } = BSM;
+const sig = Signature.fromCompact(signature, 'base64');
+const pubkey = PublicKey.fromString(pubkeyString);
+const msgHash = magicHash(toArray(messageBuffer));
+BSM.verify(msgHash, sig, pubkey);
+```
+
+#### ECDSA (Regular Signatures)
+- **Old**: Used `Message.verify()`
+- **New**: Uses `ECDSA.verify()`
+```typescript
+// Old
+Message.verify(messageBuffer, signature, address)
+
+// New
+import { ECDSA, Signature, PublicKey } from "@bsv/sdk";
+const sig = Signature.fromDER(signature, 'base64');
+const pubkey = PublicKey.fromString(pubkeyString);
+ECDSA.verify(messageBuffer, sig, pubkey);
+```
+
+### 2. Address Handling
+
+#### Converting Public Key to Address
+- **Old**: Used `Address.fromPubKey()`
+- **New**: Uses `toBase58Check` with P2PKH script
+```typescript
+// Old
+Address.fromPubKey(PublicKey.fromString(pubkeyString))
+
+// New
+import { Utils, P2PKH } from "@bsv/sdk";
+const { toBase58Check, toArray } = Utils;
+const pubKeyHash = toArray(pubkeyString);
+const p2pkhScript = new P2PKH().lock(pubKeyHash);
+const address = toBase58Check(p2pkhScript.chunks[2].data as number[]);
+```
+
+#### Converting Address to Public Key Hash
+- **Old**: Used `Address.fromString()`
+- **New**: Uses `fromBase58Check`
+```typescript
+// Old
+Address.fromString(addressString)
+
+// New
+import { Utils } from "@bsv/sdk";
+const { fromBase58Check } = Utils;
+const pubKeyHash = fromBase58Check(addressString);
+```
+
+### 3. Hashing
+
+#### SHA256
+- **Old**: Used Node's crypto module
+- **New**: Uses `Hash.sha256` with `toArray`
+```typescript
+// Old
+crypto.createHash('sha256').update(buffer).digest()
+
+// New
+import { Hash, Utils } from "@bsv/sdk";
+const { toArray } = Utils;
+const hash = Hash.sha256(toArray(buffer));
+```
+
+### 4. Buffer Handling
+
+#### Converting Data Types
+- **New**: Always use `toArray` when passing data to SDK methods
+```typescript
+import { Utils } from "@bsv/sdk";
+const { toArray } = Utils;
+
+// Convert hex string
+toArray(hexString, 'hex')
+
+// Convert base64 string
+toArray(base64String, 'base64')
+
+// Convert buffer
+toArray(buffer)
+```
+
+### 5. Script Handling
+
+#### Creating Scripts
+- **Old**: Used `Script.fromSafeDataArray()`
+- **New**: Manual buffer manipulation with `toArray`
+```typescript
+// Old
+Script.fromSafeDataArray(statements)
+
+// New
+const scriptData = statements.map(s => {
+  if (typeof s === 'string') {
+    return toArray(s, 'hex');
+  }
+  return s;
+});
+const scriptBuffer = Buffer.concat(scriptData.map(d => Buffer.from(d)));
+```
+
+## Common Gotchas
+
+1. **Signature Formats**
+   - BSM uses `Signature.fromCompact()`
+   - ECDSA uses `Signature.fromDER()`
+   - Always specify encoding ('base64', 'hex')
+
+2. **Buffer Conversion**
+   - Always use `toArray()` when passing data to SDK methods
+   - Specify encoding when converting strings
+
+3. **Address Handling**
+   - No direct Address class
+   - Use `toBase58Check` and `fromBase58Check` with P2PKH scripts
+
+4. **Message Hashing**
+   - BSM requires `magicHash`
+   - ECDSA uses raw message hash
+
+## Testing Recommendations
+
+1. Verify signature formats match expectations (DER vs Compact)
+2. Test address conversions with known valid addresses
+3. Verify hash outputs match original implementation
+4. Test with both BSM and ECDSA signature schemes
+
+## Migration Strategy
+
+1. Identify signature verification type (BSM vs ECDSA)
+2. Update imports to use specific SDK components
+3. Convert buffer handling to use `toArray`
+4. Update address handling to use new methods
+5. Test thoroughly with known valid signatures

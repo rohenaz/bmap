@@ -1,7 +1,6 @@
 var $71XCL$bputs = require("bpu-ts");
+var $71XCL$bsvsdk = require("@bsv/sdk");
 var $71XCL$buffer = require("buffer");
-var $71XCL$crypto = require("crypto");
-var $71XCL$tsbitcoincore = require("@ts-bitcoin/core");
 var $71XCL$nodefetch = require("node-fetch");
 var $71XCL$msgpackmsgpack = require("@msgpack/msgpack");
 
@@ -24,6 +23,7 @@ $parcel$export(module.exports, "TransformTx", () => $0bef5cd148f6f4f7$export$b2a
 
 
 
+const { toArray: $caee5781971edf71$var$toArray } = (0, $71XCL$bsvsdk.Utils);
 const $caee5781971edf71$export$f6e922e536d8305c = (arr)=>{
     return arr.length > 0 && arr.every((value)=>{
         return typeof value === 'string';
@@ -75,14 +75,8 @@ const $caee5781971edf71$export$ca4d6504ca148ae4 = function(data) {
     const regex = '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?';
     return new RegExp(`^${regex}$`, 'gi').test(data);
 };
-const $caee5781971edf71$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
-    let hash;
-    if ((0, ($parcel$interopDefault($71XCL$crypto))).subtle) {
-        hash = await (0, ($parcel$interopDefault($71XCL$crypto))).subtle.digest('SHA-256', msgBuffer);
-        return (0, $71XCL$buffer.Buffer).from(hash);
-    }
-    // }
-    return (0, $71XCL$buffer.Buffer).from(new ArrayBuffer(0));
+const $caee5781971edf71$export$bced8d2aada2d1c9 = (msgBuffer)=>{
+    return (0, $71XCL$bsvsdk.Hash).sha256($caee5781971edf71$var$toArray(msgBuffer));
 };
 
 
@@ -136,6 +130,7 @@ const $370fc9f1fb64c5cc$export$85479a00ad164ad6 = {
 
 
 
+const { toArray: $9d2ad5acc773d924$var$toArray, toHex: $9d2ad5acc773d924$var$toHex, fromBase58Check: $9d2ad5acc773d924$var$fromBase58Check, toBase58Check: $9d2ad5acc773d924$var$toBase58Check } = (0, $71XCL$bsvsdk.Utils);
 const $9d2ad5acc773d924$var$address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
 const $9d2ad5acc773d924$var$opReturnSchema = [
     {
@@ -154,16 +149,65 @@ const $9d2ad5acc773d924$var$opReturnSchema = [
     ]
 ];
 const $9d2ad5acc773d924$var$getFileBuffer = async (bitfsRef)=>{
-    let fileBuffer = (0, $71XCL$buffer.Buffer).from("");
     try {
-        const result = await (0, ($parcel$interopDefault($71XCL$nodefetch)))(`https://x.bitfs.network/${bitfsRef}`, {});
-        fileBuffer = await result.buffer();
-    } catch (e) {
-        console.error(e);
+        const result = await (0, ($parcel$interopDefault($71XCL$nodefetch)))(`https://x.bitfs.network/${bitfsRef}`);
+        return await result.buffer();
+    } catch  {
+        return (0, $71XCL$buffer.Buffer).from("");
     }
-    return fileBuffer;
 };
-const $9d2ad5acc773d924$var$validateSignature = async (aipObj, cell, tape)=>{
+function $9d2ad5acc773d924$var$toBigNumberFromBuffer(buffer) {
+    const hex = $9d2ad5acc773d924$var$toHex(buffer);
+    return new (0, $71XCL$bsvsdk.BigNumber)(hex, 16);
+}
+function $9d2ad5acc773d924$var$recoverPublicKeyFromBSM(message, signature, expectedAddress) {
+    const msgHash = (0, $71XCL$bsvsdk.BSM).magicHash(message);
+    const bigMsg = $9d2ad5acc773d924$var$toBigNumberFromBuffer(msgHash);
+    for(let recovery = 0; recovery < 4; recovery++)try {
+        const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
+        const pubKeyHash = publicKey.toHash();
+        const { prefix: prefix } = $9d2ad5acc773d924$var$fromBase58Check(expectedAddress);
+        const recoveredAddress = $9d2ad5acc773d924$var$toBase58Check(pubKeyHash, prefix);
+        if (recoveredAddress === expectedAddress) {
+            console.log("[recoverPublicKeyFromBSM] Successfully recovered matching public key");
+            return publicKey;
+        } else console.log("[recoverPublicKeyFromBSM] Trying recovery=", recovery, "Recovered address=", recoveredAddress, "expected=", expectedAddress);
+    } catch (e) {
+        console.log("[recoverPublicKeyFromBSM] Recovery error:", e);
+    }
+    console.log("[recoverPublicKeyFromBSM] Failed to recover any matching address");
+    throw new Error("Failed to recover public key matching the expected address");
+}
+function $9d2ad5acc773d924$var$fromSafeDataArray(dataBufs) {
+    const script = new (0, $71XCL$bsvsdk.Script)();
+    script.chunks.push({
+        op: 0
+    }); // OP_FALSE
+    script.chunks.push({
+        op: 106
+    }); // OP_RETURN
+    for (const buf of dataBufs){
+        const length = buf.length;
+        if (length <= 75) script.chunks.push({
+            op: length,
+            data: Array.from(buf)
+        });
+        else if (length <= 0xff) script.chunks.push({
+            op: 0x4c,
+            data: Array.from(buf)
+        });
+        else if (length <= 0xffff) script.chunks.push({
+            op: 0x4d,
+            data: Array.from(buf)
+        });
+        else script.chunks.push({
+            op: 0x4e,
+            data: Array.from(buf)
+        });
+    }
+    return script;
+}
+async function $9d2ad5acc773d924$var$validateSignature(aipObj, cell, tape) {
     if (!Array.isArray(tape) || tape.length < 3) throw new Error("AIP requires at least 3 cells including the prefix");
     let cellIndex = -1;
     tape.forEach((cc, index)=>{
@@ -173,122 +217,143 @@ const $9d2ad5acc773d924$var$validateSignature = async (aipObj, cell, tape)=>{
     let usingIndexes = aipObj.index || [];
     const signatureValues = [
         "6a"
-    ]; // OP_RETURN - is included in AIP
+    ]; // index 0: OP_RETURN
+    // Gather data from all previous cells
     for(let i = 0; i < cellIndex; i++){
         const cellContainer = tape[i];
-        if (!(0, $caee5781971edf71$export$429a4e8902c23802)(cellContainer)) {
-            for(let nc = 0; nc < cellContainer.cell.length; nc++){
-                const statement = cellContainer.cell[nc];
-                // add the value as hex
-                if (statement.h) signatureValues.push(statement.h);
+        if (!(0, $caee5781971edf71$export$238b4e54af8fe886)(cellContainer)) {
+            const cellData = [];
+            for (const statement of cellContainer.cell){
+                let value;
+                if (statement.h) value = statement.h;
                 else if (statement.f) {
-                    // file reference - we need to get the file from bitfs
                     const fileBuffer = await $9d2ad5acc773d924$var$getFileBuffer(statement.f);
-                    signatureValues.push(fileBuffer.toString("hex"));
-                } else if (statement.b) // no hex? try base64
-                signatureValues.push((0, $71XCL$buffer.Buffer).from(statement.b, "base64").toString("hex"));
-                else if (statement.s) signatureValues.push((0, $71XCL$buffer.Buffer).from(statement.s).toString("hex"));
+                    value = fileBuffer.length > 0 ? fileBuffer.toString("hex") : undefined;
+                } else if (statement.b) {
+                    const buf = (0, $71XCL$buffer.Buffer).from(statement.b, "base64");
+                    if (buf.length > 0) value = buf.toString("hex");
+                } else if (statement.s) {
+                    if (statement.s.length > 0) value = (0, $71XCL$buffer.Buffer).from(statement.s).toString("hex");
+                }
+                if (value && value.length > 0) cellData.push(value);
             }
-            signatureValues.push("7c"); // | hex
+            if (cellData.length > 0) {
+                // add all cellData
+                signatureValues.push(...cellData);
+                // add pipe after this cell
+                signatureValues.push("7c");
+            }
         }
     }
-    if (aipObj.hashing_algorithm) // when using HAIP, we need to parse the indexes in a non standard way
-    // indexLength is byte size of the indexes being described
-    {
-        if (aipObj.index_unit_size) {
-            const indexLength = aipObj.index_unit_size * 2;
-            usingIndexes = [];
-            const indexes = cell[6].h;
-            for(let i = 0; i < indexes.length; i += indexLength)usingIndexes.push(parseInt(indexes.substr(i, indexLength), 16));
-            aipObj.index = usingIndexes;
-        }
+    // Now HAIP indexing logic
+    if (aipObj.hashing_algorithm && aipObj.index_unit_size) {
+        const indexLength = aipObj.index_unit_size * 2;
+        usingIndexes = [];
+        const indexesHex = cell[6]?.h || "";
+        for(let i = 0; i < indexesHex.length; i += indexLength)usingIndexes.push(Number.parseInt(indexesHex.substr(i, indexLength), 16));
+        aipObj.index = usingIndexes;
     }
+    console.log("usingIndexes", usingIndexes);
+    console.log("signatureValues", signatureValues);
     const signatureBufferStatements = [];
-    // check whether we need to only sign some indexes
-    if (usingIndexes.length > 0) for (const index of usingIndexes)signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(signatureValues[index], "hex"));
-    else // add all the values to the signature buffer
-    for (const statement of signatureValues)signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(statement, "hex"));
+    if (usingIndexes.length > 0) for (const idx of usingIndexes){
+        if (typeof signatureValues[idx] !== 'string') console.log("signatureValues[idx]", signatureValues[idx], "idx", idx);
+        if (!signatureValues[idx]) {
+            console.log("signatureValues is missing an index", idx, "This means indexing is off");
+            return false;
+        }
+        signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(signatureValues[idx], "hex"));
+    }
+    else for (const val of signatureValues)signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(val, "hex"));
+    console.log("signatureBufferStatements", signatureBufferStatements.map((b)=>b.toString("hex")));
     let messageBuffer;
     if (aipObj.hashing_algorithm) {
-        // this is actually Hashed-AIP (HAIP) and works a bit differently
-        if (!aipObj.index_unit_size) // remove OP_RETURN - will be added by Script.buildDataOut
+        // HAIP logic
+        if (!aipObj.index_unit_size) // remove OP_RETURN chunk
         signatureBufferStatements.shift();
-        const dataScript = (0, $71XCL$tsbitcoincore.Script).fromSafeDataArray(signatureBufferStatements);
+        const dataScript = $9d2ad5acc773d924$var$fromSafeDataArray(signatureBufferStatements);
         let dataBuffer = (0, $71XCL$buffer.Buffer).from(dataScript.toHex(), "hex");
-        if (aipObj.index_unit_size) // the indexed buffer should not contain the OP_RETURN opcode, but this
-        // is added by the buildDataOut function automatically. Remove it.
-        dataBuffer = dataBuffer.slice(1);
-        messageBuffer = await (0, $caee5781971edf71$export$bced8d2aada2d1c9)((0, $71XCL$buffer.Buffer).from(dataBuffer.toString("hex")));
+        if (aipObj.index_unit_size) dataBuffer = dataBuffer.slice(1);
+        const hashed = (0, $71XCL$bsvsdk.Hash).sha256($9d2ad5acc773d924$var$toArray(dataBuffer));
+        messageBuffer = (0, $71XCL$buffer.Buffer).from(hashed);
     } else // regular AIP
-    messageBuffer = (0, $71XCL$buffer.Buffer).concat([
-        ...signatureBufferStatements
-    ]);
-    // AIOP uses address, HAIP uses signing_address field names
-    const adressString = aipObj.address || aipObj.signing_address;
-    // verify aip signature
-    try {
-        aipObj.verified = (0, $71XCL$tsbitcoincore.Bsm).verify(messageBuffer, aipObj.signature || "", (0, $71XCL$tsbitcoincore.Address).fromString(adressString));
-    } catch (e) {
-        aipObj.verified = false;
-    }
-    // Try if this is a Twetch compatible AIP signature
-    if (!aipObj.verified) {
-        // Twetch signs a UTF-8 buffer of the hex string of a sha256 hash of the message
-        // Without 0x06 (OP_RETURN) and without 0x7c at the end, the trailing pipe ("|")
-        messageBuffer = (0, $71XCL$buffer.Buffer).concat([
-            ...signatureBufferStatements.slice(1, signatureBufferStatements.length - 1)
-        ]);
-        const buff = await (0, $caee5781971edf71$export$bced8d2aada2d1c9)(messageBuffer);
-        messageBuffer = (0, $71XCL$buffer.Buffer).from(buff.toString("hex"));
+    messageBuffer = (0, $71XCL$buffer.Buffer).concat(signatureBufferStatements);
+    const addressString = aipObj.address || aipObj.signing_address;
+    const signatureStr = aipObj.signature;
+    const signature = (0, $71XCL$bsvsdk.Signature).fromCompact(signatureStr, 'base64');
+    const tryNormalLogic = ()=>{
+        console.log("[validateSignature:tryNormalLogic] start");
         try {
-            aipObj.verified = (0, $71XCL$tsbitcoincore.Bsm).verify(messageBuffer, aipObj.signature || "", (0, $71XCL$tsbitcoincore.Address).fromString(adressString));
-        } catch (e) {
-            aipObj.verified = false;
+            const msgArr = $9d2ad5acc773d924$var$toArray(messageBuffer);
+            const recoveredPubkey = $9d2ad5acc773d924$var$recoverPublicKeyFromBSM(msgArr, signature, addressString);
+            console.log("[tryNormalLogic] recoveredPubkey ok, verifying with BSM.verify now");
+            const res = (0, $71XCL$bsvsdk.BSM).verify(msgArr, signature, recoveredPubkey);
+            console.log("[tryNormalLogic] BSM.verify result:", res);
+            return res;
+        } catch (err) {
+            console.log("[tryNormalLogic] error:", err);
+            return false;
         }
-    }
-    return aipObj.verified || false;
-};
+    };
+    const tryTwetchLogic = ()=>{
+        console.log("[validateSignature:tryTwetchLogic] start");
+        // For twetch: remove first and last item and sha256 the remainder, interpret hex as utf8
+        if (signatureBufferStatements.length <= 2) return false;
+        const trimmed = signatureBufferStatements.slice(1, -1);
+        console.log("[tryTwetchLogic] trimmedStatements count:", trimmed.length);
+        const buff = (0, $71XCL$bsvsdk.Hash).sha256($9d2ad5acc773d924$var$toArray((0, $71XCL$buffer.Buffer).concat(trimmed)));
+        const hexStr = $9d2ad5acc773d924$var$toHex(buff);
+        const twetchMsg = (0, $71XCL$buffer.Buffer).from(hexStr, "utf8");
+        try {
+            const recoveredPubkey = $9d2ad5acc773d924$var$recoverPublicKeyFromBSM($9d2ad5acc773d924$var$toArray(twetchMsg), signature, addressString);
+            console.log("[tryTwetchLogic] recoveredPubkey ok, verifying with BSM.verify now");
+            const res = (0, $71XCL$bsvsdk.BSM).verify($9d2ad5acc773d924$var$toArray(twetchMsg), signature, recoveredPubkey);
+            console.log("[tryTwetchLogic] BSM.verify result:", res);
+            return res;
+        } catch (err) {
+            console.log("[tryTwetchLogic] error:", err);
+            return false;
+        }
+    };
+    let verified = tryNormalLogic();
+    if (!verified) verified = tryTwetchLogic();
+    console.log("[validateSignature] final verified=", verified);
+    aipObj.verified = verified;
+    return verified;
+}
 var $9d2ad5acc773d924$export$6c117c038f18b127 = /*#__PURE__*/ function(SIGPROTO) {
     SIGPROTO["HAIP"] = "HAIP";
     SIGPROTO["AIP"] = "AIP";
     return SIGPROTO;
 }({});
 const $9d2ad5acc773d924$export$f0079d0908cdbf96 = async (useOpReturnSchema, protocol, dataObj, cell, tape, tx)=>{
-    // loop over the schema
-    const aipObj = {};
-    // Does not have the required number of fields
-    if (cell.length < 4) throw new Error(`AIP requires at least 4 fields including the prefix ${tx}`);
+    const aipObj = {
+        verified: false
+    };
+    // minimal fields check
+    if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix");
     for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
         const x = Number.parseInt(idx, 10);
-        let schemaEncoding;
-        let aipField;
         if (Array.isArray(schemaField)) {
-            // signature indexes are specified
-            schemaEncoding = schemaField[0].index;
-            [aipField] = Object.keys(schemaField[0]);
-            // run through the rest of the fields in this cell, should be de indexes
+            const [aipField] = Object.keys(schemaField[0]);
             const fieldData = [];
-            for(let i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(Number.parseInt(cell[i].h || "", 16));
+            for(let i = x + 1; i < cell.length; i++)if (cell[i].h) fieldData.push(Number.parseInt(cell[i].h, 16));
             aipObj[aipField] = fieldData;
-            continue;
         } else {
-            [aipField] = Object.keys(schemaField);
-            [schemaEncoding] = Object.values(schemaField);
+            const [aipField] = Object.keys(schemaField);
+            const [schemaEncoding] = Object.values(schemaField);
+            aipObj[aipField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding) || "";
         }
-        aipObj[aipField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding) || "";
     }
-    // There is an issue where some services add the signature as binary to the transaction
-    // whereas others add the signature as base64. This will confuse bob and the parser and
-    // the signature will not be verified. When the signature is added in binary cell[3].s is
-    // binary, otherwise cell[3].s contains the base64 signature and should be used.
     if (cell[0].s === $9d2ad5acc773d924$var$address && cell[3].s && (0, $caee5781971edf71$export$ca4d6504ca148ae4)(cell[3].s)) aipObj.signature = cell[3].s;
-    if (!aipObj.signature) throw new Error(`AIP requires a signature ${tx}`);
+    console.log("[AIPhandler] AIP object before validate:", aipObj);
+    if (!aipObj.signature) throw new Error("AIP requires a signature");
     await $9d2ad5acc773d924$var$validateSignature(aipObj, cell, tape);
+    console.log("[AIPhandler] After validate, verified:", aipObj.verified);
     (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocol, aipObj);
 };
 const $9d2ad5acc773d924$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
-    if (!tape) throw new Error("Invalid AIP transaction. tape is required");
-    if (!tx) throw new Error("Invalid AIP transaction. tx is required");
+    if (!tape) throw new Error("Invalid AIP transaction");
     return await $9d2ad5acc773d924$export$f0079d0908cdbf96($9d2ad5acc773d924$var$opReturnSchema, "AIP", dataObj, cell, tape, tx);
 };
 const $9d2ad5acc773d924$export$474d593e43f12abd = {
@@ -478,6 +543,8 @@ const $44221962b60306bc$export$c19e3a57d69468ea = {
 
 
 
+const { toArray: $d53bca867b0d5879$var$toArray, toBase58Check: $d53bca867b0d5879$var$toBase58Check, toHex: $d53bca867b0d5879$var$toHex } = (0, $71XCL$bsvsdk.Utils);
+const { magicHash: $d53bca867b0d5879$var$magicHash } = (0, $71XCL$bsvsdk.BSM);
 const $d53bca867b0d5879$var$address = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC";
 const $d53bca867b0d5879$var$opReturnSchema = [
     {
@@ -493,26 +560,63 @@ const $d53bca867b0d5879$var$opReturnSchema = [
         pubkey: "string"
     }
 ];
-// const handler = function (dataObj, cell, tape, tx) {
-// https://bitkey.network/how
+// Helper to convert array to BigNumber
+function $d53bca867b0d5879$var$toBigNumber(buffer) {
+    const hex = $d53bca867b0d5879$var$toHex(buffer);
+    return new (0, $71XCL$bsvsdk.BigNumber)(hex, 16);
+}
+// Recovers a public key from a BSM signature by brute forcing recovery factors
+// Steps:
+// 1. Apply magicHash to the raw message.
+// 2. Try all recovery factors 0–3 with Signature.RecoverPublicKey()
+// 3. If BSM.verify() returns true with the recovered pubkey, return it.
+function $d53bca867b0d5879$var$recoverPublicKeyFromBSM(message, signature) {
+    // First, BSM signatures are verified by applying magicHash internally,
+    // so we must apply magicHash to the raw message ourselves for recovery:
+    const msgHash = $d53bca867b0d5879$var$magicHash(message);
+    const bigMsg = $d53bca867b0d5879$var$toBigNumber(msgHash);
+    for(let recovery = 0; recovery < 4; recovery++)try {
+        const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
+        // Verify using BSM.verify() with the original raw message (no magicHash)
+        if ((0, $71XCL$bsvsdk.BSM).verify(message, signature, publicKey)) return publicKey;
+    } catch  {
+    // Try next recovery factor
+    }
+    throw new Error("Failed to recover public key from BSM signature");
+}
 const $d53bca867b0d5879$var$handler = async ({ dataObj: dataObj, cell: cell })=>{
-    if (!cell.length) throw new Error("Invalid Bitkey tx");
+    if (cell.length < 5) throw new Error("Invalid Bitkey tx");
     const bitkeyObj = {};
-    // loop over the schema
     for (const [idx, schemaField] of Object.entries($d53bca867b0d5879$var$opReturnSchema)){
         const x = Number.parseInt(idx, 10);
         const bitkeyField = Object.keys(schemaField)[0];
         const schemaEncoding = Object.values(schemaField)[0];
         bitkeyObj[bitkeyField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
     }
-    const userAddress = (0, $71XCL$tsbitcoincore.Address).fromPubKey((0, $71XCL$tsbitcoincore.PubKey).fromString(bitkeyObj.pubkey)).toString();
-    // sha256( hex(paymail(USER)) | hex(pubkey(USER)) )
+    // Derive userAddress from pubkey
+    const pubkeyHex = bitkeyObj.pubkey;
+    const userPubkey = (0, $71XCL$bsvsdk.PublicKey).fromString(pubkeyHex);
+    const userPubKeyHash = userPubkey.toHash();
+    const userAddress = $d53bca867b0d5879$var$toBase58Check(userPubKeyHash);
+    // Prepare raw message for bitkey signature verification: sha256(paymail_hex + pubkey_hex)
     const paymailHex = (0, $71XCL$buffer.Buffer).from(bitkeyObj.paymail).toString("hex");
-    const pubkeyHex = (0, $71XCL$buffer.Buffer).from(bitkeyObj.pubkey).toString("hex");
     const concatenated = paymailHex + pubkeyHex;
-    const bitkeySignatureBuffer = await (0, $caee5781971edf71$export$bced8d2aada2d1c9)((0, $71XCL$buffer.Buffer).from(concatenated, "hex"));
-    const bitkeySignatureVerified = (0, $71XCL$tsbitcoincore.Bsm).verify(bitkeySignatureBuffer, bitkeyObj.bitkey_signature, (0, $71XCL$tsbitcoincore.Address).fromString("13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC"));
-    const userSignatureVerified = (0, $71XCL$tsbitcoincore.Bsm).verify((0, $71XCL$buffer.Buffer).from(bitkeyObj.pubkey), bitkeyObj.user_signature, (0, $71XCL$tsbitcoincore.Address).fromString(userAddress));
+    const concatenatedBuffer = (0, $71XCL$buffer.Buffer).from(concatenated, "hex");
+    const bitkeyMessage = (0, $71XCL$bsvsdk.Hash).sha256($d53bca867b0d5879$var$toArray(concatenatedBuffer));
+    // This is the raw message. BSM.verify() will do magicHash internally.
+    const bitkeySignature = (0, $71XCL$bsvsdk.Signature).fromCompact(bitkeyObj.bitkey_signature, 'base64');
+    // Recover Bitkey pubkey
+    const recoveredBitkeyPubkey = $d53bca867b0d5879$var$recoverPublicKeyFromBSM(bitkeyMessage, bitkeySignature);
+    const recoveredBitkeyPubKeyHash = recoveredBitkeyPubkey.toHash();
+    const recoveredBitkeyAddress = $d53bca867b0d5879$var$toBase58Check(recoveredBitkeyPubKeyHash);
+    const bitkeySignatureVerified = (0, $71XCL$bsvsdk.BSM).verify(bitkeyMessage, bitkeySignature, recoveredBitkeyPubkey) && recoveredBitkeyAddress === $d53bca867b0d5879$var$address;
+    // Verify user signature by using the pubkey as the message
+    const userMessage = $d53bca867b0d5879$var$toArray((0, $71XCL$buffer.Buffer).from(pubkeyHex, "utf8"));
+    const userSignature = (0, $71XCL$bsvsdk.Signature).fromCompact(bitkeyObj.user_signature, 'base64');
+    const recoveredUserPubkey = $d53bca867b0d5879$var$recoverPublicKeyFromBSM(userMessage, userSignature);
+    const recoveredUserPubKeyHash = recoveredUserPubkey.toHash();
+    const recoveredUserAddress = $d53bca867b0d5879$var$toBase58Check(recoveredUserPubKeyHash);
+    const userSignatureVerified = (0, $71XCL$bsvsdk.BSM).verify(userMessage, userSignature, recoveredUserPubkey) && recoveredUserAddress === userAddress;
     bitkeyObj.verified = bitkeySignatureVerified && userSignatureVerified;
     (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "BITKEY", bitkeyObj);
 };
@@ -527,6 +631,8 @@ const $d53bca867b0d5879$export$6a60f6b74bbaccb8 = {
 
 
 
+const { magicHash: $7d567cbd150e6a61$var$magicHash } = (0, $71XCL$bsvsdk.BSM);
+const { toArray: $7d567cbd150e6a61$var$toArray } = (0, $71XCL$bsvsdk.Utils);
 const $7d567cbd150e6a61$var$protocolAddress = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p";
 const $7d567cbd150e6a61$var$opReturnSchema = [
     {
@@ -550,26 +656,14 @@ const $7d567cbd150e6a61$var$handler = async ({ dataObj: dataObj, cell: cell, tap
     };
     const b = tape[1].cell;
     if (b[0].s === "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut") // verify bitpic signature
-    // TODO: Verification
-    // const pubkey = Buffer.from(cell[2].b, 'base64').toString('hex')
-    // const address = Address.fromPubKey(PubKey.fromString(pubkey)).toString()
-    // const hex = Buffer.from(hash, 'hex')
-    // const verified = Message.verify(hex, address, expected)
-    // return verified
-    // const expected = res.cell[3].s
-    // const paymail = res.cell[1].s
-    // const pubkey = Buffer.from(res.cell[2].b, "base64").toString("hex")
-    // const address = new bsv.PublicKey(pubkey).toAddress().toString()
-    // const hex = Buffer.from(res.hash, "hex")
-    // const verified = Message.verify(hex, address, expected)
-    // return verified
     try {
         // TODO: bob transactions are missing this binary part, cannot verify signature
         const bin = cell[1].lb || cell[1].b;
-        const buf = (0, $71XCL$buffer.Buffer).from(bin, "base64");
-        const hashBuff = await (0, $caee5781971edf71$export$bced8d2aada2d1c9)(buf);
-        const address = (0, $71XCL$tsbitcoincore.Address).fromPubKey((0, $71XCL$tsbitcoincore.PubKey).fromString(bitpicObj.pubkey));
-        bitpicObj.verified = (0, $71XCL$tsbitcoincore.Bsm).verify(hashBuff, bitpicObj.signature, address);
+        const hashBuff = (0, $71XCL$bsvsdk.Hash).sha256($7d567cbd150e6a61$var$toArray(bin, "base64"));
+        const sig = (0, $71XCL$bsvsdk.Signature).fromCompact(bitpicObj.signature, "base64");
+        const pubkey = (0, $71XCL$bsvsdk.PublicKey).fromString(bitpicObj.pubkey);
+        const msgHash = $7d567cbd150e6a61$var$magicHash(hashBuff);
+        bitpicObj.verified = (0, $71XCL$bsvsdk.BSM).verify(msgHash, sig, pubkey);
     } catch (e) {
         // failed verification
         bitpicObj.verified = false;
@@ -612,7 +706,7 @@ const $969c5b61dd3c02f1$var$opReturnSchema = [
 const $969c5b61dd3c02f1$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
     if (!tape) throw new Error("Invalid HAIP tx. Bad tape");
     if (!tx) throw new Error("Invalid HAIP tx.");
-    return await (0, $9d2ad5acc773d924$export$f0079d0908cdbf96)($969c5b61dd3c02f1$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).HAIP, dataObj, cell, tape, tx);
+    return await (0, $9d2ad5acc773d924$export$f0079d0908cdbf96)($969c5b61dd3c02f1$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).HAIP, dataObj, cell, tape);
 };
 const $969c5b61dd3c02f1$export$12815d889fe90b8 = {
     name: "HAIP",
@@ -823,6 +917,7 @@ const $f735e67f61f64b89$export$ce970371e0e850bc = {
 
 
 
+const { toArray: $23bc52f6d80ffa0b$var$toArray, toHex: $23bc52f6d80ffa0b$var$toHex } = (0, $71XCL$bsvsdk.Utils);
 const $23bc52f6d80ffa0b$var$address = "meta";
 const $23bc52f6d80ffa0b$var$opReturnSchema = [
     {
@@ -838,8 +933,8 @@ const $23bc52f6d80ffa0b$var$opReturnSchema = [
 const $23bc52f6d80ffa0b$export$3eb18141230d6532 = async (a, tx)=>{
     // Calculate the node ID
     const buf = (0, $71XCL$buffer.Buffer).from(a + tx);
-    const hashBuf = await (0, $caee5781971edf71$export$bced8d2aada2d1c9)(buf);
-    return hashBuf.toString("hex");
+    const hashBuf = (0, $71XCL$bsvsdk.Hash).sha256($23bc52f6d80ffa0b$var$toArray(buf));
+    return $23bc52f6d80ffa0b$var$toHex(hashBuf);
 };
 const $23bc52f6d80ffa0b$var$handler = async ({ dataObj: dataObj, cell: cell, tx: tx })=>{
     if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error(`Invalid Metanet tx ${tx}`);
