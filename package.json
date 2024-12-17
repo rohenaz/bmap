@@ -1,37 +1,15 @@
 {
     "name": "bmapjs",
-    "version": "0.4.0-beta.52",
-    "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, SIGMA, METANET and AIP/HAIP.",
-    "types": "types/index.d.ts",
-    "module": "dist/bmap.module.js",
-    "main": "dist/bmap.js",
-    "type": "module",
+    "version": "0.4.0-beta.53",
+    "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, SIGMA, METANET, and AIP/HAIP.",
+    "main": "dist/bmap.cjs.js",
+    "module": "dist/bmap.es.js",
+    "types": "dist/index.d.ts",
     "files": [
         "dist",
         "README.md",
         "LICENSE"
     ],
-    "targets": {
-        "main": {
-            "isLibrary": true,
-            "context": "node",
-            "source": "src/bmap.ts",
-            "engines": {
-                "node": ">=14"
-            }
-        },
-        "module": {
-            "isLibrary": true,
-            "context": "node",
-            "source": "src/bmap.ts"
-        },
-        "types": {
-            "source": "src/bmap.ts"
-        }
-    },
-    "engines": {
-        "node": "22"
-    },
     "scripts": {
         "prebuild": "mkdir -p types && touch types/index.d.ts",
         "build": "bun run clean && vite build",
