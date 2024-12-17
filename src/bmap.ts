@@ -373,6 +373,7 @@ export const TransformTx = async (
 };
 
 // Export types
+export type { BmapTx, BobTx, Handler, HandlerProps, MetaNet, MomTx, Protocol, ScriptChecker } from './types/common';
 export type { _21E8 } from './types/protocols/_21e8';
 export type { AIP } from './types/protocols/aip';
 export type { B } from './types/protocols/b';
@@ -385,3 +386,4 @@ export type { MAP } from './types/protocols/map';
 export type { ORD } from './types/protocols/ord';
 export type { RON } from './types/protocols/ron';
 export type { SYMRE } from './types/protocols/symre';
+

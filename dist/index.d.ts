@@ -11,6 +11,7 @@ import { HAIP } from './types/protocols/haip';
 import { Handler } from './types/common';
 import { HandlerProps } from './types/common';
 import { MAP } from './types/protocols/map';
+import { MetaNet } from './types/common';
 import { MomTx } from './types/common';
 import { ORD } from './types/protocols/ord';
 import { Out } from 'bpu-ts';
@@ -56,7 +57,11 @@ export declare class BMAP {
     processDataProtocols: (tape: Tape[], out: Out, tx: BobTx, dataObj: Partial<BobTx>) => Promise<Partial<BobTx>>;
 }
 
+export { BmapTx }
+
 export declare const bobFromRawTx: (rawTx: string) => Promise<BobTx>;
+
+export { BobTx }
 
 export declare const defaultProtocols: Protocol[];
 
@@ -64,11 +69,23 @@ export declare const fetchRawTx: (txid: string) => Promise<string>;
 
 export { HAIP }
 
+export { Handler }
+
+export { HandlerProps }
+
 export { MAP }
+
+export { MetaNet }
+
+export { MomTx }
 
 export { ORD }
 
+export { Protocol }
+
 export { RON }
+
+export { ScriptChecker }
 
 export declare const supportedProtocols: string[];
 
