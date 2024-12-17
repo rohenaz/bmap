@@ -1,122 +1,355 @@
-import {parse as $bbzTI$parse} from "bpu-ts";
-import {Utils as $bbzTI$Utils, Hash as $bbzTI$Hash, BigNumber as $bbzTI$BigNumber, BSM as $bbzTI$BSM, Script as $bbzTI$Script, Signature as $bbzTI$Signature, PublicKey as $bbzTI$PublicKey} from "@bsv/sdk";
-import {Buffer as $bbzTI$Buffer} from "buffer";
-import $bbzTI$nodefetch from "node-fetch";
-import {decode as $bbzTI$decode} from "@msgpack/msgpack";
+import {Script as $7AlAh$Script, Bsm as $7AlAh$Bsm, Address as $7AlAh$Address, PubKey as $7AlAh$PubKey} from "@ts-bitcoin/core";
+import {Buffer as $7AlAh$Buffer} from "buffer";
+import $7AlAh$nodefetch from "node-fetch";
+import {webcrypto as $7AlAh$webcrypto} from "crypto";
+import {decode as $7AlAh$decode} from "@msgpack/msgpack";
+import {PaymailClient as $7AlAh$PaymailClient} from "@moneybutton/paymail-client";
+import $7AlAh$dns from "dns";
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+var $414950da4f87d079$exports = {};
+
+$parcel$export($414950da4f87d079$exports, "BMAP", () => $414950da4f87d079$export$894a720e71f90b3c, (v) => $414950da4f87d079$export$894a720e71f90b3c = v);
+$parcel$export($414950da4f87d079$exports, "TransformTx", () => $414950da4f87d079$export$b2a90e318402f6bc, (v) => $414950da4f87d079$export$b2a90e318402f6bc = v);
+var $98aa1784bfd49640$exports = {};
+
+$parcel$export($98aa1784bfd49640$exports, "AIPhandler", () => $98aa1784bfd49640$export$f0079d0908cdbf96, (v) => $98aa1784bfd49640$export$f0079d0908cdbf96 = v);
+$parcel$export($98aa1784bfd49640$exports, "AIP", () => $98aa1784bfd49640$export$474d593e43f12abd, (v) => $98aa1784bfd49640$export$474d593e43f12abd = v);
 
 
 
+var $c2053de758ee1450$exports = {};
 
-const { toArray: $135c27e403539915$var$toArray } = (0, $bbzTI$Utils);
-const $135c27e403539915$export$f6e922e536d8305c = (arr)=>{
-    return arr.length > 0 && arr.every((value)=>{
-        return typeof value === 'string';
+$parcel$export($c2053de758ee1450$exports, "cellValue", () => $c2053de758ee1450$export$b691916706e0e9cc, (v) => $c2053de758ee1450$export$b691916706e0e9cc = v);
+$parcel$export($c2053de758ee1450$exports, "checkOpFalseOpReturn", () => $c2053de758ee1450$export$238b4e54af8fe886, (v) => $c2053de758ee1450$export$238b4e54af8fe886 = v);
+$parcel$export($c2053de758ee1450$exports, "saveProtocolData", () => $c2053de758ee1450$export$23dbc584560299c3, (v) => $c2053de758ee1450$export$23dbc584560299c3 = v);
+$parcel$export($c2053de758ee1450$exports, "bmapQuerySchemaHandler", () => $c2053de758ee1450$export$9c363cd18b34077b, (v) => $c2053de758ee1450$export$9c363cd18b34077b = v);
+$parcel$export($c2053de758ee1450$exports, "isBase64", () => $c2053de758ee1450$export$ca4d6504ca148ae4, (v) => $c2053de758ee1450$export$ca4d6504ca148ae4 = v);
+$parcel$export($c2053de758ee1450$exports, "sha256", () => $c2053de758ee1450$export$bced8d2aada2d1c9, (v) => $c2053de758ee1450$export$bced8d2aada2d1c9 = v);
+
+
+var $c2053de758ee1450$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const $135c27e403539915$export$37b8d83213de0f5f = (arr)=>{
-    return arr.length > 0 && arr.every((value)=>{
-        return value === 'object';
-    });
+var $c2053de758ee1450$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    }, f, y, t, g;
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g;
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
+        };
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
+    }
 };
-const $135c27e403539915$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
-    if (!pushData) throw new Error(`cannot get cell value of: ${pushData}`);
-    else if (schemaEncoding === 'string') return pushData['s'] ? pushData.s : pushData.ls || '';
-    else if (schemaEncoding === 'hex') return pushData['h'] ? pushData.h : pushData.lh || (pushData['b'] ? (0, $bbzTI$Buffer).from(pushData.b, 'base64').toString('hex') : pushData.lb && (0, $bbzTI$Buffer).from(pushData.lb, 'base64').toString('hex')) || '';
-    else if (schemaEncoding === 'number') return parseInt(pushData['h'] ? pushData.h : pushData.lh || '0', 16);
-    else if (schemaEncoding === 'file') return `bitfs://${pushData['f'] ? pushData.f : pushData.lf}`;
-    return (pushData['b'] ? pushData.b : pushData.lb) || '';
+var $c2053de758ee1450$export$b691916706e0e9cc = function(pushData, schemaEncoding) {
+    if (!pushData) throw new Error("cannot get cell value of: ".concat(pushData));
+    else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
+    else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || "";
+    else if (schemaEncoding === "number") return parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
+    else if (schemaEncoding === "file") return "bitfs://".concat(pushData["f"] ? pushData.f : pushData.lf);
+    return (pushData["b"] ? pushData.b : pushData.lb) || "";
 };
-const $135c27e403539915$export$429a4e8902c23802 = (cc)=>{
-    return cc.cell.some((c)=>c.op === 106);
+var $c2053de758ee1450$export$238b4e54af8fe886 = function(cc) {
+    return cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].op && cc.cell[1].op === 106 || cc.cell[0].op === 106;
 };
-const $135c27e403539915$export$238b4e54af8fe886 = (cc)=>{
-    if (cc.cell.length !== 2) return false;
-    const opReturnIdx = cc.cell.findIndex((c)=>c.op === 106);
-    if (opReturnIdx !== -1) return cc.cell[opReturnIdx - 1]?.op === 0;
-    return false;
-};
-const $135c27e403539915$export$23dbc584560299c3 = (dataObj, protocolName, data)=>{
+var $c2053de758ee1450$export$23dbc584560299c3 = function(dataObj, protocolName, data) {
     if (!dataObj[protocolName]) dataObj[protocolName] = [
         data
     ];
-    else dataObj[protocolName].push(data);
-};
-const $135c27e403539915$export$ee2a8bbe689a8ef5 = function(protocolName, opReturnSchema, dataObj, cell, tx) {
-    // loop over the schema
-    const obj = {};
-    // Does not have the required number of fields
-    const length = opReturnSchema.length + 1;
-    if (cell.length < length) throw new Error(`${protocolName} requires at least ${length} fields including the prefix: ${tx.tx.h}`);
-    for (const [idx, schemaField] of Object.entries(opReturnSchema)){
-        const x = parseInt(idx, 10);
-        const [field] = Object.keys(schemaField);
-        const [schemaEncoding] = Object.values(schemaField);
-        obj[field] = $135c27e403539915$export$b691916706e0e9cc(cell[x + 1], schemaEncoding);
+    else {
+        if (!Array.isArray(dataObj[protocolName])) {
+            var prevData = dataObj[protocolName];
+            dataObj[protocolName] = [];
+            dataObj[protocolName][0] = prevData;
+        }
+        dataObj[protocolName][dataObj[protocolName].length] = data;
     }
-    $135c27e403539915$export$23dbc584560299c3(dataObj, protocolName, obj);
 };
-const $135c27e403539915$export$ca4d6504ca148ae4 = function(data) {
-    const regex = '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?';
-    return new RegExp(`^${regex}$`, 'gi').test(data);
+var $c2053de758ee1450$export$9c363cd18b34077b = function(protocolName, querySchema, dataObj, cell, tape, tx) {
+    // loop over the schema
+    var obj = {};
+    // Does not have the required number of fields
+    var length = querySchema.length + 1;
+    if (cell.length < length) throw new Error("".concat(protocolName, " requires at least ").concat(length, " fields including the prefix: ").concat(tx.tx.h));
+    for(var _i = 0, _a = Object.entries(querySchema); _i < _a.length; _i++){
+        var _b = _a[_i], idx = _b[0], schemaField = _b[1];
+        var x = parseInt(idx, 10);
+        var field = Object.keys(schemaField)[0];
+        var schemaEncoding = Object.values(schemaField)[0];
+        obj[field] = $c2053de758ee1450$export$b691916706e0e9cc(cell[x + 1], schemaEncoding);
+    }
+    $c2053de758ee1450$export$23dbc584560299c3(dataObj, protocolName, obj);
 };
-const $135c27e403539915$export$bced8d2aada2d1c9 = (msgBuffer)=>{
-    return (0, $bbzTI$Hash).sha256($135c27e403539915$var$toArray(msgBuffer));
+var $c2053de758ee1450$export$ca4d6504ca148ae4 = function(data) {
+    var regex = "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?";
+    return new RegExp("^".concat(regex, "$"), "gi").test(data);
 };
-
-
-// 21e8 does not use the first pushdata for id
-// in fact there is no id since the 21e8 is designed for difficulty and can be changed
-// instead we use the static part of the script to indentfy the transaction
-// TODO - the OP_X_PLACEHOLDER is the number of bytes to push onto the stack and must match difficulty size
-const $77ebe2efe8e9ecb0$var$_21e8Script = "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(" ");
-const $77ebe2efe8e9ecb0$var$scriptChecker = (cell)=>{
-    if (cell.length !== 12) // wrong length
-    return false;
-    // match exact script
-    const ops = [
-        ...cell
-    ].map((c)=>c.ops).splice(2, cell.length);
-    // calculate target byte length
-    const target = (0, $135c27e403539915$export$b691916706e0e9cc)(cell[1], "hex");
-    const targetOpSize = Buffer.from(target).byteLength;
-    // replace the placeholder opcode with actual
-    ops[1] = `OP_${targetOpSize}`;
-    $77ebe2efe8e9ecb0$var$_21e8Script[1] = `OP_${targetOpSize}`;
-    // protocol identifier always in first pushdata
-    return ops.join() === $77ebe2efe8e9ecb0$var$_21e8Script.join();
-};
-const $77ebe2efe8e9ecb0$var$handler = ({ dataObj: dataObj, cell: cell, out: out })=>{
-    if (!cell[0] || !out) throw new Error("Invalid 21e8 tx. dataObj, cell, out and tx are required.");
-    // assemble asm
-    // make sure first piece matches a txid
-    // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
-    // next
-    const txid = (0, $135c27e403539915$export$b691916706e0e9cc)(cell[0], "hex");
-    const target = (0, $135c27e403539915$export$b691916706e0e9cc)(cell[1], "hex");
-    if (!target) throw new Error(`Invalid 21e8 target. ${JSON.stringify(cell[0], null, 2)}`);
-    const difficulty = Buffer.from(target, "hex").byteLength;
-    const _21e8Obj = {
-        target: target,
-        difficulty: difficulty,
-        value: out.e.v,
-        txid: txid
-    };
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "21E8", _21e8Obj);
-};
-const $77ebe2efe8e9ecb0$export$85479a00ad164ad6 = {
-    name: "21E8",
-    handler: $77ebe2efe8e9ecb0$var$handler,
-    scriptChecker: $77ebe2efe8e9ecb0$var$scriptChecker
+var $c2053de758ee1450$export$bced8d2aada2d1c9 = function(msgBuffer) {
+    return $c2053de758ee1450$var$__awaiter(void 0, void 0, void 0, function() {
+        var hash;
+        return $c2053de758ee1450$var$__generator(this, function(_a) {
+            switch(_a.label){
+                case 0:
+                    return [
+                        4 /*yield*/ ,
+                        ((0, $7AlAh$webcrypto) || window.crypto).subtle.digest("SHA-256", msgBuffer)
+                    ];
+                case 1:
+                    hash = _a.sent();
+                    return [
+                        2 /*return*/ ,
+                        (0, $7AlAh$Buffer).from(hash)
+                    ];
+            }
+        });
+    });
 };
 
 
-
-
-
-
-const { toArray: $8431c1983427e0bc$var$toArray, toHex: $8431c1983427e0bc$var$toHex, fromBase58Check: $8431c1983427e0bc$var$fromBase58Check, toBase58Check: $8431c1983427e0bc$var$toBase58Check } = (0, $bbzTI$Utils);
-const $8431c1983427e0bc$var$address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
-const $8431c1983427e0bc$var$opReturnSchema = [
+var $98aa1784bfd49640$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var $98aa1784bfd49640$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    }, f, y, t, g;
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g;
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
+        };
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
+    }
+};
+var $98aa1784bfd49640$var$__spreadArray = undefined && undefined.__spreadArray || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for(var i = 0, l = from.length, ar; i < l; i++)if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var $98aa1784bfd49640$var$address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
+var $98aa1784bfd49640$var$querySchema = [
     {
         algorithm: "string"
     },
@@ -132,225 +365,298 @@ const $8431c1983427e0bc$var$opReturnSchema = [
         }
     ]
 ];
-const $8431c1983427e0bc$var$getFileBuffer = async (bitfsRef)=>{
-    try {
-        const result = await (0, $bbzTI$nodefetch)(`https://x.bitfs.network/${bitfsRef}`);
-        return await result.buffer();
-    } catch  {
-        return (0, $bbzTI$Buffer).from("");
-    }
-};
-function $8431c1983427e0bc$var$toBigNumberFromBuffer(buffer) {
-    const hex = $8431c1983427e0bc$var$toHex(buffer);
-    return new (0, $bbzTI$BigNumber)(hex, 16);
-}
-function $8431c1983427e0bc$var$recoverPublicKeyFromBSM(message, signature, expectedAddress) {
-    const msgHash = (0, $bbzTI$BSM).magicHash(message);
-    const bigMsg = $8431c1983427e0bc$var$toBigNumberFromBuffer(msgHash);
-    for(let recovery = 0; recovery < 4; recovery++)try {
-        const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
-        const pubKeyHash = publicKey.toHash();
-        const { prefix: prefix } = $8431c1983427e0bc$var$fromBase58Check(expectedAddress);
-        const recoveredAddress = $8431c1983427e0bc$var$toBase58Check(pubKeyHash, prefix);
-        if (recoveredAddress === expectedAddress) {
-            console.log("[recoverPublicKeyFromBSM] Successfully recovered matching public key");
-            return publicKey;
-        } else console.log("[recoverPublicKeyFromBSM] Trying recovery=", recovery, "Recovered address=", recoveredAddress, "expected=", expectedAddress);
-    } catch (e) {
-        console.log("[recoverPublicKeyFromBSM] Recovery error:", e);
-    }
-    console.log("[recoverPublicKeyFromBSM] Failed to recover any matching address");
-    throw new Error("Failed to recover public key matching the expected address");
-}
-function $8431c1983427e0bc$var$fromSafeDataArray(dataBufs) {
-    const script = new (0, $bbzTI$Script)();
-    script.chunks.push({
-        op: 0
-    }); // OP_FALSE
-    script.chunks.push({
-        op: 106
-    }); // OP_RETURN
-    for (const buf of dataBufs){
-        const length = buf.length;
-        if (length <= 75) script.chunks.push({
-            op: length,
-            data: Array.from(buf)
+var $98aa1784bfd49640$var$getFileBuffer = function(bitfsRef) {
+    return $98aa1784bfd49640$var$__awaiter(this, void 0, void 0, function() {
+        var fileBuffer, result, e_1;
+        return $98aa1784bfd49640$var$__generator(this, function(_a) {
+            switch(_a.label){
+                case 0:
+                    fileBuffer = (0, $7AlAh$Buffer).from("");
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([
+                        1,
+                        4,
+                        ,
+                        5
+                    ]);
+                    return [
+                        4 /*yield*/ ,
+                        (0, $7AlAh$nodefetch)("https://x.bitfs.network/".concat(bitfsRef), {})
+                    ];
+                case 2:
+                    result = _a.sent();
+                    return [
+                        4 /*yield*/ ,
+                        result.buffer()
+                    ];
+                case 3:
+                    fileBuffer = _a.sent();
+                    return [
+                        3 /*break*/ ,
+                        5
+                    ];
+                case 4:
+                    e_1 = _a.sent();
+                    console.error(e_1);
+                    return [
+                        3 /*break*/ ,
+                        5
+                    ];
+                case 5:
+                    return [
+                        2 /*return*/ ,
+                        fileBuffer
+                    ];
+            }
         });
-        else if (length <= 0xff) script.chunks.push({
-            op: 0x4c,
-            data: Array.from(buf)
-        });
-        else if (length <= 0xffff) script.chunks.push({
-            op: 0x4d,
-            data: Array.from(buf)
-        });
-        else script.chunks.push({
-            op: 0x4e,
-            data: Array.from(buf)
-        });
-    }
-    return script;
-}
-async function $8431c1983427e0bc$var$validateSignature(aipObj, cell, tape) {
-    if (!Array.isArray(tape) || tape.length < 3) throw new Error("AIP requires at least 3 cells including the prefix");
-    let cellIndex = -1;
-    tape.forEach((cc, index)=>{
-        if (cc.cell === cell) cellIndex = index;
     });
-    if (cellIndex === -1) throw new Error("AIP could not find cell in tape");
-    let usingIndexes = aipObj.index || [];
-    const signatureValues = [
-        "6a"
-    ]; // index 0: OP_RETURN
-    // Gather data from all previous cells
-    for(let i = 0; i < cellIndex; i++){
-        const cellContainer = tape[i];
-        if (!(0, $135c27e403539915$export$238b4e54af8fe886)(cellContainer)) {
-            const cellData = [];
-            for (const statement of cellContainer.cell){
-                let value;
-                if (statement.h) value = statement.h;
-                else if (statement.f) {
-                    const fileBuffer = await $8431c1983427e0bc$var$getFileBuffer(statement.f);
-                    value = fileBuffer.length > 0 ? fileBuffer.toString("hex") : undefined;
-                } else if (statement.b) {
-                    const buf = (0, $bbzTI$Buffer).from(statement.b, "base64");
-                    if (buf.length > 0) value = buf.toString("hex");
-                } else if (statement.s) {
-                    if (statement.s.length > 0) value = (0, $bbzTI$Buffer).from(statement.s).toString("hex");
-                }
-                if (value && value.length > 0) cellData.push(value);
-            }
-            if (cellData.length > 0) {
-                // add all cellData
-                signatureValues.push(...cellData);
-                // add pipe after this cell
-                signatureValues.push("7c");
-            }
-        }
-    }
-    // Now HAIP indexing logic
-    if (aipObj.hashing_algorithm && aipObj.index_unit_size) {
-        const indexLength = aipObj.index_unit_size * 2;
-        usingIndexes = [];
-        const indexesHex = cell[6]?.h || "";
-        for(let i = 0; i < indexesHex.length; i += indexLength)usingIndexes.push(Number.parseInt(indexesHex.substr(i, indexLength), 16));
-        aipObj.index = usingIndexes;
-    }
-    console.log("usingIndexes", usingIndexes);
-    console.log("signatureValues", signatureValues);
-    const signatureBufferStatements = [];
-    if (usingIndexes.length > 0) for (const idx of usingIndexes){
-        if (typeof signatureValues[idx] !== 'string') console.log("signatureValues[idx]", signatureValues[idx], "idx", idx);
-        if (!signatureValues[idx]) {
-            console.log("signatureValues is missing an index", idx, "This means indexing is off");
-            return false;
-        }
-        signatureBufferStatements.push((0, $bbzTI$Buffer).from(signatureValues[idx], "hex"));
-    }
-    else for (const val of signatureValues)signatureBufferStatements.push((0, $bbzTI$Buffer).from(val, "hex"));
-    console.log("signatureBufferStatements", signatureBufferStatements.map((b)=>b.toString("hex")));
-    let messageBuffer;
-    if (aipObj.hashing_algorithm) {
-        // HAIP logic
-        if (!aipObj.index_unit_size) // remove OP_RETURN chunk
-        signatureBufferStatements.shift();
-        const dataScript = $8431c1983427e0bc$var$fromSafeDataArray(signatureBufferStatements);
-        let dataBuffer = (0, $bbzTI$Buffer).from(dataScript.toHex(), "hex");
-        if (aipObj.index_unit_size) dataBuffer = dataBuffer.slice(1);
-        const hashed = (0, $bbzTI$Hash).sha256($8431c1983427e0bc$var$toArray(dataBuffer));
-        messageBuffer = (0, $bbzTI$Buffer).from(hashed);
-    } else // regular AIP
-    messageBuffer = (0, $bbzTI$Buffer).concat(signatureBufferStatements);
-    const addressString = aipObj.address || aipObj.signing_address;
-    const signatureStr = aipObj.signature;
-    const signature = (0, $bbzTI$Signature).fromCompact(signatureStr, 'base64');
-    const tryNormalLogic = ()=>{
-        console.log("[validateSignature:tryNormalLogic] start");
-        try {
-            const msgArr = $8431c1983427e0bc$var$toArray(messageBuffer);
-            const recoveredPubkey = $8431c1983427e0bc$var$recoverPublicKeyFromBSM(msgArr, signature, addressString);
-            console.log("[tryNormalLogic] recoveredPubkey ok, verifying with BSM.verify now");
-            const res = (0, $bbzTI$BSM).verify(msgArr, signature, recoveredPubkey);
-            console.log("[tryNormalLogic] BSM.verify result:", res);
-            return res;
-        } catch (err) {
-            console.log("[tryNormalLogic] error:", err);
-            return false;
-        }
-    };
-    const tryTwetchLogic = ()=>{
-        console.log("[validateSignature:tryTwetchLogic] start");
-        // For twetch: remove first and last item and sha256 the remainder, interpret hex as utf8
-        if (signatureBufferStatements.length <= 2) return false;
-        const trimmed = signatureBufferStatements.slice(1, -1);
-        console.log("[tryTwetchLogic] trimmedStatements count:", trimmed.length);
-        const buff = (0, $bbzTI$Hash).sha256($8431c1983427e0bc$var$toArray((0, $bbzTI$Buffer).concat(trimmed)));
-        const hexStr = $8431c1983427e0bc$var$toHex(buff);
-        const twetchMsg = (0, $bbzTI$Buffer).from(hexStr, "utf8");
-        try {
-            const recoveredPubkey = $8431c1983427e0bc$var$recoverPublicKeyFromBSM($8431c1983427e0bc$var$toArray(twetchMsg), signature, addressString);
-            console.log("[tryTwetchLogic] recoveredPubkey ok, verifying with BSM.verify now");
-            const res = (0, $bbzTI$BSM).verify($8431c1983427e0bc$var$toArray(twetchMsg), signature, recoveredPubkey);
-            console.log("[tryTwetchLogic] BSM.verify result:", res);
-            return res;
-        } catch (err) {
-            console.log("[tryTwetchLogic] error:", err);
-            return false;
-        }
-    };
-    let verified = tryNormalLogic();
-    if (!verified) verified = tryTwetchLogic();
-    console.log("[validateSignature] final verified=", verified);
-    aipObj.verified = verified;
-    return verified;
-}
-var $8431c1983427e0bc$export$6c117c038f18b127 = /*#__PURE__*/ function(SIGPROTO) {
-    SIGPROTO["HAIP"] = "HAIP";
-    SIGPROTO["AIP"] = "AIP";
-    return SIGPROTO;
-}({});
-const $8431c1983427e0bc$export$f0079d0908cdbf96 = async (useOpReturnSchema, protocol, dataObj, cell, tape, tx)=>{
-    const aipObj = {
-        verified: false
-    };
-    // minimal fields check
-    if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix");
-    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
-        const x = Number.parseInt(idx, 10);
-        if (Array.isArray(schemaField)) {
-            const [aipField] = Object.keys(schemaField[0]);
-            const fieldData = [];
-            for(let i = x + 1; i < cell.length; i++)if (cell[i].h) fieldData.push(Number.parseInt(cell[i].h, 16));
-            aipObj[aipField] = fieldData;
-        } else {
-            const [aipField] = Object.keys(schemaField);
-            const [schemaEncoding] = Object.values(schemaField);
-            aipObj[aipField] = (0, $135c27e403539915$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding) || "";
-        }
-    }
-    if (cell[0].s === $8431c1983427e0bc$var$address && cell[3].s && (0, $135c27e403539915$export$ca4d6504ca148ae4)(cell[3].s)) aipObj.signature = cell[3].s;
-    console.log("[AIPhandler] AIP object before validate:", aipObj);
-    if (!aipObj.signature) throw new Error("AIP requires a signature");
-    await $8431c1983427e0bc$var$validateSignature(aipObj, cell, tape);
-    console.log("[AIPhandler] After validate, verified:", aipObj.verified);
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, protocol, aipObj);
 };
-const $8431c1983427e0bc$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
-    if (!tape) throw new Error("Invalid AIP transaction");
-    return await $8431c1983427e0bc$export$f0079d0908cdbf96($8431c1983427e0bc$var$opReturnSchema, "AIP", dataObj, cell, tape, tx);
+var $98aa1784bfd49640$var$validateSignature = function(aipObj, cell, tape) {
+    return $98aa1784bfd49640$var$__awaiter(this, void 0, Promise, function() {
+        var cellIndex, usingIndexes, signatureValues, i, cellContainer, nc, statement, fileBuffer, indexLength, indexes, i, signatureBufferStatements, messageBuffer, dataScript, dataBuffer, buff;
+        return $98aa1784bfd49640$var$__generator(this, function(_a) {
+            switch(_a.label){
+                case 0:
+                    if (!Array.isArray(tape) || tape.length < 3) throw new Error("AIP requires at least 3 cells including the prefix");
+                    cellIndex = -1;
+                    tape.forEach(function(cc, index) {
+                        if (cc.cell === cell) cellIndex = index;
+                    });
+                    if (cellIndex === -1) throw new Error("AIP could not find cell in tape");
+                    usingIndexes = aipObj.index || [];
+                    signatureValues = [
+                        "6a"
+                    ] // OP_RETURN - is included in AIP
+                    ;
+                    i = 0;
+                    _a.label = 1;
+                case 1:
+                    if (!(i < cellIndex)) return [
+                        3 /*break*/ ,
+                        9
+                    ];
+                    cellContainer = tape[i];
+                    if (!!(0, $c2053de758ee1450$exports.checkOpFalseOpReturn)(cellContainer)) return [
+                        3 /*break*/ ,
+                        8
+                    ];
+                    nc = 0;
+                    _a.label = 2;
+                case 2:
+                    if (!(nc < cellContainer.cell.length)) return [
+                        3 /*break*/ ,
+                        7
+                    ];
+                    statement = cellContainer.cell[nc];
+                    if (!statement.h) return [
+                        3 /*break*/ ,
+                        3
+                    ];
+                    signatureValues.push(statement.h);
+                    return [
+                        3 /*break*/ ,
+                        6
+                    ];
+                case 3:
+                    if (!statement.f) return [
+                        3 /*break*/ ,
+                        5
+                    ];
+                    return [
+                        4 /*yield*/ ,
+                        $98aa1784bfd49640$var$getFileBuffer(statement.f)
+                    ];
+                case 4:
+                    fileBuffer = _a.sent();
+                    signatureValues.push(fileBuffer.toString("hex"));
+                    return [
+                        3 /*break*/ ,
+                        6
+                    ];
+                case 5:
+                    if (statement.b) // no hex? try base64
+                    signatureValues.push((0, $7AlAh$Buffer).from(statement.b, "base64").toString("hex"));
+                    else if (statement.s) signatureValues.push((0, $7AlAh$Buffer).from(statement.s).toString("hex"));
+                    _a.label = 6;
+                case 6:
+                    nc++;
+                    return [
+                        3 /*break*/ ,
+                        2
+                    ];
+                case 7:
+                    signatureValues.push("7c"); // | hex
+                    _a.label = 8;
+                case 8:
+                    i++;
+                    return [
+                        3 /*break*/ ,
+                        1
+                    ];
+                case 9:
+                    if (aipObj.hashing_algorithm) // when using HAIP, we need to parse the indexes in a non standard way
+                    // indexLength is byte size of the indexes being described
+                    {
+                        if (aipObj.index_unit_size) {
+                            indexLength = aipObj.index_unit_size * 2;
+                            usingIndexes = [];
+                            indexes = cell[6].h;
+                            for(i = 0; i < indexes.length; i += indexLength)usingIndexes.push(parseInt(indexes.substr(i, indexLength), 16));
+                            aipObj.index = usingIndexes;
+                        }
+                    }
+                    signatureBufferStatements = [];
+                    // check whether we need to only sign some indexes
+                    if (usingIndexes.length > 0) usingIndexes.forEach(function(index) {
+                        signatureBufferStatements.push((0, $7AlAh$Buffer).from(signatureValues[index], "hex"));
+                    });
+                    else // add all the values to the signature buffer
+                    signatureValues.forEach(function(statement) {
+                        signatureBufferStatements.push((0, $7AlAh$Buffer).from(statement, "hex"));
+                    });
+                    if (!aipObj.hashing_algorithm) return [
+                        3 /*break*/ ,
+                        11
+                    ];
+                    // this is actually Hashed-AIP (HAIP) and works a bit differently
+                    if (!aipObj.index_unit_size) // remove OP_RETURN - will be added by Script.buildDataOut
+                    signatureBufferStatements.shift();
+                    dataScript = (0, $7AlAh$Script).fromSafeDataArray(signatureBufferStatements);
+                    dataBuffer = (0, $7AlAh$Buffer).from(dataScript.toHex(), "hex");
+                    if (aipObj.index_unit_size) // the indexed buffer should not contain the OP_RETURN opcode, but this
+                    // is added by the buildDataOut function automatically. Remove it.
+                    dataBuffer = dataBuffer.slice(1);
+                    return [
+                        4 /*yield*/ ,
+                        (0, $c2053de758ee1450$exports.sha256)((0, $7AlAh$Buffer).from(dataBuffer.toString("hex")))
+                    ];
+                case 10:
+                    messageBuffer = _a.sent();
+                    return [
+                        3 /*break*/ ,
+                        12
+                    ];
+                case 11:
+                    // regular AIP
+                    messageBuffer = (0, $7AlAh$Buffer).concat($98aa1784bfd49640$var$__spreadArray([], signatureBufferStatements, true));
+                    _a.label = 12;
+                case 12:
+                    // verify aip signature
+                    try {
+                        aipObj.verified = (0, $7AlAh$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $7AlAh$Address).fromString(aipObj.address || "") || (0, $7AlAh$Address).fromString(aipObj.signing_address || ""));
+                    } catch (e) {
+                        aipObj.verified = false;
+                    }
+                    if (!!aipObj.verified) return [
+                        3 /*break*/ ,
+                        14
+                    ];
+                    // Twetch signs a UTF-8 buffer of the hex string of a sha256 hash of the message
+                    // Without 0x06 (OP_RETURN) and without 0x7c at the end, the trailing pipe ("|")
+                    messageBuffer = (0, $7AlAh$Buffer).concat($98aa1784bfd49640$var$__spreadArray([], signatureBufferStatements.slice(1, signatureBufferStatements.length - 1), true));
+                    return [
+                        4 /*yield*/ ,
+                        (0, $c2053de758ee1450$exports.sha256)(messageBuffer)
+                    ];
+                case 13:
+                    buff = _a.sent();
+                    messageBuffer = (0, $7AlAh$Buffer).from(buff.toString("hex"));
+                    try {
+                        aipObj.verified = (0, $7AlAh$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $7AlAh$Address).fromString(aipObj.address || aipObj.signing_address || ""));
+                    } catch (e1) {
+                        aipObj.verified = false;
+                    }
+                    _a.label = 14;
+                case 14:
+                    return [
+                        2 /*return*/ ,
+                        aipObj.verified || false
+                    ];
+            }
+        });
+    });
 };
-const $8431c1983427e0bc$export$474d593e43f12abd = {
+var $98aa1784bfd49640$export$f0079d0908cdbf96 = function(useQuerySchema, protocolName, dataObj, cell, tape, tx) {
+    return $98aa1784bfd49640$var$__awaiter(this, void 0, void 0, function() {
+        var aipObj, _i, _a, _b, idx, schemaField, x, schemaEncoding, aipField, fieldData, i;
+        return $98aa1784bfd49640$var$__generator(this, function(_c) {
+            switch(_c.label){
+                case 0:
+                    aipObj = {};
+                    // Does not have the required number of fields
+                    if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix " + tx);
+                    for(_i = 0, _a = Object.entries(useQuerySchema); _i < _a.length; _i++){
+                        _b = _a[_i], idx = _b[0], schemaField = _b[1];
+                        x = parseInt(idx, 10);
+                        schemaEncoding = void 0;
+                        aipField = void 0;
+                        if (schemaField instanceof Array) {
+                            // signature indexes are specified
+                            schemaEncoding = schemaField[0].index;
+                            aipField = Object.keys(schemaField[0])[0];
+                            fieldData = [];
+                            for(i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(parseInt(cell[i].h || "", 16));
+                            aipObj[aipField] = fieldData;
+                            continue;
+                        } else {
+                            aipField = Object.keys(schemaField)[0];
+                            schemaEncoding = Object.values(schemaField)[0];
+                        }
+                        aipObj[aipField] = (0, $c2053de758ee1450$exports.cellValue)(cell[x + 1], schemaEncoding) || "";
+                    }
+                    // There is an issue where some services add the signature as binary to the transaction
+                    // whereas others add the signature as base64. This will confuse bob and the parser and
+                    // the signature will not be verified. When the signature is added in binary cell[3].s is
+                    // binary, otherwise cell[3].s contains the base64 signature and should be used.
+                    if (cell[0].s === $98aa1784bfd49640$var$address && cell[3].s && (0, $c2053de758ee1450$exports.isBase64)(cell[3].s)) aipObj.signature = cell[3].s;
+                    if (!aipObj.signature) throw new Error("AIP requires a signature " + tx);
+                    return [
+                        4 /*yield*/ ,
+                        $98aa1784bfd49640$var$validateSignature(aipObj, cell, tape)
+                    ];
+                case 1:
+                    _c.sent();
+                    (0, $c2053de758ee1450$exports.saveProtocolData)(dataObj, protocolName, aipObj);
+                    return [
+                        2 /*return*/ 
+                    ];
+            }
+        });
+    });
+};
+var $98aa1784bfd49640$var$handler = function(_a) {
+    var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape, tx = _a.tx;
+    return $98aa1784bfd49640$var$__awaiter(void 0, void 0, void 0, function() {
+        return $98aa1784bfd49640$var$__generator(this, function(_b) {
+            switch(_b.label){
+                case 0:
+                    if (!tape) throw new Error("Invalid AIP transaction. tape is required");
+                    if (!tx) throw new Error("Invalid AIP transaction. tx is required");
+                    return [
+                        4 /*yield*/ ,
+                        $98aa1784bfd49640$export$f0079d0908cdbf96($98aa1784bfd49640$var$querySchema, "AIP", dataObj, cell, tape, tx)
+                    ];
+                case 1:
+                    return [
+                        2 /*return*/ ,
+                        _b.sent()
+                    ];
+            }
+        });
+    });
+};
+var $98aa1784bfd49640$export$474d593e43f12abd = {
     name: "AIP",
-    address: $8431c1983427e0bc$var$address,
-    opReturnSchema: $8431c1983427e0bc$var$opReturnSchema,
-    handler: $8431c1983427e0bc$var$handler
+    address: $98aa1784bfd49640$var$address,
+    querySchema: $98aa1784bfd49640$var$querySchema,
+    handler: $98aa1784bfd49640$var$handler
 };
 
 
 
-const $46ab6895f01c3f36$var$address = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut";
-const $46ab6895f01c3f36$var$opReturnSchema = [
+var $a429761762b93e1b$var$address = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut";
+var $a429761762b93e1b$var$querySchema = [
     {
         content: [
             "string",
@@ -368,24 +674,26 @@ const $46ab6895f01c3f36$var$opReturnSchema = [
         filename: "string"
     }
 ];
-const $46ab6895f01c3f36$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    const encodingMap = new Map();
+var $a429761762b93e1b$var$handler = function(_a) {
+    var dataObj = _a.dataObj, cell = _a.cell, tx = _a.tx;
+    var encodingMap = new Map();
     encodingMap.set("utf8", "string");
     encodingMap.set("text", "string"); // invalid but people use it :(
     encodingMap.set("gzip", "binary"); // invalid but people use it :(
     encodingMap.set("text/plain", "string");
     encodingMap.set("image/png", "binary");
     encodingMap.set("image/jpeg", "binary");
-    if (!cell[1] || !cell[2]) throw new Error(`Invalid B tx: ${tx}`);
+    if (!cell[1] || !cell[2]) throw new Error("Invalid B tx: ".concat(tx));
     // Check pushdata length + 1 for protocol prefix
-    if (cell.length > $46ab6895f01c3f36$var$opReturnSchema.length + 1) throw new Error("Invalid B tx. Too many fields.");
+    if (cell.length > $a429761762b93e1b$var$querySchema.length + 1) throw new Error("Invalid B tx. Too many fields.");
     // Make sure there are not more fields than possible
-    const bObj = {};
+    var bObj = {};
     // loop over the schema
-    for (const [idx, schemaField] of Object.entries($46ab6895f01c3f36$var$opReturnSchema)){
-        const x = Number.parseInt(idx, 10);
-        const bField = Object.keys(schemaField)[0];
-        let schemaEncoding = Object.values(schemaField)[0];
+    for(var _i = 0, _b = Object.entries($a429761762b93e1b$var$querySchema); _i < _b.length; _i++){
+        var _c = _b[_i], idx = _c[0], schemaField = _c[1];
+        var x = parseInt(idx, 10);
+        var bField = Object.keys(schemaField)[0];
+        var schemaEncoding = Object.values(schemaField)[0];
         if (bField === "content") {
             // If the encoding is ommitted, try to infer from content-type instead of breaking
             if (cell[1].f) // this is file reference to B files
@@ -405,31 +713,31 @@ const $46ab6895f01c3f36$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })
                     ii: 0
                 };
                 cell[3].s = schemaEncoding === "string" ? "utf-8" : "binary";
-            } else schemaEncoding = cell[3]?.s ? encodingMap.get(cell[3].s.replace("-", "").toLowerCase()) : null;
+            } else schemaEncoding = cell[3] && cell[3].s ? encodingMap.get(cell[3].s.replace("-", "").toLowerCase()) : null;
         }
         // encoding is not required
         if (bField === "encoding" && !cell[x + 1]) continue;
         // filename is not required
         if (bField === "filename" && !cell[x + 1]) continue;
         // check for malformed syntax
-        if (!cell || !cell[x + 1]) throw new Error(`malformed B syntax ${cell}`);
+        if (!cell || !cell[x + 1]) throw new Error("malformed B syntax " + cell);
         // set field value from either s, b, ls, or lb depending on encoding and availability
-        const data = cell[x + 1];
-        bObj[bField] = (0, $135c27e403539915$export$b691916706e0e9cc)(data, schemaEncoding);
+        var data = cell[x + 1];
+        bObj[bField] = (0, $c2053de758ee1450$exports.cellValue)(data, schemaEncoding);
     }
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "B", bObj);
+    (0, $c2053de758ee1450$exports.saveProtocolData)(dataObj, "B", bObj);
 };
-const $46ab6895f01c3f36$export$ef35774e6d314e91 = {
+var $a429761762b93e1b$export$ef35774e6d314e91 = {
     name: "B",
-    address: $46ab6895f01c3f36$var$address,
-    opReturnSchema: $46ab6895f01c3f36$var$opReturnSchema,
-    handler: $46ab6895f01c3f36$var$handler
+    address: $a429761762b93e1b$var$address,
+    querySchema: $a429761762b93e1b$var$querySchema,
+    handler: $a429761762b93e1b$var$handler
 };
 
 
 
-const $f10d8251edac4279$var$address = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT";
-const $f10d8251edac4279$var$opReturnSchema = [
+var $0d2672e9817499e3$var$address = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT";
+var $0d2672e9817499e3$var$querySchema = [
     {
         type: "string"
     },
@@ -440,231 +748,148 @@ const $f10d8251edac4279$var$opReturnSchema = [
         sequence: "string"
     }
 ];
-const $f10d8251edac4279$export$c3c52e219617878 = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
+var $0d2672e9817499e3$export$c3c52e219617878 = function(_a) {
+    var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape, tx = _a.tx;
+    if (!tape) throw new Error("Invalid BAP tx, tape required");
     if (!tx) throw new Error("Invalid BAP tx, tx required");
-    (0, $135c27e403539915$export$ee2a8bbe689a8ef5)("BAP", $f10d8251edac4279$var$opReturnSchema, dataObj, cell, tx);
+    (0, $c2053de758ee1450$exports.bmapQuerySchemaHandler)("BAP", $0d2672e9817499e3$var$querySchema, dataObj, cell, tape, tx);
 };
-const $f10d8251edac4279$export$5935ea4bf04c4453 = {
+var $0d2672e9817499e3$export$5935ea4bf04c4453 = {
     name: "BAP",
-    address: $f10d8251edac4279$var$address,
-    opReturnSchema: $f10d8251edac4279$var$opReturnSchema,
-    handler: $f10d8251edac4279$export$c3c52e219617878
+    address: $0d2672e9817499e3$var$address,
+    querySchema: $0d2672e9817499e3$var$querySchema,
+    handler: $0d2672e9817499e3$export$c3c52e219617878
 };
 
 
+var $e22c244abfee4b98$exports = {};
 
-const $07efa46a438da3e6$var$protocolAddress = "$";
-const $07efa46a438da3e6$var$opReturnSchema = [
-    {
-        su: [
-            {
-                pubkey: "string"
-            },
-            {
-                sign_position: "string"
-            },
-            {
-                signature: "string"
+$parcel$export($e22c244abfee4b98$exports, "HAIP", () => $e22c244abfee4b98$export$12815d889fe90b8, (v) => $e22c244abfee4b98$export$12815d889fe90b8 = v);
+
+var $e22c244abfee4b98$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
             }
-        ],
-        echo: [
-            {
-                data: "string"
-            },
-            {
-                to: "string"
-            },
-            {
-                filename: "string"
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
             }
-        ],
-        route: [
-            [
-                {
-                    add: [
-                        {
-                            bitcom_address: "string"
-                        },
-                        {
-                            route_matcher: "string"
-                        },
-                        {
-                            endpoint_template: "string"
-                        }
-                    ]
-                },
-                {
-                    enable: [
-                        {
-                            path: "string"
-                        }
-                    ]
-                }
-            ]
-        ],
-        useradd: [
-            {
-                address: "string"
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var $e22c244abfee4b98$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    }, f, y, t, g;
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g;
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
+        };
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
             }
-        ]
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
     }
-];
-// const handler = function (dataObj, protocolName, cell, tape, tx) {
-const $07efa46a438da3e6$var$handler = ({ dataObj: dataObj, cell: cell })=>{
-    if (!cell.length || !cell.every((c)=>c.s)) throw new Error("Invalid Bitcom tx");
-    // gather up the string values
-    const bitcomObj = cell.map((c)=>c?.s ? c.s : "");
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "BITCOM", bitcomObj);
 };
-const $07efa46a438da3e6$export$c19e3a57d69468ea = {
-    name: "BITCOM",
-    address: $07efa46a438da3e6$var$protocolAddress,
-    opReturnSchema: $07efa46a438da3e6$var$opReturnSchema,
-    handler: $07efa46a438da3e6$var$handler
-};
-
-
-
-
-
-const { toArray: $0caf3051d6cd1d65$var$toArray, toBase58Check: $0caf3051d6cd1d65$var$toBase58Check, toHex: $0caf3051d6cd1d65$var$toHex } = (0, $bbzTI$Utils);
-const { magicHash: $0caf3051d6cd1d65$var$magicHash } = (0, $bbzTI$BSM);
-const $0caf3051d6cd1d65$var$address = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC";
-const $0caf3051d6cd1d65$var$opReturnSchema = [
-    {
-        bitkey_signature: "string"
-    },
-    {
-        user_signature: "string"
-    },
-    {
-        paymail: "string"
-    },
-    {
-        pubkey: "string"
-    }
-];
-// Helper to convert array to BigNumber
-function $0caf3051d6cd1d65$var$toBigNumber(buffer) {
-    const hex = $0caf3051d6cd1d65$var$toHex(buffer);
-    return new (0, $bbzTI$BigNumber)(hex, 16);
-}
-// Recovers a public key from a BSM signature by brute forcing recovery factors
-// Steps:
-// 1. Apply magicHash to the raw message.
-// 2. Try all recovery factors 0–3 with Signature.RecoverPublicKey()
-// 3. If BSM.verify() returns true with the recovered pubkey, return it.
-function $0caf3051d6cd1d65$var$recoverPublicKeyFromBSM(message, signature) {
-    // First, BSM signatures are verified by applying magicHash internally,
-    // so we must apply magicHash to the raw message ourselves for recovery:
-    const msgHash = $0caf3051d6cd1d65$var$magicHash(message);
-    const bigMsg = $0caf3051d6cd1d65$var$toBigNumber(msgHash);
-    for(let recovery = 0; recovery < 4; recovery++)try {
-        const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
-        // Verify using BSM.verify() with the original raw message (no magicHash)
-        if ((0, $bbzTI$BSM).verify(message, signature, publicKey)) return publicKey;
-    } catch  {
-    // Try next recovery factor
-    }
-    throw new Error("Failed to recover public key from BSM signature");
-}
-const $0caf3051d6cd1d65$var$handler = async ({ dataObj: dataObj, cell: cell })=>{
-    if (cell.length < 5) throw new Error("Invalid Bitkey tx");
-    const bitkeyObj = {};
-    for (const [idx, schemaField] of Object.entries($0caf3051d6cd1d65$var$opReturnSchema)){
-        const x = Number.parseInt(idx, 10);
-        const bitkeyField = Object.keys(schemaField)[0];
-        const schemaEncoding = Object.values(schemaField)[0];
-        bitkeyObj[bitkeyField] = (0, $135c27e403539915$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
-    }
-    // Derive userAddress from pubkey
-    const pubkeyHex = bitkeyObj.pubkey;
-    const userPubkey = (0, $bbzTI$PublicKey).fromString(pubkeyHex);
-    const userPubKeyHash = userPubkey.toHash();
-    const userAddress = $0caf3051d6cd1d65$var$toBase58Check(userPubKeyHash);
-    // Prepare raw message for bitkey signature verification: sha256(paymail_hex + pubkey_hex)
-    const paymailHex = (0, $bbzTI$Buffer).from(bitkeyObj.paymail).toString("hex");
-    const concatenated = paymailHex + pubkeyHex;
-    const concatenatedBuffer = (0, $bbzTI$Buffer).from(concatenated, "hex");
-    const bitkeyMessage = (0, $bbzTI$Hash).sha256($0caf3051d6cd1d65$var$toArray(concatenatedBuffer));
-    // This is the raw message. BSM.verify() will do magicHash internally.
-    const bitkeySignature = (0, $bbzTI$Signature).fromCompact(bitkeyObj.bitkey_signature, 'base64');
-    // Recover Bitkey pubkey
-    const recoveredBitkeyPubkey = $0caf3051d6cd1d65$var$recoverPublicKeyFromBSM(bitkeyMessage, bitkeySignature);
-    const recoveredBitkeyPubKeyHash = recoveredBitkeyPubkey.toHash();
-    const recoveredBitkeyAddress = $0caf3051d6cd1d65$var$toBase58Check(recoveredBitkeyPubKeyHash);
-    const bitkeySignatureVerified = (0, $bbzTI$BSM).verify(bitkeyMessage, bitkeySignature, recoveredBitkeyPubkey) && recoveredBitkeyAddress === $0caf3051d6cd1d65$var$address;
-    // Verify user signature by using the pubkey as the message
-    const userMessage = $0caf3051d6cd1d65$var$toArray((0, $bbzTI$Buffer).from(pubkeyHex, "utf8"));
-    const userSignature = (0, $bbzTI$Signature).fromCompact(bitkeyObj.user_signature, 'base64');
-    const recoveredUserPubkey = $0caf3051d6cd1d65$var$recoverPublicKeyFromBSM(userMessage, userSignature);
-    const recoveredUserPubKeyHash = recoveredUserPubkey.toHash();
-    const recoveredUserAddress = $0caf3051d6cd1d65$var$toBase58Check(recoveredUserPubKeyHash);
-    const userSignatureVerified = (0, $bbzTI$BSM).verify(userMessage, userSignature, recoveredUserPubkey) && recoveredUserAddress === userAddress;
-    bitkeyObj.verified = bitkeySignatureVerified && userSignatureVerified;
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "BITKEY", bitkeyObj);
-};
-const $0caf3051d6cd1d65$export$6a60f6b74bbaccb8 = {
-    name: "BITKEY",
-    address: $0caf3051d6cd1d65$var$address,
-    opReturnSchema: $0caf3051d6cd1d65$var$opReturnSchema,
-    handler: $0caf3051d6cd1d65$var$handler
-};
-
-
-
-
-
-const { magicHash: $0aee1758fbc2ad1d$var$magicHash } = (0, $bbzTI$BSM);
-const { toArray: $0aee1758fbc2ad1d$var$toArray } = (0, $bbzTI$Utils);
-const $0aee1758fbc2ad1d$var$protocolAddress = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p";
-const $0aee1758fbc2ad1d$var$opReturnSchema = [
-    {
-        paymail: "string"
-    },
-    {
-        pubkey: "binary"
-    },
-    {
-        signature: "string"
-    }
-];
-const $0aee1758fbc2ad1d$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
-    // Validation
-    if (cell[0].s !== $0aee1758fbc2ad1d$var$protocolAddress || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].s || !tape) throw new Error(`Invalid BITPIC record: ${tx}`);
-    const bitpicObj = {
-        paymail: cell[1].s,
-        pubkey: (0, $bbzTI$Buffer).from(cell[2].b, "base64").toString("hex"),
-        signature: cell[3].s || "",
-        verified: false
-    };
-    const b = tape[1].cell;
-    if (b[0].s === "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut") // verify bitpic signature
-    try {
-        // TODO: bob transactions are missing this binary part, cannot verify signature
-        const bin = cell[1].lb || cell[1].b;
-        const hashBuff = (0, $bbzTI$Hash).sha256($0aee1758fbc2ad1d$var$toArray(bin, "base64"));
-        const sig = (0, $bbzTI$Signature).fromCompact(bitpicObj.signature, "base64");
-        const pubkey = (0, $bbzTI$PublicKey).fromString(bitpicObj.pubkey);
-        const msgHash = $0aee1758fbc2ad1d$var$magicHash(hashBuff);
-        bitpicObj.verified = (0, $bbzTI$BSM).verify(msgHash, sig, pubkey);
-    } catch (e) {
-        // failed verification
-        bitpicObj.verified = false;
-    }
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "BITPIC", bitpicObj);
-};
-const $0aee1758fbc2ad1d$export$bbef9cc099c72f9d = {
-    name: "BITPIC",
-    address: $0aee1758fbc2ad1d$var$protocolAddress,
-    opReturnSchema: $0aee1758fbc2ad1d$var$opReturnSchema,
-    handler: $0aee1758fbc2ad1d$var$handler
-};
-
-
-
-const $e0c7c17de15e479d$var$address = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3";
-const $e0c7c17de15e479d$var$opReturnSchema = [
+var $e22c244abfee4b98$var$address = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3";
+var $e22c244abfee4b98$var$querySchema = [
     {
         hashing_algorithm: "string"
     },
@@ -687,24 +912,40 @@ const $e0c7c17de15e479d$var$opReturnSchema = [
     ]
 ];
 // https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
-const $e0c7c17de15e479d$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
-    if (!tape) throw new Error("Invalid HAIP tx. Bad tape");
-    if (!tx) throw new Error("Invalid HAIP tx.");
-    return await (0, $8431c1983427e0bc$export$f0079d0908cdbf96)($e0c7c17de15e479d$var$opReturnSchema, (0, $8431c1983427e0bc$export$6c117c038f18b127).HAIP, dataObj, cell, tape);
+var $e22c244abfee4b98$var$handler = function(_a) {
+    var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape, tx = _a.tx;
+    return $e22c244abfee4b98$var$__awaiter(void 0, void 0, void 0, function() {
+        return $e22c244abfee4b98$var$__generator(this, function(_b) {
+            switch(_b.label){
+                case 0:
+                    if (!tape) throw new Error("Invalid HAIP tx. Bad tape");
+                    if (!tx) throw new Error("Invalid HAIP tx.");
+                    return [
+                        4 /*yield*/ ,
+                        (0, $98aa1784bfd49640$exports.AIPhandler)($e22c244abfee4b98$var$querySchema, "HAIP", dataObj, cell, tape, tx)
+                    ];
+                case 1:
+                    return [
+                        2 /*return*/ ,
+                        _b.sent()
+                    ];
+            }
+        });
+    });
 };
-const $e0c7c17de15e479d$export$12815d889fe90b8 = {
+var $e22c244abfee4b98$export$12815d889fe90b8 = {
     name: "HAIP",
-    address: $e0c7c17de15e479d$var$address,
-    opReturnSchema: $e0c7c17de15e479d$var$opReturnSchema,
-    handler: $e0c7c17de15e479d$var$handler
+    address: $e22c244abfee4b98$var$address,
+    querySchema: $e22c244abfee4b98$var$querySchema,
+    handler: $e22c244abfee4b98$var$handler
 };
 
 
 
 
 
-const $a2123a5d6a97fffa$var$address = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5";
-const $a2123a5d6a97fffa$var$opReturnSchema = [
+var $5a1837533efd883a$var$address = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5";
+var $5a1837533efd883a$var$querySchema = [
     {
         cmd: {
             SET: [
@@ -758,12 +999,13 @@ const $a2123a5d6a97fffa$var$opReturnSchema = [
         }
     }
 ];
-const $a2123a5d6a97fffa$var$processADD = (cell, mapObj)=>{
-    let last = null;
-    for (const pushdataContainer of cell){
+var $5a1837533efd883a$var$processADD = function(cell, mapObj) {
+    var last = null;
+    for(var _i = 0, cell_1 = cell; _i < cell_1.length; _i++){
+        var pushdataContainer = cell_1[_i];
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
-        const pushdata = pushdataContainer.s;
+        var pushdata = pushdataContainer.s;
         if (pushdataContainer.i === 2) {
             // Key name
             mapObj[pushdata] = [];
@@ -771,12 +1013,13 @@ const $a2123a5d6a97fffa$var$processADD = (cell, mapObj)=>{
         } else if (last && Array.isArray(mapObj[last])) mapObj[last].push(pushdata);
     }
 };
-const $a2123a5d6a97fffa$var$proccessDELETE = (cell, mapObj)=>{
-    let last = null;
-    for (const pushdataContainer of cell){
+var $5a1837533efd883a$var$proccessDELETE = function(cell, mapObj) {
+    var last = null;
+    for(var _i = 0, cell_2 = cell; _i < cell_2.length; _i++){
+        var pushdataContainer = cell_2[_i];
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
-        const pushdata = pushdataContainer.s;
+        var pushdata = pushdataContainer.s;
         if (pushdataContainer.i === 2) {
             // Key name
             mapObj[pushdata] = [];
@@ -784,31 +1027,36 @@ const $a2123a5d6a97fffa$var$proccessDELETE = (cell, mapObj)=>{
         } else if (last) mapObj[last].push(pushdata);
     }
 };
-const $a2123a5d6a97fffa$var$processSELECT = (cell, mapObj)=>{
+var $5a1837533efd883a$var$processSELECT = function(cell, mapObj) {
     // TODO
     // console.log('MAP SELECT');
-    for (const pushdataContainer of cell)// ignore MAP command
-    if (pushdataContainer.i === 0 || pushdataContainer.i === 1) {
-        mapObj.SELECT = "TODO";
-        continue;
+    for(var _i = 0, cell_3 = cell; _i < cell_3.length; _i++){
+        var pushdataContainer = cell_3[_i];
+        // ignore MAP command
+        if (pushdataContainer.i === 0 || pushdataContainer.i === 1) {
+            mapObj.SELECT = "TODO";
+            continue;
+        }
     }
 };
-const $a2123a5d6a97fffa$var$processMSGPACK = (cell, mapObj)=>{
-    for (const pushdataContainer of cell){
+var $5a1837533efd883a$var$processMSGPACK = function(cell, mapObj) {
+    for(var _i = 0, cell_4 = cell; _i < cell_4.length; _i++){
+        var pushdataContainer = cell_4[_i];
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
         if (pushdataContainer.i === 2) try {
-            if (!(0, $bbzTI$decode)) throw new Error("Msgpack is required but not loaded");
-            const buff = (0, $bbzTI$Buffer).from(pushdataContainer.b, "base64");
-            mapObj = (0, $bbzTI$decode)(buff);
+            if (!(0, $7AlAh$decode)) throw new Error("Msgpack is required but not loaded");
+            var buff = (0, $7AlAh$Buffer).from(pushdataContainer.b, "base64");
+            mapObj = (0, $7AlAh$decode)(buff);
         } catch (e) {
             mapObj = {};
         }
     }
     return mapObj;
 };
-const $a2123a5d6a97fffa$var$processJSON = (cell, mapObj)=>{
-    for (const pushdataContainer of cell){
+var $5a1837533efd883a$var$processJSON = function(cell, mapObj) {
+    for(var _i = 0, cell_5 = cell; _i < cell_5.length; _i++){
+        var pushdataContainer = cell_5[_i];
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
         if (pushdataContainer.i === 2) try {
@@ -819,91 +1067,217 @@ const $a2123a5d6a97fffa$var$processJSON = (cell, mapObj)=>{
     }
     return mapObj;
 };
-const $a2123a5d6a97fffa$var$processSET = (cell, mapObj)=>{
-    let last = null;
-    for (const pushdataContainer of cell){
+var $5a1837533efd883a$var$processSET = function(cell, mapObj) {
+    var last = null;
+    for(var _i = 0, cell_6 = cell; _i < cell_6.length; _i++){
+        var pushdataContainer = cell_6[_i];
         // ignore MAP command
         if (!pushdataContainer.s || pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
-        const pushdata = pushdataContainer.s;
+        var pushdata = pushdataContainer.s;
         if (pushdataContainer.i % 2 === 0) {
             // key
             mapObj[pushdata] = "";
             last = pushdata;
         } else {
             // value
-            if (!last) throw new Error(`malformed MAP syntax. Cannot parse.${last}`);
+            if (!last) throw new Error("malformed MAP syntax. Cannot parse.".concat(last));
             mapObj[last] = pushdata;
         }
     }
 };
-const $a2123a5d6a97fffa$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
+var $5a1837533efd883a$var$handler = function(_a) {
+    var dataObj = _a.dataObj, cell = _a.cell, tx = _a.tx;
     // Validate
-    if (cell[0].s !== $a2123a5d6a97fffa$var$address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) throw new Error(`Invalid MAP record: ${tx}`);
-    let mapObj = {};
+    if (cell[0].s !== $5a1837533efd883a$var$address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) throw new Error("Invalid MAP record: ".concat(tx));
+    var mapObj = {};
     // parse the protocol separator
-    const commands = [];
-    let commandSeparator = 0;
-    for(let i = 1; i < cell.length; i++)if (cell[i].s === ":::") commandSeparator++;
+    var commands = [];
+    var commandSeparator = 0;
+    for(var i = 1; i < cell.length; i++)if (cell[i].s === ":::") commandSeparator++;
     else {
         if (!commands[commandSeparator]) commands[commandSeparator] = [];
         cell[i].i = commands[commandSeparator].length + 1;
         commands[commandSeparator].push(cell[i]);
     }
     // Get the MAP command key name from the query schema
-    const mapCmdKey = Object.keys($a2123a5d6a97fffa$var$opReturnSchema[0])[0];
+    var mapCmdKey = Object.keys($5a1837533efd883a$var$querySchema[0])[0];
     // Add the firt MAP command in the response object
     mapObj[mapCmdKey] = commands[0][0].s;
-    for (const cc of commands){
+    commands.forEach(function(cc) {
         // re-add the MAP address
         cc.unshift({
-            s: $a2123a5d6a97fffa$var$address,
+            s: $5a1837533efd883a$var$address,
             i: 0
         });
-        const command = cc[1].s;
+        var command = cc[1].s;
         // Individual parsing rules for each MAP command
         switch(command){
             // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
             case "ADD":
-                $a2123a5d6a97fffa$var$processADD(cc, mapObj);
+                $5a1837533efd883a$var$processADD(cc, mapObj);
                 break;
             case "REMOVE":
                 mapObj.key = cc[2].s;
                 break;
             case "DELETE":
-                $a2123a5d6a97fffa$var$proccessDELETE(cc, mapObj);
+                $5a1837533efd883a$var$proccessDELETE(cc, mapObj);
                 break;
             case "CLEAR":
                 break;
             case "SELECT":
-                $a2123a5d6a97fffa$var$processSELECT(cc, mapObj);
+                $5a1837533efd883a$var$processSELECT(cc, mapObj);
                 break;
             case "MSGPACK":
-                mapObj = $a2123a5d6a97fffa$var$processMSGPACK(cc, mapObj);
+                mapObj = $5a1837533efd883a$var$processMSGPACK(cc, mapObj);
                 break;
             case "JSON":
-                mapObj = $a2123a5d6a97fffa$var$processJSON(cc, mapObj);
+                mapObj = $5a1837533efd883a$var$processJSON(cc, mapObj);
                 break;
             case "SET":
-                $a2123a5d6a97fffa$var$processSET(cc, mapObj);
+                $5a1837533efd883a$var$processSET(cc, mapObj);
                 break;
             default:
         }
-    }
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "MAP", mapObj);
+    });
+    (0, $c2053de758ee1450$exports.saveProtocolData)(dataObj, "MAP", mapObj);
 };
-const $a2123a5d6a97fffa$export$ce970371e0e850bc = {
+var $5a1837533efd883a$export$ce970371e0e850bc = {
     name: "MAP",
-    address: $a2123a5d6a97fffa$var$address,
-    opReturnSchema: $a2123a5d6a97fffa$var$opReturnSchema,
-    handler: $a2123a5d6a97fffa$var$handler
+    address: $5a1837533efd883a$var$address,
+    querySchema: $5a1837533efd883a$var$querySchema,
+    handler: $5a1837533efd883a$var$handler
 };
 
 
+var $1dadca38d7be2882$exports = {};
+
+$parcel$export($1dadca38d7be2882$exports, "METANET", () => $1dadca38d7be2882$export$7830a85a59ca4593, (v) => $1dadca38d7be2882$export$7830a85a59ca4593 = v);
 
 
-const { toArray: $5919cfba307ca207$var$toArray, toHex: $5919cfba307ca207$var$toHex } = (0, $bbzTI$Utils);
-const $5919cfba307ca207$var$address = "meta";
-const $5919cfba307ca207$var$opReturnSchema = [
+var $1dadca38d7be2882$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var $1dadca38d7be2882$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    }, f, y, t, g;
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g;
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
+        };
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
+    }
+};
+var $1dadca38d7be2882$var$address = "meta";
+var $1dadca38d7be2882$var$querySchema = [
     {
         address: "string"
     },
@@ -914,389 +1288,783 @@ const $5919cfba307ca207$var$opReturnSchema = [
         name: "string"
     }
 ];
-const $5919cfba307ca207$export$3eb18141230d6532 = async (a, tx)=>{
-    // Calculate the node ID
-    const buf = (0, $bbzTI$Buffer).from(a + tx);
-    const hashBuf = (0, $bbzTI$Hash).sha256($5919cfba307ca207$var$toArray(buf));
-    return $5919cfba307ca207$var$toHex(hashBuf);
-};
-const $5919cfba307ca207$var$handler = async ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error(`Invalid Metanet tx ${tx}`);
-    // For now, we just copy from MOM keys later if available, or keep BOB format
-    const nodeId = await $5919cfba307ca207$export$3eb18141230d6532(cell[1].s, tx.tx.h);
-    // Described this node
-    const node = {
-        a: cell[1].s,
-        tx: tx.tx.h,
-        id: nodeId
-    };
-    let parent = {};
-    if (tx.in) {
-        const parentId = await $5919cfba307ca207$export$3eb18141230d6532(tx.in[0].e.a, cell[2].s);
-        // Parent node
-        parent = {
-            a: tx.in[0].e.a,
-            tx: cell[2].s,
-            id: parentId
-        };
-    }
-    if (!dataObj.METANET) dataObj.METANET = [];
-    dataObj.METANET.push({
-        node: node,
-        parent: parent
+var $1dadca38d7be2882$export$3eb18141230d6532 = function(a, tx) {
+    return $1dadca38d7be2882$var$__awaiter(this, void 0, void 0, function() {
+        var buf, hashBuf;
+        return $1dadca38d7be2882$var$__generator(this, function(_a) {
+            switch(_a.label){
+                case 0:
+                    buf = (0, $7AlAh$Buffer).from(a + tx);
+                    return [
+                        4 /*yield*/ ,
+                        (0, $c2053de758ee1450$exports.sha256)(buf)
+                    ];
+                case 1:
+                    hashBuf = _a.sent();
+                    return [
+                        2 /*return*/ ,
+                        hashBuf.toString("hex")
+                    ];
+            }
+        });
     });
 };
-const $5919cfba307ca207$export$7830a85a59ca4593 = {
-    name: "METANET",
-    address: $5919cfba307ca207$var$address,
-    opReturnSchema: $5919cfba307ca207$var$opReturnSchema,
-    handler: $5919cfba307ca207$var$handler
-};
-
-
-
-// const OrdScript =
-//     'OP_FALSE OP_IF 6F7264 OP_1 <CONTENT_TYPE_PLACEHOLDER> OP_0 <DATA_PLACEHOLDER> OP_ENDIF'.split(
-//         ' '
-//     )
-const $e1f2429e8f3586f4$var$scriptChecker = (cell)=>{
-    if (cell.length < 13) // wrong length
-    return false;
-    // Find OP_IF wrapper
-    const startIdx = $e1f2429e8f3586f4$var$findIndex(cell, (c)=>c.ops === "OP_IF");
-    const endIdx = $e1f2429e8f3586f4$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
-    const ordScript = cell.slice(startIdx, endIdx);
-    const prevCell = cell[startIdx - 1];
-    return prevCell?.op === 0 && !!ordScript[0] && !!ordScript[1] && ordScript[1].s == "ord";
-};
-const $e1f2429e8f3586f4$var$handler = ({ dataObj: dataObj, cell: cell, out: out })=>{
-    if (!cell[0] || !out) throw new Error("Invalid Ord tx. dataObj, cell, out and tx are required.");
-    // assemble asm
-    // make sure first piece matches a txid
-    // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
-    // next
-    // Find OP_IF wrapper
-    const startIdx = $e1f2429e8f3586f4$var$findIndex(cell, (c)=>c.ops === "OP_IF");
-    const endIdx = $e1f2429e8f3586f4$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF") + 1;
-    const ordScript = cell.slice(startIdx, endIdx);
-    if (!ordScript[0] || !ordScript[1] || ordScript[1].s !== "ord") throw new Error("Invalid Ord tx. Prefix not found.");
-    let data;
-    let contentType;
-    ordScript.forEach((push, idx, all)=>{
-        // content-type
-        if (push.ops === "OP_1") contentType = all[idx + 1].s;
-        // data
-        if (push.ops === "OP_0") data = all[idx + 1].b;
-    });
-    if (!data) throw new Error("Invalid Ord data.");
-    if (!contentType) throw new Error("Invalid Ord content type.");
-    const OrdObj = {
-        data: data,
-        contentType: contentType
-    };
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "ORD", OrdObj);
-};
-const $e1f2429e8f3586f4$export$a3deb2ff0da16a68 = {
-    name: "ORD",
-    handler: $e1f2429e8f3586f4$var$handler,
-    scriptChecker: $e1f2429e8f3586f4$var$scriptChecker
-};
-function $e1f2429e8f3586f4$var$findIndex(array, predicate) {
-    return $e1f2429e8f3586f4$var$findLastIndex(array, predicate);
-}
-function $e1f2429e8f3586f4$var$findLastIndex(array, predicate, fromIndex) {
-    const length = array == null ? 0 : array.length;
-    if (!length) return -1;
-    let index = length - 1;
-    if (fromIndex !== undefined) {
-        index = fromIndex;
-        index = fromIndex < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1);
-    }
-    return $e1f2429e8f3586f4$var$baseFindIndex(array, predicate, index, true);
-}
-function $e1f2429e8f3586f4$var$baseFindIndex(array, predicate, fromIndex, fromRight) {
-    const { length: length } = array;
-    let index = fromIndex + (fromRight ? 1 : -1);
-    while(fromRight ? index-- : ++index < length){
-        if (predicate(array[index], index, array)) return index;
-    }
-    return -1;
-}
-
-
-
-const $20612a1331ed9f23$var$address = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1";
-const $20612a1331ed9f23$var$opReturnSchema = [
-    {
-        pair: "json"
-    },
-    {
-        address: "string"
-    },
-    {
-        timestamp: "string"
-    }
-];
-const $20612a1331ed9f23$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    if (cell[0].s !== $20612a1331ed9f23$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) throw new Error(`Invalid RON record ${tx?.tx.h}`);
-    const pair = JSON.parse(cell[1].s);
-    const timestamp = Number(cell[3].s);
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "RON", {
-        pair: pair,
-        address: cell[2].s,
-        timestamp: timestamp
-    });
-};
-const $20612a1331ed9f23$export$2839d627b6f3bcfe = {
-    name: "RON",
-    address: $20612a1331ed9f23$var$address,
-    opReturnSchema: $20612a1331ed9f23$var$opReturnSchema,
-    handler: $20612a1331ed9f23$var$handler
-};
-
-
-
-const $f8b42ef01183455b$var$address = "1SymRe7erxM46GByucUWnB9fEEMgo7spd";
-const $f8b42ef01183455b$var$opReturnSchema = [
-    {
-        url: "string"
-    }
-];
-const $f8b42ef01183455b$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    if (cell[0].s !== $f8b42ef01183455b$var$address || !cell[1] || !cell[1].s) throw new Error(`Invalid SymRe tx: ${tx}`);
-    (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, "SYMRE", {
-        url: cell[1].s
-    });
-};
-const $f8b42ef01183455b$export$33455cbcda538c68 = {
-    name: "SYMRE",
-    address: $f8b42ef01183455b$var$address,
-    opReturnSchema: $f8b42ef01183455b$var$opReturnSchema,
-    handler: $f8b42ef01183455b$var$handler
-};
-
-
-
-// Names of enabled protocols
-const $c159e985831c0f89$var$enabledProtocols = new Map([]);
-// Protocol Handlers
-const $c159e985831c0f89$var$protocolHandlers = new Map([]);
-// Script checkers are intentionally minimalistic detection functions for identifying matching scripts for a given protocol. Only if a checker returns true is a handler called for processing.
-const $c159e985831c0f89$var$protocolScriptCheckers = new Map([]);
-const $c159e985831c0f89$var$protocolOpReturnSchemas = new Map();
-const $c159e985831c0f89$export$6b22fa9a84a4797f = [
-    (0, $8431c1983427e0bc$export$474d593e43f12abd),
-    (0, $46ab6895f01c3f36$export$ef35774e6d314e91),
-    (0, $f10d8251edac4279$export$5935ea4bf04c4453),
-    (0, $a2123a5d6a97fffa$export$ce970371e0e850bc),
-    (0, $5919cfba307ca207$export$7830a85a59ca4593),
-    (0, $77ebe2efe8e9ecb0$export$85479a00ad164ad6),
-    (0, $07efa46a438da3e6$export$c19e3a57d69468ea),
-    (0, $0caf3051d6cd1d65$export$6a60f6b74bbaccb8),
-    (0, $0aee1758fbc2ad1d$export$bbef9cc099c72f9d),
-    (0, $e0c7c17de15e479d$export$12815d889fe90b8),
-    (0, $20612a1331ed9f23$export$2839d627b6f3bcfe),
-    (0, $f8b42ef01183455b$export$33455cbcda538c68),
-    (0, $e1f2429e8f3586f4$export$a3deb2ff0da16a68)
-];
-const $c159e985831c0f89$export$63e9417ed8d8533a = $c159e985831c0f89$export$6b22fa9a84a4797f.map((p)=>p.name);
-const $c159e985831c0f89$export$4f34a1c822988d11 = [
-    (0, $8431c1983427e0bc$export$474d593e43f12abd),
-    (0, $46ab6895f01c3f36$export$ef35774e6d314e91),
-    (0, $f10d8251edac4279$export$5935ea4bf04c4453),
-    (0, $a2123a5d6a97fffa$export$ce970371e0e850bc),
-    (0, $5919cfba307ca207$export$7830a85a59ca4593),
-    (0, $e1f2429e8f3586f4$export$a3deb2ff0da16a68)
-];
-// prepare protocol map, handlers and schemas
-for (const protocol of $c159e985831c0f89$export$4f34a1c822988d11){
-    if (protocol.address) $c159e985831c0f89$var$enabledProtocols.set(protocol.address, protocol.name);
-    $c159e985831c0f89$var$protocolHandlers.set(protocol.name, protocol.handler);
-    if (protocol.opReturnSchema) $c159e985831c0f89$var$protocolOpReturnSchemas.set(protocol.name, protocol.opReturnSchema);
-    if (protocol.scriptChecker) $c159e985831c0f89$var$protocolScriptCheckers.set(protocol.name, protocol.scriptChecker);
-}
-class $c159e985831c0f89$export$894a720e71f90b3c {
-    constructor(){
-        this.transformTx = async (tx)=>{
-            if (!tx || !tx.in || !tx.out) throw new Error("Cannot process tx");
-            // This will become our nicely formatted response object
-            let dataObj = {};
-            for (const [key, val] of Object.entries(tx)){
-                if (key === "out") // loop over the outputs
-                for (const out of tx.out){
-                    const { tape: tape } = out;
-                    // Process opReturn data
-                    if (tape?.some((cc)=>(0, $135c27e403539915$export$429a4e8902c23802)(cc))) dataObj = await this.processDataProtocols(tape, out, tx, dataObj);
-                    // No OP_FALSE OP_RETURN in this tape
-                    const _21e8Checker = this.protocolScriptCheckers.get((0, $77ebe2efe8e9ecb0$export$85479a00ad164ad6).name);
-                    const ordChecker = this.protocolScriptCheckers.get((0, $e1f2429e8f3586f4$export$a3deb2ff0da16a68).name);
-                    // Check for 21e8 and ords
-                    if (tape?.some((cc)=>{
-                        const { cell: cell } = cc;
-                        if (_21e8Checker?.(cell)) // 'found 21e8'
-                        return true;
-                        if (ordChecker?.(cell)) // 'found 1sat ordinal'
-                        return true;
-                    })) // find the cell array
-                    // loop over tape
-                    for (const cellContainer of tape){
-                        const { cell: cell } = cellContainer;
-                        // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                        if (!cell) throw new Error("empty cell while parsing");
-                        let protocolName = "";
-                        if (_21e8Checker?.(cell)) protocolName = (0, $77ebe2efe8e9ecb0$export$85479a00ad164ad6).name;
-                        else if (ordChecker?.(cell)) protocolName = (0, $e1f2429e8f3586f4$export$a3deb2ff0da16a68).name;
-                        else continue;
-                        this.process(protocolName, {
-                            tx: tx,
-                            cell: cell,
-                            dataObj: dataObj,
-                            tape: tape,
-                            out: out
-                        });
-                    }
-                }
-                else if (key === "in") dataObj[key] = val.map((v)=>{
-                    const r = {
-                        ...v
+var $1dadca38d7be2882$var$handler = function(_a) {
+    var dataObj = _a.dataObj, cell = _a.cell, tx = _a.tx;
+    return $1dadca38d7be2882$var$__awaiter(void 0, void 0, void 0, function() {
+        var nodeId, node, parent, parentId;
+        return $1dadca38d7be2882$var$__generator(this, function(_b) {
+            switch(_b.label){
+                case 0:
+                    if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error("Invalid Metanet tx " + tx);
+                    return [
+                        4 /*yield*/ ,
+                        $1dadca38d7be2882$export$3eb18141230d6532(cell[1].s, tx.tx.h)
+                    ];
+                case 1:
+                    nodeId = _b.sent();
+                    node = {
+                        a: cell[1].s,
+                        tx: tx.tx.h,
+                        id: nodeId
                     };
-                    delete r.tape;
-                    return r;
-                });
-                else // known key, just write it retaining original type
-                dataObj[key] = val;
+                    parent = {};
+                    if (!tx.in) return [
+                        3 /*break*/ ,
+                        3
+                    ];
+                    return [
+                        4 /*yield*/ ,
+                        $1dadca38d7be2882$export$3eb18141230d6532(tx.in[0].e.a, cell[2].s)
+                    ];
+                case 2:
+                    parentId = _b.sent();
+                    // Parent node
+                    parent = {
+                        a: tx.in[0].e.a,
+                        tx: cell[2].s,
+                        id: parentId
+                    };
+                    _b.label = 3;
+                case 3:
+                    if (!dataObj.METANET) dataObj.METANET = [];
+                    dataObj.METANET.push({
+                        node: node,
+                        parent: parent
+                    });
+                    return [
+                        2 /*return*/ 
+                    ];
             }
-            // If this is a MOM planaria it will have metanet keys available
-            if (dataObj.METANET && tx.parent) {
-                const meta = {
-                    ancestor: tx.ancestor,
-                    parent: tx.parent,
-                    child: tx.child,
-                    head: tx.head
-                };
-                dataObj.METANET.push(meta);
-                // remove parent and node from root level for (MOM data)
-                delete dataObj.ancestor;
-                delete dataObj.child;
-                delete dataObj.parent;
-                delete dataObj.head;
-                delete dataObj.node;
+        });
+    });
+};
+var $1dadca38d7be2882$export$7830a85a59ca4593 = {
+    name: "METANET",
+    address: $1dadca38d7be2882$var$address,
+    querySchema: $1dadca38d7be2882$var$querySchema,
+    handler: $1dadca38d7be2882$var$handler
+};
+
+
+var $b57223da72fa21e9$exports = {};
+
+$parcel$export($b57223da72fa21e9$exports, "PSP", () => $b57223da72fa21e9$export$bd49ff9d0c7fbe97, (v) => $b57223da72fa21e9$export$bd49ff9d0c7fbe97 = v);
+
+
+var $cd237abf67628bc8$exports = {};
+
+$parcel$export($cd237abf67628bc8$exports, "verifyPaymailPublicKey", () => $cd237abf67628bc8$export$fe8725667d42151, (v) => $cd237abf67628bc8$export$fe8725667d42151 = v);
+
+
+
+var $cd237abf67628bc8$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
             }
-            return dataObj;
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var $cd237abf67628bc8$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    }, f, y, t, g;
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g;
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
         };
-        this.processUnknown = (key, dataObj, out)=>{
-            // no known non-OP_RETURN scripts
-            if (key && !dataObj[key]) dataObj[key] = [];
-            dataObj[key].push({
-                i: out.i,
-                e: out.e,
-                tape: []
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
+    }
+};
+var $cd237abf67628bc8$export$fe8725667d42151 = function(paymail, publicKey) {
+    return $cd237abf67628bc8$var$__awaiter(this, void 0, void 0, function() {
+        var client;
+        return $cd237abf67628bc8$var$__generator(this, function(_a) {
+            client = new (0, $7AlAh$PaymailClient)((0, $7AlAh$dns), (0, $7AlAh$nodefetch));
+            return [
+                2 /*return*/ ,
+                client.verifyPubkeyOwner(publicKey, paymail)
+            ];
+        });
+    });
+};
+
+
+
+var $b57223da72fa21e9$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var $b57223da72fa21e9$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    }, f, y, t, g;
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g;
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
+        };
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
+    }
+};
+var $b57223da72fa21e9$var$address = "1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4";
+var $b57223da72fa21e9$var$querySchema = [
+    {
+        signature: "string"
+    },
+    {
+        pubkey: "string"
+    },
+    {
+        paymail: "string"
+    }
+];
+var $b57223da72fa21e9$var$validateSignature = function(pspObj, cell, tape) {
+    if (!Array.isArray(tape) || tape.length < 3) throw new Error("PSP requires at least 3 cells including the prefix");
+    var cellIndex = -1;
+    tape.forEach(function(cc, index) {
+        if (cc.cell === cell) cellIndex = index;
+    });
+    if (cellIndex === -1) throw new Error("PSP could not find cell in tape");
+    var signatureBufferStatements = [];
+    for(var i = 0; i < cellIndex; i++){
+        var cellContainer = tape[i];
+        if (!(0, $c2053de758ee1450$exports.checkOpFalseOpReturn)(cellContainer)) {
+            cellContainer.cell.forEach(function(statement) {
+                // add the value as hex
+                var value = statement.h;
+                if (!value) value = (0, $7AlAh$Buffer).from(statement.b, "base64").toString("hex");
+                if (!value) value = (0, $7AlAh$Buffer).from(statement.s).toString("hex");
+                signatureBufferStatements.push((0, $7AlAh$Buffer).from(value, "hex"));
+            });
+            signatureBufferStatements.push((0, $7AlAh$Buffer).from("7c", "hex")); // | hex ????
+        }
+    }
+    var dataScript = (0, $7AlAh$Script).fromSafeDataArray(signatureBufferStatements);
+    var messageBuffer = (0, $7AlAh$Buffer).from(dataScript.toHex(), "hex");
+    // verify psp signature
+    var publicKey = (0, $7AlAh$PubKey).fromString(pspObj.pubkey);
+    var signingAddress = (0, $7AlAh$Address).fromPubKey(publicKey);
+    try {
+        pspObj.verified = (0, $7AlAh$Bsm).verify(messageBuffer, pspObj.signature, signingAddress);
+    } catch (e) {
+        pspObj.verified = false;
+    }
+    return pspObj.verified;
+};
+var $b57223da72fa21e9$var$handler = function(_a) {
+    var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape;
+    return $b57223da72fa21e9$var$__awaiter(this, void 0, void 0, function() {
+        var pspObj, paymailPublicKeyVerified;
+        return $b57223da72fa21e9$var$__generator(this, function(_b) {
+            switch(_b.label){
+                case 0:
+                    // Paymail Signature Protocol
+                    // Validation
+                    if (!cell.length || cell[0].s !== $b57223da72fa21e9$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error("Invalid Paymail Signature Protocol record");
+                    pspObj = {
+                        signature: cell[1].s,
+                        pubkey: cell[2].s,
+                        paymail: cell[3].s,
+                        verified: false
+                    };
+                    // verify signature
+                    $b57223da72fa21e9$var$validateSignature(pspObj, cell, tape);
+                    return [
+                        4 /*yield*/ ,
+                        (0, $cd237abf67628bc8$exports.verifyPaymailPublicKey)(pspObj.paymail, pspObj.pubkey)
+                    ];
+                case 1:
+                    paymailPublicKeyVerified = _b.sent();
+                    pspObj.verified = pspObj.verified && paymailPublicKeyVerified;
+                    (0, $c2053de758ee1450$exports.saveProtocolData)(dataObj, "PSP", pspObj);
+                    return [
+                        2 /*return*/ 
+                    ];
+            }
+        });
+    });
+};
+var $b57223da72fa21e9$export$bd49ff9d0c7fbe97 = {
+    name: "PSP",
+    address: $b57223da72fa21e9$var$address,
+    querySchema: $b57223da72fa21e9$var$querySchema,
+    handler: $b57223da72fa21e9$var$handler
+};
+
+
+
+var $414950da4f87d079$var$__assign = undefined && undefined.__assign || function() {
+    $414950da4f87d079$var$__assign = Object.assign || function(t) {
+        for(var s, i = 1, n = arguments.length; i < n; i++){
+            s = arguments[i];
+            for(var p in s)if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+    return $414950da4f87d079$var$__assign.apply(this, arguments);
+};
+var $414950da4f87d079$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var $414950da4f87d079$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    }, f, y, t, g;
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g;
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
+        };
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
+    }
+};
+var $414950da4f87d079$var$protocolMap = new Map([]);
+var $414950da4f87d079$var$protocolHandlers = new Map();
+var $414950da4f87d079$var$protocolQuerySchemas = new Map();
+[
+    (0, $98aa1784bfd49640$exports.AIP),
+    (0, $a429761762b93e1b$export$ef35774e6d314e91),
+    (0, $0d2672e9817499e3$export$5935ea4bf04c4453),
+    (0, $e22c244abfee4b98$exports.HAIP),
+    (0, $5a1837533efd883a$export$ce970371e0e850bc),
+    (0, $1dadca38d7be2882$exports.METANET),
+    (0, $b57223da72fa21e9$exports.PSP)
+].forEach(function(protocol) {
+    $414950da4f87d079$var$protocolMap.set(protocol.address, protocol.name);
+    $414950da4f87d079$var$protocolHandlers.set(protocol.name, protocol.handler);
+    $414950da4f87d079$var$protocolQuerySchemas.set(protocol.name, protocol.querySchema);
+});
+// Takes a BOB formatted op_return transaction
+var $414950da4f87d079$export$894a720e71f90b3c = /** @class */ function() {
+    function BMAP() {
+        var _this = this;
+        this.transformTx = function(tx) {
+            return $414950da4f87d079$var$__awaiter(_this, void 0, Promise, function() {
+                var self, dataObj, _i, _a, _b, key, val, _c, _d, out, tape, _e, tape_1, cellContainer, cell, prefix, protocolName, handler, meta;
+                return $414950da4f87d079$var$__generator(this, function(_f) {
+                    switch(_f.label){
+                        case 0:
+                            self = this;
+                            if (!tx || !tx["in"] || !tx["out"]) throw new Error("Cannot process tx");
+                            dataObj = {
+                                in: [],
+                                out: [],
+                                _id: "",
+                                tx: {},
+                                blk: {}
+                            };
+                            _i = 0, _a = Object.entries(tx);
+                            _f.label = 1;
+                        case 1:
+                            if (!(_i < _a.length)) return [
+                                3 /*break*/ ,
+                                14
+                            ];
+                            _b = _a[_i], key = _b[0], val = _b[1];
+                            if (!(key === "out")) return [
+                                3 /*break*/ ,
+                                12
+                            ];
+                            _c = 0, _d = tx.out;
+                            _f.label = 2;
+                        case 2:
+                            if (!(_c < _d.length)) return [
+                                3 /*break*/ ,
+                                11
+                            ];
+                            out = _d[_c];
+                            tape = out.tape;
+                            if (!(tape === null || tape === void 0 ? void 0 : tape.some(function(cc) {
+                                return (0, $c2053de758ee1450$exports.checkOpFalseOpReturn)(cc);
+                            }))) return [
+                                3 /*break*/ ,
+                                9
+                            ];
+                            _e = 0, tape_1 = tape;
+                            _f.label = 3;
+                        case 3:
+                            if (!(_e < tape_1.length)) return [
+                                3 /*break*/ ,
+                                8
+                            ];
+                            cellContainer = tape_1[_e];
+                            // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+                            if ((0, $c2053de758ee1450$exports.checkOpFalseOpReturn)(cellContainer)) return [
+                                3 /*break*/ ,
+                                7
+                            ];
+                            cell = cellContainer.cell;
+                            if (!cell) throw new Error("empty cell while parsing");
+                            prefix = cell[0].s;
+                            protocolName = self.protocolMap.get(prefix) || prefix;
+                            if (!(self.protocolHandlers.has(protocolName) && typeof self.protocolHandlers.get(protocolName) === "function")) return [
+                                3 /*break*/ ,
+                                6
+                            ];
+                            handler = self.protocolHandlers.get(protocolName);
+                            if (!handler) return [
+                                3 /*break*/ ,
+                                5
+                            ];
+                            /* eslint-disable no-await-in-loop */ return [
+                                4 /*yield*/ ,
+                                handler({
+                                    dataObj: dataObj,
+                                    cell: cell,
+                                    tape: tape,
+                                    tx: tx
+                                })
+                            ];
+                        case 4:
+                            /* eslint-disable no-await-in-loop */ _f.sent();
+                            _f.label = 5;
+                        case 5:
+                            return [
+                                3 /*break*/ ,
+                                7
+                            ];
+                        case 6:
+                            (0, $c2053de758ee1450$exports.saveProtocolData)(dataObj, protocolName, cell);
+                            _f.label = 7;
+                        case 7:
+                            _e++;
+                            return [
+                                3 /*break*/ ,
+                                3
+                            ];
+                        case 8:
+                            return [
+                                3 /*break*/ ,
+                                10
+                            ];
+                        case 9:
+                            // No OP_RETURN in this outputs
+                            if (key && !dataObj[key]) dataObj[key] = [];
+                            dataObj[key].push({
+                                i: out.i,
+                                e: out.e
+                            });
+                            _f.label = 10;
+                        case 10:
+                            _c++;
+                            return [
+                                3 /*break*/ ,
+                                2
+                            ];
+                        case 11:
+                            return [
+                                3 /*break*/ ,
+                                13
+                            ];
+                        case 12:
+                            if (key === "in") dataObj[key] = val.map(function(v) {
+                                var r = $414950da4f87d079$var$__assign({}, v);
+                                delete r.tape;
+                                return r;
+                            });
+                            else if (Object.keys(dataObj).includes(key)) // knwon key, just write it retaining original type
+                            dataObj[key] = val;
+                            else if (!dataObj[key]) {
+                                // unknown key. push into array incase there are many of these detected
+                                dataObj[key] = [];
+                                dataObj[key].push(val);
+                            }
+                            _f.label = 13;
+                        case 13:
+                            _i++;
+                            return [
+                                3 /*break*/ ,
+                                1
+                            ];
+                        case 14:
+                            // If this is a MOM planaria it will have metanet keys available
+                            if (dataObj["METANET"] && tx.parent) {
+                                meta = {
+                                    ancestor: tx.ancestor,
+                                    parent: tx.parent,
+                                    child: tx.child,
+                                    head: tx.head
+                                };
+                                dataObj.METANET.push(meta);
+                                // remove parent and node from root level for (MOM data)
+                                delete dataObj.ancestor;
+                                delete dataObj.child;
+                                delete dataObj.parent;
+                                delete dataObj.head;
+                                delete dataObj.node;
+                            }
+                            return [
+                                2 /*return*/ ,
+                                dataObj
+                            ];
+                    }
+                });
             });
         };
-        this.process = async (protocolName, { cell: cell, dataObj: dataObj, tape: tape, out: out, tx: tx })=>{
-            if (this.protocolHandlers.has(protocolName) && typeof this.protocolHandlers.get(protocolName) === "function") {
-                const handler = this.protocolHandlers.get(protocolName);
-                if (handler) /* eslint-disable no-await-in-loop */ await handler({
-                    dataObj: dataObj,
-                    cell: cell,
-                    tape: tape,
-                    out: out,
-                    tx: tx
-                });
-            } else (0, $135c27e403539915$export$23dbc584560299c3)(dataObj, protocolName, cell);
-        };
-        this.processDataProtocols = async (tape, out, tx, dataObj)=>{
-            // loop over tape
-            for (const cellContainer of tape){
-                const { cell: cell } = cellContainer;
-                if (!cell) throw new Error("empty cell while parsing");
-                // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                if ((0, $135c27e403539915$export$238b4e54af8fe886)(cellContainer)) continue;
-                const prefix = cell[0].s;
-                if (prefix) {
-                    const bitcomProtocol = this.enabledProtocols.get(prefix) || $c159e985831c0f89$export$4f34a1c822988d11.filter((p)=>p.name === prefix)[0]?.name;
-                    if (bitcomProtocol) await this.process(bitcomProtocol, {
-                        cell: cell,
-                        dataObj: dataObj,
-                        tape: tape,
-                        out: out,
-                        tx: tx
-                    });
-                    else this.processUnknown(prefix, dataObj, out);
-                }
-            }
-            return dataObj;
-        };
         // initial default protocol handlers in this instantiation
-        this.enabledProtocols = $c159e985831c0f89$var$enabledProtocols;
-        this.protocolHandlers = $c159e985831c0f89$var$protocolHandlers;
-        this.protocolScriptCheckers = $c159e985831c0f89$var$protocolScriptCheckers;
-        this.protocolOpReturnSchemas = $c159e985831c0f89$var$protocolOpReturnSchemas;
+        this.protocolMap = $414950da4f87d079$var$protocolMap;
+        this.protocolHandlers = $414950da4f87d079$var$protocolHandlers;
+        this.protocolQuerySchemas = $414950da4f87d079$var$protocolQuerySchemas;
     }
-    addProtocolHandler({ name: name, address: address, opReturnSchema: opReturnSchema, handler: handler, scriptChecker: scriptChecker }) {
-        if (address) this.enabledProtocols.set(address, name);
+    BMAP.prototype.addProtocolHandler = function(protocolDefinition) {
+        var name = protocolDefinition.name, address = protocolDefinition.address, querySchema = protocolDefinition.querySchema, handler = protocolDefinition.handler;
+        this.protocolMap.set(address, name);
         this.protocolHandlers.set(name, handler);
-        if (opReturnSchema) this.protocolOpReturnSchemas.set(name, opReturnSchema);
-        if (scriptChecker) this.protocolScriptCheckers.set(name, scriptChecker);
-    }
-}
-const $c159e985831c0f89$export$54850c299f4a06d8 = async (txid)=>{
-    const url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`;
-    console.log("hitting", url);
-    const res = await fetch(url);
-    return await res.text();
-};
-const $c159e985831c0f89$export$2905b0423a229d9 = async (rawTx)=>{
-    const bpuTx = await (0, $bbzTI$parse)({
-        tx: {
-            r: rawTx
-        },
-        split: [
-            {
-                token: {
-                    op: 106
-                },
-                include: "l"
-            },
-            {
-                token: {
-                    s: "|"
-                }
-            }
-        ]
+        this.protocolQuerySchemas.set(name, querySchema);
+    };
+    return BMAP;
+}();
+var $414950da4f87d079$export$b2a90e318402f6bc = function(tx) {
+    return $414950da4f87d079$var$__awaiter(void 0, void 0, void 0, function() {
+        var b;
+        return $414950da4f87d079$var$__generator(this, function(_a) {
+            b = new $414950da4f87d079$export$894a720e71f90b3c();
+            return [
+                2 /*return*/ ,
+                b.transformTx(tx)
+            ];
+        });
     });
-    return bpuTx;
-};
-const $c159e985831c0f89$export$b2a90e318402f6bc = async (tx, protocols)=>{
-    if (typeof tx === "string") {
-        let rawTx;
-        // if it a txid or  complete transaction hex?
-        if (tx.length === 64) // txid - fetch raw tx
-        rawTx = await $c159e985831c0f89$export$54850c299f4a06d8(tx);
-        if (Buffer.from(tx).byteLength <= 146) throw new Error("Invalid rawTx");
-        if (!rawTx) rawTx = tx;
-        // TODO: Double check 146 is intended to be minimum possible byte length for a tx
-        const bobTx = await $c159e985831c0f89$export$2905b0423a229d9(rawTx);
-        if (bobTx) tx = bobTx;
-        else throw new Error("Invalid txid");
-    }
-    const b = new $c159e985831c0f89$export$894a720e71f90b3c();
-    // if protocols are specified
-    if (protocols) {
-        // wipe out defaults
-        b.enabledProtocols.clear();
-        if ((0, $135c27e403539915$export$f6e922e536d8305c)(protocols)) {
-            // set enabled protocols
-            for (const protocol of $c159e985831c0f89$export$6b22fa9a84a4797f)if (protocols?.includes(protocol.name)) b.addProtocolHandler(protocol);
-        } else if ((0, $135c27e403539915$export$37b8d83213de0f5f)(protocols)) for (const p of protocols){
-            const protocol = p;
-            if (protocol) b.addProtocolHandler(protocol);
-        }
-        else throw new Error("Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).");
-    }
-    return b.transformTx(tx);
 };
 
 
-export {$c159e985831c0f89$export$6b22fa9a84a4797f as allProtocols, $c159e985831c0f89$export$63e9417ed8d8533a as supportedProtocols, $c159e985831c0f89$export$4f34a1c822988d11 as defaultProtocols, $c159e985831c0f89$export$894a720e71f90b3c as BMAP, $c159e985831c0f89$export$54850c299f4a06d8 as fetchRawTx, $c159e985831c0f89$export$2905b0423a229d9 as bobFromRawTx, $c159e985831c0f89$export$b2a90e318402f6bc as TransformTx};
+export {$414950da4f87d079$export$894a720e71f90b3c as BMAP, $414950da4f87d079$export$b2a90e318402f6bc as TransformTx, $414950da4f87d079$exports as default};
 //# sourceMappingURL=bmap.module.js.map

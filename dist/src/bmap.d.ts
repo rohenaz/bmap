@@ -1,6 +1,6 @@
-import { Out, Tape } from "bpu-ts";
-import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from "../types/common";
-export const allProtocols: (Protocol | {
+import { Out, Tape } from 'bpu-ts';
+import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from '../types/common';
+export declare const allProtocols: (Protocol | {
     name: string;
     address: string;
     opReturnSchema: {
@@ -8,9 +8,9 @@ export const allProtocols: (Protocol | {
     }[];
     handler: ({ dataObj, cell, tx }: HandlerProps) => void;
 })[];
-export const supportedProtocols: string[];
-export const defaultProtocols: Protocol[];
-export class BMAP {
+export declare const supportedProtocols: string[];
+export declare const defaultProtocols: Protocol[];
+export declare class BMAP {
     enabledProtocols: Map<string, string>;
     protocolHandlers: Map<string, Handler>;
     protocolScriptCheckers: Map<string, ScriptChecker>;
@@ -22,8 +22,6 @@ export class BMAP {
     process: (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => Promise<void>;
     processDataProtocols: (tape: Tape[], out: Out, tx: BobTx, dataObj: Partial<BobTx>) => Promise<Partial<BobTx>>;
 }
-export const fetchRawTx: (txid: string) => Promise<string>;
-export const bobFromRawTx: (rawTx: string) => Promise<BobTx>;
-export const TransformTx: (tx: BobTx | string | MomTx | BmapTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;
-
-//# sourceMappingURL=index.d.ts.map
+export declare const fetchRawTx: (txid: string) => Promise<string>;
+export declare const bobFromRawTx: (rawTx: string) => Promise<BobTx>;
+export declare const TransformTx: (tx: BobTx | string | MomTx | BmapTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;

@@ -1,63 +1,53 @@
-var $71XCL$bputs = require("bpu-ts");
-var $71XCL$bsvsdk = require("@bsv/sdk");
-var $71XCL$buffer = require("buffer");
-var $71XCL$nodefetch = require("node-fetch");
-var $71XCL$msgpackmsgpack = require("@msgpack/msgpack");
+import {Script as $a6mis$Script, Bsm as $a6mis$Bsm, Address as $a6mis$Address, PubKey as $a6mis$PubKey} from "@ts-bitcoin/core";
+import {Buffer as $a6mis$Buffer} from "buffer";
+import $a6mis$nodefetch from "node-fetch";
+import {webcrypto as $a6mis$webcrypto} from "crypto";
+import {PaymailClient as $a6mis$PaymailClient} from "@moneybutton/paymail-client";
+import $a6mis$dns from "dns";
+import {BoostPowJob as $a6mis$BoostPowJob} from "boostpow";
+import {decode as $a6mis$decode} from "@msgpack/msgpack";
 
-
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
-
-function $parcel$interopDefault(a) {
-  return a && a.__esModule ? a.default : a;
-}
-
-$parcel$export(module.exports, "allProtocols", () => $0bef5cd148f6f4f7$export$6b22fa9a84a4797f);
-$parcel$export(module.exports, "supportedProtocols", () => $0bef5cd148f6f4f7$export$63e9417ed8d8533a);
-$parcel$export(module.exports, "defaultProtocols", () => $0bef5cd148f6f4f7$export$4f34a1c822988d11);
-$parcel$export(module.exports, "BMAP", () => $0bef5cd148f6f4f7$export$894a720e71f90b3c);
-$parcel$export(module.exports, "fetchRawTx", () => $0bef5cd148f6f4f7$export$54850c299f4a06d8);
-$parcel$export(module.exports, "bobFromRawTx", () => $0bef5cd148f6f4f7$export$2905b0423a229d9);
-$parcel$export(module.exports, "TransformTx", () => $0bef5cd148f6f4f7$export$b2a90e318402f6bc);
+// import default protocols
 
 
 
-const { toArray: $caee5781971edf71$var$toArray } = (0, $71XCL$bsvsdk.Utils);
-const $caee5781971edf71$export$f6e922e536d8305c = (arr)=>{
+
+
+const $8c5e6215e1bd1bd5$export$f6e922e536d8305c = (arr)=>{
     return arr.length > 0 && arr.every((value)=>{
-        return typeof value === 'string';
+        return typeof value === "string";
     });
 };
-const $caee5781971edf71$export$37b8d83213de0f5f = (arr)=>{
+const $8c5e6215e1bd1bd5$export$37b8d83213de0f5f = (arr)=>{
     return arr.length > 0 && arr.every((value)=>{
-        return value === 'object';
+        return value === "object";
     });
 };
-const $caee5781971edf71$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
+const $8c5e6215e1bd1bd5$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
     if (!pushData) throw new Error(`cannot get cell value of: ${pushData}`);
-    else if (schemaEncoding === 'string') return pushData['s'] ? pushData.s : pushData.ls || '';
-    else if (schemaEncoding === 'hex') return pushData['h'] ? pushData.h : pushData.lh || (pushData['b'] ? (0, $71XCL$buffer.Buffer).from(pushData.b, 'base64').toString('hex') : pushData.lb && (0, $71XCL$buffer.Buffer).from(pushData.lb, 'base64').toString('hex')) || '';
-    else if (schemaEncoding === 'number') return parseInt(pushData['h'] ? pushData.h : pushData.lh || '0', 16);
-    else if (schemaEncoding === 'file') return `bitfs://${pushData['f'] ? pushData.f : pushData.lf}`;
-    return (pushData['b'] ? pushData.b : pushData.lb) || '';
+    else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
+    else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || (pushData["b"] ? (0, $a6mis$Buffer).from(pushData.b, "base64").toString("hex") : pushData.lb && (0, $a6mis$Buffer).from(pushData.lb, "base64").toString("hex")) || "";
+    else if (schemaEncoding === "number") return parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
+    else if (schemaEncoding === "file") return `bitfs://${pushData["f"] ? pushData.f : pushData.lf}`;
+    return (pushData["b"] ? pushData.b : pushData.lb) || "";
 };
-const $caee5781971edf71$export$429a4e8902c23802 = (cc)=>{
-    return cc.cell.some((c)=>c.op === 106);
+const $8c5e6215e1bd1bd5$export$238b4e54af8fe886 = function(cc) {
+    return cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].op && cc.cell[1].op === 106 || cc.cell[0].op === 106;
 };
-const $caee5781971edf71$export$238b4e54af8fe886 = (cc)=>{
-    if (cc.cell.length !== 2) return false;
-    const opReturnIdx = cc.cell.findIndex((c)=>c.op === 106);
-    if (opReturnIdx !== -1) return cc.cell[opReturnIdx - 1]?.op === 0;
-    return false;
-};
-const $caee5781971edf71$export$23dbc584560299c3 = (dataObj, protocolName, data)=>{
+const $8c5e6215e1bd1bd5$export$23dbc584560299c3 = (dataObj, protocolName, data)=>{
     if (!dataObj[protocolName]) dataObj[protocolName] = [
         data
     ];
-    else dataObj[protocolName].push(data);
+    else {
+        if (!Array.isArray(dataObj[protocolName])) {
+            const prevData = dataObj[protocolName];
+            dataObj[protocolName] = [];
+            dataObj[protocolName][0] = prevData;
+        }
+        dataObj[protocolName][dataObj[protocolName].length] = data;
+    }
 };
-const $caee5781971edf71$export$ee2a8bbe689a8ef5 = function(protocolName, opReturnSchema, dataObj, cell, tx) {
+const $8c5e6215e1bd1bd5$export$ee2a8bbe689a8ef5 = function(protocolName, opReturnSchema, dataObj, cell, tx) {
     // loop over the schema
     const obj = {};
     // Does not have the required number of fields
@@ -67,72 +57,22 @@ const $caee5781971edf71$export$ee2a8bbe689a8ef5 = function(protocolName, opRetur
         const x = parseInt(idx, 10);
         const [field] = Object.keys(schemaField);
         const [schemaEncoding] = Object.values(schemaField);
-        obj[field] = $caee5781971edf71$export$b691916706e0e9cc(cell[x + 1], schemaEncoding);
+        obj[field] = $8c5e6215e1bd1bd5$export$b691916706e0e9cc(cell[x + 1], schemaEncoding);
     }
-    $caee5781971edf71$export$23dbc584560299c3(dataObj, protocolName, obj);
+    $8c5e6215e1bd1bd5$export$23dbc584560299c3(dataObj, protocolName, obj);
 };
-const $caee5781971edf71$export$ca4d6504ca148ae4 = function(data) {
-    const regex = '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?';
-    return new RegExp(`^${regex}$`, 'gi').test(data);
+const $8c5e6215e1bd1bd5$export$ca4d6504ca148ae4 = function(data) {
+    const regex = "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?";
+    return new RegExp(`^${regex}$`, "gi").test(data);
 };
-const $caee5781971edf71$export$bced8d2aada2d1c9 = (msgBuffer)=>{
-    return (0, $71XCL$bsvsdk.Hash).sha256($caee5781971edf71$var$toArray(msgBuffer));
-};
-
-
-// 21e8 does not use the first pushdata for id
-// in fact there is no id since the 21e8 is designed for difficulty and can be changed
-// instead we use the static part of the script to indentfy the transaction
-// TODO - the OP_X_PLACEHOLDER is the number of bytes to push onto the stack and must match difficulty size
-const $370fc9f1fb64c5cc$var$_21e8Script = "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(" ");
-const $370fc9f1fb64c5cc$var$scriptChecker = (cell)=>{
-    if (cell.length !== 12) // wrong length
-    return false;
-    // match exact script
-    const ops = [
-        ...cell
-    ].map((c)=>c.ops).splice(2, cell.length);
-    // calculate target byte length
-    const target = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[1], "hex");
-    const targetOpSize = Buffer.from(target).byteLength;
-    // replace the placeholder opcode with actual
-    ops[1] = `OP_${targetOpSize}`;
-    $370fc9f1fb64c5cc$var$_21e8Script[1] = `OP_${targetOpSize}`;
-    // protocol identifier always in first pushdata
-    return ops.join() === $370fc9f1fb64c5cc$var$_21e8Script.join();
-};
-const $370fc9f1fb64c5cc$var$handler = ({ dataObj: dataObj, cell: cell, out: out })=>{
-    if (!cell[0] || !out) throw new Error("Invalid 21e8 tx. dataObj, cell, out and tx are required.");
-    // assemble asm
-    // make sure first piece matches a txid
-    // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
-    // next
-    const txid = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[0], "hex");
-    const target = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[1], "hex");
-    if (!target) throw new Error(`Invalid 21e8 target. ${JSON.stringify(cell[0], null, 2)}`);
-    const difficulty = Buffer.from(target, "hex").byteLength;
-    const _21e8Obj = {
-        target: target,
-        difficulty: difficulty,
-        value: out.e.v,
-        txid: txid
-    };
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "21E8", _21e8Obj);
-};
-const $370fc9f1fb64c5cc$export$85479a00ad164ad6 = {
-    name: "21E8",
-    handler: $370fc9f1fb64c5cc$var$handler,
-    scriptChecker: $370fc9f1fb64c5cc$var$scriptChecker
+const $8c5e6215e1bd1bd5$export$bced8d2aada2d1c9 = async (msgBuffer)=>{
+    const hash = await ((0, $a6mis$webcrypto) || window.crypto).subtle.digest("SHA-256", msgBuffer);
+    return (0, $a6mis$Buffer).from(hash);
 };
 
 
-
-
-
-
-const { toArray: $9d2ad5acc773d924$var$toArray, toHex: $9d2ad5acc773d924$var$toHex, fromBase58Check: $9d2ad5acc773d924$var$fromBase58Check, toBase58Check: $9d2ad5acc773d924$var$toBase58Check } = (0, $71XCL$bsvsdk.Utils);
-const $9d2ad5acc773d924$var$address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
-const $9d2ad5acc773d924$var$opReturnSchema = [
+const $6e4f14d1954af30e$var$address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
+const $6e4f14d1954af30e$var$opReturnSchema = [
     {
         algorithm: "string"
     },
@@ -148,66 +88,17 @@ const $9d2ad5acc773d924$var$opReturnSchema = [
         }
     ]
 ];
-const $9d2ad5acc773d924$var$getFileBuffer = async (bitfsRef)=>{
+const $6e4f14d1954af30e$var$getFileBuffer = async function(bitfsRef) {
+    let fileBuffer = (0, $a6mis$Buffer).from("");
     try {
-        const result = await (0, ($parcel$interopDefault($71XCL$nodefetch)))(`https://x.bitfs.network/${bitfsRef}`);
-        return await result.buffer();
-    } catch  {
-        return (0, $71XCL$buffer.Buffer).from("");
-    }
-};
-function $9d2ad5acc773d924$var$toBigNumberFromBuffer(buffer) {
-    const hex = $9d2ad5acc773d924$var$toHex(buffer);
-    return new (0, $71XCL$bsvsdk.BigNumber)(hex, 16);
-}
-function $9d2ad5acc773d924$var$recoverPublicKeyFromBSM(message, signature, expectedAddress) {
-    const msgHash = (0, $71XCL$bsvsdk.BSM).magicHash(message);
-    const bigMsg = $9d2ad5acc773d924$var$toBigNumberFromBuffer(msgHash);
-    for(let recovery = 0; recovery < 4; recovery++)try {
-        const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
-        const pubKeyHash = publicKey.toHash();
-        const { prefix: prefix } = $9d2ad5acc773d924$var$fromBase58Check(expectedAddress);
-        const recoveredAddress = $9d2ad5acc773d924$var$toBase58Check(pubKeyHash, prefix);
-        if (recoveredAddress === expectedAddress) {
-            console.log("[recoverPublicKeyFromBSM] Successfully recovered matching public key");
-            return publicKey;
-        } else console.log("[recoverPublicKeyFromBSM] Trying recovery=", recovery, "Recovered address=", recoveredAddress, "expected=", expectedAddress);
+        const result = await (0, $a6mis$nodefetch)(`https://x.bitfs.network/${bitfsRef}`, {});
+        fileBuffer = await result.buffer();
     } catch (e) {
-        console.log("[recoverPublicKeyFromBSM] Recovery error:", e);
+        console.error(e);
     }
-    console.log("[recoverPublicKeyFromBSM] Failed to recover any matching address");
-    throw new Error("Failed to recover public key matching the expected address");
-}
-function $9d2ad5acc773d924$var$fromSafeDataArray(dataBufs) {
-    const script = new (0, $71XCL$bsvsdk.Script)();
-    script.chunks.push({
-        op: 0
-    }); // OP_FALSE
-    script.chunks.push({
-        op: 106
-    }); // OP_RETURN
-    for (const buf of dataBufs){
-        const length = buf.length;
-        if (length <= 75) script.chunks.push({
-            op: length,
-            data: Array.from(buf)
-        });
-        else if (length <= 0xff) script.chunks.push({
-            op: 0x4c,
-            data: Array.from(buf)
-        });
-        else if (length <= 0xffff) script.chunks.push({
-            op: 0x4d,
-            data: Array.from(buf)
-        });
-        else script.chunks.push({
-            op: 0x4e,
-            data: Array.from(buf)
-        });
-    }
-    return script;
-}
-async function $9d2ad5acc773d924$var$validateSignature(aipObj, cell, tape) {
+    return fileBuffer;
+};
+const $6e4f14d1954af30e$var$validateSignature = async function(aipObj, cell, tape) {
     if (!Array.isArray(tape) || tape.length < 3) throw new Error("AIP requires at least 3 cells including the prefix");
     let cellIndex = -1;
     tape.forEach((cc, index)=>{
@@ -217,156 +108,143 @@ async function $9d2ad5acc773d924$var$validateSignature(aipObj, cell, tape) {
     let usingIndexes = aipObj.index || [];
     const signatureValues = [
         "6a"
-    ]; // index 0: OP_RETURN
-    // Gather data from all previous cells
+    ] // OP_RETURN - is included in AIP
+    ;
     for(let i = 0; i < cellIndex; i++){
         const cellContainer = tape[i];
-        if (!(0, $caee5781971edf71$export$238b4e54af8fe886)(cellContainer)) {
-            const cellData = [];
-            for (const statement of cellContainer.cell){
-                let value;
-                if (statement.h) value = statement.h;
+        if (!(0, $8c5e6215e1bd1bd5$export$238b4e54af8fe886)(cellContainer)) {
+            for(let nc = 0; nc < cellContainer.cell.length; nc++){
+                const statement = cellContainer.cell[nc];
+                // add the value as hex
+                if (statement.h) signatureValues.push(statement.h);
                 else if (statement.f) {
-                    const fileBuffer = await $9d2ad5acc773d924$var$getFileBuffer(statement.f);
-                    value = fileBuffer.length > 0 ? fileBuffer.toString("hex") : undefined;
-                } else if (statement.b) {
-                    const buf = (0, $71XCL$buffer.Buffer).from(statement.b, "base64");
-                    if (buf.length > 0) value = buf.toString("hex");
-                } else if (statement.s) {
-                    if (statement.s.length > 0) value = (0, $71XCL$buffer.Buffer).from(statement.s).toString("hex");
-                }
-                if (value && value.length > 0) cellData.push(value);
+                    // file reference - we need to get the file from bitfs
+                    const fileBuffer = await $6e4f14d1954af30e$var$getFileBuffer(statement.f);
+                    signatureValues.push(fileBuffer.toString("hex"));
+                } else if (statement.b) // no hex? try base64
+                signatureValues.push((0, $a6mis$Buffer).from(statement.b, "base64").toString("hex"));
+                else if (statement.s) signatureValues.push((0, $a6mis$Buffer).from(statement.s).toString("hex"));
             }
-            if (cellData.length > 0) {
-                // add all cellData
-                signatureValues.push(...cellData);
-                // add pipe after this cell
-                signatureValues.push("7c");
-            }
+            signatureValues.push("7c") // | hex
+            ;
         }
     }
-    // Now HAIP indexing logic
-    if (aipObj.hashing_algorithm && aipObj.index_unit_size) {
-        const indexLength = aipObj.index_unit_size * 2;
-        usingIndexes = [];
-        const indexesHex = cell[6]?.h || "";
-        for(let i = 0; i < indexesHex.length; i += indexLength)usingIndexes.push(Number.parseInt(indexesHex.substr(i, indexLength), 16));
-        aipObj.index = usingIndexes;
+    if (aipObj.hashing_algorithm) // when using HAIP, we need to parse the indexes in a non standard way
+    // indexLength is byte size of the indexes being described
+    {
+        if (aipObj.index_unit_size) {
+            const indexLength = aipObj.index_unit_size * 2;
+            usingIndexes = [];
+            const indexes = cell[6].h;
+            for(let i1 = 0; i1 < indexes.length; i1 += indexLength)usingIndexes.push(parseInt(indexes.substr(i1, indexLength), 16));
+            aipObj.index = usingIndexes;
+        }
     }
-    console.log("usingIndexes", usingIndexes);
-    console.log("signatureValues", signatureValues);
     const signatureBufferStatements = [];
-    if (usingIndexes.length > 0) for (const idx of usingIndexes){
-        if (typeof signatureValues[idx] !== 'string') console.log("signatureValues[idx]", signatureValues[idx], "idx", idx);
-        if (!signatureValues[idx]) {
-            console.log("signatureValues is missing an index", idx, "This means indexing is off");
-            return false;
-        }
-        signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(signatureValues[idx], "hex"));
-    }
-    else for (const val of signatureValues)signatureBufferStatements.push((0, $71XCL$buffer.Buffer).from(val, "hex"));
-    console.log("signatureBufferStatements", signatureBufferStatements.map((b)=>b.toString("hex")));
+    // check whether we need to only sign some indexes
+    if (usingIndexes.length > 0) usingIndexes.forEach((index)=>{
+        signatureBufferStatements.push((0, $a6mis$Buffer).from(signatureValues[index], "hex"));
+    });
+    else // add all the values to the signature buffer
+    signatureValues.forEach((statement)=>{
+        signatureBufferStatements.push((0, $a6mis$Buffer).from(statement, "hex"));
+    });
     let messageBuffer;
     if (aipObj.hashing_algorithm) {
-        // HAIP logic
-        if (!aipObj.index_unit_size) // remove OP_RETURN chunk
+        // this is actually Hashed-AIP (HAIP) and works a bit differently
+        if (!aipObj.index_unit_size) // remove OP_RETURN - will be added by Script.buildDataOut
         signatureBufferStatements.shift();
-        const dataScript = $9d2ad5acc773d924$var$fromSafeDataArray(signatureBufferStatements);
-        let dataBuffer = (0, $71XCL$buffer.Buffer).from(dataScript.toHex(), "hex");
-        if (aipObj.index_unit_size) dataBuffer = dataBuffer.slice(1);
-        const hashed = (0, $71XCL$bsvsdk.Hash).sha256($9d2ad5acc773d924$var$toArray(dataBuffer));
-        messageBuffer = (0, $71XCL$buffer.Buffer).from(hashed);
+        const dataScript = (0, $a6mis$Script).fromSafeDataArray(signatureBufferStatements);
+        let dataBuffer = (0, $a6mis$Buffer).from(dataScript.toHex(), "hex");
+        if (aipObj.index_unit_size) // the indexed buffer should not contain the OP_RETURN opcode, but this
+        // is added by the buildDataOut function automatically. Remove it.
+        dataBuffer = dataBuffer.slice(1);
+        messageBuffer = await (0, $8c5e6215e1bd1bd5$export$bced8d2aada2d1c9)((0, $a6mis$Buffer).from(dataBuffer.toString("hex")));
     } else // regular AIP
-    messageBuffer = (0, $71XCL$buffer.Buffer).concat(signatureBufferStatements);
-    const addressString = aipObj.address || aipObj.signing_address;
-    const signatureStr = aipObj.signature;
-    const signature = (0, $71XCL$bsvsdk.Signature).fromCompact(signatureStr, 'base64');
-    const tryNormalLogic = ()=>{
-        console.log("[validateSignature:tryNormalLogic] start");
+    messageBuffer = (0, $a6mis$Buffer).concat([
+        ...signatureBufferStatements
+    ]);
+    // AIOP uses address, HAIP uses signing_address field names
+    const adressString = aipObj.address || aipObj.signing_address;
+    // verify aip signature
+    try {
+        aipObj.verified = (0, $a6mis$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $a6mis$Address).fromString(adressString));
+    } catch (e) {
+        aipObj.verified = false;
+    }
+    // Try if this is a Twetch compatible AIP signature
+    if (!aipObj.verified) {
+        // Twetch signs a UTF-8 buffer of the hex string of a sha256 hash of the message
+        // Without 0x06 (OP_RETURN) and without 0x7c at the end, the trailing pipe ("|")
+        messageBuffer = (0, $a6mis$Buffer).concat([
+            ...signatureBufferStatements.slice(1, signatureBufferStatements.length - 1)
+        ]);
+        const buff = await (0, $8c5e6215e1bd1bd5$export$bced8d2aada2d1c9)(messageBuffer);
+        messageBuffer = (0, $a6mis$Buffer).from(buff.toString("hex"));
         try {
-            const msgArr = $9d2ad5acc773d924$var$toArray(messageBuffer);
-            const recoveredPubkey = $9d2ad5acc773d924$var$recoverPublicKeyFromBSM(msgArr, signature, addressString);
-            console.log("[tryNormalLogic] recoveredPubkey ok, verifying with BSM.verify now");
-            const res = (0, $71XCL$bsvsdk.BSM).verify(msgArr, signature, recoveredPubkey);
-            console.log("[tryNormalLogic] BSM.verify result:", res);
-            return res;
-        } catch (err) {
-            console.log("[tryNormalLogic] error:", err);
-            return false;
-        }
-    };
-    const tryTwetchLogic = ()=>{
-        console.log("[validateSignature:tryTwetchLogic] start");
-        // For twetch: remove first and last item and sha256 the remainder, interpret hex as utf8
-        if (signatureBufferStatements.length <= 2) return false;
-        const trimmed = signatureBufferStatements.slice(1, -1);
-        console.log("[tryTwetchLogic] trimmedStatements count:", trimmed.length);
-        const buff = (0, $71XCL$bsvsdk.Hash).sha256($9d2ad5acc773d924$var$toArray((0, $71XCL$buffer.Buffer).concat(trimmed)));
-        const hexStr = $9d2ad5acc773d924$var$toHex(buff);
-        const twetchMsg = (0, $71XCL$buffer.Buffer).from(hexStr, "utf8");
-        try {
-            const recoveredPubkey = $9d2ad5acc773d924$var$recoverPublicKeyFromBSM($9d2ad5acc773d924$var$toArray(twetchMsg), signature, addressString);
-            console.log("[tryTwetchLogic] recoveredPubkey ok, verifying with BSM.verify now");
-            const res = (0, $71XCL$bsvsdk.BSM).verify($9d2ad5acc773d924$var$toArray(twetchMsg), signature, recoveredPubkey);
-            console.log("[tryTwetchLogic] BSM.verify result:", res);
-            return res;
-        } catch (err) {
-            console.log("[tryTwetchLogic] error:", err);
-            return false;
-        }
-    };
-    let verified = tryNormalLogic();
-    if (!verified) verified = tryTwetchLogic();
-    console.log("[validateSignature] final verified=", verified);
-    aipObj.verified = verified;
-    return verified;
-}
-var $9d2ad5acc773d924$export$6c117c038f18b127 = /*#__PURE__*/ function(SIGPROTO) {
-    SIGPROTO["HAIP"] = "HAIP";
-    SIGPROTO["AIP"] = "AIP";
-    return SIGPROTO;
-}({});
-const $9d2ad5acc773d924$export$f0079d0908cdbf96 = async (useOpReturnSchema, protocol, dataObj, cell, tape, tx)=>{
-    const aipObj = {
-        verified: false
-    };
-    // minimal fields check
-    if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix");
-    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
-        const x = Number.parseInt(idx, 10);
-        if (Array.isArray(schemaField)) {
-            const [aipField] = Object.keys(schemaField[0]);
-            const fieldData = [];
-            for(let i = x + 1; i < cell.length; i++)if (cell[i].h) fieldData.push(Number.parseInt(cell[i].h, 16));
-            aipObj[aipField] = fieldData;
-        } else {
-            const [aipField] = Object.keys(schemaField);
-            const [schemaEncoding] = Object.values(schemaField);
-            aipObj[aipField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding) || "";
+            aipObj.verified = (0, $a6mis$Bsm).verify(messageBuffer, aipObj.signature || "", (0, $a6mis$Address).fromString(adressString));
+        } catch (e1) {
+            aipObj.verified = false;
         }
     }
-    if (cell[0].s === $9d2ad5acc773d924$var$address && cell[3].s && (0, $caee5781971edf71$export$ca4d6504ca148ae4)(cell[3].s)) aipObj.signature = cell[3].s;
-    console.log("[AIPhandler] AIP object before validate:", aipObj);
-    if (!aipObj.signature) throw new Error("AIP requires a signature");
-    await $9d2ad5acc773d924$var$validateSignature(aipObj, cell, tape);
-    console.log("[AIPhandler] After validate, verified:", aipObj.verified);
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocol, aipObj);
+    return aipObj.verified || false;
 };
-const $9d2ad5acc773d924$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
-    if (!tape) throw new Error("Invalid AIP transaction");
-    return await $9d2ad5acc773d924$export$f0079d0908cdbf96($9d2ad5acc773d924$var$opReturnSchema, "AIP", dataObj, cell, tape, tx);
+let $6e4f14d1954af30e$export$6c117c038f18b127;
+(function(SIGPROTO) {
+    SIGPROTO["HAIP"] = "HAIP";
+    SIGPROTO["AIP"] = "AIP";
+    SIGPROTO["BITCOM_HASHED"] = "BITCOM_HASHED";
+    SIGPROTO["PSP"] = "PSP";
+})($6e4f14d1954af30e$export$6c117c038f18b127 || ($6e4f14d1954af30e$export$6c117c038f18b127 = {}));
+const $6e4f14d1954af30e$export$f0079d0908cdbf96 = async function(useOpReturnSchema, protocol, dataObj, cell, tape, tx) {
+    // loop over the schema
+    const aipObj = {};
+    // Does not have the required number of fields
+    if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix " + tx);
+    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
+        const x = parseInt(idx, 10);
+        let schemaEncoding;
+        let aipField;
+        if (schemaField instanceof Array) {
+            // signature indexes are specified
+            schemaEncoding = schemaField[0].index;
+            [aipField] = Object.keys(schemaField[0]);
+            // run through the rest of the fields in this cell, should be de indexes
+            const fieldData = [];
+            for(let i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(parseInt(cell[i].h || "", 16));
+            aipObj[aipField] = fieldData;
+            continue;
+        } else {
+            [aipField] = Object.keys(schemaField);
+            [schemaEncoding] = Object.values(schemaField);
+        }
+        aipObj[aipField] = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding) || "";
+    }
+    // There is an issue where some services add the signature as binary to the transaction
+    // whereas others add the signature as base64. This will confuse bob and the parser and
+    // the signature will not be verified. When the signature is added in binary cell[3].s is
+    // binary, otherwise cell[3].s contains the base64 signature and should be used.
+    if (cell[0].s === $6e4f14d1954af30e$var$address && cell[3].s && (0, $8c5e6215e1bd1bd5$export$ca4d6504ca148ae4)(cell[3].s)) aipObj.signature = cell[3].s;
+    if (!aipObj.signature) throw new Error("AIP requires a signature " + tx);
+    await $6e4f14d1954af30e$var$validateSignature(aipObj, cell, tape);
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, protocol, aipObj);
 };
-const $9d2ad5acc773d924$export$474d593e43f12abd = {
+const $6e4f14d1954af30e$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+    if (!tape) throw new Error("Invalid AIP transaction. tape is required");
+    if (!tx) throw new Error("Invalid AIP transaction. tx is required");
+    return await $6e4f14d1954af30e$export$f0079d0908cdbf96($6e4f14d1954af30e$var$opReturnSchema, "AIP", dataObj, cell, tape, tx);
+};
+const $6e4f14d1954af30e$export$474d593e43f12abd = {
     name: "AIP",
-    address: $9d2ad5acc773d924$var$address,
-    opReturnSchema: $9d2ad5acc773d924$var$opReturnSchema,
-    handler: $9d2ad5acc773d924$var$handler
+    address: $6e4f14d1954af30e$var$address,
+    opReturnSchema: $6e4f14d1954af30e$var$opReturnSchema,
+    handler: $6e4f14d1954af30e$var$handler
 };
 
 
 
-const $c5a475aecaa24150$var$address = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut";
-const $c5a475aecaa24150$var$opReturnSchema = [
+const $7aa111bfe3605772$var$address = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut";
+const $7aa111bfe3605772$var$opReturnSchema = [
     {
         content: [
             "string",
@@ -384,22 +262,24 @@ const $c5a475aecaa24150$var$opReturnSchema = [
         filename: "string"
     }
 ];
-const $c5a475aecaa24150$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
+const $7aa111bfe3605772$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
     const encodingMap = new Map();
     encodingMap.set("utf8", "string");
-    encodingMap.set("text", "string"); // invalid but people use it :(
-    encodingMap.set("gzip", "binary"); // invalid but people use it :(
+    encodingMap.set("text", "string") // invalid but people use it :(
+    ;
+    encodingMap.set("gzip", "binary") // invalid but people use it :(
+    ;
     encodingMap.set("text/plain", "string");
     encodingMap.set("image/png", "binary");
     encodingMap.set("image/jpeg", "binary");
     if (!cell[1] || !cell[2]) throw new Error(`Invalid B tx: ${tx}`);
     // Check pushdata length + 1 for protocol prefix
-    if (cell.length > $c5a475aecaa24150$var$opReturnSchema.length + 1) throw new Error("Invalid B tx. Too many fields.");
+    if (cell.length > $7aa111bfe3605772$var$opReturnSchema.length + 1) throw new Error("Invalid B tx. Too many fields.");
     // Make sure there are not more fields than possible
     const bObj = {};
     // loop over the schema
-    for (const [idx, schemaField] of Object.entries($c5a475aecaa24150$var$opReturnSchema)){
-        const x = Number.parseInt(idx, 10);
+    for (const [idx, schemaField] of Object.entries($7aa111bfe3605772$var$opReturnSchema)){
+        const x = parseInt(idx, 10);
         const bField = Object.keys(schemaField)[0];
         let schemaEncoding = Object.values(schemaField)[0];
         if (bField === "content") {
@@ -421,31 +301,31 @@ const $c5a475aecaa24150$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })
                     ii: 0
                 };
                 cell[3].s = schemaEncoding === "string" ? "utf-8" : "binary";
-            } else schemaEncoding = cell[3]?.s ? encodingMap.get(cell[3].s.replace("-", "").toLowerCase()) : null;
+            } else schemaEncoding = cell[3] && cell[3].s ? encodingMap.get(cell[3].s.replace("-", "").toLowerCase()) : null;
         }
         // encoding is not required
         if (bField === "encoding" && !cell[x + 1]) continue;
         // filename is not required
         if (bField === "filename" && !cell[x + 1]) continue;
         // check for malformed syntax
-        if (!cell || !cell[x + 1]) throw new Error(`malformed B syntax ${cell}`);
+        if (!cell || !cell[x + 1]) throw new Error("malformed B syntax " + cell);
         // set field value from either s, b, ls, or lb depending on encoding and availability
         const data = cell[x + 1];
-        bObj[bField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(data, schemaEncoding);
+        bObj[bField] = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(data, schemaEncoding);
     }
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "B", bObj);
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "B", bObj);
 };
-const $c5a475aecaa24150$export$ef35774e6d314e91 = {
+const $7aa111bfe3605772$export$ef35774e6d314e91 = {
     name: "B",
-    address: $c5a475aecaa24150$var$address,
-    opReturnSchema: $c5a475aecaa24150$var$opReturnSchema,
-    handler: $c5a475aecaa24150$var$handler
+    address: $7aa111bfe3605772$var$address,
+    opReturnSchema: $7aa111bfe3605772$var$opReturnSchema,
+    handler: $7aa111bfe3605772$var$handler
 };
 
 
 
-const $2519a10c9a0ebef2$var$address = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT";
-const $2519a10c9a0ebef2$var$opReturnSchema = [
+const $e51e508d397a2f63$var$address = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT";
+const $e51e508d397a2f63$var$opReturnSchema = [
     {
         type: "string"
     },
@@ -456,21 +336,21 @@ const $2519a10c9a0ebef2$var$opReturnSchema = [
         sequence: "string"
     }
 ];
-const $2519a10c9a0ebef2$export$c3c52e219617878 = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    if (!tx) throw new Error("Invalid BAP tx, tx required");
-    (0, $caee5781971edf71$export$ee2a8bbe689a8ef5)("BAP", $2519a10c9a0ebef2$var$opReturnSchema, dataObj, cell, tx);
+const $e51e508d397a2f63$export$c3c52e219617878 = ({ dataObj: dataObj , cell: cell , tx: tx  })=>{
+    if (!tx) throw new Error(`Invalid BAP tx, tx required`);
+    (0, $8c5e6215e1bd1bd5$export$ee2a8bbe689a8ef5)("BAP", $e51e508d397a2f63$var$opReturnSchema, dataObj, cell, tx);
 };
-const $2519a10c9a0ebef2$export$5935ea4bf04c4453 = {
+const $e51e508d397a2f63$export$5935ea4bf04c4453 = {
     name: "BAP",
-    address: $2519a10c9a0ebef2$var$address,
-    opReturnSchema: $2519a10c9a0ebef2$var$opReturnSchema,
-    handler: $2519a10c9a0ebef2$export$c3c52e219617878
+    address: $e51e508d397a2f63$var$address,
+    opReturnSchema: $e51e508d397a2f63$var$opReturnSchema,
+    handler: $e51e508d397a2f63$export$c3c52e219617878
 };
 
 
 
-const $44221962b60306bc$var$protocolAddress = "$";
-const $44221962b60306bc$var$opReturnSchema = [
+const $98b3080a17c71cf0$var$protocolAddress = "$";
+const $98b3080a17c71cf0$var$opReturnSchema = [
     {
         su: [
             {
@@ -526,27 +406,153 @@ const $44221962b60306bc$var$opReturnSchema = [
     }
 ];
 // const handler = function (dataObj, protocolName, cell, tape, tx) {
-const $44221962b60306bc$var$handler = ({ dataObj: dataObj, cell: cell })=>{
+const $98b3080a17c71cf0$var$handler = ({ dataObj: dataObj , cell: cell  })=>{
     if (!cell.length || !cell.every((c)=>c.s)) throw new Error("Invalid Bitcom tx");
     // gather up the string values
-    const bitcomObj = cell.map((c)=>c?.s ? c.s : "");
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "BITCOM", bitcomObj);
+    const bitcomObj = cell.map((c)=>c && c.s ? c.s : "");
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "BITCOM", bitcomObj);
 };
-const $44221962b60306bc$export$c19e3a57d69468ea = {
+const $98b3080a17c71cf0$export$c19e3a57d69468ea = {
     name: "BITCOM",
-    address: $44221962b60306bc$var$protocolAddress,
-    opReturnSchema: $44221962b60306bc$var$opReturnSchema,
-    handler: $44221962b60306bc$var$handler
+    address: $98b3080a17c71cf0$var$protocolAddress,
+    opReturnSchema: $98b3080a17c71cf0$var$opReturnSchema,
+    handler: $98b3080a17c71cf0$var$handler
 };
 
 
 
 
 
-const { toArray: $d53bca867b0d5879$var$toArray, toBase58Check: $d53bca867b0d5879$var$toBase58Check, toHex: $d53bca867b0d5879$var$toHex } = (0, $71XCL$bsvsdk.Utils);
-const { magicHash: $d53bca867b0d5879$var$magicHash } = (0, $71XCL$bsvsdk.BSM);
-const $d53bca867b0d5879$var$address = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC";
-const $d53bca867b0d5879$var$opReturnSchema = [
+
+
+
+const $39dd6b3960e6a3ea$export$fe8725667d42151 = async function(paymail, publicKey) {
+    const client = new (0, $a6mis$PaymailClient)((0, $a6mis$dns), (0, $a6mis$nodefetch));
+    return client.verifyPubkeyOwner(publicKey, paymail);
+};
+
+
+
+
+const $541801f53125a663$var$address = "1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4";
+const $541801f53125a663$var$opReturnSchema = [
+    {
+        signature: "string"
+    },
+    {
+        pubkey: "string"
+    },
+    {
+        paymail: "string"
+    }
+];
+const $541801f53125a663$var$validateSignature = (pspObj, cell, tape)=>{
+    if (!Array.isArray(tape) || tape.length < 3) throw new Error("PSP requires at least 3 cells including the prefix");
+    let cellIndex = -1;
+    tape.forEach((cc, index)=>{
+        if (cc.cell === cell) cellIndex = index;
+    });
+    if (cellIndex === -1) throw new Error("PSP could not find cell in tape");
+    const signatureBufferStatements = [];
+    for(let i = 0; i < cellIndex; i++){
+        const cellContainer = tape[i];
+        if (!(0, $8c5e6215e1bd1bd5$export$238b4e54af8fe886)(cellContainer)) {
+            cellContainer.cell.forEach((statement)=>{
+                // add the value as hex
+                let value = statement.h;
+                if (!value) value = (0, $a6mis$Buffer).from(statement.b, "base64").toString("hex");
+                if (!value) value = (0, $a6mis$Buffer).from(statement.s).toString("hex");
+                signatureBufferStatements.push((0, $a6mis$Buffer).from(value, "hex"));
+            });
+            signatureBufferStatements.push((0, $a6mis$Buffer).from("7c", "hex")) // | hex ????
+            ;
+        }
+    }
+    const dataScript = (0, $a6mis$Script).fromSafeDataArray(signatureBufferStatements);
+    const messageBuffer = (0, $a6mis$Buffer).from(dataScript.toHex(), "hex");
+    // verify psp signature
+    const publicKey = (0, $a6mis$PubKey).fromString(pspObj.pubkey);
+    const signingAddress = (0, $a6mis$Address).fromPubKey(publicKey);
+    try {
+        pspObj.verified = (0, $a6mis$Bsm).verify(messageBuffer, pspObj.signature, signingAddress);
+    } catch (e) {
+        pspObj.verified = false;
+    }
+    return pspObj.verified;
+};
+const $541801f53125a663$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
+    // Paymail Signature Protocol
+    // Validation
+    if (!cell.length || cell[0].s !== $541801f53125a663$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error(`Invalid Paymail Signature Protocol record`);
+    return await $541801f53125a663$export$c3c3eee1546d651a($541801f53125a663$var$opReturnSchema, (0, $6e4f14d1954af30e$export$6c117c038f18b127).PSP, dataObj, cell, tape);
+};
+const $541801f53125a663$export$c3c3eee1546d651a = async (useOpReturnSchema, protocol, dataObj, cell, tape)=>{
+    // loop over the schema
+    const pspObj = {
+        verified: false
+    };
+    // Does not have the required number of fields
+    if (cell.length < 4) throw new Error("PSP requires at least 4 fields including the prefix " + cell);
+    for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
+        const x = parseInt(idx, 10);
+        const [pspField] = Object.keys(schemaField);
+        const [schemaEncoding] = Object.values(schemaField);
+        pspObj[pspField] = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
+    }
+    if (!pspObj.signature) throw new Error("PSP requires a signature " + cell);
+    //  TODO: we can only check on PSP until we figure out the BITCOM_HASHED fields
+    //  verify signature
+    if (protocol === (0, $6e4f14d1954af30e$export$6c117c038f18b127).PSP && !$541801f53125a663$var$validateSignature(pspObj, cell, tape)) throw new Error("PSP requires a valid signature " + pspObj);
+    // check the paymail public key
+    if (pspObj.pubkey && pspObj.paymail) {
+        const paymailPublicKeyVerified = await (0, $39dd6b3960e6a3ea$export$fe8725667d42151)(pspObj.paymail, pspObj.pubkey);
+        pspObj.verified = pspObj.verified && paymailPublicKeyVerified;
+    }
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, protocol, pspObj);
+};
+const $541801f53125a663$export$bd49ff9d0c7fbe97 = {
+    name: "PSP",
+    address: $541801f53125a663$var$address,
+    opReturnSchema: $541801f53125a663$var$opReturnSchema,
+    handler: $541801f53125a663$var$handler
+};
+
+
+const $6cb5742cd91204d2$var$address = "15igChEkUWgx4dsEcSuPitcLNZmNDfUvgA";
+// should be very similar to PSP
+// see https://bsvalias.org/05-verify-public-key-owner.html
+// TODO: Really need some documentation ro to verify what these fields are
+const $6cb5742cd91204d2$var$opReturnSchema = [
+    {
+        hash: "string"
+    },
+    {
+        signature: "string"
+    },
+    {
+        pubkey: "binary"
+    },
+    {
+        paymail: "string"
+    }
+];
+const $6cb5742cd91204d2$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
+    if (!tape) throw new Error(`Invalid BITCOM_HASHED tx. Bad tape`);
+    return await (0, $541801f53125a663$export$c3c3eee1546d651a)($6cb5742cd91204d2$var$opReturnSchema, (0, $6e4f14d1954af30e$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
+};
+const $6cb5742cd91204d2$export$f069e857381ef4b9 = {
+    name: "BITCOM_HASHED",
+    address: $6cb5742cd91204d2$var$address,
+    opReturnSchema: $6cb5742cd91204d2$var$opReturnSchema,
+    handler: $6cb5742cd91204d2$var$handler
+};
+
+
+
+
+
+const $5cabab930d18e9f6$var$address = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC";
+const $5cabab930d18e9f6$var$opReturnSchema = [
     {
         bitkey_signature: "string"
     },
@@ -560,81 +566,42 @@ const $d53bca867b0d5879$var$opReturnSchema = [
         pubkey: "string"
     }
 ];
-// Helper to convert array to BigNumber
-function $d53bca867b0d5879$var$toBigNumber(buffer) {
-    const hex = $d53bca867b0d5879$var$toHex(buffer);
-    return new (0, $71XCL$bsvsdk.BigNumber)(hex, 16);
-}
-// Recovers a public key from a BSM signature by brute forcing recovery factors
-// Steps:
-// 1. Apply magicHash to the raw message.
-// 2. Try all recovery factors 0–3 with Signature.RecoverPublicKey()
-// 3. If BSM.verify() returns true with the recovered pubkey, return it.
-function $d53bca867b0d5879$var$recoverPublicKeyFromBSM(message, signature) {
-    // First, BSM signatures are verified by applying magicHash internally,
-    // so we must apply magicHash to the raw message ourselves for recovery:
-    const msgHash = $d53bca867b0d5879$var$magicHash(message);
-    const bigMsg = $d53bca867b0d5879$var$toBigNumber(msgHash);
-    for(let recovery = 0; recovery < 4; recovery++)try {
-        const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
-        // Verify using BSM.verify() with the original raw message (no magicHash)
-        if ((0, $71XCL$bsvsdk.BSM).verify(message, signature, publicKey)) return publicKey;
-    } catch  {
-    // Try next recovery factor
-    }
-    throw new Error("Failed to recover public key from BSM signature");
-}
-const $d53bca867b0d5879$var$handler = async ({ dataObj: dataObj, cell: cell })=>{
-    if (cell.length < 5) throw new Error("Invalid Bitkey tx");
+// const handler = function (dataObj, cell, tape, tx) {
+// https://bitkey.network/how
+const $5cabab930d18e9f6$var$handler = async ({ dataObj: dataObj , cell: cell  })=>{
+    if (!cell.length) throw new Error("Invalid Bitkey tx");
     const bitkeyObj = {};
-    for (const [idx, schemaField] of Object.entries($d53bca867b0d5879$var$opReturnSchema)){
-        const x = Number.parseInt(idx, 10);
+    // loop over the schema
+    for (const [idx, schemaField] of Object.entries($5cabab930d18e9f6$var$opReturnSchema)){
+        const x = parseInt(idx, 10);
         const bitkeyField = Object.keys(schemaField)[0];
         const schemaEncoding = Object.values(schemaField)[0];
-        bitkeyObj[bitkeyField] = (0, $caee5781971edf71$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
+        bitkeyObj[bitkeyField] = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
     }
-    // Derive userAddress from pubkey
-    const pubkeyHex = bitkeyObj.pubkey;
-    const userPubkey = (0, $71XCL$bsvsdk.PublicKey).fromString(pubkeyHex);
-    const userPubKeyHash = userPubkey.toHash();
-    const userAddress = $d53bca867b0d5879$var$toBase58Check(userPubKeyHash);
-    // Prepare raw message for bitkey signature verification: sha256(paymail_hex + pubkey_hex)
-    const paymailHex = (0, $71XCL$buffer.Buffer).from(bitkeyObj.paymail).toString("hex");
+    const userAddress = (0, $a6mis$Address).fromPubKey((0, $a6mis$PubKey).fromString(bitkeyObj.pubkey)).toString();
+    // sha256( hex(paymail(USER)) | hex(pubkey(USER)) )
+    const paymailHex = (0, $a6mis$Buffer).from(bitkeyObj.paymail).toString("hex");
+    const pubkeyHex = (0, $a6mis$Buffer).from(bitkeyObj.pubkey).toString("hex");
     const concatenated = paymailHex + pubkeyHex;
-    const concatenatedBuffer = (0, $71XCL$buffer.Buffer).from(concatenated, "hex");
-    const bitkeyMessage = (0, $71XCL$bsvsdk.Hash).sha256($d53bca867b0d5879$var$toArray(concatenatedBuffer));
-    // This is the raw message. BSM.verify() will do magicHash internally.
-    const bitkeySignature = (0, $71XCL$bsvsdk.Signature).fromCompact(bitkeyObj.bitkey_signature, 'base64');
-    // Recover Bitkey pubkey
-    const recoveredBitkeyPubkey = $d53bca867b0d5879$var$recoverPublicKeyFromBSM(bitkeyMessage, bitkeySignature);
-    const recoveredBitkeyPubKeyHash = recoveredBitkeyPubkey.toHash();
-    const recoveredBitkeyAddress = $d53bca867b0d5879$var$toBase58Check(recoveredBitkeyPubKeyHash);
-    const bitkeySignatureVerified = (0, $71XCL$bsvsdk.BSM).verify(bitkeyMessage, bitkeySignature, recoveredBitkeyPubkey) && recoveredBitkeyAddress === $d53bca867b0d5879$var$address;
-    // Verify user signature by using the pubkey as the message
-    const userMessage = $d53bca867b0d5879$var$toArray((0, $71XCL$buffer.Buffer).from(pubkeyHex, "utf8"));
-    const userSignature = (0, $71XCL$bsvsdk.Signature).fromCompact(bitkeyObj.user_signature, 'base64');
-    const recoveredUserPubkey = $d53bca867b0d5879$var$recoverPublicKeyFromBSM(userMessage, userSignature);
-    const recoveredUserPubKeyHash = recoveredUserPubkey.toHash();
-    const recoveredUserAddress = $d53bca867b0d5879$var$toBase58Check(recoveredUserPubKeyHash);
-    const userSignatureVerified = (0, $71XCL$bsvsdk.BSM).verify(userMessage, userSignature, recoveredUserPubkey) && recoveredUserAddress === userAddress;
+    const bitkeySignatureBuffer = await (0, $8c5e6215e1bd1bd5$export$bced8d2aada2d1c9)((0, $a6mis$Buffer).from(concatenated, "hex"));
+    const bitkeySignatureVerified = (0, $a6mis$Bsm).verify(bitkeySignatureBuffer, bitkeyObj.bitkey_signature, (0, $a6mis$Address).fromString("13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC"));
+    const userSignatureVerified = (0, $a6mis$Bsm).verify((0, $a6mis$Buffer).from(bitkeyObj.pubkey), bitkeyObj.user_signature, (0, $a6mis$Address).fromString(userAddress));
     bitkeyObj.verified = bitkeySignatureVerified && userSignatureVerified;
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "BITKEY", bitkeyObj);
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "BITKEY", bitkeyObj);
 };
-const $d53bca867b0d5879$export$6a60f6b74bbaccb8 = {
+const $5cabab930d18e9f6$export$6a60f6b74bbaccb8 = {
     name: "BITKEY",
-    address: $d53bca867b0d5879$var$address,
-    opReturnSchema: $d53bca867b0d5879$var$opReturnSchema,
-    handler: $d53bca867b0d5879$var$handler
+    address: $5cabab930d18e9f6$var$address,
+    opReturnSchema: $5cabab930d18e9f6$var$opReturnSchema,
+    handler: $5cabab930d18e9f6$var$handler
 };
 
 
 
 
 
-const { magicHash: $7d567cbd150e6a61$var$magicHash } = (0, $71XCL$bsvsdk.BSM);
-const { toArray: $7d567cbd150e6a61$var$toArray } = (0, $71XCL$bsvsdk.Utils);
-const $7d567cbd150e6a61$var$protocolAddress = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p";
-const $7d567cbd150e6a61$var$opReturnSchema = [
+const $25b031142c3ac89e$var$protocolAddress = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p";
+const $25b031142c3ac89e$var$opReturnSchema = [
     {
         paymail: "string"
     },
@@ -645,42 +612,89 @@ const $7d567cbd150e6a61$var$opReturnSchema = [
         signature: "string"
     }
 ];
-const $7d567cbd150e6a61$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
+const $25b031142c3ac89e$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
     // Validation
-    if (cell[0].s !== $7d567cbd150e6a61$var$protocolAddress || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].s || !tape) throw new Error(`Invalid BITPIC record: ${tx}`);
+    if (cell[0].s !== $25b031142c3ac89e$var$protocolAddress || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].s || !tape) throw new Error(`Invalid BITPIC record: ${tx}`);
     const bitpicObj = {
         paymail: cell[1].s,
-        pubkey: (0, $71XCL$buffer.Buffer).from(cell[2].b, "base64").toString("hex"),
+        pubkey: (0, $a6mis$Buffer).from(cell[2].b, "base64").toString("hex"),
         signature: cell[3].s || "",
         verified: false
     };
     const b = tape[1].cell;
     if (b[0].s === "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut") // verify bitpic signature
+    // TODO: Verification
+    // const pubkey = Buffer.from(cell[2].b, 'base64').toString('hex')
+    // const address = Address.fromPubKey(PubKey.fromString(pubkey)).toString()
+    // const hex = Buffer.from(hash, 'hex')
+    // const verified = Message.verify(hex, address, expected)
+    // return verified
+    // const expected = res.cell[3].s
+    // const paymail = res.cell[1].s
+    // const pubkey = Buffer.from(res.cell[2].b, "base64").toString("hex")
+    // const address = new bsv.PublicKey(pubkey).toAddress().toString()
+    // const hex = Buffer.from(res.hash, "hex")
+    // const verified = Message.verify(hex, address, expected)
+    // return verified
     try {
         // TODO: bob transactions are missing this binary part, cannot verify signature
         const bin = cell[1].lb || cell[1].b;
-        const hashBuff = (0, $71XCL$bsvsdk.Hash).sha256($7d567cbd150e6a61$var$toArray(bin, "base64"));
-        const sig = (0, $71XCL$bsvsdk.Signature).fromCompact(bitpicObj.signature, "base64");
-        const pubkey = (0, $71XCL$bsvsdk.PublicKey).fromString(bitpicObj.pubkey);
-        const msgHash = $7d567cbd150e6a61$var$magicHash(hashBuff);
-        bitpicObj.verified = (0, $71XCL$bsvsdk.BSM).verify(msgHash, sig, pubkey);
+        const buf = (0, $a6mis$Buffer).from(bin, "base64");
+        const hashBuff = await (0, $8c5e6215e1bd1bd5$export$bced8d2aada2d1c9)(buf);
+        const address = (0, $a6mis$Address).fromPubKey((0, $a6mis$PubKey).fromString(bitpicObj.pubkey));
+        bitpicObj.verified = (0, $a6mis$Bsm).verify(hashBuff, bitpicObj.signature, address);
     } catch (e) {
         // failed verification
         bitpicObj.verified = false;
     }
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "BITPIC", bitpicObj);
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "BITPIC", bitpicObj);
 };
-const $7d567cbd150e6a61$export$bbef9cc099c72f9d = {
+const $25b031142c3ac89e$export$bbef9cc099c72f9d = {
     name: "BITPIC",
-    address: $7d567cbd150e6a61$var$protocolAddress,
-    opReturnSchema: $7d567cbd150e6a61$var$opReturnSchema,
-    handler: $7d567cbd150e6a61$var$handler
+    address: $25b031142c3ac89e$var$protocolAddress,
+    opReturnSchema: $25b031142c3ac89e$var$opReturnSchema,
+    handler: $25b031142c3ac89e$var$handler
 };
 
 
 
-const $969c5b61dd3c02f1$var$address = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3";
-const $969c5b61dd3c02f1$var$opReturnSchema = [
+
+const $ba95ea4e23297c9b$var$protocolIdentifier = "boostpow";
+/*
+{
+    hash: '0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc',
+    content: '00000000000000000000000000000000000000000048656c6c6f20776f726c64',
+    bits: 486604799,
+    difficulty: 1,
+    metadataHash: "acd8278e84b037c47565df65a981d72fb09be5262e8783d4cf4e42633615962a",
+    time: 1305200806,
+    nonce: 3698479534,
+    category: 1,
+}
+*/ const $ba95ea4e23297c9b$var$scriptChecker = (cell)=>{
+    // protocol identifier always in first pushdata
+    return cell[0].s === $ba95ea4e23297c9b$var$protocolIdentifier;
+};
+const $ba95ea4e23297c9b$var$handler = ({ dataObj: dataObj , cell: cell , out: out , tx: tx  })=>{
+    if (!tx || !cell[0] || !out) throw new Error(`Invalid BOOST tx. dataObj, cell, out and tx are required.`);
+    // build ASM from either op codes and script chunks
+    const asm = cell.map((c)=>c.ops ? c.ops : (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(c, "hex") || "").join(" ");
+    if (asm) {
+        const boostJob = (0, $a6mis$BoostPowJob).fromASM(asm, tx.tx.h, out.i, out.e.v).toObject();
+        (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "BOOST", boostJob);
+    }
+};
+const $ba95ea4e23297c9b$export$13c3c8ee12090ebc = {
+    name: "BOOST",
+    handler: $ba95ea4e23297c9b$var$handler,
+    address: $ba95ea4e23297c9b$var$protocolIdentifier,
+    scriptChecker: $ba95ea4e23297c9b$var$scriptChecker
+};
+
+
+
+const $0677e8846d069940$var$address = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3";
+const $0677e8846d069940$var$opReturnSchema = [
     {
         hashing_algorithm: "string"
     },
@@ -703,24 +717,24 @@ const $969c5b61dd3c02f1$var$opReturnSchema = [
     ]
 ];
 // https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
-const $969c5b61dd3c02f1$var$handler = async ({ dataObj: dataObj, cell: cell, tape: tape, tx: tx })=>{
-    if (!tape) throw new Error("Invalid HAIP tx. Bad tape");
-    if (!tx) throw new Error("Invalid HAIP tx.");
-    return await (0, $9d2ad5acc773d924$export$f0079d0908cdbf96)($969c5b61dd3c02f1$var$opReturnSchema, (0, $9d2ad5acc773d924$export$6c117c038f18b127).HAIP, dataObj, cell, tape);
+const $0677e8846d069940$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+    if (!tape) throw new Error(`Invalid HAIP tx. Bad tape`);
+    if (!tx) throw new Error(`Invalid HAIP tx.`);
+    return await (0, $6e4f14d1954af30e$export$f0079d0908cdbf96)($0677e8846d069940$var$opReturnSchema, (0, $6e4f14d1954af30e$export$6c117c038f18b127).HAIP, dataObj, cell, tape, tx);
 };
-const $969c5b61dd3c02f1$export$12815d889fe90b8 = {
+const $0677e8846d069940$export$12815d889fe90b8 = {
     name: "HAIP",
-    address: $969c5b61dd3c02f1$var$address,
-    opReturnSchema: $969c5b61dd3c02f1$var$opReturnSchema,
-    handler: $969c5b61dd3c02f1$var$handler
+    address: $0677e8846d069940$var$address,
+    opReturnSchema: $0677e8846d069940$var$opReturnSchema,
+    handler: $0677e8846d069940$var$handler
 };
 
 
 
 
 
-const $f735e67f61f64b89$var$address = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5";
-const $f735e67f61f64b89$var$opReturnSchema = [
+const $294420dffa930363$var$address = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5";
+const $294420dffa930363$var$opReturnSchema = [
     {
         cmd: {
             SET: [
@@ -774,7 +788,7 @@ const $f735e67f61f64b89$var$opReturnSchema = [
         }
     }
 ];
-const $f735e67f61f64b89$var$processADD = (cell, mapObj)=>{
+const $294420dffa930363$var$processADD = function(cell, mapObj) {
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -787,7 +801,7 @@ const $f735e67f61f64b89$var$processADD = (cell, mapObj)=>{
         } else if (last && Array.isArray(mapObj[last])) mapObj[last].push(pushdata);
     }
 };
-const $f735e67f61f64b89$var$proccessDELETE = (cell, mapObj)=>{
+const $294420dffa930363$var$proccessDELETE = function(cell, mapObj) {
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -800,7 +814,7 @@ const $f735e67f61f64b89$var$proccessDELETE = (cell, mapObj)=>{
         } else if (last) mapObj[last].push(pushdata);
     }
 };
-const $f735e67f61f64b89$var$processSELECT = (cell, mapObj)=>{
+const $294420dffa930363$var$processSELECT = function(cell, mapObj) {
     // TODO
     // console.log('MAP SELECT');
     for (const pushdataContainer of cell)// ignore MAP command
@@ -809,21 +823,21 @@ const $f735e67f61f64b89$var$processSELECT = (cell, mapObj)=>{
         continue;
     }
 };
-const $f735e67f61f64b89$var$processMSGPACK = (cell, mapObj)=>{
+const $294420dffa930363$var$processMSGPACK = function(cell, mapObj) {
     for (const pushdataContainer of cell){
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
         if (pushdataContainer.i === 2) try {
-            if (!(0, $71XCL$msgpackmsgpack.decode)) throw new Error("Msgpack is required but not loaded");
-            const buff = (0, $71XCL$buffer.Buffer).from(pushdataContainer.b, "base64");
-            mapObj = (0, $71XCL$msgpackmsgpack.decode)(buff);
+            if (!(0, $a6mis$decode)) throw new Error("Msgpack is required but not loaded");
+            const buff = (0, $a6mis$Buffer).from(pushdataContainer.b, "base64");
+            mapObj = (0, $a6mis$decode)(buff);
         } catch (e) {
             mapObj = {};
         }
     }
     return mapObj;
 };
-const $f735e67f61f64b89$var$processJSON = (cell, mapObj)=>{
+const $294420dffa930363$var$processJSON = function(cell, mapObj) {
     for (const pushdataContainer of cell){
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
@@ -835,7 +849,7 @@ const $f735e67f61f64b89$var$processJSON = (cell, mapObj)=>{
     }
     return mapObj;
 };
-const $f735e67f61f64b89$var$processSET = (cell, mapObj)=>{
+const $294420dffa930363$var$processSET = function(cell, mapObj) {
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -852,9 +866,9 @@ const $f735e67f61f64b89$var$processSET = (cell, mapObj)=>{
         }
     }
 };
-const $f735e67f61f64b89$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
+const $294420dffa930363$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
     // Validate
-    if (cell[0].s !== $f735e67f61f64b89$var$address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) throw new Error(`Invalid MAP record: ${tx}`);
+    if (cell[0].s !== $294420dffa930363$var$address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) throw new Error(`Invalid MAP record: ${tx}`);
     let mapObj = {};
     // parse the protocol separator
     const commands = [];
@@ -866,13 +880,13 @@ const $f735e67f61f64b89$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })
         commands[commandSeparator].push(cell[i]);
     }
     // Get the MAP command key name from the query schema
-    const mapCmdKey = Object.keys($f735e67f61f64b89$var$opReturnSchema[0])[0];
+    const mapCmdKey = Object.keys($294420dffa930363$var$opReturnSchema[0])[0];
     // Add the firt MAP command in the response object
     mapObj[mapCmdKey] = commands[0][0].s;
-    for (const cc of commands){
+    commands.forEach((cc)=>{
         // re-add the MAP address
         cc.unshift({
-            s: $f735e67f61f64b89$var$address,
+            s: $294420dffa930363$var$address,
             i: 0
         });
         const command = cc[1].s;
@@ -880,46 +894,45 @@ const $f735e67f61f64b89$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })
         switch(command){
             // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
             case "ADD":
-                $f735e67f61f64b89$var$processADD(cc, mapObj);
+                $294420dffa930363$var$processADD(cc, mapObj);
                 break;
             case "REMOVE":
                 mapObj.key = cc[2].s;
                 break;
             case "DELETE":
-                $f735e67f61f64b89$var$proccessDELETE(cc, mapObj);
+                $294420dffa930363$var$proccessDELETE(cc, mapObj);
                 break;
             case "CLEAR":
                 break;
             case "SELECT":
-                $f735e67f61f64b89$var$processSELECT(cc, mapObj);
+                $294420dffa930363$var$processSELECT(cc, mapObj);
                 break;
             case "MSGPACK":
-                mapObj = $f735e67f61f64b89$var$processMSGPACK(cc, mapObj);
+                mapObj = $294420dffa930363$var$processMSGPACK(cc, mapObj);
                 break;
             case "JSON":
-                mapObj = $f735e67f61f64b89$var$processJSON(cc, mapObj);
+                mapObj = $294420dffa930363$var$processJSON(cc, mapObj);
                 break;
             case "SET":
-                $f735e67f61f64b89$var$processSET(cc, mapObj);
+                $294420dffa930363$var$processSET(cc, mapObj);
                 break;
             default:
         }
-    }
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "MAP", mapObj);
+    });
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "MAP", mapObj);
 };
-const $f735e67f61f64b89$export$ce970371e0e850bc = {
+const $294420dffa930363$export$ce970371e0e850bc = {
     name: "MAP",
-    address: $f735e67f61f64b89$var$address,
-    opReturnSchema: $f735e67f61f64b89$var$opReturnSchema,
-    handler: $f735e67f61f64b89$var$handler
+    address: $294420dffa930363$var$address,
+    opReturnSchema: $294420dffa930363$var$opReturnSchema,
+    handler: $294420dffa930363$var$handler
 };
 
 
 
 
-const { toArray: $23bc52f6d80ffa0b$var$toArray, toHex: $23bc52f6d80ffa0b$var$toHex } = (0, $71XCL$bsvsdk.Utils);
-const $23bc52f6d80ffa0b$var$address = "meta";
-const $23bc52f6d80ffa0b$var$opReturnSchema = [
+const $fbd4a3a1e0399b51$var$address = "meta";
+const $fbd4a3a1e0399b51$var$opReturnSchema = [
     {
         address: "string"
     },
@@ -930,16 +943,16 @@ const $23bc52f6d80ffa0b$var$opReturnSchema = [
         name: "string"
     }
 ];
-const $23bc52f6d80ffa0b$export$3eb18141230d6532 = async (a, tx)=>{
+const $fbd4a3a1e0399b51$export$3eb18141230d6532 = async function(a, tx) {
     // Calculate the node ID
-    const buf = (0, $71XCL$buffer.Buffer).from(a + tx);
-    const hashBuf = (0, $71XCL$bsvsdk.Hash).sha256($23bc52f6d80ffa0b$var$toArray(buf));
-    return $23bc52f6d80ffa0b$var$toHex(hashBuf);
+    const buf = (0, $a6mis$Buffer).from(a + tx);
+    const hashBuf = await (0, $8c5e6215e1bd1bd5$export$bced8d2aada2d1c9)(buf);
+    return hashBuf.toString("hex");
 };
-const $23bc52f6d80ffa0b$var$handler = async ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error(`Invalid Metanet tx ${tx}`);
+const $fbd4a3a1e0399b51$var$handler = async ({ dataObj: dataObj , cell: cell , tx: tx  })=>{
+    if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error("Invalid Metanet tx " + tx);
     // For now, we just copy from MOM keys later if available, or keep BOB format
-    const nodeId = await $23bc52f6d80ffa0b$export$3eb18141230d6532(cell[1].s, tx.tx.h);
+    const nodeId = await $fbd4a3a1e0399b51$export$3eb18141230d6532(cell[1].s, tx.tx.h);
     // Described this node
     const node = {
         a: cell[1].s,
@@ -948,7 +961,7 @@ const $23bc52f6d80ffa0b$var$handler = async ({ dataObj: dataObj, cell: cell, tx:
     };
     let parent = {};
     if (tx.in) {
-        const parentId = await $23bc52f6d80ffa0b$export$3eb18141230d6532(tx.in[0].e.a, cell[2].s);
+        const parentId = await $fbd4a3a1e0399b51$export$3eb18141230d6532(tx.in[0].e.a, cell[2].s);
         // Parent node
         parent = {
             a: tx.in[0].e.a,
@@ -962,87 +975,18 @@ const $23bc52f6d80ffa0b$var$handler = async ({ dataObj: dataObj, cell: cell, tx:
         parent: parent
     });
 };
-const $23bc52f6d80ffa0b$export$7830a85a59ca4593 = {
+const $fbd4a3a1e0399b51$export$7830a85a59ca4593 = {
     name: "METANET",
-    address: $23bc52f6d80ffa0b$var$address,
-    opReturnSchema: $23bc52f6d80ffa0b$var$opReturnSchema,
-    handler: $23bc52f6d80ffa0b$var$handler
+    address: $fbd4a3a1e0399b51$var$address,
+    opReturnSchema: $fbd4a3a1e0399b51$var$opReturnSchema,
+    handler: $fbd4a3a1e0399b51$var$handler
 };
 
 
 
-// const OrdScript =
-//     'OP_FALSE OP_IF 6F7264 OP_1 <CONTENT_TYPE_PLACEHOLDER> OP_0 <DATA_PLACEHOLDER> OP_ENDIF'.split(
-//         ' '
-//     )
-const $cf02eb2496a3bc72$var$scriptChecker = (cell)=>{
-    if (cell.length < 13) // wrong length
-    return false;
-    // Find OP_IF wrapper
-    const startIdx = $cf02eb2496a3bc72$var$findIndex(cell, (c)=>c.ops === "OP_IF");
-    const endIdx = $cf02eb2496a3bc72$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF");
-    const ordScript = cell.slice(startIdx, endIdx);
-    const prevCell = cell[startIdx - 1];
-    return prevCell?.op === 0 && !!ordScript[0] && !!ordScript[1] && ordScript[1].s == "ord";
-};
-const $cf02eb2496a3bc72$var$handler = ({ dataObj: dataObj, cell: cell, out: out })=>{
-    if (!cell[0] || !out) throw new Error("Invalid Ord tx. dataObj, cell, out and tx are required.");
-    // assemble asm
-    // make sure first piece matches a txid
-    // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
-    // next
-    // Find OP_IF wrapper
-    const startIdx = $cf02eb2496a3bc72$var$findIndex(cell, (c)=>c.ops === "OP_IF");
-    const endIdx = $cf02eb2496a3bc72$var$findIndex(cell, (c, i)=>i > startIdx && c.ops === "OP_ENDIF") + 1;
-    const ordScript = cell.slice(startIdx, endIdx);
-    if (!ordScript[0] || !ordScript[1] || ordScript[1].s !== "ord") throw new Error("Invalid Ord tx. Prefix not found.");
-    let data;
-    let contentType;
-    ordScript.forEach((push, idx, all)=>{
-        // content-type
-        if (push.ops === "OP_1") contentType = all[idx + 1].s;
-        // data
-        if (push.ops === "OP_0") data = all[idx + 1].b;
-    });
-    if (!data) throw new Error("Invalid Ord data.");
-    if (!contentType) throw new Error("Invalid Ord content type.");
-    const OrdObj = {
-        data: data,
-        contentType: contentType
-    };
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "ORD", OrdObj);
-};
-const $cf02eb2496a3bc72$export$a3deb2ff0da16a68 = {
-    name: "ORD",
-    handler: $cf02eb2496a3bc72$var$handler,
-    scriptChecker: $cf02eb2496a3bc72$var$scriptChecker
-};
-function $cf02eb2496a3bc72$var$findIndex(array, predicate) {
-    return $cf02eb2496a3bc72$var$findLastIndex(array, predicate);
-}
-function $cf02eb2496a3bc72$var$findLastIndex(array, predicate, fromIndex) {
-    const length = array == null ? 0 : array.length;
-    if (!length) return -1;
-    let index = length - 1;
-    if (fromIndex !== undefined) {
-        index = fromIndex;
-        index = fromIndex < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1);
-    }
-    return $cf02eb2496a3bc72$var$baseFindIndex(array, predicate, index, true);
-}
-function $cf02eb2496a3bc72$var$baseFindIndex(array, predicate, fromIndex, fromRight) {
-    const { length: length } = array;
-    let index = fromIndex + (fromRight ? 1 : -1);
-    while(fromRight ? index-- : ++index < length){
-        if (predicate(array[index], index, array)) return index;
-    }
-    return -1;
-}
 
-
-
-const $6c2cab82920c5ead$var$address = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1";
-const $6c2cab82920c5ead$var$opReturnSchema = [
+const $da321a7b0ed8b49b$var$address = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1";
+const $da321a7b0ed8b49b$var$opReturnSchema = [
     {
         pair: "json"
     },
@@ -1053,265 +997,270 @@ const $6c2cab82920c5ead$var$opReturnSchema = [
         timestamp: "string"
     }
 ];
-const $6c2cab82920c5ead$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    if (cell[0].s !== $6c2cab82920c5ead$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) throw new Error(`Invalid RON record ${tx?.tx.h}`);
+const $da321a7b0ed8b49b$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+    if (cell[0].s !== $da321a7b0ed8b49b$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) throw new Error(`Invalid RON record ${tx === null || tx === void 0 ? void 0 : tx.tx.h}`);
     const pair = JSON.parse(cell[1].s);
     const timestamp = Number(cell[3].s);
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "RON", {
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "RON", {
         pair: pair,
         address: cell[2].s,
         timestamp: timestamp
     });
 };
-const $6c2cab82920c5ead$export$2839d627b6f3bcfe = {
+const $da321a7b0ed8b49b$export$2839d627b6f3bcfe = {
     name: "RON",
-    address: $6c2cab82920c5ead$var$address,
-    opReturnSchema: $6c2cab82920c5ead$var$opReturnSchema,
-    handler: $6c2cab82920c5ead$var$handler
+    address: $da321a7b0ed8b49b$var$address,
+    opReturnSchema: $da321a7b0ed8b49b$var$opReturnSchema,
+    handler: $da321a7b0ed8b49b$var$handler
 };
 
 
 
-const $49d2b3729450186e$var$address = "1SymRe7erxM46GByucUWnB9fEEMgo7spd";
-const $49d2b3729450186e$var$opReturnSchema = [
+const $ba3299f8714dec0f$var$address = "1SymRe7erxM46GByucUWnB9fEEMgo7spd";
+const $ba3299f8714dec0f$var$opReturnSchema = [
     {
         url: "string"
     }
 ];
-const $49d2b3729450186e$var$handler = ({ dataObj: dataObj, cell: cell, tx: tx })=>{
-    if (cell[0].s !== $49d2b3729450186e$var$address || !cell[1] || !cell[1].s) throw new Error(`Invalid SymRe tx: ${tx}`);
-    (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, "SYMRE", {
+const $ba3299f8714dec0f$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+    if (cell[0].s !== $ba3299f8714dec0f$var$address || !cell[1] || !cell[1].s) throw new Error(`Invalid SymRe tx: ${tx}`);
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "SYMRE", {
         url: cell[1].s
     });
 };
-const $49d2b3729450186e$export$33455cbcda538c68 = {
+const $ba3299f8714dec0f$export$33455cbcda538c68 = {
     name: "SYMRE",
-    address: $49d2b3729450186e$var$address,
-    opReturnSchema: $49d2b3729450186e$var$opReturnSchema,
-    handler: $49d2b3729450186e$var$handler
+    address: $ba3299f8714dec0f$var$address,
+    opReturnSchema: $ba3299f8714dec0f$var$opReturnSchema,
+    handler: $ba3299f8714dec0f$var$handler
+};
+
+
+
+// 21e8 does not use the first pushdata for id
+// in fact there is no id since the 21e8 is designed for difficulty and can be changed
+// instead we use the static part of the script to indentfy the transaction
+// TODO - the OP_X_PLACEHOLDER is the number of bytes to push onto the stack and must match difficulty size
+const $cbff6fb4c505c31d$var$_21e8Script = "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(" ");
+const $cbff6fb4c505c31d$var$scriptChecker = (cell)=>{
+    if (cell.length !== 12) // wrong length
+    return false;
+    // match exact script
+    const ops = [
+        ...cell
+    ].map((c)=>c.ops).splice(2, cell.length);
+    // calculate target byte length
+    const target = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[1], "hex");
+    const targetOpSize = Buffer.from(target).byteLength;
+    // replace the placeholder opcode with actual
+    ops[1] = `OP_${targetOpSize}`;
+    $cbff6fb4c505c31d$var$_21e8Script[1] = `OP_${targetOpSize}`;
+    // protocol identifier always in first pushdata
+    return ops.join() === $cbff6fb4c505c31d$var$_21e8Script.join();
+};
+const $cbff6fb4c505c31d$var$handler = ({ dataObj: dataObj , cell: cell , out: out  })=>{
+    if (!cell[0] || !out) throw new Error(`Invalid 21e8 tx. dataObj, cell, out and tx are required.`);
+    // assemble asm
+    // make sure first piece matches a txid
+    // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
+    // next
+    const txid = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[0], "hex");
+    const target = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[1], "hex");
+    if (!target) throw new Error(`Invalid 21e8 target.` + JSON.stringify(cell[0], null, 2));
+    const difficulty = Buffer.from(target, "hex").byteLength;
+    const _21e8Obj = {
+        target: target,
+        difficulty: difficulty,
+        value: out.e.v,
+        txid: txid
+    };
+    (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "21E8", _21e8Obj);
+};
+const $cbff6fb4c505c31d$export$85479a00ad164ad6 = {
+    name: "21E8",
+    handler: $cbff6fb4c505c31d$var$handler,
+    scriptChecker: $cbff6fb4c505c31d$var$scriptChecker
 };
 
 
 
 // Names of enabled protocols
-const $0bef5cd148f6f4f7$var$enabledProtocols = new Map([]);
+const $5662655d7032e480$var$enabledProtocols = new Map([]);
 // Protocol Handlers
-const $0bef5cd148f6f4f7$var$protocolHandlers = new Map([]);
+const $5662655d7032e480$var$protocolHandlers = new Map([]);
 // Script checkers are intentionally minimalistic detection functions for identifying matching scripts for a given protocol. Only if a checker returns true is a handler called for processing.
-const $0bef5cd148f6f4f7$var$protocolScriptCheckers = new Map([]);
-const $0bef5cd148f6f4f7$var$protocolOpReturnSchemas = new Map();
-const $0bef5cd148f6f4f7$export$6b22fa9a84a4797f = [
-    (0, $9d2ad5acc773d924$export$474d593e43f12abd),
-    (0, $c5a475aecaa24150$export$ef35774e6d314e91),
-    (0, $2519a10c9a0ebef2$export$5935ea4bf04c4453),
-    (0, $f735e67f61f64b89$export$ce970371e0e850bc),
-    (0, $23bc52f6d80ffa0b$export$7830a85a59ca4593),
-    (0, $370fc9f1fb64c5cc$export$85479a00ad164ad6),
-    (0, $44221962b60306bc$export$c19e3a57d69468ea),
-    (0, $d53bca867b0d5879$export$6a60f6b74bbaccb8),
-    (0, $7d567cbd150e6a61$export$bbef9cc099c72f9d),
-    (0, $969c5b61dd3c02f1$export$12815d889fe90b8),
-    (0, $6c2cab82920c5ead$export$2839d627b6f3bcfe),
-    (0, $49d2b3729450186e$export$33455cbcda538c68),
-    (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68)
+const $5662655d7032e480$var$protocolScriptCheckers = new Map([]);
+const $5662655d7032e480$var$protocolOpReturnSchemas = new Map();
+const $5662655d7032e480$export$6b22fa9a84a4797f = [
+    (0, $6e4f14d1954af30e$export$474d593e43f12abd),
+    (0, $7aa111bfe3605772$export$ef35774e6d314e91),
+    (0, $e51e508d397a2f63$export$5935ea4bf04c4453),
+    (0, $294420dffa930363$export$ce970371e0e850bc),
+    (0, $fbd4a3a1e0399b51$export$7830a85a59ca4593),
+    (0, $ba95ea4e23297c9b$export$13c3c8ee12090ebc),
+    (0, $cbff6fb4c505c31d$export$85479a00ad164ad6),
+    (0, $98b3080a17c71cf0$export$c19e3a57d69468ea),
+    (0, $5cabab930d18e9f6$export$6a60f6b74bbaccb8),
+    (0, $25b031142c3ac89e$export$bbef9cc099c72f9d),
+    (0, $0677e8846d069940$export$12815d889fe90b8),
+    (0, $6cb5742cd91204d2$export$f069e857381ef4b9),
+    (0, $541801f53125a663$export$bd49ff9d0c7fbe97),
+    (0, $da321a7b0ed8b49b$export$2839d627b6f3bcfe),
+    (0, $ba3299f8714dec0f$export$33455cbcda538c68)
 ];
-const $0bef5cd148f6f4f7$export$63e9417ed8d8533a = $0bef5cd148f6f4f7$export$6b22fa9a84a4797f.map((p)=>p.name);
-const $0bef5cd148f6f4f7$export$4f34a1c822988d11 = [
-    (0, $9d2ad5acc773d924$export$474d593e43f12abd),
-    (0, $c5a475aecaa24150$export$ef35774e6d314e91),
-    (0, $2519a10c9a0ebef2$export$5935ea4bf04c4453),
-    (0, $f735e67f61f64b89$export$ce970371e0e850bc),
-    (0, $23bc52f6d80ffa0b$export$7830a85a59ca4593),
-    (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68)
+const $5662655d7032e480$export$63e9417ed8d8533a = $5662655d7032e480$export$6b22fa9a84a4797f.map((p)=>p.name);
+const $5662655d7032e480$export$4f34a1c822988d11 = [
+    (0, $6e4f14d1954af30e$export$474d593e43f12abd),
+    (0, $7aa111bfe3605772$export$ef35774e6d314e91),
+    (0, $e51e508d397a2f63$export$5935ea4bf04c4453),
+    (0, $294420dffa930363$export$ce970371e0e850bc),
+    (0, $fbd4a3a1e0399b51$export$7830a85a59ca4593)
 ];
 // prepare protocol map, handlers and schemas
-for (const protocol of $0bef5cd148f6f4f7$export$4f34a1c822988d11){
-    if (protocol.address) $0bef5cd148f6f4f7$var$enabledProtocols.set(protocol.address, protocol.name);
-    $0bef5cd148f6f4f7$var$protocolHandlers.set(protocol.name, protocol.handler);
-    if (protocol.opReturnSchema) $0bef5cd148f6f4f7$var$protocolOpReturnSchemas.set(protocol.name, protocol.opReturnSchema);
-    if (protocol.scriptChecker) $0bef5cd148f6f4f7$var$protocolScriptCheckers.set(protocol.name, protocol.scriptChecker);
-}
-class $0bef5cd148f6f4f7$export$894a720e71f90b3c {
+$5662655d7032e480$export$4f34a1c822988d11.forEach((protocol)=>{
+    if (protocol.address) $5662655d7032e480$var$enabledProtocols.set(protocol.address, protocol.name);
+    $5662655d7032e480$var$protocolHandlers.set(protocol.name, protocol.handler);
+    if (protocol.opReturnSchema) $5662655d7032e480$var$protocolOpReturnSchemas.set(protocol.name, protocol.opReturnSchema);
+    if (protocol.scriptChecker) $5662655d7032e480$var$protocolScriptCheckers.set(protocol.name, protocol.scriptChecker);
+});
+class $5662655d7032e480$export$894a720e71f90b3c {
     constructor(){
-        this.transformTx = async (tx)=>{
-            if (!tx || !tx.in || !tx.out) throw new Error("Cannot process tx");
-            // This will become our nicely formatted response object
-            let dataObj = {};
-            for (const [key, val] of Object.entries(tx)){
-                if (key === "out") // loop over the outputs
-                for (const out of tx.out){
-                    const { tape: tape } = out;
-                    // Process opReturn data
-                    if (tape?.some((cc)=>(0, $caee5781971edf71$export$429a4e8902c23802)(cc))) dataObj = await this.processDataProtocols(tape, out, tx, dataObj);
-                    // No OP_FALSE OP_RETURN in this tape
-                    const _21e8Checker = this.protocolScriptCheckers.get((0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name);
-                    const ordChecker = this.protocolScriptCheckers.get((0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name);
-                    // Check for 21e8 and ords
-                    if (tape?.some((cc)=>{
-                        const { cell: cell } = cc;
-                        if (_21e8Checker?.(cell)) // 'found 21e8'
-                        return true;
-                        if (ordChecker?.(cell)) // 'found 1sat ordinal'
-                        return true;
-                    })) // find the cell array
-                    // loop over tape
-                    for (const cellContainer of tape){
-                        const { cell: cell } = cellContainer;
-                        // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                        if (!cell) throw new Error("empty cell while parsing");
-                        let protocolName = "";
-                        if (_21e8Checker?.(cell)) protocolName = (0, $370fc9f1fb64c5cc$export$85479a00ad164ad6).name;
-                        else if (ordChecker?.(cell)) protocolName = (0, $cf02eb2496a3bc72$export$a3deb2ff0da16a68).name;
-                        else continue;
-                        this.process(protocolName, {
-                            tx: tx,
-                            cell: cell,
-                            dataObj: dataObj,
-                            tape: tape,
-                            out: out
-                        });
-                    }
-                }
-                else if (key === "in") dataObj[key] = val.map((v)=>{
-                    const r = {
-                        ...v
-                    };
-                    delete r.tape;
-                    return r;
-                });
-                else // known key, just write it retaining original type
-                dataObj[key] = val;
-            }
-            // If this is a MOM planaria it will have metanet keys available
-            if (dataObj.METANET && tx.parent) {
-                const meta = {
-                    ancestor: tx.ancestor,
-                    parent: tx.parent,
-                    child: tx.child,
-                    head: tx.head
-                };
-                dataObj.METANET.push(meta);
-                // remove parent and node from root level for (MOM data)
-                delete dataObj.ancestor;
-                delete dataObj.child;
-                delete dataObj.parent;
-                delete dataObj.head;
-                delete dataObj.node;
-            }
-            return dataObj;
-        };
-        this.processUnknown = (key, dataObj, out)=>{
-            // no known non-OP_RETURN scripts
-            if (key && !dataObj[key]) dataObj[key] = [];
-            dataObj[key].push({
-                i: out.i,
-                e: out.e,
-                tape: []
-            });
-        };
-        this.process = async (protocolName, { cell: cell, dataObj: dataObj, tape: tape, out: out, tx: tx })=>{
-            if (this.protocolHandlers.has(protocolName) && typeof this.protocolHandlers.get(protocolName) === "function") {
-                const handler = this.protocolHandlers.get(protocolName);
-                if (handler) /* eslint-disable no-await-in-loop */ await handler({
-                    dataObj: dataObj,
-                    cell: cell,
-                    tape: tape,
-                    out: out,
-                    tx: tx
-                });
-            } else (0, $caee5781971edf71$export$23dbc584560299c3)(dataObj, protocolName, cell);
-        };
-        this.processDataProtocols = async (tape, out, tx, dataObj)=>{
-            // loop over tape
-            for (const cellContainer of tape){
-                const { cell: cell } = cellContainer;
-                if (!cell) throw new Error("empty cell while parsing");
-                // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
-                if ((0, $caee5781971edf71$export$238b4e54af8fe886)(cellContainer)) continue;
-                const prefix = cell[0].s;
-                if (prefix) {
-                    const bitcomProtocol = this.enabledProtocols.get(prefix) || $0bef5cd148f6f4f7$export$4f34a1c822988d11.filter((p)=>p.name === prefix)[0]?.name;
-                    if (bitcomProtocol) await this.process(bitcomProtocol, {
+        // initial default protocol handlers in this instantiation
+        this.enabledProtocols = $5662655d7032e480$var$enabledProtocols;
+        this.protocolHandlers = $5662655d7032e480$var$protocolHandlers;
+        this.protocolScriptCheckers = $5662655d7032e480$var$protocolScriptCheckers;
+        this.protocolOpReturnSchemas = $5662655d7032e480$var$protocolOpReturnSchemas;
+    }
+    addProtocolHandler({ name: name , address: address , opReturnSchema: opReturnSchema , handler: handler , scriptChecker: scriptChecker  }) {
+        if (address) this.enabledProtocols.set(address, name);
+        this.protocolHandlers.set(name, handler);
+        if (opReturnSchema) this.protocolOpReturnSchemas.set(name, opReturnSchema);
+        if (scriptChecker) this.protocolScriptCheckers.set(name, scriptChecker);
+    }
+    transformTx = async (tx)=>{
+        if (!tx || !tx["in"] || !tx["out"]) throw new Error("Cannot process tx");
+        // This will become our nicely formatted response object
+        const dataObj = {};
+        for (const [key, val] of Object.entries(tx)){
+            if (key === "out") // loop over the outputs
+            for (const out of tx.out){
+                const { tape: tape  } = out;
+                if (tape === null || tape === void 0 ? void 0 : tape.some((cc)=>(0, $8c5e6215e1bd1bd5$export$238b4e54af8fe886)(cc))) // loop over tape
+                for (const cellContainer of tape){
+                    // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+                    if ((0, $8c5e6215e1bd1bd5$export$238b4e54af8fe886)(cellContainer)) continue;
+                    const { cell: cell  } = cellContainer;
+                    if (!cell) throw new Error("empty cell while parsing");
+                    const prefix = cell[0].s;
+                    await this.process(this.enabledProtocols.get(prefix || "") || prefix || "", {
                         cell: cell,
                         dataObj: dataObj,
                         tape: tape,
                         out: out,
                         tx: tx
                     });
-                    else this.processUnknown(prefix, dataObj, out);
+                }
+                else {
+                    // No OP_RETURN in this tape
+                    const boostChecker = this.protocolScriptCheckers.get((0, $ba95ea4e23297c9b$export$13c3c8ee12090ebc).name);
+                    const _21e8Checker = this.protocolScriptCheckers.get((0, $cbff6fb4c505c31d$export$85479a00ad164ad6).name);
+                    // Check for boostpow and 21e8
+                    if (tape === null || tape === void 0 ? void 0 : tape.some((cc)=>{
+                        const { cell: cell  } = cc;
+                        if (boostChecker && boostChecker(cell)) // 'found boost'
+                        return true;
+                        if (_21e8Checker && _21e8Checker(cell)) // 'found 21e8'
+                        return true;
+                    })) // find the cell array
+                    // loop over tape
+                    for (const cellContainer1 of tape){
+                        const { cell: cell1  } = cellContainer1;
+                        // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
+                        if (!cell1) throw new Error("empty cell while parsing");
+                        let protocolName = "";
+                        if (boostChecker && boostChecker(cell1)) protocolName = (0, $ba95ea4e23297c9b$export$13c3c8ee12090ebc).name;
+                        else if (_21e8Checker && _21e8Checker(cell1)) protocolName = (0, $cbff6fb4c505c31d$export$85479a00ad164ad6).name;
+                        else continue;
+                        this.process(protocolName, {
+                            tx: tx,
+                            cell: cell1,
+                            dataObj: dataObj,
+                            tape: tape,
+                            out: out
+                        });
+                    }
+                    else this.processUnknown(key, dataObj, out);
                 }
             }
-            return dataObj;
-        };
-        // initial default protocol handlers in this instantiation
-        this.enabledProtocols = $0bef5cd148f6f4f7$var$enabledProtocols;
-        this.protocolHandlers = $0bef5cd148f6f4f7$var$protocolHandlers;
-        this.protocolScriptCheckers = $0bef5cd148f6f4f7$var$protocolScriptCheckers;
-        this.protocolOpReturnSchemas = $0bef5cd148f6f4f7$var$protocolOpReturnSchemas;
-    }
-    addProtocolHandler({ name: name, address: address, opReturnSchema: opReturnSchema, handler: handler, scriptChecker: scriptChecker }) {
-        if (address) this.enabledProtocols.set(address, name);
-        this.protocolHandlers.set(name, handler);
-        if (opReturnSchema) this.protocolOpReturnSchemas.set(name, opReturnSchema);
-        if (scriptChecker) this.protocolScriptCheckers.set(name, scriptChecker);
-    }
+            else if (key === "in") // TODO: Boost check inputs to see if this is a tx solving a puzzle
+            // TODO: 21e8 check inputs to see if this is a tx solving a puzzle
+            dataObj[key] = val.map((v)=>{
+                const r = {
+                    ...v
+                };
+                delete r.tape;
+                return r;
+            });
+            else // known key, just write it retaining original type
+            dataObj[key] = val;
+        }
+        // If this is a MOM planaria it will have metanet keys available
+        if (dataObj["METANET"] && tx.parent) {
+            const meta = {
+                ancestor: tx.ancestor,
+                parent: tx.parent,
+                child: tx.child,
+                head: tx.head
+            };
+            dataObj.METANET.push(meta);
+            // remove parent and node from root level for (MOM data)
+            delete dataObj.ancestor;
+            delete dataObj.child;
+            delete dataObj.parent;
+            delete dataObj.head;
+            delete dataObj.node;
+        }
+        return dataObj;
+    };
+    processUnknown = (key, dataObj, out)=>{
+        // no known non-OP_RETURN scripts
+        if (key && !dataObj[key]) dataObj[key] = [];
+        dataObj[key].push({
+            i: out.i,
+            e: out.e
+        });
+    };
+    process = async (protocolName, { cell: cell , dataObj: dataObj , tape: tape , out: out , tx: tx  })=>{
+        if (this.protocolHandlers.has(protocolName) && typeof this.protocolHandlers.get(protocolName) === "function") {
+            const handler = this.protocolHandlers.get(protocolName);
+            if (handler) /* eslint-disable no-await-in-loop */ await handler({
+                dataObj: dataObj,
+                cell: cell,
+                tape: tape,
+                out: out,
+                tx: tx
+            });
+        } else (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, protocolName, cell);
+    };
 }
-const $0bef5cd148f6f4f7$export$54850c299f4a06d8 = async (txid)=>{
-    const url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`;
-    console.log("hitting", url);
-    const res = await fetch(url);
-    return await res.text();
-};
-const $0bef5cd148f6f4f7$export$2905b0423a229d9 = async (rawTx)=>{
-    const bpuTx = await (0, $71XCL$bputs.parse)({
-        tx: {
-            r: rawTx
-        },
-        split: [
-            {
-                token: {
-                    op: 106
-                },
-                include: "l"
-            },
-            {
-                token: {
-                    s: "|"
-                }
-            }
-        ]
-    });
-    return bpuTx;
-};
-const $0bef5cd148f6f4f7$export$b2a90e318402f6bc = async (tx, protocols)=>{
-    if (typeof tx === "string") {
-        let rawTx;
-        // if it a txid or  complete transaction hex?
-        if (tx.length === 64) // txid - fetch raw tx
-        rawTx = await $0bef5cd148f6f4f7$export$54850c299f4a06d8(tx);
-        if (Buffer.from(tx).byteLength <= 146) throw new Error("Invalid rawTx");
-        if (!rawTx) rawTx = tx;
-        // TODO: Double check 146 is intended to be minimum possible byte length for a tx
-        const bobTx = await $0bef5cd148f6f4f7$export$2905b0423a229d9(rawTx);
-        if (bobTx) tx = bobTx;
-        else throw new Error("Invalid txid");
-    }
-    const b = new $0bef5cd148f6f4f7$export$894a720e71f90b3c();
+const $5662655d7032e480$export$b2a90e318402f6bc = async (tx, protocols)=>{
+    const b = new $5662655d7032e480$export$894a720e71f90b3c();
     // if protocols are specified
     if (protocols) {
         // wipe out defaults
         b.enabledProtocols.clear();
-        if ((0, $caee5781971edf71$export$f6e922e536d8305c)(protocols)) {
+        if ((0, $8c5e6215e1bd1bd5$export$f6e922e536d8305c)(protocols)) {
             // set enabled protocols
-            for (const protocol of $0bef5cd148f6f4f7$export$6b22fa9a84a4797f)if (protocols?.includes(protocol.name)) b.addProtocolHandler(protocol);
-        } else if ((0, $caee5781971edf71$export$37b8d83213de0f5f)(protocols)) for (const p of protocols){
-            const protocol = p;
-            if (protocol) b.addProtocolHandler(protocol);
+            for (const protocol of $5662655d7032e480$export$6b22fa9a84a4797f)if (protocols === null || protocols === void 0 ? void 0 : protocols.includes(protocol.name)) b.addProtocolHandler(protocol);
+        } else if ((0, $8c5e6215e1bd1bd5$export$37b8d83213de0f5f)(protocols)) for (const p of protocols){
+            const protocol1 = p;
+            if (protocol1) b.addProtocolHandler(protocol1);
         }
-        else throw new Error("Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).");
+        else throw new Error(`Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).`);
     }
     return b.transformTx(tx);
 };
 
 
+export {$5662655d7032e480$export$6b22fa9a84a4797f as allProtocols, $5662655d7032e480$export$63e9417ed8d8533a as supportedProtocols, $5662655d7032e480$export$4f34a1c822988d11 as defaultProtocols, $5662655d7032e480$export$894a720e71f90b3c as BMAP, $5662655d7032e480$export$b2a90e318402f6bc as TransformTx};
 //# sourceMappingURL=bmap.js.map
