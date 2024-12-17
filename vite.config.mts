@@ -6,7 +6,7 @@ export default defineConfig({
     lib: {
       entry: 'src/bmap.ts',
       name: 'Bmap',
-      fileName: 'bmap',
+      fileName: (format) => `bmap.${format}.js`,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
@@ -25,6 +25,8 @@ export default defineConfig({
       include: ['src/**/*.ts'],
       outDir: 'dist',
       insertTypesEntry: true,
+      cleanVueFileName: true, // Optional: cleans up file names in declarations
+      rollupTypes: true, // Roll up all the type definitions into a single file
     }),
   ],
 });
