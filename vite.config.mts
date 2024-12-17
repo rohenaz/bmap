@@ -12,15 +12,26 @@ export default defineConfig({
     target: 'node16',
     rollupOptions: {
       external: [
-        'http',
-        'https',
-        'url',
-        'stream',
-        'zlib'
+        '@bsv/sdk',
+        '@msgpack/msgpack',
+        'bpu-ts',
+        'node-fetch',
       ]
     },
     outDir: 'dist',
     sourcemap: true
   },
-  plugins: [dts({ outDir: 'dist/types', entryRoot: 'src/types' })]
+  publicDir: false,
+  plugins: [
+    dts({
+      include: ['src/**/*.ts'],
+      outDir: 'dist',
+      insertTypesEntry: true,
+      cleanVueFileName: true, // Optional: cleans up file names in declarations
+      rollupTypes: true, // Roll up all the type definitions into a single file
+      afterDiagnostic: (diagnostic) => {
+        console.log(diagnostic);
+      }
+    }),
+  ],
 });
