@@ -5,28 +5,22 @@ export default defineConfig({
   build: {
     lib: {
       entry: 'src/bmap.ts',
-      name: 'Bmap',
-      fileName: (format) => `bmap.${format}.js`,
+      name: 'bmapjs',
       formats: ['es', 'cjs'],
+      fileName: (format) => `bmap.${format}.js`
     },
+    target: 'node16',
     rollupOptions: {
       external: [
-        '@bsv/sdk',
-        '@msgpack/msgpack',
-        'bpu-ts',
-        'node-fetch',
-      ],
+        'http',
+        'https',
+        'url',
+        'stream',
+        'zlib'
+      ]
     },
-    emptyOutDir: true,
+    outDir: 'dist',
+    sourcemap: true
   },
-  publicDir: false,
-  plugins: [
-    dts({
-      include: ['src/**/*.ts'],
-      outDir: 'dist',
-      insertTypesEntry: true,
-      cleanVueFileName: true, // Optional: cleans up file names in declarations
-      rollupTypes: true, // Roll up all the type definitions into a single file
-    }),
-  ],
+  plugins: [dts({ outDir: 'dist/types', entryRoot: 'src/types' })]
 });

@@ -1,4 +1,4 @@
-// /types/index.ts
+// /types/index.d.ts
 
 // Re-export everything from protocols
 export * from './protocols/_21e8';
