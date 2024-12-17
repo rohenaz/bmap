@@ -25,7 +25,7 @@ export default defineConfig({
   plugins: [
     dts({
       include: ['src/**/*.ts'],
-      outDir: 'dist',
+      outDir: 'dist/types',
       insertTypesEntry: true,
       cleanVueFileName: true, // Optional: cleans up file names in declarations
       rollupTypes: true, // Roll up all the type definitions into a single file
