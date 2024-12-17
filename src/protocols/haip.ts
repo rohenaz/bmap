@@ -1,4 +1,4 @@
-import type { HandlerProps, Protocol } from "../../types/common";
+import type { HandlerProps, Protocol } from "../types/common";
 import { AIPhandler, SIGPROTO } from "./aip";
 
 const address = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3";

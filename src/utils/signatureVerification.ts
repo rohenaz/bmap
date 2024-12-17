@@ -1,7 +1,7 @@
+
 import { BSM, PublicKey, Script, Signature, Utils } from "@bsv/sdk";
 import type { Cell, Tape } from "bpu-ts";
-import { Buffer } from "buffer";
-import type { BmapTx } from "../../types/common";
+import type { BmapTx } from "../types/common";
 import { cellValue, checkOpReturn, saveProtocolData } from "../utils";
 
 const { magicHash } = BSM;

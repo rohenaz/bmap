@@ -1,6 +1,5 @@
 import { BSM, BigNumber, Hash, PublicKey, Signature, Utils } from "@bsv/sdk";
-import { Buffer } from "buffer";
-import type { HandlerProps, Protocol } from "../../types/common";
+import type { HandlerProps, Protocol } from "../types/common";
 import { cellValue, saveProtocolData } from "../utils";
 
 const { toArray, toBase58Check, toHex } = Utils;

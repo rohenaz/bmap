@@ -1,5 +1,5 @@
 import { Cell, Tape } from 'bpu-ts';
-import { BobTx } from '../types/common';
+import { BobTx } from './types/common';
 export declare const isStringArray: (arr: Array<any>) => boolean;
 export declare const isObjectArray: (arr: Array<any>) => boolean;
 /**

@@ -1,14 +1,4 @@
 import { type In, type Out, type Tape, parse } from "bpu-ts";
-import type {
-  BmapTx,
-  BobTx,
-  Handler,
-  HandlerProps,
-  MetaNet,
-  MomTx,
-  Protocol,
-  ScriptChecker,
-} from "../types/common";
 import { _21E8 } from "./protocols/_21e8";
 import { AIP } from "./protocols/aip";
 import { B } from "./protocols/b";
@@ -22,6 +12,16 @@ import { METANET } from "./protocols/metanet";
 import { ORD } from "./protocols/ord";
 import { RON } from "./protocols/ron";
 import { SYMRE } from "./protocols/symre";
+import type {
+  BmapTx,
+  BobTx,
+  Handler,
+  HandlerProps,
+  MetaNet,
+  MomTx,
+  Protocol,
+  ScriptChecker,
+} from "./types/common";
 import {
   checkOpFalseOpReturn,
   checkOpReturn,
@@ -373,4 +373,4 @@ export const TransformTx = async (
 };
 
 // Export types
-export type { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from '../types/common';
+export type { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from './types/common';

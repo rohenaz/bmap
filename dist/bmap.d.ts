@@ -1,5 +1,5 @@
 import { Out, Tape } from 'bpu-ts';
-import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from '../types/common';
+import { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from './types/common';
 export declare const allProtocols: (Protocol | {
     name: string;
     address: string;
@@ -25,4 +25,4 @@ export declare class BMAP {
 export declare const fetchRawTx: (txid: string) => Promise<string>;
 export declare const bobFromRawTx: (rawTx: string) => Promise<BobTx>;
 export declare const TransformTx: (tx: BobTx | string | MomTx | BmapTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;
-export type { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from '../types/common';
+export type { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from './types/common';

@@ -1,4 +1,4 @@
-import { HandlerProps } from '../../types/common';
+import { HandlerProps } from '../types/common';
 export declare const SYMRE: {
     name: string;
     address: string;

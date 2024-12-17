@@ -1,5 +1,5 @@
 import { Cell, Tape } from 'bpu-ts';
-import { Protocol } from '../../types/common';
+import { Protocol } from '../types/common';
 export declare enum SIGPROTO {
     HAIP = "HAIP",
     AIP = "AIP"

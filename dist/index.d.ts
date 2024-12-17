@@ -1,2 +1,2 @@
-export * from './src/bmap'
+export * from './bmap'
 export {}

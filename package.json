@@ -1,6 +1,6 @@
 {
     "name": "bmapjs",
-    "version": "0.4.0-beta.54",
+    "version": "0.4.0-beta.55",
     "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, SIGMA, METANET, and AIP/HAIP.",
     "main": "dist/bmap.cjs.js",
     "module": "dist/bmap.es.js",

@@ -1,11 +1,11 @@
+
 import { Hash, Utils } from "@bsv/sdk";
-import { Buffer } from "buffer";
 import type {
   HandlerProps,
   MetaNet,
   MetanetNode,
   Protocol,
-} from "../../types/common";
+} from "../types/common";
 
 const { toArray, toHex } = Utils;
 

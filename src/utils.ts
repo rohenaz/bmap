@@ -1,7 +1,7 @@
-import { Hash, Utils } from '@bsv/sdk'
-import { Cell, Tape } from 'bpu-ts'
-import { Buffer } from 'buffer'
-import { BobTx } from '../types/common'
+
+import { Hash, Utils } from '@bsv/sdk';
+import type { Cell, Tape } from 'bpu-ts';
+import type { BobTx } from './types/common';
 const { toArray } = Utils;
 
 export const isStringArray = (arr: Array<any>): boolean => {
@@ -103,13 +103,13 @@ export const saveProtocolData = (
  * @param tape
  * @param tx
  */
-export const bmapOpReturnSchemaHandler = function (
+export const bmapOpReturnSchemaHandler = (
   protocolName: string,
   opReturnSchema: Object[],
   dataObj: Object,
   cell: Cell[],
   tx: BobTx
-) {
+) => {
   // loop over the schema
   const obj: { [key: string]: any } = {}
 
@@ -122,7 +122,7 @@ export const bmapOpReturnSchemaHandler = function (
   }
 
   for (const [idx, schemaField] of Object.entries(opReturnSchema)) {
-    const x = parseInt(idx, 10)
+    const x = Number.parseInt(idx, 10)
 
     const [field] = Object.keys(schemaField)
     const [schemaEncoding] = Object.values(schemaField)
@@ -138,7 +138,7 @@ export const bmapOpReturnSchemaHandler = function (
  * @param data
  * @returns {boolean}
  */
-export const isBase64 = function (data: string) {
+export const isBase64 = (data: string) => {
   const regex =
     '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?'
   return new RegExp(`^${regex}$`, 'gi').test(data)
