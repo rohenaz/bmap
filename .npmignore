@@ -1,12 +1,43 @@
-public/
-functions/
-coverage/
-node_test/
+# Source
+src/
 tests/
-parccel-bundle-reports/
-.parcel-cache/
-.firebase/
+public/
+
+# Config files
+.prettierrc.json
+.prettierignore
+.eslintrc
+.eslintignore
+.parcelrc
+.nvmrc
+.cursorrules
+biome.json
+jest.config.ts
+tsconfig.json
+vite.config.mts
+
+# Git
+.git/
+.gitignore
+
+# IDE
 .vscode/
-playground-1.mongodb.js
-prompt.txt
-relevant_code.txt
+.idea/
+
+# Firebase
+firebase.json
+.firebaserc
+.firebase/
+functions/
+
+# Development
+playground-*.js
+*.test.ts
+*.test.js
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build artifacts
+*.map

@@ -1,15 +1,33 @@
+# Build output
+dist/
+types/
+
+# Dependencies
 node_modules/
-node_test/node_modules
-node_test/yarn.lock
-functions/ui-debug.log
-functions/node_modules
-.firebaserc
-.firebase
-.DS_STORE
-coverage
-.parcel-cache
-.cache
-parcel-bundle-reports
-yarn-error.log
-prompt.txt
-relevant_code.txt
+bun.lockb
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Environment variables
+.env
+.env.local
+
+# Firebase
+.firebase/
+firebase-debug.log*
+
+# Development
+playground-*.js
