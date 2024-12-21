@@ -8,12 +8,12 @@ const { toArray } = Utils;
 
 const validateSignature = (signedObj: any, cell: Cell[], tape: Tape[]) => {
   if (!Array.isArray(tape) || tape.length < 3) {
-    throw new Error("PSP requires at least 3 cells including the prefix");
+    throw new Error("Requires at least 3 cells including the prefix");
   }
 
   const cellIndex = tape.findIndex((cc) => cc.cell === cell);
   if (cellIndex === -1) {
-    throw new Error("PSP could not find cell in tape");
+    throw new Error("Could not find cell in tape");
   }
 
   const signatureBufferStatements: Buffer[] = [];
@@ -62,7 +62,7 @@ export const signatureHandler = async (
   const obj: { [key: string]: any } = { verified: false };
 
   if (cell.length < 4) {
-    throw new Error("PSP requires at least 4 fields including the prefix");
+    throw new Error("Sequires at least 4 fields including the prefix");
   }
 
   for (const [idx, schemaField] of Object.entries(opReturnSchema)) {

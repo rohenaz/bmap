@@ -197,8 +197,6 @@ function toBigNumberFromBuffer(buffer: number[]): BigNumber {
 export enum SIGPROTO {
   HAIP = "HAIP",
   AIP = "AIP",
-  BITCOM_HASHED = "BITCOM_HASHED",
-  PSP = "PSP",
 }
 
 export const AIPhandler = async (

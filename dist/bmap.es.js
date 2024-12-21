@@ -1,11 +1,11 @@
 import { parse as Pe } from "bpu-ts";
-import { Script as Se, Hash as I, Signature as B, Utils as R, BSM as b, BigNumber as Y, PublicKey as Z } from "@bsv/sdk";
+import { Script as Se, Hash as A, Signature as B, Utils as k, BSM as b, BigNumber as Y, PublicKey as Z } from "@bsv/sdk";
 import { decode as L } from "@msgpack/msgpack";
 const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), ve = (t) => t.length > 0 && t.every((e) => e === "object"), w = (t, e) => {
   if (!t)
     throw new Error(`cannot get cell value of: ${t}`);
   return e === "string" ? t.s ? t.s : t.ls || "" : e === "hex" ? t.h ? t.h : t.lh || (t.b ? Buffer.from(t.b, "base64").toString("hex") : t.lb && Buffer.from(t.lb, "base64").toString("hex")) || "" : e === "number" ? Number.parseInt(t.h ? t.h : t.lh || "0", 16) : e === "file" ? `bitfs://${t.f ? t.f : t.lf}` : (t.b ? t.b : t.lb) || "";
-}, Ae = (t) => t.cell.some((e) => e.op === 106), D = (t) => {
+}, Ie = (t) => t.cell.some((e) => e.op === 106), G = (t) => {
   var r;
   if (t.cell.length !== 2)
     return !1;
@@ -13,7 +13,7 @@ const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), ve = (t)
   return e !== -1 ? ((r = t.cell[e - 1]) == null ? void 0 : r.op) === 0 : !1;
 }, m = (t, e, r) => {
   t[e] ? t[e].push(r) : t[e] = [r];
-}, Ie = (t, e, r, n, s) => {
+}, Ae = (t, e, r, n, s) => {
   const o = {}, a = e.length + 1;
   if (n.length < a)
     throw new Error(
@@ -34,7 +34,7 @@ const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), ve = (t)
     return !1;
   const e = [...t].map((s) => s.ops).splice(2, t.length), r = w(t[1], "hex"), n = Buffer.from(r).byteLength;
   return e[1] = `OP_${n}`, K[1] = `OP_${n}`, e.join() === K.join();
-}, ke = ({ dataObj: t, cell: e, out: r }) => {
+}, Re = ({ dataObj: t, cell: e, out: r }) => {
   if (!e[0] || !r)
     throw new Error("Invalid 21e8 tx. dataObj, cell, out and tx are required.");
   const n = w(e[0], "hex"), s = w(e[1], "hex");
@@ -47,17 +47,17 @@ const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), ve = (t)
     txid: n
   };
   m(t, "21E8", a);
-}, O = {
+}, C = {
   name: "21E8",
-  handler: ke,
+  handler: Re,
   scriptChecker: He
-}, { toArray: v, toHex: A, fromBase58Check: F, toBase58Check: V } = R, J = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva", W = [
+}, { toArray: v, toHex: I, fromBase58Check: F, toBase58Check: V } = k, J = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva", D = [
   { algorithm: "string" },
   { address: "string" },
   { signature: "binary" },
   [{ index: "binary" }]
 ];
-function Re(t, e, r) {
+function ke(t, e, r) {
   if (!Array.isArray(r) || r.length < 3)
     throw new Error("AIP requires at least 3 cells including the prefix");
   let n = -1;
@@ -72,9 +72,9 @@ function Re(t, e, r) {
   const o = ["6a"];
   for (let h = 0; h < n; h++) {
     const l = r[h];
-    if (!D(l)) {
+    if (!G(l)) {
       for (const g of l.cell)
-        g.h ? o.push(g.h) : g.b ? o.push(A(v(g.b, "base64"))) : g.s && o.push(A(v(g.s)));
+        g.h ? o.push(g.h) : g.b ? o.push(I(v(g.b, "base64"))) : g.s && o.push(I(v(g.s)));
       o.push("7c");
     }
   }
@@ -99,9 +99,9 @@ function Re(t, e, r) {
   let i;
   if (t.hashing_algorithm) {
     t.index_unit_size || a.shift();
-    const h = Se.fromHex(A(a.flat()));
+    const h = Se.fromHex(I(a.flat()));
     let l = v(h.toHex(), "hex");
-    t.index_unit_size && (l = l.slice(1)), i = I.sha256(l);
+    t.index_unit_size && (l = l.slice(1)), i = A.sha256(l);
   } else
     i = a.flat();
   const d = t.address || t.signing_address;
@@ -132,7 +132,7 @@ function Re(t, e, r) {
     if (a.length <= 2)
       return !1;
     try {
-      const h = a.slice(1, -1), l = I.sha256(h.flat()), g = A(l), y = v(g, "utf8"), E = b.magicHash(y), P = q(E);
+      const h = a.slice(1, -1), l = A.sha256(h.flat()), g = I(l), y = v(g, "utf8"), E = b.magicHash(y), P = q(E);
       for (let S = 0; S < 4; S++)
         try {
           const x = c.RecoverPublicKey(S, P), $ = x.toHash(), { prefix: T } = F(d);
@@ -150,10 +150,10 @@ function Re(t, e, r) {
   return p || (p = u()), t.verified = p, p;
 }
 function q(t) {
-  const e = A(t);
+  const e = I(t);
   return new Y(e, 16);
 }
-var G = /* @__PURE__ */ ((t) => (t.HAIP = "HAIP", t.AIP = "AIP", t.BITCOM_HASHED = "BITCOM_HASHED", t.PSP = "PSP", t))(G || {});
+var W = /* @__PURE__ */ ((t) => (t.HAIP = "HAIP", t.AIP = "AIP", t))(W || {});
 const j = async (t, e, r, n, s) => {
   const o = {};
   if (n.length < 4)
@@ -172,15 +172,15 @@ const j = async (t, e, r, n, s) => {
   }
   if (n[0].s === J && n[3].s && Be(n[3].s) && (o.signature = n[3].s), !o.signature)
     throw new Error("AIP requires a signature");
-  return Re(o, n, s), m(r, e, o), { dataObj: r, cell: n, tape: s };
+  return ke(o, n, s), m(r, e, o), { dataObj: r, cell: n, tape: s };
 }, $e = async ({ dataObj: t, cell: e, tape: r }) => {
   if (!r)
     throw new Error("Invalid AIP transaction. tape is required");
-  return j(W, "AIP", t, e, r);
+  return j(D, "AIP", t, e, r);
 }, X = {
   name: "AIP",
   address: J,
-  opReturnSchema: W,
+  opReturnSchema: D,
   handler: $e
 }, Te = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut", _ = [
   { content: ["string", "binary", "file"] },
@@ -229,19 +229,19 @@ const j = async (t, e, r, n, s) => {
   address: Te,
   opReturnSchema: _,
   handler: Me
-}, Ce = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT", te = [
+}, Oe = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT", te = [
   { type: "string" },
   { hash: "string" },
   { sequence: "string" }
-], Oe = ({ dataObj: t, cell: e, tx: r }) => {
+], Ce = ({ dataObj: t, cell: e, tx: r }) => {
   if (!r)
     throw new Error("Invalid BAP tx, tx required");
-  Ie("BAP", te, t, e, r);
+  Ae("BAP", te, t, e, r);
 }, re = {
   name: "BAP",
-  address: Ce,
+  address: Oe,
   opReturnSchema: te,
-  handler: Oe
+  handler: Ce
 }, _e = "$", Ne = [
   {
     su: [{ pubkey: "string" }, { sign_position: "string" }, { signature: "string" }],
@@ -272,7 +272,7 @@ const j = async (t, e, r, n, s) => {
   address: _e,
   opReturnSchema: Ne,
   handler: Le
-}, { toArray: z, toBase58Check: C, toHex: Fe } = R, { magicHash: Ve } = b, ne = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC", se = [
+}, { toArray: z, toBase58Check: O, toHex: Fe } = k, { magicHash: Ve } = b, ne = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC", se = [
   { bitkey_signature: "string" },
   { user_signature: "string" },
   { paymail: "string" },
@@ -301,18 +301,18 @@ const ze = async ({ dataObj: t, cell: e }) => {
     const be = Number.parseInt(T, 10), we = Object.keys(M)[0], Ee = Object.values(M)[0];
     r[we] = w(e[be + 1], Ee);
   }
-  const n = r.pubkey, o = Z.fromString(n).toHash(), a = C(o), d = Buffer.from(r.paymail).toString("hex") + n, c = Buffer.from(d, "hex"), f = I.sha256(z(c)), u = B.fromCompact(r.bitkey_signature, "base64"), p = U(f, u), h = p.toHash(), l = C(h), g = b.verify(f, u, p) && l === ne, y = z(Buffer.from(n, "utf8")), E = B.fromCompact(r.user_signature, "base64"), P = U(y, E), S = P.toHash(), x = C(S), $ = b.verify(y, E, P) && x === a;
+  const n = r.pubkey, o = Z.fromString(n).toHash(), a = O(o), d = Buffer.from(r.paymail).toString("hex") + n, c = Buffer.from(d, "hex"), f = A.sha256(z(c)), u = B.fromCompact(r.bitkey_signature, "base64"), p = U(f, u), h = p.toHash(), l = O(h), g = b.verify(f, u, p) && l === ne, y = z(Buffer.from(n, "utf8")), E = B.fromCompact(r.user_signature, "base64"), P = U(y, E), S = P.toHash(), x = O(S), $ = b.verify(y, E, P) && x === a;
   r.verified = g && $, m(t, "BITKEY", r);
 }, Ue = {
   name: "BITKEY",
   address: ne,
   opReturnSchema: se,
   handler: ze
-}, { magicHash: Qe } = b, { toArray: Ye } = R, oe = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p", Ze = [
+}, { magicHash: Qe } = b, { toArray: Ye } = k, oe = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p", Ze = [
   { paymail: "string" },
   { pubkey: "binary" },
   { signature: "string" }
-], De = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
+], Ge = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
   if (e[0].s !== oe || !e[1] || !e[2] || !e[3] || !e[1].s || !e[2].b || !e[3].s || !r)
     throw new Error(`Invalid BITPIC record: ${n}`);
   const s = {
@@ -323,7 +323,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
   };
   if (r[1].cell[0].s === "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut")
     try {
-      const a = e[1].lb || e[1].b, i = I.sha256(Ye(a, "base64")), d = B.fromCompact(s.signature, "base64"), c = Z.fromString(s.pubkey), f = Qe(i);
+      const a = e[1].lb || e[1].b, i = A.sha256(Ye(a, "base64")), d = B.fromCompact(s.signature, "base64"), c = Z.fromString(s.pubkey), f = Qe(i);
       s.verified = b.verify(f, d, c);
     } catch {
       s.verified = !1;
@@ -333,22 +333,22 @@ const ze = async ({ dataObj: t, cell: e }) => {
   name: "BITPIC",
   address: oe,
   opReturnSchema: Ze,
-  handler: De
-}, We = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3", ie = [
+  handler: Ge
+}, De = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3", ie = [
   { algorithm: "string" },
   { algorithm: "string" },
   { address: "string" },
   { signature: "string" },
   { algorithm: "string" },
   [{ index: "binary" }]
-], Ge = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
+], We = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
   if (!r)
     throw new Error("Invalid HAIP tx. Bad tape");
   if (!n)
     throw new Error("Invalid HAIP tx.");
   return await j(
     ie,
-    G.HAIP,
+    W.HAIP,
     t,
     e,
     r
@@ -356,9 +356,9 @@ const ze = async ({ dataObj: t, cell: e }) => {
   );
 }, je = {
   name: "HAIP",
-  address: We,
+  address: De,
   opReturnSchema: ie,
-  handler: Ge
+  handler: We
 }, N = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5", ae = [
   {
     cmd: {
@@ -478,12 +478,12 @@ const ze = async ({ dataObj: t, cell: e }) => {
   address: N,
   opReturnSchema: ae,
   handler: ot
-}, { toArray: it, toHex: at } = R, ct = "meta", ft = [
+}, { toArray: it, toHex: at } = k, ct = "meta", ft = [
   { address: "string" },
   { parent: "string" },
   { name: "string" }
 ], Q = async (t, e) => {
-  const r = Buffer.from(t + e), n = I.sha256(it(r));
+  const r = Buffer.from(t + e), n = A.sha256(it(r));
   return at(n);
 }, dt = async ({ dataObj: t, cell: e, tx: r }) => {
   if (!e.length || e[0].s !== "meta" || !e[1] || !e[1].s || !e[2] || !e[2].s || !r)
@@ -518,12 +518,12 @@ const ze = async ({ dataObj: t, cell: e }) => {
 }, ht = (t) => {
   if (t.length < 13)
     return !1;
-  const e = k(t, (o) => o.ops === "OP_IF"), r = k(t, (o, a) => a > e && o.ops === "OP_ENDIF"), n = t.slice(e, r), s = t[e - 1];
+  const e = R(t, (o) => o.ops === "OP_IF"), r = R(t, (o, a) => a > e && o.ops === "OP_ENDIF"), n = t.slice(e, r), s = t[e - 1];
   return (s == null ? void 0 : s.op) === 0 && !!n[0] && !!n[1] && n[1].s === "ord";
 }, ut = ({ dataObj: t, cell: e, out: r }) => {
   if (!e[0] || !r)
     throw new Error("Invalid Ord tx. dataObj, cell, out and tx are required.");
-  const n = k(e, (c) => c.ops === "OP_IF"), s = k(e, (c, f) => f > n && c.ops === "OP_ENDIF") + 1, o = e.slice(n, s);
+  const n = R(e, (c) => c.ops === "OP_IF"), s = R(e, (c, f) => f > n && c.ops === "OP_ENDIF") + 1, o = e.slice(n, s);
   if (!o[0] || !o[1] || o[1].s !== "ord")
     throw new Error("Invalid Ord tx. Prefix not found.");
   let a, i;
@@ -543,7 +543,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
   handler: ut,
   scriptChecker: ht
 };
-function k(t, e) {
+function R(t, e) {
   return gt(t, e);
 }
 function gt(t, e, r) {
@@ -593,7 +593,7 @@ const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", mt = [
   re,
   ce,
   fe,
-  O,
+  C,
   Ke,
   Ue,
   Je,
@@ -623,8 +623,8 @@ class Pt {
       if (n === "out")
         for (const o of e.out) {
           const { tape: a } = o;
-          a != null && a.some((c) => Ae(c)) && (r = await this.processDataProtocols(a, o, e, r));
-          const i = this.protocolScriptCheckers.get(O.name), d = this.protocolScriptCheckers.get(H.name);
+          a != null && a.some((c) => Ie(c)) && (r = await this.processDataProtocols(a, o, e, r));
+          const i = this.protocolScriptCheckers.get(C.name), d = this.protocolScriptCheckers.get(H.name);
           if (a != null && a.some((c) => {
             const { cell: f } = c;
             if (i != null && i(f) || d != null && d(f))
@@ -636,7 +636,7 @@ class Pt {
                 throw new Error("empty cell while parsing");
               let u = "";
               if (i != null && i(f))
-                u = O.name;
+                u = C.name;
               else if (d != null && d(f))
                 u = H.name;
               else
@@ -691,7 +691,7 @@ class Pt {
       const { cell: i } = a;
       if (!i)
         throw new Error("empty cell while parsing");
-      if (D(a))
+      if (G(a))
         continue;
       const d = i[0].s;
       if (d) {

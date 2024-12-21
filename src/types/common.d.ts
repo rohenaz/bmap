@@ -25,7 +25,7 @@ export type HandlerProps = {
 export type Handler = (handlerProps: HandlerProps) => any;
 export type ScriptChecker = (cell: Cell[]) => boolean;
 
-export type BobTx = {
+export interface BobTx extends BpuTx {
   blk?: {
     t: number;
     i: number;
@@ -38,7 +38,7 @@ export type BobTx = {
   };
   lock?: number;
   [key: string]: any;
-} & BpuTx;
+}
 
 export type MetanetNode = {
   tx: string;
@@ -53,9 +53,10 @@ export type MetaNet = {
   head?: boolean;
   node: MetanetNode;
 };
-export type MomTx = {} & BobTx & MetaNet;
 
-export type BmapTx = {
+export interface MomTx extends BobTx, MetaNet {}
+
+export interface BmapTx extends BobTx {
   timestamp: number;
   B?: B[];
   AIP?: AIP[];
@@ -70,7 +71,7 @@ export type BmapTx = {
   SYMRE?: SYMRE[];
   RON?: RON[];
   HAIP?: HAIP[];
-} & BobTx;
+}
 
 type SimpleField = { [key: string]: string };
 type SchemaValue = string | SimpleField | { [key: string]: SchemaValue } | SchemaValue[];
