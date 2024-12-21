@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import type { Cell, Tape } from "bpu-ts";
 import { METANET } from "../../src/protocols/metanet";
-import type { BmapTx } from "../../src/types/bmap";
-import type { BobTx } from "../../src/types/bob";
+import type { BmapTx } from "../../src/types/common";
+import type { BobTx } from "../../src/types/common";
 import mapTransactions from "../data/map-transactions.json";
 import metanetTransactions from "../data/metanet-transactions.json";
 

@@ -5,7 +5,7 @@ import { bobFromRawTx } from "../../src/bmap";
 import { ORD } from "../../src/protocols/ord";
 
 import type { Cell, Out } from "bpu-ts";
-import type { BmapTx } from "../../src/types/bmap";
+import type { BmapTx } from "../../src/types/common";
 
 const ordHex = fs.readFileSync(
   path.resolve(

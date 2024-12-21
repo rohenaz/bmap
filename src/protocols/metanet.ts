@@ -1,6 +1,5 @@
 import { Hash, Utils } from "@bsv/sdk";
 import type { HandlerProps, Protocol, SchemaField } from "../types/common";
-import type { MetaNet } from "../types/protocols/metanet";
 
 const { toArray, toHex } = Utils;
 
