@@ -20,6 +20,7 @@ import type {
   MetaNet,
   MomTx,
   Protocol,
+  SchemaField,
   ScriptChecker,
 } from "./types/common";
 import {
@@ -36,7 +37,7 @@ const enabledProtocols = new Map<string, string>([]);
 const protocolHandlers = new Map<string, Handler>([]);
 // Script checkers are intentionally minimalistic detection functions for identifying matching scripts for a given protocol. Only if a checker returns true is a handler called for processing.
 const protocolScriptCheckers = new Map<string, ScriptChecker>([]);
-const protocolOpReturnSchemas = new Map<string, Object[]>();
+const protocolOpReturnSchemas = new Map<string, SchemaField[]>();
 
 export const allProtocols = [
   AIP,
@@ -74,12 +75,9 @@ for (const protocol of defaultProtocols) {
 // Takes a BOB formatted op_return transaction
 export class BMAP {
   enabledProtocols: Map<string, string>;
-
   protocolHandlers: Map<string, Handler>;
-
   protocolScriptCheckers: Map<string, ScriptChecker>;
-
-  protocolOpReturnSchemas: Map<string, Object[]>;
+  protocolOpReturnSchemas: Map<string, SchemaField[]>;
 
   constructor() {
     // initial default protocol handlers in this instantiation
@@ -229,7 +227,7 @@ export class BMAP {
       if (handler) {
         /* eslint-disable no-await-in-loop */
         await handler({
-          dataObj: dataObj,
+          dataObj,
           cell,
           tape,
           out,
@@ -284,9 +282,7 @@ export class BMAP {
 
 export const fetchRawTx = async (txid: string): Promise<string> => {
   const url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`;
-
   console.log("hitting", url);
-
   const res = await fetch(url);
   return await res.text();
 };
@@ -373,17 +369,4 @@ export const TransformTx = async (
 };
 
 // Export types
-export type { BmapTx, BobTx, Handler, HandlerProps, MetaNet, MomTx, Protocol, ScriptChecker } from './types/common';
-export type { _21E8 } from './types/protocols/_21e8';
-export type { AIP } from './types/protocols/aip';
-export type { B } from './types/protocols/b';
-export type { BAP } from './types/protocols/bap';
-export type { BITCOM } from './types/protocols/bitcom';
-export type { BITKEY } from './types/protocols/bitkey';
-export type { BITPIC } from './types/protocols/bitpic';
-export type { HAIP } from './types/protocols/haip';
-export type { MAP } from './types/protocols/map';
-export type { ORD } from './types/protocols/ord';
-export type { RON } from './types/protocols/ron';
-export type { SYMRE } from './types/protocols/symre';
-
+export type { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from './types/common';

@@ -1,5 +1,5 @@
 export type BAP = {
-	type: string;
-	hash: string;
-	sequence: string;
+  type: string;
+  hash: string;
+  sequence: string;
 };

@@ -1,12 +1,6 @@
 import type { Cell } from "bpu-ts";
 import type { HandlerProps, Protocol } from "../types/common";
 import type { ORD as OrdType } from "../types/protocols/ord";
-import { saveProtocolData } from "../utils";
-
-// const OrdScript =
-//     'OP_FALSE OP_IF 6F7264 OP_1 <CONTENT_TYPE_PLACEHOLDER> OP_0 <DATA_PLACEHOLDER> OP_ENDIF'.split(
-//         ' '
-//     )
 
 const scriptChecker = (cell: Cell[]) => {
   if (cell.length < 13) {
@@ -26,7 +20,7 @@ const scriptChecker = (cell: Cell[]) => {
     prevCell?.op === 0 &&
     !!ordScript[0] &&
     !!ordScript[1] &&
-    ordScript[1].s == "ord"
+    ordScript[1].s === "ord"
   );
 };
 
@@ -34,11 +28,6 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
   if (!cell[0] || !out) {
     throw new Error("Invalid Ord tx. dataObj, cell, out and tx are required.");
   }
-
-  // assemble asm
-  // make sure first piece matches a txid
-  // 2nd piece matches any difficulty. set some resonable limit in bytes if there isnt one documented somewhere
-  // next
 
   // Find OP_IF wrapper
   const startIdx = findIndex(cell, (c: Cell) => c.ops === "OP_IF");
@@ -78,7 +67,10 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
     contentType,
   };
 
-  saveProtocolData(dataObj, "ORD", OrdObj);
+  if (!dataObj.ORD) {
+    dataObj.ORD = [];
+  }
+  dataObj.ORD.push(OrdObj);
 };
 
 export const ORD: Protocol = {
@@ -87,10 +79,15 @@ export const ORD: Protocol = {
   scriptChecker,
 };
 
-function findIndex(array: any[], predicate: Function) {
+function findIndex<T>(array: T[], predicate: (value: T, index: number, array: T[]) => boolean): number {
   return findLastIndex(array, predicate);
 }
-function findLastIndex(array: any[], predicate: Function, fromIndex?: number) {
+
+function findLastIndex<T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => boolean,
+  fromIndex?: number
+): number {
   const length = array == null ? 0 : array.length;
   if (!length) {
     return -1;
@@ -104,12 +101,12 @@ function findLastIndex(array: any[], predicate: Function, fromIndex?: number) {
   return baseFindIndex(array, predicate, index, true);
 }
 
-function baseFindIndex(
-  array: any[],
-  predicate: Function,
+function baseFindIndex<T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => boolean,
   fromIndex: number,
   fromRight: boolean,
-) {
+): number {
   const { length } = array;
   let index = fromIndex + (fromRight ? 1 : -1);
 

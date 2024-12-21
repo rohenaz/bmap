@@ -5,11 +5,7 @@ const protocolAddress = "$";
 
 const opReturnSchema = [
   {
-    su: [
-      { pubkey: "string" },
-      { sign_position: "string" },
-      { signature: "string" },
-    ],
+    su: [{ pubkey: "string" }, { sign_position: "string" }, { signature: "string" }],
     echo: [{ data: "string" }, { to: "string" }, { filename: "string" }],
     route: [
       [

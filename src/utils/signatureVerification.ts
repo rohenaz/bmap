@@ -1,4 +1,3 @@
-
 import { BSM, PublicKey, Script, Signature, Utils } from "@bsv/sdk";
 import type { Cell, Tape } from "bpu-ts";
 import type { BmapTx } from "../types/common";
@@ -12,7 +11,7 @@ const validateSignature = (signedObj: any, cell: Cell[], tape: Tape[]) => {
     throw new Error("PSP requires at least 3 cells including the prefix");
   }
 
-  const cellIndex = tape.findIndex(cc => cc.cell === cell);
+  const cellIndex = tape.findIndex((cc) => cc.cell === cell);
   if (cellIndex === -1) {
     throw new Error("PSP could not find cell in tape");
   }
@@ -37,10 +36,10 @@ const validateSignature = (signedObj: any, cell: Cell[], tape: Tape[]) => {
   }
 
   // Replicate old behavior: build a script from data and get its hex representation
-  const dataArrays = signatureBufferStatements.map(b => toArray(b));
+  const dataArrays = signatureBufferStatements.map((b) => toArray(b));
   const script = Script.fromASM(`OP_FALSE  OP_RETURN ${dataArrays.join("")}`);
 
-  const sig = Signature.fromCompact(signedObj.signature, 'base64');
+  const sig = Signature.fromCompact(signedObj.signature, "base64");
   const pubkey = PublicKey.fromString(signedObj.pubkey);
   const msgHash = magicHash(script.toBinary());
 
@@ -58,7 +57,7 @@ export const signatureHandler = async (
   protocolName: string,
   dataObj: BmapTx,
   cell: Cell[],
-  tape: Tape[],
+  tape: Tape[]
 ) => {
   const obj: { [key: string]: any } = { verified: false };
 
@@ -74,7 +73,7 @@ export const signatureHandler = async (
   }
 
   if (!obj.signature) {
-    throw new Error(`PSP requires a signature`);
+    throw new Error("Requires a signature");
   }
 
   validateSignature(obj, cell, tape);

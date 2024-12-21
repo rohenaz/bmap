@@ -30,13 +30,13 @@ $parcel$export($c2053de758ee1450$exports, "isBase64", () => $c2053de758ee1450$ex
 $parcel$export($c2053de758ee1450$exports, "sha256", () => $c2053de758ee1450$export$bced8d2aada2d1c9, (v) => $c2053de758ee1450$export$bced8d2aada2d1c9 = v);
 
 
-var $c2053de758ee1450$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+var $c2053de758ee1450$var$__awaiter = undefined && undefined.__awaiter || ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
+        return value instanceof P ? value : new P((resolve) => {
             resolve(value);
         });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) {
             try {
                 step(generator.next(value));
@@ -56,11 +56,11 @@ var $c2053de758ee1450$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var $c2053de758ee1450$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+});
+var $c2053de758ee1450$var$__generator = undefined && undefined.__generator || ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function() {
+        sent: () => {
             if (t[0] & 1) throw t[1];
             return t[1];
         },
@@ -75,12 +75,10 @@ var $c2053de758ee1450$var$__generator = undefined && undefined.__generator || fu
         return this;
     }), g;
     function verb(n) {
-        return function(v) {
-            return step([
+        return (v) => step([
                 n,
                 v
             ]);
-        };
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -151,19 +149,17 @@ var $c2053de758ee1450$var$__generator = undefined && undefined.__generator || fu
             done: true
         };
     }
-};
-var $c2053de758ee1450$export$b691916706e0e9cc = function(pushData, schemaEncoding) {
+});
+var $c2053de758ee1450$export$b691916706e0e9cc = (pushData, schemaEncoding) => {
     if (!pushData) throw new Error("cannot get cell value of: ".concat(pushData));
     else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
     else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || "";
-    else if (schemaEncoding === "number") return parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
+    else if (schemaEncoding === "number") return Number.parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
     else if (schemaEncoding === "file") return "bitfs://".concat(pushData["f"] ? pushData.f : pushData.lf);
     return (pushData["b"] ? pushData.b : pushData.lb) || "";
 };
-var $c2053de758ee1450$export$238b4e54af8fe886 = function(cc) {
-    return cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].op && cc.cell[1].op === 106 || cc.cell[0].op === 106;
-};
-var $c2053de758ee1450$export$23dbc584560299c3 = function(dataObj, protocolName, data) {
+var $c2053de758ee1450$export$238b4e54af8fe886 = (cc) => cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].op && cc.cell[1].op === 106 || cc.cell[0].op === 106;
+var $c2053de758ee1450$export$23dbc584560299c3 = (dataObj, protocolName, data) => {
     if (!dataObj[protocolName]) dataObj[protocolName] = [
         data
     ];
@@ -176,7 +172,7 @@ var $c2053de758ee1450$export$23dbc584560299c3 = function(dataObj, protocolName, 
         dataObj[protocolName][dataObj[protocolName].length] = data;
     }
 };
-var $c2053de758ee1450$export$9c363cd18b34077b = function(protocolName, querySchema, dataObj, cell, tape, tx) {
+var $c2053de758ee1450$export$9c363cd18b34077b = (protocolName, querySchema, dataObj, cell, tape, tx) => {
     // loop over the schema
     var obj = {};
     // Does not have the required number of fields
@@ -184,21 +180,20 @@ var $c2053de758ee1450$export$9c363cd18b34077b = function(protocolName, querySche
     if (cell.length < length) throw new Error("".concat(protocolName, " requires at least ").concat(length, " fields including the prefix: ").concat(tx.tx.h));
     for(var _i = 0, _a = Object.entries(querySchema); _i < _a.length; _i++){
         var _b = _a[_i], idx = _b[0], schemaField = _b[1];
-        var x = parseInt(idx, 10);
+        var x = Number.parseInt(idx, 10);
         var field = Object.keys(schemaField)[0];
         var schemaEncoding = Object.values(schemaField)[0];
         obj[field] = $c2053de758ee1450$export$b691916706e0e9cc(cell[x + 1], schemaEncoding);
     }
     $c2053de758ee1450$export$23dbc584560299c3(dataObj, protocolName, obj);
 };
-var $c2053de758ee1450$export$ca4d6504ca148ae4 = function(data) {
+var $c2053de758ee1450$export$ca4d6504ca148ae4 = (data) => {
     var regex = "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?";
     return new RegExp("^".concat(regex, "$"), "gi").test(data);
 };
-var $c2053de758ee1450$export$bced8d2aada2d1c9 = function(msgBuffer) {
-    return $c2053de758ee1450$var$__awaiter(void 0, void 0, void 0, function() {
+var $c2053de758ee1450$export$bced8d2aada2d1c9 = (msgBuffer) => $c2053de758ee1450$var$__awaiter(void 0, void 0, void 0, function() {
         var hash;
-        return $c2053de758ee1450$var$__generator(this, function(_a) {
+        return $c2053de758ee1450$var$__generator(this, (_a) => {
             switch(_a.label){
                 case 0:
                     return [
@@ -214,16 +209,15 @@ var $c2053de758ee1450$export$bced8d2aada2d1c9 = function(msgBuffer) {
             }
         });
     });
-};
 
 
-var $98aa1784bfd49640$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+var $98aa1784bfd49640$var$__awaiter = undefined && undefined.__awaiter || ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
+        return value instanceof P ? value : new P((resolve) => {
             resolve(value);
         });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) {
             try {
                 step(generator.next(value));
@@ -243,11 +237,11 @@ var $98aa1784bfd49640$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var $98aa1784bfd49640$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+});
+var $98aa1784bfd49640$var$__generator = undefined && undefined.__generator || ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function() {
+        sent: () => {
             if (t[0] & 1) throw t[1];
             return t[1];
         },
@@ -262,12 +256,10 @@ var $98aa1784bfd49640$var$__generator = undefined && undefined.__generator || fu
         return this;
     }), g;
     function verb(n) {
-        return function(v) {
-            return step([
+        return (v) => step([
                 n,
                 v
             ]);
-        };
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -338,8 +330,8 @@ var $98aa1784bfd49640$var$__generator = undefined && undefined.__generator || fu
             done: true
         };
     }
-};
-var $98aa1784bfd49640$var$__spreadArray = undefined && undefined.__spreadArray || function(to, from, pack) {
+});
+var $98aa1784bfd49640$var$__spreadArray = undefined && undefined.__spreadArray || ((to, from, pack) => {
     if (pack || arguments.length === 2) {
         for(var i = 0, l = from.length, ar; i < l; i++)if (ar || !(i in from)) {
             if (!ar) ar = Array.prototype.slice.call(from, 0, i);
@@ -347,7 +339,7 @@ var $98aa1784bfd49640$var$__spreadArray = undefined && undefined.__spreadArray |
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
-};
+});
 var $98aa1784bfd49640$var$address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
 var $98aa1784bfd49640$var$querySchema = [
     {
@@ -368,7 +360,7 @@ var $98aa1784bfd49640$var$querySchema = [
 var $98aa1784bfd49640$var$getFileBuffer = function(bitfsRef) {
     return $98aa1784bfd49640$var$__awaiter(this, void 0, void 0, function() {
         var fileBuffer, result, e_1;
-        return $98aa1784bfd49640$var$__generator(this, function(_a) {
+        return $98aa1784bfd49640$var$__generator(this, (_a) => {
             switch(_a.label){
                 case 0:
                     fileBuffer = (0, $7AlAh$Buffer).from("");
@@ -415,12 +407,12 @@ var $98aa1784bfd49640$var$getFileBuffer = function(bitfsRef) {
 var $98aa1784bfd49640$var$validateSignature = function(aipObj, cell, tape) {
     return $98aa1784bfd49640$var$__awaiter(this, void 0, Promise, function() {
         var cellIndex, usingIndexes, signatureValues, i, cellContainer, nc, statement, fileBuffer, indexLength, indexes, i, signatureBufferStatements, messageBuffer, dataScript, dataBuffer, buff;
-        return $98aa1784bfd49640$var$__generator(this, function(_a) {
+        return $98aa1784bfd49640$var$__generator(this, (_a) => {
             switch(_a.label){
                 case 0:
                     if (!Array.isArray(tape) || tape.length < 3) throw new Error("AIP requires at least 3 cells including the prefix");
                     cellIndex = -1;
-                    tape.forEach(function(cc, index) {
+                    tape.forEach((cc, index) => {
                         if (cc.cell === cell) cellIndex = index;
                     });
                     if (cellIndex === -1) throw new Error("AIP could not find cell in tape");
@@ -502,17 +494,17 @@ var $98aa1784bfd49640$var$validateSignature = function(aipObj, cell, tape) {
                             indexLength = aipObj.index_unit_size * 2;
                             usingIndexes = [];
                             indexes = cell[6].h;
-                            for(i = 0; i < indexes.length; i += indexLength)usingIndexes.push(parseInt(indexes.substr(i, indexLength), 16));
+                            for(i = 0; i < indexes.length; i += indexLength)usingIndexes.push(Number.parseInt(indexes.substr(i, indexLength), 16));
                             aipObj.index = usingIndexes;
                         }
                     }
                     signatureBufferStatements = [];
                     // check whether we need to only sign some indexes
-                    if (usingIndexes.length > 0) usingIndexes.forEach(function(index) {
+                    if (usingIndexes.length > 0) usingIndexes.forEach((index) => {
                         signatureBufferStatements.push((0, $7AlAh$Buffer).from(signatureValues[index], "hex"));
                     });
                     else // add all the values to the signature buffer
-                    signatureValues.forEach(function(statement) {
+                    signatureValues.forEach((statement) => {
                         signatureBufferStatements.push((0, $7AlAh$Buffer).from(statement, "hex"));
                     });
                     if (!aipObj.hashing_algorithm) return [
@@ -580,7 +572,7 @@ var $98aa1784bfd49640$var$validateSignature = function(aipObj, cell, tape) {
 var $98aa1784bfd49640$export$f0079d0908cdbf96 = function(useQuerySchema, protocolName, dataObj, cell, tape, tx) {
     return $98aa1784bfd49640$var$__awaiter(this, void 0, void 0, function() {
         var aipObj, _i, _a, _b, idx, schemaField, x, schemaEncoding, aipField, fieldData, i;
-        return $98aa1784bfd49640$var$__generator(this, function(_c) {
+        return $98aa1784bfd49640$var$__generator(this, (_c) => {
             switch(_c.label){
                 case 0:
                     aipObj = {};
@@ -588,7 +580,7 @@ var $98aa1784bfd49640$export$f0079d0908cdbf96 = function(useQuerySchema, protoco
                     if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix " + tx);
                     for(_i = 0, _a = Object.entries(useQuerySchema); _i < _a.length; _i++){
                         _b = _a[_i], idx = _b[0], schemaField = _b[1];
-                        x = parseInt(idx, 10);
+                        x = Number.parseInt(idx, 10);
                         schemaEncoding = void 0;
                         aipField = void 0;
                         if (schemaField instanceof Array) {
@@ -596,7 +588,7 @@ var $98aa1784bfd49640$export$f0079d0908cdbf96 = function(useQuerySchema, protoco
                             schemaEncoding = schemaField[0].index;
                             aipField = Object.keys(schemaField[0])[0];
                             fieldData = [];
-                            for(i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(parseInt(cell[i].h || "", 16));
+                            for(i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(Number.parseInt(cell[i].h || "", 16));
                             aipObj[aipField] = fieldData;
                             continue;
                         } else {
@@ -625,10 +617,10 @@ var $98aa1784bfd49640$export$f0079d0908cdbf96 = function(useQuerySchema, protoco
         });
     });
 };
-var $98aa1784bfd49640$var$handler = function(_a) {
+var $98aa1784bfd49640$var$handler = (_a) => {
     var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape, tx = _a.tx;
     return $98aa1784bfd49640$var$__awaiter(void 0, void 0, void 0, function() {
-        return $98aa1784bfd49640$var$__generator(this, function(_b) {
+        return $98aa1784bfd49640$var$__generator(this, (_b) => {
             switch(_b.label){
                 case 0:
                     if (!tape) throw new Error("Invalid AIP transaction. tape is required");
@@ -674,7 +666,7 @@ var $a429761762b93e1b$var$querySchema = [
         filename: "string"
     }
 ];
-var $a429761762b93e1b$var$handler = function(_a) {
+var $a429761762b93e1b$var$handler = (_a) => {
     var dataObj = _a.dataObj, cell = _a.cell, tx = _a.tx;
     var encodingMap = new Map();
     encodingMap.set("utf8", "string");
@@ -691,7 +683,7 @@ var $a429761762b93e1b$var$handler = function(_a) {
     // loop over the schema
     for(var _i = 0, _b = Object.entries($a429761762b93e1b$var$querySchema); _i < _b.length; _i++){
         var _c = _b[_i], idx = _c[0], schemaField = _c[1];
-        var x = parseInt(idx, 10);
+        var x = Number.parseInt(idx, 10);
         var bField = Object.keys(schemaField)[0];
         var schemaEncoding = Object.values(schemaField)[0];
         if (bField === "content") {
@@ -748,7 +740,7 @@ var $0d2672e9817499e3$var$querySchema = [
         sequence: "string"
     }
 ];
-var $0d2672e9817499e3$export$c3c52e219617878 = function(_a) {
+var $0d2672e9817499e3$export$c3c52e219617878 = (_a) => {
     var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape, tx = _a.tx;
     if (!tape) throw new Error("Invalid BAP tx, tape required");
     if (!tx) throw new Error("Invalid BAP tx, tx required");
@@ -766,13 +758,13 @@ var $e22c244abfee4b98$exports = {};
 
 $parcel$export($e22c244abfee4b98$exports, "HAIP", () => $e22c244abfee4b98$export$12815d889fe90b8, (v) => $e22c244abfee4b98$export$12815d889fe90b8 = v);
 
-var $e22c244abfee4b98$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+var $e22c244abfee4b98$var$__awaiter = undefined && undefined.__awaiter || ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
+        return value instanceof P ? value : new P((resolve) => {
             resolve(value);
         });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) {
             try {
                 step(generator.next(value));
@@ -792,11 +784,11 @@ var $e22c244abfee4b98$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var $e22c244abfee4b98$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+});
+var $e22c244abfee4b98$var$__generator = undefined && undefined.__generator || ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function() {
+        sent: () => {
             if (t[0] & 1) throw t[1];
             return t[1];
         },
@@ -811,12 +803,10 @@ var $e22c244abfee4b98$var$__generator = undefined && undefined.__generator || fu
         return this;
     }), g;
     function verb(n) {
-        return function(v) {
-            return step([
+        return (v) => step([
                 n,
                 v
             ]);
-        };
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -887,7 +877,7 @@ var $e22c244abfee4b98$var$__generator = undefined && undefined.__generator || fu
             done: true
         };
     }
-};
+});
 var $e22c244abfee4b98$var$address = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3";
 var $e22c244abfee4b98$var$querySchema = [
     {
@@ -912,10 +902,10 @@ var $e22c244abfee4b98$var$querySchema = [
     ]
 ];
 // https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
-var $e22c244abfee4b98$var$handler = function(_a) {
+var $e22c244abfee4b98$var$handler = (_a) => {
     var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape, tx = _a.tx;
     return $e22c244abfee4b98$var$__awaiter(void 0, void 0, void 0, function() {
-        return $e22c244abfee4b98$var$__generator(this, function(_b) {
+        return $e22c244abfee4b98$var$__generator(this, (_b) => {
             switch(_b.label){
                 case 0:
                     if (!tape) throw new Error("Invalid HAIP tx. Bad tape");
@@ -999,7 +989,7 @@ var $5a1837533efd883a$var$querySchema = [
         }
     }
 ];
-var $5a1837533efd883a$var$processADD = function(cell, mapObj) {
+var $5a1837533efd883a$var$processADD = (cell, mapObj) => {
     var last = null;
     for(var _i = 0, cell_1 = cell; _i < cell_1.length; _i++){
         var pushdataContainer = cell_1[_i];
@@ -1013,7 +1003,7 @@ var $5a1837533efd883a$var$processADD = function(cell, mapObj) {
         } else if (last && Array.isArray(mapObj[last])) mapObj[last].push(pushdata);
     }
 };
-var $5a1837533efd883a$var$proccessDELETE = function(cell, mapObj) {
+var $5a1837533efd883a$var$proccessDELETE = (cell, mapObj) => {
     var last = null;
     for(var _i = 0, cell_2 = cell; _i < cell_2.length; _i++){
         var pushdataContainer = cell_2[_i];
@@ -1027,7 +1017,7 @@ var $5a1837533efd883a$var$proccessDELETE = function(cell, mapObj) {
         } else if (last) mapObj[last].push(pushdata);
     }
 };
-var $5a1837533efd883a$var$processSELECT = function(cell, mapObj) {
+var $5a1837533efd883a$var$processSELECT = (cell, mapObj) => {
     // TODO
     // console.log('MAP SELECT');
     for(var _i = 0, cell_3 = cell; _i < cell_3.length; _i++){
@@ -1039,7 +1029,7 @@ var $5a1837533efd883a$var$processSELECT = function(cell, mapObj) {
         }
     }
 };
-var $5a1837533efd883a$var$processMSGPACK = function(cell, mapObj) {
+var $5a1837533efd883a$var$processMSGPACK = (cell, mapObj) => {
     for(var _i = 0, cell_4 = cell; _i < cell_4.length; _i++){
         var pushdataContainer = cell_4[_i];
         // ignore MAP command
@@ -1054,7 +1044,7 @@ var $5a1837533efd883a$var$processMSGPACK = function(cell, mapObj) {
     }
     return mapObj;
 };
-var $5a1837533efd883a$var$processJSON = function(cell, mapObj) {
+var $5a1837533efd883a$var$processJSON = (cell, mapObj) => {
     for(var _i = 0, cell_5 = cell; _i < cell_5.length; _i++){
         var pushdataContainer = cell_5[_i];
         // ignore MAP command
@@ -1067,7 +1057,7 @@ var $5a1837533efd883a$var$processJSON = function(cell, mapObj) {
     }
     return mapObj;
 };
-var $5a1837533efd883a$var$processSET = function(cell, mapObj) {
+var $5a1837533efd883a$var$processSET = (cell, mapObj) => {
     var last = null;
     for(var _i = 0, cell_6 = cell; _i < cell_6.length; _i++){
         var pushdataContainer = cell_6[_i];
@@ -1085,7 +1075,7 @@ var $5a1837533efd883a$var$processSET = function(cell, mapObj) {
         }
     }
 };
-var $5a1837533efd883a$var$handler = function(_a) {
+var $5a1837533efd883a$var$handler = (_a) => {
     var dataObj = _a.dataObj, cell = _a.cell, tx = _a.tx;
     // Validate
     if (cell[0].s !== $5a1837533efd883a$var$address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) throw new Error("Invalid MAP record: ".concat(tx));
@@ -1103,7 +1093,7 @@ var $5a1837533efd883a$var$handler = function(_a) {
     var mapCmdKey = Object.keys($5a1837533efd883a$var$querySchema[0])[0];
     // Add the firt MAP command in the response object
     mapObj[mapCmdKey] = commands[0][0].s;
-    commands.forEach(function(cc) {
+    commands.forEach((cc) => {
         // re-add the MAP address
         cc.unshift({
             s: $5a1837533efd883a$var$address,
@@ -1154,13 +1144,13 @@ var $1dadca38d7be2882$exports = {};
 $parcel$export($1dadca38d7be2882$exports, "METANET", () => $1dadca38d7be2882$export$7830a85a59ca4593, (v) => $1dadca38d7be2882$export$7830a85a59ca4593 = v);
 
 
-var $1dadca38d7be2882$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+var $1dadca38d7be2882$var$__awaiter = undefined && undefined.__awaiter || ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
+        return value instanceof P ? value : new P((resolve) => {
             resolve(value);
         });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) {
             try {
                 step(generator.next(value));
@@ -1180,11 +1170,11 @@ var $1dadca38d7be2882$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var $1dadca38d7be2882$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+});
+var $1dadca38d7be2882$var$__generator = undefined && undefined.__generator || ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function() {
+        sent: () => {
             if (t[0] & 1) throw t[1];
             return t[1];
         },
@@ -1199,12 +1189,10 @@ var $1dadca38d7be2882$var$__generator = undefined && undefined.__generator || fu
         return this;
     }), g;
     function verb(n) {
-        return function(v) {
-            return step([
+        return (v) => step([
                 n,
                 v
             ]);
-        };
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -1275,7 +1263,7 @@ var $1dadca38d7be2882$var$__generator = undefined && undefined.__generator || fu
             done: true
         };
     }
-};
+});
 var $1dadca38d7be2882$var$address = "meta";
 var $1dadca38d7be2882$var$querySchema = [
     {
@@ -1291,7 +1279,7 @@ var $1dadca38d7be2882$var$querySchema = [
 var $1dadca38d7be2882$export$3eb18141230d6532 = function(a, tx) {
     return $1dadca38d7be2882$var$__awaiter(this, void 0, void 0, function() {
         var buf, hashBuf;
-        return $1dadca38d7be2882$var$__generator(this, function(_a) {
+        return $1dadca38d7be2882$var$__generator(this, (_a) => {
             switch(_a.label){
                 case 0:
                     buf = (0, $7AlAh$Buffer).from(a + tx);
@@ -1309,11 +1297,11 @@ var $1dadca38d7be2882$export$3eb18141230d6532 = function(a, tx) {
         });
     });
 };
-var $1dadca38d7be2882$var$handler = function(_a) {
+var $1dadca38d7be2882$var$handler = (_a) => {
     var dataObj = _a.dataObj, cell = _a.cell, tx = _a.tx;
     return $1dadca38d7be2882$var$__awaiter(void 0, void 0, void 0, function() {
         var nodeId, node, parent, parentId;
-        return $1dadca38d7be2882$var$__generator(this, function(_b) {
+        return $1dadca38d7be2882$var$__generator(this, (_b) => {
             switch(_b.label){
                 case 0:
                     if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error("Invalid Metanet tx " + tx);
@@ -1378,13 +1366,13 @@ $parcel$export($cd237abf67628bc8$exports, "verifyPaymailPublicKey", () => $cd237
 
 
 
-var $cd237abf67628bc8$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+var $cd237abf67628bc8$var$__awaiter = undefined && undefined.__awaiter || ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
+        return value instanceof P ? value : new P((resolve) => {
             resolve(value);
         });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) {
             try {
                 step(generator.next(value));
@@ -1404,11 +1392,11 @@ var $cd237abf67628bc8$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var $cd237abf67628bc8$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+});
+var $cd237abf67628bc8$var$__generator = undefined && undefined.__generator || ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function() {
+        sent: () => {
             if (t[0] & 1) throw t[1];
             return t[1];
         },
@@ -1423,12 +1411,10 @@ var $cd237abf67628bc8$var$__generator = undefined && undefined.__generator || fu
         return this;
     }), g;
     function verb(n) {
-        return function(v) {
-            return step([
+        return (v) => step([
                 n,
                 v
             ]);
-        };
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -1499,11 +1485,11 @@ var $cd237abf67628bc8$var$__generator = undefined && undefined.__generator || fu
             done: true
         };
     }
-};
+});
 var $cd237abf67628bc8$export$fe8725667d42151 = function(paymail, publicKey) {
     return $cd237abf67628bc8$var$__awaiter(this, void 0, void 0, function() {
         var client;
-        return $cd237abf67628bc8$var$__generator(this, function(_a) {
+        return $cd237abf67628bc8$var$__generator(this, (_a) => {
             client = new (0, $7AlAh$PaymailClient)((0, $7AlAh$dns), (0, $7AlAh$nodefetch));
             return [
                 2 /*return*/ ,
@@ -1515,13 +1501,13 @@ var $cd237abf67628bc8$export$fe8725667d42151 = function(paymail, publicKey) {
 
 
 
-var $b57223da72fa21e9$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+var $b57223da72fa21e9$var$__awaiter = undefined && undefined.__awaiter || ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
+        return value instanceof P ? value : new P((resolve) => {
             resolve(value);
         });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) {
             try {
                 step(generator.next(value));
@@ -1541,11 +1527,11 @@ var $b57223da72fa21e9$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var $b57223da72fa21e9$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+});
+var $b57223da72fa21e9$var$__generator = undefined && undefined.__generator || ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function() {
+        sent: () => {
             if (t[0] & 1) throw t[1];
             return t[1];
         },
@@ -1560,12 +1546,10 @@ var $b57223da72fa21e9$var$__generator = undefined && undefined.__generator || fu
         return this;
     }), g;
     function verb(n) {
-        return function(v) {
-            return step([
+        return (v) => step([
                 n,
                 v
             ]);
-        };
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -1636,7 +1620,7 @@ var $b57223da72fa21e9$var$__generator = undefined && undefined.__generator || fu
             done: true
         };
     }
-};
+});
 var $b57223da72fa21e9$var$address = "1signyCizp1VyBsJ5Ss2tEAgw7zCYNJu4";
 var $b57223da72fa21e9$var$querySchema = [
     {
@@ -1649,10 +1633,10 @@ var $b57223da72fa21e9$var$querySchema = [
         paymail: "string"
     }
 ];
-var $b57223da72fa21e9$var$validateSignature = function(pspObj, cell, tape) {
+var $b57223da72fa21e9$var$validateSignature = (pspObj, cell, tape) => {
     if (!Array.isArray(tape) || tape.length < 3) throw new Error("PSP requires at least 3 cells including the prefix");
     var cellIndex = -1;
-    tape.forEach(function(cc, index) {
+    tape.forEach((cc, index) => {
         if (cc.cell === cell) cellIndex = index;
     });
     if (cellIndex === -1) throw new Error("PSP could not find cell in tape");
@@ -1660,7 +1644,7 @@ var $b57223da72fa21e9$var$validateSignature = function(pspObj, cell, tape) {
     for(var i = 0; i < cellIndex; i++){
         var cellContainer = tape[i];
         if (!(0, $c2053de758ee1450$exports.checkOpFalseOpReturn)(cellContainer)) {
-            cellContainer.cell.forEach(function(statement) {
+            cellContainer.cell.forEach((statement) => {
                 // add the value as hex
                 var value = statement.h;
                 if (!value) value = (0, $7AlAh$Buffer).from(statement.b, "base64").toString("hex");
@@ -1686,7 +1670,7 @@ var $b57223da72fa21e9$var$handler = function(_a) {
     var dataObj = _a.dataObj, cell = _a.cell, tape = _a.tape;
     return $b57223da72fa21e9$var$__awaiter(this, void 0, void 0, function() {
         var pspObj, paymailPublicKeyVerified;
-        return $b57223da72fa21e9$var$__generator(this, function(_b) {
+        return $b57223da72fa21e9$var$__generator(this, (_b) => {
             switch(_b.label){
                 case 0:
                     // Paymail Signature Protocol
@@ -1725,22 +1709,22 @@ var $b57223da72fa21e9$export$bd49ff9d0c7fbe97 = {
 
 
 var $414950da4f87d079$var$__assign = undefined && undefined.__assign || function() {
-    $414950da4f87d079$var$__assign = Object.assign || function(t) {
+    $414950da4f87d079$var$__assign = Object.assign || ((t) => {
         for(var s, i = 1, n = arguments.length; i < n; i++){
             s = arguments[i];
             for(var p in s)if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
         return t;
-    };
+    });
     return $414950da4f87d079$var$__assign.apply(this, arguments);
 };
-var $414950da4f87d079$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+var $414950da4f87d079$var$__awaiter = undefined && undefined.__awaiter || ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
+        return value instanceof P ? value : new P((resolve) => {
             resolve(value);
         });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) {
             try {
                 step(generator.next(value));
@@ -1760,11 +1744,11 @@ var $414950da4f87d079$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var $414950da4f87d079$var$__generator = undefined && undefined.__generator || function(thisArg, body) {
+});
+var $414950da4f87d079$var$__generator = undefined && undefined.__generator || ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function() {
+        sent: () => {
             if (t[0] & 1) throw t[1];
             return t[1];
         },
@@ -1779,12 +1763,10 @@ var $414950da4f87d079$var$__generator = undefined && undefined.__generator || fu
         return this;
     }), g;
     function verb(n) {
-        return function(v) {
-            return step([
+        return (v) => step([
                 n,
                 v
             ]);
-        };
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -1855,7 +1837,7 @@ var $414950da4f87d079$var$__generator = undefined && undefined.__generator || fu
             done: true
         };
     }
-};
+});
 var $414950da4f87d079$var$protocolMap = new Map([]);
 var $414950da4f87d079$var$protocolHandlers = new Map();
 var $414950da4f87d079$var$protocolQuerySchemas = new Map();
@@ -1867,17 +1849,15 @@ var $414950da4f87d079$var$protocolQuerySchemas = new Map();
     (0, $5a1837533efd883a$export$ce970371e0e850bc),
     (0, $1dadca38d7be2882$exports.METANET),
     (0, $b57223da72fa21e9$exports.PSP)
-].forEach(function(protocol) {
+].forEach((protocol) => {
     $414950da4f87d079$var$protocolMap.set(protocol.address, protocol.name);
     $414950da4f87d079$var$protocolHandlers.set(protocol.name, protocol.handler);
     $414950da4f87d079$var$protocolQuerySchemas.set(protocol.name, protocol.querySchema);
 });
 // Takes a BOB formatted op_return transaction
-var $414950da4f87d079$export$894a720e71f90b3c = /** @class */ function() {
+var $414950da4f87d079$export$894a720e71f90b3c = /** @class */ (() => {
     function BMAP() {
-        var _this = this;
-        this.transformTx = function(tx) {
-            return $414950da4f87d079$var$__awaiter(_this, void 0, Promise, function() {
+        this.transformTx = (tx) => $414950da4f87d079$var$__awaiter(this, void 0, Promise, function() {
                 var self, dataObj, _i, _a, _b, key, val, _c, _d, out, tape, _e, tape_1, cellContainer, cell, prefix, protocolName, handler, meta;
                 return $414950da4f87d079$var$__generator(this, function(_f) {
                     switch(_f.label){
@@ -1912,9 +1892,7 @@ var $414950da4f87d079$export$894a720e71f90b3c = /** @class */ function() {
                             ];
                             out = _d[_c];
                             tape = out.tape;
-                            if (!(tape === null || tape === void 0 ? void 0 : tape.some(function(cc) {
-                                return (0, $c2053de758ee1450$exports.checkOpFalseOpReturn)(cc);
-                            }))) return [
+                            if (!(tape === null || tape === void 0 ? void 0 : tape.some((cc) => (0, $c2053de758ee1450$exports.checkOpFalseOpReturn)(cc)))) return [
                                 3 /*break*/ ,
                                 9
                             ];
@@ -1995,7 +1973,7 @@ var $414950da4f87d079$export$894a720e71f90b3c = /** @class */ function() {
                                 13
                             ];
                         case 12:
-                            if (key === "in") dataObj[key] = val.map(function(v) {
+                            if (key === "in") dataObj[key] = val.map((v) => {
                                 var r = $414950da4f87d079$var$__assign({}, v);
                                 delete r.tape;
                                 return r;
@@ -2038,7 +2016,6 @@ var $414950da4f87d079$export$894a720e71f90b3c = /** @class */ function() {
                     }
                 });
             });
-        };
         // initial default protocol handlers in this instantiation
         this.protocolMap = $414950da4f87d079$var$protocolMap;
         this.protocolHandlers = $414950da4f87d079$var$protocolHandlers;
@@ -2051,11 +2028,10 @@ var $414950da4f87d079$export$894a720e71f90b3c = /** @class */ function() {
         this.protocolQuerySchemas.set(name, querySchema);
     };
     return BMAP;
-}();
-var $414950da4f87d079$export$b2a90e318402f6bc = function(tx) {
-    return $414950da4f87d079$var$__awaiter(void 0, void 0, void 0, function() {
+})();
+var $414950da4f87d079$export$b2a90e318402f6bc = (tx) => $414950da4f87d079$var$__awaiter(void 0, void 0, void 0, function() {
         var b;
-        return $414950da4f87d079$var$__generator(this, function(_a) {
+        return $414950da4f87d079$var$__generator(this, (_a) => {
             b = new $414950da4f87d079$export$894a720e71f90b3c();
             return [
                 2 /*return*/ ,
@@ -2063,7 +2039,6 @@ var $414950da4f87d079$export$b2a90e318402f6bc = function(tx) {
             ];
         });
     });
-};
 
 
 export {$414950da4f87d079$export$894a720e71f90b3c as BMAP, $414950da4f87d079$export$b2a90e318402f6bc as TransformTx, $414950da4f87d079$exports as default};

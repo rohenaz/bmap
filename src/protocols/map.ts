@@ -1,13 +1,12 @@
-
 import { decode } from "@msgpack/msgpack";
 import type { Cell } from "bpu-ts";
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import type { MAP as MAPType } from "../types/protocols/map";
 import { saveProtocolData } from "../utils";
 
 const address = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5";
 
-const opReturnSchema = [
+const opReturnSchema: SchemaField[] = [
   {
     cmd: {
       SET: [{ key: "string" }, { val: "string" }],

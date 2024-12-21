@@ -1,6 +1,6 @@
 let examples
-let currentTxid = localStorage.getItem('example');
-let currentProtocol = localStorage.getItem('protocol') || 'B';
+const currentTxid = localStorage.getItem('example');
+const currentProtocol = localStorage.getItem('protocol') || 'B';
 
 const getExample = (txid, protocol) => {
       if(txid) {
@@ -22,7 +22,7 @@ const load = async (ex) => {
     button.id = protocol;
 
     // examples.some((e) => e.protocols.includes(protocol) && e.protocols.includes(currentProtocol))
-    let example = getExample(currentTxid, currentProtocol)
+    const example = getExample(currentTxid, currentProtocol)
     button.classList.add('protocol-button');
 
     if (currentProtocol === protocol) {
@@ -85,7 +85,7 @@ const load = async (ex) => {
     })
     .then(async (r) => {
       console.log(r);
-      let tx = r
+      const tx = r
 
       // TODO: There are some examples with multiple transactions
       // removed support for this when migrating to v0.4.0 and removing bob in favor of bmapjs.com to fetch transactions one at a time
@@ -109,7 +109,7 @@ const load = async (ex) => {
           console.log("do i have the example?", bmapTx)
           const mapCoreKeys = bmapTx.MAP?.map((m) => { return {cmd: m.cmd, app: m.app, type: m.type}} )
       
-          for (let k of mapCoreKeys) {
+          for (const k of mapCoreKeys) {
       
             const mapKeysEle = document.createElement('div')
             mapKeysEle.classList.add('map-keys')
@@ -181,7 +181,7 @@ const load = async (ex) => {
 };
 
 // Start
-(function () {
+((() => {
   document.addEventListener('DOMContentLoaded', () => {
     fetch('./data/example-txids.json')
       .then((response) => { return response.json(); })
@@ -194,4 +194,4 @@ const load = async (ex) => {
         return console.log(json);
       });
   });
-}());
+})());

@@ -53,12 +53,12 @@ describe("metanet", () => {
     await METANET.handler({ dataObj, cell, tape, tx });
     expect(Array.isArray(dataObj.METANET)).toBe(true);
     expect(dataObj.METANET && typeof dataObj.METANET[0]).toEqual("object");
-    expect(dataObj.METANET && dataObj.METANET[0].node).toEqual({
+    expect(dataObj.METANET?.[0].node).toEqual({
       a: "1FqmFgY45CqSGXRNVpHNRQWqoNVCkRpUau",
       tx: "2f24d7edb8de0ef534d8e0bc2413eddda451b4accc481519a1647d7af79d8e88",
       id: "ef456f1afc40e789efb29e184f331e90d5c35b66423698da1553448c7ef9e0a5",
     });
-    expect(dataObj.METANET && dataObj.METANET[0].parent).toEqual({
+    expect(dataObj.METANET?.[0].parent).toEqual({
       a: "1MncX49XDHnH3291wUdCfuUFQFJWSab8Uj",
       tx: "588aa018df5a029f01bbefb3bf3c212600d0caf83fdd7355ee8994f8b5a87e8a",
       id: "a8e9189b51b9cfedb4725dadae718a6a53a7a129b6433af4836e40e0efeec116",
@@ -74,12 +74,12 @@ describe("metanet", () => {
     await METANET.handler({ dataObj, cell, tape, tx });
     expect(Array.isArray(dataObj.METANET)).toBe(true);
     expect(dataObj.METANET && typeof dataObj.METANET[0]).toEqual("object");
-    expect(dataObj.METANET && dataObj.METANET[0].node).toEqual({
+    expect(dataObj.METANET?.[0].node).toEqual({
       a: "1DmFvHmysemLdnFPoVxiJr5kvVMXZ1KySR",
       tx: "296ddbbbfd704f907ae5e1669a5ff266ba8335713298dd87cdf0ee8af0b4691a",
       id: "f3c88658391af6ab7ba876ab668ab112d189e5e396aaf2ad70935e226ab17f20",
     });
-    expect(dataObj.METANET && dataObj.METANET[0].parent).toEqual({
+    expect(dataObj.METANET?.[0].parent).toEqual({
       a: "15YpmH1p5DowYa9mYRV9Vd5UzUo95JHRwe",
       tx: "46ed587c0305367efe3762e1e28c441b99e4ea13ab0d110c1f3818e4362ad90d",
       id: "3245c5fb93cc053ea440d18442afdda418638a0a3b64dde421db0617e254236a",

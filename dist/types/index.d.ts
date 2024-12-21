@@ -1,29 +1,27 @@
-import { _21E8 } from './types/protocols/_21e8';
-import { AIP } from './types/protocols/aip';
-import { B } from './types/protocols/b';
-import { BAP } from './types/protocols/bap';
-import { BITCOM } from './types/protocols/bitcom';
-import { BITKEY } from './types/protocols/bitkey';
-import { BITPIC } from './types/protocols/bitpic';
-import { BmapTx } from './types/common';
-import { BobTx } from './types/common';
-import { HAIP } from './types/protocols/haip';
-import { Handler } from './types/common';
-import { HandlerProps } from './types/common';
-import { MAP } from './types/protocols/map';
-import { MetaNet } from './types/common';
-import { MomTx } from './types/common';
-import { ORD } from './types/protocols/ord';
+import { BpuTx } from 'bpu-ts';
+import { Cell } from 'bpu-ts';
+import { In } from 'bpu-ts';
 import { Out } from 'bpu-ts';
-import { Protocol } from './types/common';
-import { RON } from './types/protocols/ron';
-import { ScriptChecker } from './types/common';
-import { SYMRE } from './types/protocols/symre';
 import { Tape } from 'bpu-ts';
 
-export { _21E8 }
+declare type _21E8 = {
+    txid: string;
+    target: string;
+    difficulty: number;
+    value: number;
+};
 
-export { AIP }
+declare type AIP = {
+    address?: string;
+    algorithm?: string;
+    signing_algorithm?: string;
+    signing_address?: string;
+    index?: number[];
+    hashing_algorithm?: string;
+    index_unit_size?: number;
+    signature?: string;
+    verified?: boolean;
+};
 
 export declare const allProtocols: (Protocol | {
     name: string;
@@ -34,21 +32,40 @@ export declare const allProtocols: (Protocol | {
     handler: ({ dataObj, cell, tx }: HandlerProps) => void;
 })[];
 
-export { B }
+declare type B = {
+    content: string;
+    "content-type": string;
+    encoding: string;
+    filename?: string;
+};
 
-export { BAP }
+declare type BAP = {
+    type: string;
+    hash: string;
+    sequence: string;
+};
 
-export { BITCOM }
+declare type BITCOM = string[];
 
-export { BITKEY }
+declare type BITKEY = {
+    bitkey_signature: string;
+    user_signature: string;
+    paymail: string;
+    pubkey: string;
+};
 
-export { BITPIC }
+declare type BITPIC = {
+    paymail: string;
+    pubkey: string;
+    signature: string;
+    verified: boolean;
+};
 
 export declare class BMAP {
     enabledProtocols: Map<string, string>;
     protocolHandlers: Map<string, Handler>;
     protocolScriptCheckers: Map<string, ScriptChecker>;
-    protocolOpReturnSchemas: Map<string, Object[]>;
+    protocolOpReturnSchemas: Map<string, SchemaField[]>;
     constructor();
     addProtocolHandler({ name, address, opReturnSchema, handler, scriptChecker, }: Protocol): void;
     transformTx: (tx: BobTx | MomTx) => Promise<BmapTx>;
@@ -57,40 +74,147 @@ export declare class BMAP {
     processDataProtocols: (tape: Tape[], out: Out, tx: BobTx, dataObj: Partial<BobTx>) => Promise<Partial<BobTx>>;
 }
 
-export { BmapTx }
+export declare type BmapTx = {
+    timestamp: number;
+    B?: B[];
+    AIP?: AIP[];
+    MAP?: MAP[];
+    BAP?: BAP[];
+    "21E8"?: _21E8[];
+    ORD?: ORD[];
+    BITCOM?: BITCOM[];
+    BITPIC?: BITPIC[];
+    BITKEY?: BITKEY[];
+    METANET?: MetaNet[];
+    SYMRE?: SYMRE[];
+    RON?: RON[];
+    HAIP?: HAIP[];
+} & BobTx
 
 export declare const bobFromRawTx: (rawTx: string) => Promise<BobTx>;
 
-export { BobTx }
+export declare type BobTx = {
+    blk?: {
+        t: number;
+        i: number;
+    };
+    mem?: number;
+    out: Out[];
+    in?: In[];
+    tx: {
+        h: string;
+    };
+    lock?: number;
+    [key: string]: any;
+} & BpuTx
 
 export declare const defaultProtocols: Protocol[];
 
 export declare const fetchRawTx: (txid: string) => Promise<string>;
 
-export { HAIP }
+declare type HAIP = {
+    signing_address?: string;
+    hashing_algorithm?: string;
+    signing_algorithm?: string;
+    index?: number[];
+    index_unit_size?: number;
+    signature?: string;
+    verified?: boolean;
+};
 
-export { Handler }
+export declare type Handler = (handlerProps: HandlerProps) => any;
 
-export { HandlerProps }
+export declare type HandlerProps = {
+    dataObj: BmapTx;
+    cell: Cell[];
+    tape?: Tape[];
+    tx?: BobTx;
+    out?: Out;
+};
 
-export { MAP }
+declare type MAP = {
+    app: string;
+    type: string;
+    context?: string;
+    subcontext?: string;
+    collection?: string;
+    url?: string;
+    audio?: string;
+    channel?: string;
+    rarity?: string;
+    tx?: string;
+    videoID?: string;
+    provider?: string;
+    tags?: string[];
+    start?: string;
+    duration?: string;
+    [prop: string]: string | string[];
+};
 
-export { MetaNet }
+declare type MetaNet = {
+    parent: MetanetNode;
+    ancestor?: MetanetNode[];
+    child?: MetanetNode[];
+    head?: boolean;
+    node: MetanetNode;
+};
 
-export { MomTx }
+declare type MetanetNode = {
+    tx: string;
+    id: string;
+    a: string;
+};
 
-export { ORD }
+export declare type MomTx = {} & BobTx & MetaNet
 
-export { Protocol }
+declare type ORD = {
+    data: string; //base64
+    contentType: string;
+};
 
-export { RON }
+export declare type Protocol = {
+    name: string;
+    handler: Handler;
+    address?: string;
+    opReturnSchema?: SchemaField[];
+    scriptChecker?: ScriptChecker;
+};
 
-export { ScriptChecker }
+declare type RON = {
+    pair: string; // TODO: json tring - needs parsing
+    address: string;
+    timestamp: string;
+};
+
+declare type SchemaField = SchemaFieldValue | SchemaFieldValue[];
+
+declare type SchemaFieldValue = { [key: string]: string }
+
+export declare type ScriptChecker = (cell: Cell[]) => boolean;
 
 export declare const supportedProtocols: string[];
 
-export { SYMRE }
+declare type SYMRE = {
+    url: string;
+};
 
 export declare const TransformTx: (tx: BobTx | string | MomTx | BmapTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;
 
 export { }
+
+declare module "bun:test" {
+  export interface Assertion {
+    toBe(expected: any): void;
+    toEqual(expected: any): void;
+    toBeDefined(): void;
+    toBeTruthy(): void;
+    toThrow(expected?: string | RegExp): void;
+    rejects: {
+      toThrow(expected?: string | RegExp): Promise<void>;
+    };
+  }
+
+  export function expect(actual: any): Assertion;
+  export function describe(name: string, fn: () => void): void;
+  export function test(name: string, fn: () => void | Promise<void>): void;
+}

@@ -9,7 +9,7 @@ import { cellValue, saveProtocolData } from "../utils";
 // TODO - the OP_X_PLACEHOLDER is the number of bytes to push onto the stack and must match difficulty size
 const _21e8Script =
   "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(
-    " ",
+    " "
   );
 
 const scriptChecker = (cell: Cell[]) => {

@@ -1,8 +1,6 @@
-
-import { BSM, BigNumber, Hash, type PublicKey, Script, Signature, Utils } from "@bsv/sdk";
+import { BSM, BigNumber, Hash, Script, Signature, Utils } from "@bsv/sdk";
 import type { Cell, Tape } from "bpu-ts";
-import fetch from "node-fetch";
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import type { AIP as AIPType } from "../types/protocols/aip";
 import type { HAIP as HAIPType } from "../types/protocols/haip";
 import { cellValue, checkOpFalseOpReturn, isBase64, saveProtocolData } from "../utils";
@@ -10,222 +8,176 @@ import { cellValue, checkOpFalseOpReturn, isBase64, saveProtocolData } from "../
 const { toArray, toHex, fromBase58Check, toBase58Check } = Utils;
 
 const address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
-const opReturnSchema = [
-  { algorithm: "string" },
-  { address: "string" },
-  { signature: "binary" },
-  [{ index: "binary" }],
+
+const opReturnSchema: SchemaField[] = [
+  { algorithm: 'string' },
+  { address: 'string' },
+  { signature: 'binary' },
+  [{ index: 'binary' }],
 ];
 
-const getFileBuffer = async (bitfsRef: string) => {
-  try {
-    const result = await fetch(`https://x.bitfs.network/${bitfsRef}`);
-    return await result.buffer();
-  } catch {
-    return Buffer.from("");
-  }
-};
-
-function toBigNumberFromBuffer(buffer: number[]): BigNumber {
-  const hex = toHex(buffer);
-  return new BigNumber(hex, 16);
-}
-
-function recoverPublicKeyFromBSM(message: number[], signature: Signature, expectedAddress: string): PublicKey {
-  const msgHash = BSM.magicHash(message);
-  const bigMsg = toBigNumberFromBuffer(msgHash);
-
-  for (let recovery = 0; recovery < 4; recovery++) {
-    try {
-      const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
-      const pubKeyHash = publicKey.toHash() as number[];
-      const { prefix } = fromBase58Check(expectedAddress);
-      const recoveredAddress = toBase58Check(pubKeyHash, prefix as number[]);
-      if (recoveredAddress === expectedAddress) {
-        console.log("[recoverPublicKeyFromBSM] Successfully recovered matching public key");
-        return publicKey;
-      } else {
-        console.log("[recoverPublicKeyFromBSM] Trying recovery=", recovery, "Recovered address=", recoveredAddress, "expected=", expectedAddress);
-      }
-    } catch (e) {
-      console.log("[recoverPublicKeyFromBSM] Recovery error:", e);
-    }
-  }
-
-  console.log("[recoverPublicKeyFromBSM] Failed to recover any matching address");
-  throw new Error("Failed to recover public key matching the expected address");
-}
-
-function fromSafeDataArray(dataBufs: Buffer[]): Script {
-  const script = new Script();
-  script.chunks.push({ op: 0 }); // OP_FALSE
-  script.chunks.push({ op: 106 }); // OP_RETURN
-  for (const buf of dataBufs) {
-    const length = buf.length;
-    if (length <= 75) {
-      script.chunks.push({ op: length, data: Array.from(buf) });
-    } else if (length <= 0xff) {
-      script.chunks.push({ op: 0x4c, data: Array.from(buf) });
-    } else if (length <= 0xffff) {
-      script.chunks.push({ op: 0x4d, data: Array.from(buf) });
-    } else {
-      script.chunks.push({ op: 0x4e, data: Array.from(buf) });
-    }
-  }
-  return script;
-}
-
-async function validateSignature(
+function validateSignature(
   aipObj: Partial<AIPType | HAIPType>,
   cell: Cell[],
   tape: Tape[]
-): Promise<boolean> {
+): boolean {
   if (!Array.isArray(tape) || tape.length < 3) {
-    throw new Error("AIP requires at least 3 cells including the prefix");
+    throw new Error('AIP requires at least 3 cells including the prefix');
   }
 
   let cellIndex = -1;
-  tape.forEach((cc, index) => {
-    if (cc.cell === cell) {
-      cellIndex = index;
+  for (let i = 0; i < tape.length; i++) {
+    if (tape[i].cell === cell) {
+      cellIndex = i;
+      break;
     }
-  });
+  }
   if (cellIndex === -1) {
-    throw new Error("AIP could not find cell in tape");
+    throw new Error('AIP could not find cell in tape');
   }
 
-  let usingIndexes: number[] = (aipObj.index as number[]) || [];
-  const signatureValues: string[] = ["6a"]; // index 0: OP_RETURN
-
-  // Gather data from all previous cells
+  let usingIndexes: number[] = aipObj.index || [];
+  const signatureValues = ['6a']; // OP_RETURN - is included in AIP
   for (let i = 0; i < cellIndex; i++) {
     const cellContainer = tape[i];
     if (!checkOpFalseOpReturn(cellContainer)) {
-      const cellData: string[] = [];
       for (const statement of cellContainer.cell) {
-        let value: string | undefined;
+        // add the value as hex
         if (statement.h) {
-          value = statement.h;
-        } else if (statement.f) {
-          const fileBuffer = await getFileBuffer(statement.f);
-          value = fileBuffer.length > 0 ? fileBuffer.toString("hex") : undefined;
+          signatureValues.push(statement.h);
         } else if (statement.b) {
-          const buf = Buffer.from(statement.b, "base64");
-          if (buf.length > 0) {
-            value = buf.toString("hex");
-          }
+          // no hex? try base64
+          signatureValues.push(toHex(toArray(statement.b, 'base64')));
         } else if (statement.s) {
-          if (statement.s.length > 0) {
-            value = Buffer.from(statement.s).toString("hex");
-          }
-        }
-
-        if (value && value.length > 0) {
-          cellData.push(value);
+          signatureValues.push(toHex(toArray(statement.s)));
         }
       }
-      if (cellData.length > 0) {
-        // add all cellData
-        signatureValues.push(...cellData);
-        // add pipe after this cell
-        signatureValues.push("7c");
-      }
+      signatureValues.push('7c'); // | hex
     }
   }
 
-  // Now HAIP indexing logic
-  if (aipObj.hashing_algorithm && aipObj.index_unit_size) {
-    const indexLength = aipObj.index_unit_size * 2;
-    usingIndexes = [];
-    const indexesHex = cell[6]?.h || "";
-    for (let i = 0; i < indexesHex.length; i += indexLength) {
-      usingIndexes.push(Number.parseInt(indexesHex.substr(i, indexLength), 16));
+  if (aipObj.hashing_algorithm) {
+    // when using HAIP, we need to parse the indexes in a non standard way
+    // indexLength is byte size of the indexes being described
+    if (aipObj.index_unit_size) {
+      const indexLength = aipObj.index_unit_size * 2;
+      usingIndexes = [];
+      const indexes = cell[6].h as string;
+      for (let i = 0; i < indexes.length; i += indexLength) {
+        usingIndexes.push(Number.parseInt(indexes.substr(i, indexLength), 16));
+      }
+      aipObj.index = usingIndexes;
     }
-    aipObj.index = usingIndexes;
   }
 
-  console.log("usingIndexes", usingIndexes);
-  console.log("signatureValues", signatureValues);
-
-  const signatureBufferStatements: Buffer[] = [];
+  const signatureBufferStatements: number[][] = [];
+  // check whether we need to only sign some indexes
   if (usingIndexes.length > 0) {
-    for (const idx of usingIndexes) {
-      if (typeof signatureValues[idx] !== 'string') {
-        console.log("signatureValues[idx]", signatureValues[idx], "idx", idx);
-      }
-      if (!signatureValues[idx]) {
-        console.log("signatureValues is missing an index", idx, "This means indexing is off");
+    for (const index of usingIndexes) {
+      if (index >= signatureValues.length) {
+        console.log('[validateSignature] Index out of bounds:', index);
         return false;
       }
-      signatureBufferStatements.push(Buffer.from(signatureValues[idx], "hex"));
+      signatureBufferStatements.push(toArray(signatureValues[index], 'hex'));
     }
   } else {
-    for (const val of signatureValues) {
-      signatureBufferStatements.push(Buffer.from(val, "hex"));
+    // add all the values to the signature buffer
+    for (const statement of signatureValues) {
+      signatureBufferStatements.push(toArray(statement, 'hex'));
     }
   }
 
-  console.log("signatureBufferStatements", signatureBufferStatements.map((b) => b.toString("hex")));
-
-  let messageBuffer: Buffer;
+  let messageBuffer: number[];
   if (aipObj.hashing_algorithm) {
-    // HAIP logic
+    // this is actually Hashed-AIP (HAIP) and works a bit differently
     if (!aipObj.index_unit_size) {
-      // remove OP_RETURN chunk
+      // remove OP_RETURN - will be added by Script.buildDataOut
       signatureBufferStatements.shift();
     }
-    const dataScript = fromSafeDataArray(signatureBufferStatements);
-    let dataBuffer = Buffer.from(dataScript.toHex(), "hex");
+    const dataScript = Script.fromHex(toHex(signatureBufferStatements.flat()));
+    let dataArray = toArray(dataScript.toHex(), 'hex');
     if (aipObj.index_unit_size) {
-      dataBuffer = dataBuffer.slice(1);
+      // the indexed buffer should not contain the OP_RETURN opcode, but this
+      // is added by the buildDataOut function automatically. Remove it.
+      dataArray = dataArray.slice(1);
     }
-    const hashed = Hash.sha256(toArray(dataBuffer));
-    messageBuffer = Buffer.from(hashed);
+    messageBuffer = Hash.sha256(dataArray);
   } else {
     // regular AIP
-    messageBuffer = Buffer.concat(signatureBufferStatements);
+    messageBuffer = signatureBufferStatements.flat();
   }
 
+  // AIOP uses address, HAIP uses signing_address field names
   const addressString = (aipObj as AIPType).address || (aipObj as HAIPType).signing_address;
-  const signatureStr = aipObj.signature as string;
-  const signature = Signature.fromCompact(signatureStr, 'base64');
+  if (!addressString || !aipObj.signature) {
+    return false;
+  }
+
+  let signature: Signature;
+  try {
+    signature = Signature.fromCompact(aipObj.signature, 'base64');
+  } catch (e) {
+    console.log('[validateSignature] Failed to parse signature:', e);
+    return false;
+  }
 
   const tryNormalLogic = (): boolean => {
-    console.log("[validateSignature:tryNormalLogic] start");
     try {
-      const msgArr = toArray(messageBuffer);
-      const recoveredPubkey = recoverPublicKeyFromBSM(msgArr, signature, addressString);
-      console.log("[tryNormalLogic] recoveredPubkey ok, verifying with BSM.verify now");
-      const res = BSM.verify(msgArr, signature, recoveredPubkey);
-      console.log("[tryNormalLogic] BSM.verify result:", res);
-      return res;
-    } catch (err) {
-      console.log("[tryNormalLogic] error:", err);
-      return false;
+      const msgHash = BSM.magicHash(messageBuffer);
+      const bigMsg = toBigNumberFromBuffer(msgHash);
+
+      for (let recovery = 0; recovery < 4; recovery++) {
+        try {
+          const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
+          const pubKeyHash = publicKey.toHash() as number[];
+          const { prefix } = fromBase58Check(addressString);
+          const recoveredAddress = toBase58Check(pubKeyHash, prefix as number[]);
+          if (recoveredAddress === addressString) {
+            return BSM.verify(messageBuffer, signature, publicKey);
+          }
+        } catch (e) {
+          console.log('[tryNormalLogic] Recovery error:', e);
+        }
+      }
+    } catch (e) {
+      console.log('[tryNormalLogic] error:', e);
     }
+    return false;
   };
 
   const tryTwetchLogic = (): boolean => {
-    console.log("[validateSignature:tryTwetchLogic] start");
-    // For twetch: remove first and last item and sha256 the remainder, interpret hex as utf8
+    // Twetch signs a UTF-8 buffer of the hex string of a sha256 hash of the message
+    // Without 0x06 (OP_RETURN) and without 0x7c at the end, the trailing pipe ("|")
     if (signatureBufferStatements.length <= 2) {
       return false;
     }
-    const trimmed = signatureBufferStatements.slice(1, -1);
-    console.log("[tryTwetchLogic] trimmedStatements count:", trimmed.length);
-    const buff = Hash.sha256(toArray(Buffer.concat(trimmed)));
-    const hexStr = toHex(buff);
-    const twetchMsg = Buffer.from(hexStr, "utf8");
+
     try {
-      const recoveredPubkey = recoverPublicKeyFromBSM(toArray(twetchMsg), signature, addressString);
-      console.log("[tryTwetchLogic] recoveredPubkey ok, verifying with BSM.verify now");
-      const res = BSM.verify(toArray(twetchMsg), signature, recoveredPubkey);
-      console.log("[tryTwetchLogic] BSM.verify result:", res);
-      return res;
-    } catch (err) {
-      console.log("[tryTwetchLogic] error:", err);
-      return false;
+      const trimmed = signatureBufferStatements.slice(1, -1);
+      const buff = Hash.sha256(trimmed.flat());
+      const hexStr = toHex(buff);
+      const twetchMsg = toArray(hexStr, 'utf8');
+
+      const msgHash = BSM.magicHash(twetchMsg);
+      const bigMsg = toBigNumberFromBuffer(msgHash);
+
+      for (let recovery = 0; recovery < 4; recovery++) {
+        try {
+          const publicKey = signature.RecoverPublicKey(recovery, bigMsg);
+          const pubKeyHash = publicKey.toHash() as number[];
+          const { prefix } = fromBase58Check(addressString);
+          const recoveredAddress = toBase58Check(pubKeyHash, prefix as number[]);
+          if (recoveredAddress === addressString) {
+            return BSM.verify(twetchMsg, signature, publicKey);
+          }
+        } catch (e) {
+          console.log('[tryTwetchLogic] Recovery error:', e);
+        }
+      }
+    } catch (e) {
+      console.log('[tryTwetchLogic] error:', e);
     }
+    return false;
   };
 
   let verified = tryNormalLogic();
@@ -233,81 +185,85 @@ async function validateSignature(
     verified = tryTwetchLogic();
   }
 
-  console.log("[validateSignature] final verified=", verified);
-  (aipObj as AIPType).verified = verified;
+  aipObj.verified = verified;
   return verified;
 }
 
+function toBigNumberFromBuffer(buffer: number[]): BigNumber {
+  const hex = toHex(buffer);
+  return new BigNumber(hex, 16);
+}
+
 export enum SIGPROTO {
-  HAIP = "HAIP",
-  AIP = "AIP",
+  HAIP = 'HAIP',
+  AIP = 'AIP',
+  BITCOM_HASHED = 'BITCOM_HASHED',
+  PSP = 'PSP',
 }
 
 export const AIPhandler = async (
-  useOpReturnSchema: any[],
+  useOpReturnSchema: SchemaField[],
   protocol: SIGPROTO,
   dataObj: any,
   cell: Cell[],
-  tape: Tape[],
-  tx?: any
-) => {
-  const aipObj: { [key: string]: any } = { verified: false };
+  tape: Tape[]
+): Promise<HandlerProps> => {
+  // loop over the schema
+  const aipObj: { [key: string]: number | number[] | string | boolean } = {};
 
-  // minimal fields check
+  // Does not have the required number of fields
   if (cell.length < 4) {
-    throw new Error("AIP requires at least 4 fields including the prefix");
+    throw new Error('AIP requires at least 4 fields including the prefix');
   }
 
   for (const [idx, schemaField] of Object.entries(useOpReturnSchema)) {
     const x = Number.parseInt(idx, 10);
+
     if (Array.isArray(schemaField)) {
+      // signature indexes are specified
       const [aipField] = Object.keys(schemaField[0]) as (keyof AIPType)[];
+      // run through the rest of the fields in this cell, should be de indexes
       const fieldData: number[] = [];
       for (let i = x + 1; i < cell.length; i++) {
-        if (cell[i].h) {
-          fieldData.push(Number.parseInt(cell[i].h!, 16));
+        if (cell[i].h && Array.isArray(fieldData)) {
+          fieldData.push(Number.parseInt(cell[i].h || '', 16));
         }
       }
       aipObj[aipField] = fieldData;
     } else {
       const [aipField] = Object.keys(schemaField) as (keyof AIPType)[];
       const [schemaEncoding] = Object.values(schemaField);
-      aipObj[aipField] = cellValue(cell[x + 1], schemaEncoding as string) || "";
+      aipObj[aipField] = cellValue(cell[x + 1], schemaEncoding) || '';
     }
   }
 
+  // There is an issue where some services add the signature as binary to the transaction
+  // whereas others add the signature as base64. This will confuse bob and the parser and
+  // the signature will not be verified. When the signature is added in binary cell[3].s is
+  // binary, otherwise cell[3].s contains the base64 signature and should be used.
   if (cell[0].s === address && cell[3].s && isBase64(cell[3].s)) {
     aipObj.signature = cell[3].s;
   }
 
-  console.log("[AIPhandler] AIP object before validate:", aipObj);
-
   if (!aipObj.signature) {
-    throw new Error("AIP requires a signature");
+    throw new Error('AIP requires a signature');
   }
 
-  await validateSignature(aipObj as Partial<AIPType>, cell, tape);
-  console.log("[AIPhandler] After validate, verified:", aipObj.verified);
+  validateSignature(aipObj as Partial<AIPType>, cell, tape);
 
   saveProtocolData(dataObj, protocol, aipObj);
+  return { dataObj, cell, tape };
 };
 
-const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
+const handler = async ({ dataObj, cell, tape }: HandlerProps): Promise<HandlerProps> => {
   if (!tape) {
-    throw new Error("Invalid AIP transaction");
+    throw new Error('Invalid AIP transaction. tape is required');
   }
-  return await AIPhandler(
-    opReturnSchema,
-    SIGPROTO.AIP,
-    dataObj,
-    cell,
-    tape,
-    tx
-  );
+  return AIPhandler(opReturnSchema, SIGPROTO.AIP, dataObj, cell, tape);
 };
 
 export const AIP: Protocol = {
-  name: "AIP",
+  name: 'AIP',
   address,
   opReturnSchema,
   handler,

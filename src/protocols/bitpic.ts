@@ -1,18 +1,17 @@
 import { BSM, Hash, PublicKey, Signature, Utils } from "@bsv/sdk";
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import type { BITPIC as BITPICType } from "../types/protocols/bitpic";
 import { saveProtocolData } from "../utils";
 const { magicHash } = BSM;
 const { toArray } = Utils;
 
-
 const protocolAddress = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p";
 
-const opReturnSchema = [
-  { paymail: "string" },
-  { pubkey: "binary" },
-  { signature: "string" },
-];
+const opReturnSchema: SchemaField[] = [
+  { paymail: 'string' },
+  { pubkey: 'binary' },
+  { signature: 'string' },
+]
 
 const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
   // Validation
