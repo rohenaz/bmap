@@ -1,27 +1,19 @@
-import { parse as Se } from "bpu-ts";
-import { Script as Pe, Hash as v, Signature as B, Utils as R, BSM as y, BigNumber as Y, PublicKey as Z } from "@bsv/sdk";
+import { parse as Pe } from "bpu-ts";
+import { Script as Se, Hash as I, Signature as B, Utils as R, BSM as b, BigNumber as Y, PublicKey as Z } from "@bsv/sdk";
 import { decode as L } from "@msgpack/msgpack";
-const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), Ae = (t) => t.length > 0 && t.every((e) => e === "object"), w = (t, e) => {
-  if (t) {
-    if (e === "string")
-      return t.s ? t.s : t.ls || "";
-    if (e === "hex")
-      return t.h ? t.h : t.lh || (t.b ? Buffer.from(t.b, "base64").toString("hex") : t.lb && Buffer.from(t.lb, "base64").toString("hex")) || "";
-    if (e === "number")
-      return Number.parseInt(t.h ? t.h : t.lh || "0", 16);
-    if (e === "file")
-      return `bitfs://${t.f ? t.f : t.lf}`;
-  } else throw new Error(`cannot get cell value of: ${t}`);
-  return (t.b ? t.b : t.lb) || "";
-}, Ie = (t) => t.cell.some((e) => e.op === 106), J = (t) => {
+const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), ve = (t) => t.length > 0 && t.every((e) => e === "object"), w = (t, e) => {
+  if (!t)
+    throw new Error(`cannot get cell value of: ${t}`);
+  return e === "string" ? t.s ? t.s : t.ls || "" : e === "hex" ? t.h ? t.h : t.lh || (t.b ? Buffer.from(t.b, "base64").toString("hex") : t.lb && Buffer.from(t.lb, "base64").toString("hex")) || "" : e === "number" ? Number.parseInt(t.h ? t.h : t.lh || "0", 16) : e === "file" ? `bitfs://${t.f ? t.f : t.lf}` : (t.b ? t.b : t.lb) || "";
+}, Ae = (t) => t.cell.some((e) => e.op === 106), D = (t) => {
   var r;
   if (t.cell.length !== 2)
     return !1;
   const e = t.cell.findIndex((n) => n.op === 106);
   return e !== -1 ? ((r = t.cell[e - 1]) == null ? void 0 : r.op) === 0 : !1;
-}, p = (t, e, r) => {
+}, m = (t, e, r) => {
   t[e] ? t[e].push(r) : t[e] = [r];
-}, ve = (t, e, r, n, s) => {
+}, Ie = (t, e, r, n, s) => {
   const o = {}, a = e.length + 1;
   if (n.length < a)
     throw new Error(
@@ -31,7 +23,7 @@ const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), Ae = (t)
     const c = Number.parseInt(i, 10), [f] = Object.keys(d), [u] = Object.values(d);
     o[f] = w(n[c + 1], u);
   }
-  p(r, t, o);
+  m(r, t, o);
 }, Be = (t) => {
   const e = "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?";
   return new RegExp(`^${e}$`, "gi").test(t);
@@ -42,7 +34,7 @@ const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), Ae = (t)
     return !1;
   const e = [...t].map((s) => s.ops).splice(2, t.length), r = w(t[1], "hex"), n = Buffer.from(r).byteLength;
   return e[1] = `OP_${n}`, K[1] = `OP_${n}`, e.join() === K.join();
-}, $e = ({ dataObj: t, cell: e, out: r }) => {
+}, ke = ({ dataObj: t, cell: e, out: r }) => {
   if (!e[0] || !r)
     throw new Error("Invalid 21e8 tx. dataObj, cell, out and tx are required.");
   const n = w(e[0], "hex"), s = w(e[1], "hex");
@@ -54,12 +46,12 @@ const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), Ae = (t)
     value: r.e.v,
     txid: n
   };
-  p(t, "21E8", a);
+  m(t, "21E8", a);
 }, O = {
   name: "21E8",
-  handler: $e,
+  handler: ke,
   scriptChecker: He
-}, { toArray: A, toHex: I, fromBase58Check: F, toBase58Check: V } = R, D = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva", W = [
+}, { toArray: v, toHex: A, fromBase58Check: F, toBase58Check: V } = R, J = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva", W = [
   { algorithm: "string" },
   { address: "string" },
   { signature: "binary" },
@@ -79,19 +71,19 @@ function Re(t, e, r) {
   let s = t.index || [];
   const o = ["6a"];
   for (let h = 0; h < n; h++) {
-    const g = r[h];
-    if (!J(g)) {
-      for (const l of g.cell)
-        l.h ? o.push(l.h) : l.b ? o.push(I(A(l.b, "base64"))) : l.s && o.push(I(A(l.s)));
+    const l = r[h];
+    if (!D(l)) {
+      for (const g of l.cell)
+        g.h ? o.push(g.h) : g.b ? o.push(A(v(g.b, "base64"))) : g.s && o.push(A(v(g.s)));
       o.push("7c");
     }
   }
   if (t.hashing_algorithm && t.index_unit_size) {
     const h = t.index_unit_size * 2;
     s = [];
-    const g = e[6].h;
-    for (let l = 0; l < g.length; l += h)
-      s.push(Number.parseInt(g.substr(l, h), 16));
+    const l = e[6].h;
+    for (let g = 0; g < l.length; g += h)
+      s.push(Number.parseInt(l.substr(g, h), 16));
     t.index = s;
   }
   const a = [];
@@ -99,17 +91,17 @@ function Re(t, e, r) {
     for (const h of s) {
       if (h >= o.length)
         return console.log("[validateSignature] Index out of bounds:", h), !1;
-      a.push(A(o[h], "hex"));
+      a.push(v(o[h], "hex"));
     }
   else
     for (const h of o)
-      a.push(A(h, "hex"));
+      a.push(v(h, "hex"));
   let i;
   if (t.hashing_algorithm) {
     t.index_unit_size || a.shift();
-    const h = Pe.fromHex(I(a.flat()));
-    let g = A(h.toHex(), "hex");
-    t.index_unit_size && (g = g.slice(1)), i = v.sha256(g);
+    const h = Se.fromHex(A(a.flat()));
+    let l = v(h.toHex(), "hex");
+    t.index_unit_size && (l = l.slice(1)), i = I.sha256(l);
   } else
     i = a.flat();
   const d = t.address || t.signing_address;
@@ -123,14 +115,14 @@ function Re(t, e, r) {
   }
   const f = () => {
     try {
-      const h = y.magicHash(i), g = q(h);
-      for (let l = 0; l < 4; l++)
+      const h = b.magicHash(i), l = q(h);
+      for (let g = 0; g < 4; g++)
         try {
-          const m = c.RecoverPublicKey(l, g), E = m.toHash(), { prefix: S } = F(d);
-          if (V(E, S) === d)
-            return y.verify(i, c, m);
-        } catch (m) {
-          console.log("[tryNormalLogic] Recovery error:", m);
+          const y = c.RecoverPublicKey(g, l), E = y.toHash(), { prefix: P } = F(d);
+          if (V(E, P) === d)
+            return b.verify(i, c, y);
+        } catch (y) {
+          console.log("[tryNormalLogic] Recovery error:", y);
         }
     } catch (h) {
       console.log("[tryNormalLogic] error:", h);
@@ -140,12 +132,12 @@ function Re(t, e, r) {
     if (a.length <= 2)
       return !1;
     try {
-      const h = a.slice(1, -1), g = v.sha256(h.flat()), l = I(g), m = A(l, "utf8"), E = y.magicHash(m), S = q(E);
-      for (let P = 0; P < 4; P++)
+      const h = a.slice(1, -1), l = I.sha256(h.flat()), g = A(l), y = v(g, "utf8"), E = b.magicHash(y), P = q(E);
+      for (let S = 0; S < 4; S++)
         try {
-          const x = c.RecoverPublicKey(P, S), k = x.toHash(), { prefix: T } = F(d);
-          if (V(k, T) === d)
-            return y.verify(m, c, x);
+          const x = c.RecoverPublicKey(S, P), $ = x.toHash(), { prefix: T } = F(d);
+          if (V($, T) === d)
+            return b.verify(y, c, x);
         } catch (x) {
           console.log("[tryTwetchLogic] Recovery error:", x);
         }
@@ -154,11 +146,11 @@ function Re(t, e, r) {
     }
     return !1;
   };
-  let b = f();
-  return b || (b = u()), t.verified = b, b;
+  let p = f();
+  return p || (p = u()), t.verified = p, p;
 }
 function q(t) {
-  const e = I(t);
+  const e = A(t);
   return new Y(e, 16);
 }
 var G = /* @__PURE__ */ ((t) => (t.HAIP = "HAIP", t.AIP = "AIP", t.BITCOM_HASHED = "BITCOM_HASHED", t.PSP = "PSP", t))(G || {});
@@ -178,18 +170,18 @@ const j = async (t, e, r, n, s) => {
       o[c] = w(n[d + 1], f) || "";
     }
   }
-  if (n[0].s === D && n[3].s && Be(n[3].s) && (o.signature = n[3].s), !o.signature)
+  if (n[0].s === J && n[3].s && Be(n[3].s) && (o.signature = n[3].s), !o.signature)
     throw new Error("AIP requires a signature");
-  return Re(o, n, s), p(r, e, o), { dataObj: r, cell: n, tape: s };
-}, ke = async ({ dataObj: t, cell: e, tape: r }) => {
+  return Re(o, n, s), m(r, e, o), { dataObj: r, cell: n, tape: s };
+}, $e = async ({ dataObj: t, cell: e, tape: r }) => {
   if (!r)
     throw new Error("Invalid AIP transaction. tape is required");
   return j(W, "AIP", t, e, r);
 }, X = {
   name: "AIP",
-  address: D,
+  address: J,
   opReturnSchema: W,
-  handler: ke
+  handler: $e
 }, Te = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut", _ = [
   { content: ["string", "binary", "file"] },
   { "content-type": "string" },
@@ -216,8 +208,14 @@ const j = async (t, e, r, n, s) => {
           return;
         }
         e[3] || (e[3] = { h: "", b: "", s: "", i: 0, ii: 0 }), e[3].s = f === "string" ? "utf-8" : "binary";
-      } else
-        f = (o = e[3]) != null && o.s ? n.get(e[3].s.replace("-", "").toLowerCase()) : null;
+      } else {
+        const p = (o = e[3]) != null && o.s ? n.get(e[3].s.replace("-", "").toLowerCase()) : null;
+        if (!p) {
+          console.warn("Problem inferring encoding. Malformed B data.", e);
+          return;
+        }
+        f = p;
+      }
     if (c === "encoding" && !e[d + 1] || c === "filename" && !e[d + 1])
       continue;
     if (!e || !e[d + 1])
@@ -225,16 +223,20 @@ const j = async (t, e, r, n, s) => {
     const u = e[d + 1];
     s[c] = w(u, f);
   }
-  p(t, "B", s);
+  m(t, "B", s);
 }, ee = {
   name: "B",
   address: Te,
   opReturnSchema: _,
   handler: Me
-}, Ce = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT", te = [{ type: "string" }, { hash: "string" }, { sequence: "string" }], Oe = async ({ dataObj: t, cell: e, tx: r }) => {
+}, Ce = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT", te = [
+  { type: "string" },
+  { hash: "string" },
+  { sequence: "string" }
+], Oe = ({ dataObj: t, cell: e, tx: r }) => {
   if (!r)
     throw new Error("Invalid BAP tx, tx required");
-  ve("BAP", te, t, e, r);
+  Ie("BAP", te, t, e, r);
 }, re = {
   name: "BAP",
   address: Ce,
@@ -264,13 +266,13 @@ const j = async (t, e, r, n, s) => {
   if (!e.length || !e.every((n) => n.s))
     throw new Error("Invalid Bitcom tx");
   const r = e.map((n) => n != null && n.s ? n.s : "");
-  p(t, "BITCOM", r);
+  m(t, "BITCOM", r);
 }, Ke = {
   name: "BITCOM",
   address: _e,
   opReturnSchema: Ne,
   handler: Le
-}, { toArray: z, toBase58Check: C, toHex: Fe } = R, { magicHash: Ve } = y, ne = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC", se = [
+}, { toArray: z, toBase58Check: C, toHex: Fe } = R, { magicHash: Ve } = b, ne = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC", se = [
   { bitkey_signature: "string" },
   { user_signature: "string" },
   { paymail: "string" },
@@ -285,7 +287,7 @@ function U(t, e) {
   for (let s = 0; s < 4; s++)
     try {
       const o = e.RecoverPublicKey(s, n);
-      if (y.verify(t, e, o))
+      if (b.verify(t, e, o))
         return o;
     } catch {
     }
@@ -299,18 +301,18 @@ const ze = async ({ dataObj: t, cell: e }) => {
     const be = Number.parseInt(T, 10), we = Object.keys(M)[0], Ee = Object.values(M)[0];
     r[we] = w(e[be + 1], Ee);
   }
-  const n = r.pubkey, o = Z.fromString(n).toHash(), a = C(o), d = Buffer.from(r.paymail).toString("hex") + n, c = Buffer.from(d, "hex"), f = v.sha256(z(c)), u = B.fromCompact(r.bitkey_signature, "base64"), b = U(f, u), h = b.toHash(), g = C(h), l = y.verify(f, u, b) && g === ne, m = z(Buffer.from(n, "utf8")), E = B.fromCompact(r.user_signature, "base64"), S = U(m, E), P = S.toHash(), x = C(P), k = y.verify(m, E, S) && x === a;
-  r.verified = l && k, p(t, "BITKEY", r);
+  const n = r.pubkey, o = Z.fromString(n).toHash(), a = C(o), d = Buffer.from(r.paymail).toString("hex") + n, c = Buffer.from(d, "hex"), f = I.sha256(z(c)), u = B.fromCompact(r.bitkey_signature, "base64"), p = U(f, u), h = p.toHash(), l = C(h), g = b.verify(f, u, p) && l === ne, y = z(Buffer.from(n, "utf8")), E = B.fromCompact(r.user_signature, "base64"), P = U(y, E), S = P.toHash(), x = C(S), $ = b.verify(y, E, P) && x === a;
+  r.verified = g && $, m(t, "BITKEY", r);
 }, Ue = {
   name: "BITKEY",
   address: ne,
   opReturnSchema: se,
   handler: ze
-}, { magicHash: Qe } = y, { toArray: Ye } = R, oe = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p", Ze = [
+}, { magicHash: Qe } = b, { toArray: Ye } = R, oe = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p", Ze = [
   { paymail: "string" },
   { pubkey: "binary" },
   { signature: "string" }
-], Je = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
+], De = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
   if (e[0].s !== oe || !e[1] || !e[2] || !e[3] || !e[1].s || !e[2].b || !e[3].s || !r)
     throw new Error(`Invalid BITPIC record: ${n}`);
   const s = {
@@ -321,17 +323,17 @@ const ze = async ({ dataObj: t, cell: e }) => {
   };
   if (r[1].cell[0].s === "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut")
     try {
-      const a = e[1].lb || e[1].b, i = v.sha256(Ye(a, "base64")), d = B.fromCompact(s.signature, "base64"), c = Z.fromString(s.pubkey), f = Qe(i);
-      s.verified = y.verify(f, d, c);
+      const a = e[1].lb || e[1].b, i = I.sha256(Ye(a, "base64")), d = B.fromCompact(s.signature, "base64"), c = Z.fromString(s.pubkey), f = Qe(i);
+      s.verified = b.verify(f, d, c);
     } catch {
       s.verified = !1;
     }
-  p(t, "BITPIC", s);
-}, De = {
+  m(t, "BITPIC", s);
+}, Je = {
   name: "BITPIC",
   address: oe,
   opReturnSchema: Ze,
-  handler: Je
+  handler: De
 }, We = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3", ie = [
   { algorithm: "string" },
   { algorithm: "string" },
@@ -358,13 +360,17 @@ const ze = async ({ dataObj: t, cell: e }) => {
   opReturnSchema: ie,
   handler: Ge
 }, N = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5", ae = [
-  { SET: "string" },
-  { SELECT: "string" },
-  { ADD: "string" },
-  { DELETE: "string" },
-  { JSON: "string" },
-  { REMOVE: "string" },
-  { CLEAR: "string" }
+  {
+    cmd: {
+      SET: [{ key: "string" }, { val: "string" }],
+      SELECT: [{ tx: "string" }],
+      ADD: [{ key: "string" }, [{ val: "string" }]],
+      DELETE: [{ key: "string" }, [{ val: "string" }]],
+      JSON: "string",
+      REMOVE: [[{ key: "string" }]],
+      CLEAR: [[{ txid: "string" }]]
+    }
+  }
 ], Xe = (t, e) => {
   let r = null;
   for (const n of t) {
@@ -383,10 +389,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
   }
 }, tt = (t, e) => {
   for (const r of t)
-    if (r.i === 0 || r.i === 1) {
-      e.SELECT = "TODO";
-      continue;
-    }
+    (r.i === 0 || r.i === 1) && (e.SELECT = "TODO");
 }, rt = (t, e) => {
   for (const r of t)
     if (!(r.i === 0 || r.i === 1) && r.i === 2)
@@ -412,17 +415,17 @@ const ze = async ({ dataObj: t, cell: e }) => {
   let r = null;
   for (const n of t) {
     if (!n.s || n.i === 0 || n.i === 1)
-      return;
+      continue;
     const s = n.s;
     if (n.i % 2 === 0)
-      s === "collection" ? (e.collection = "", r = "collection") : (e[s] = "", r = s);
+      e[s] = "", r = s;
     else {
       if (!r)
         throw new Error(`malformed MAP syntax. Cannot parse.${r}`);
       e[r] = s;
     }
   }
-}, ot = async ({ dataObj: t, cell: e, tx: r }) => {
+}, ot = ({ dataObj: t, cell: e, tx: r }) => {
   if (e[0].s !== N || !e[1] || !e[1].s || !e[2] || !e[2].s)
     throw new Error(`Invalid MAP record: ${r}`);
   let n = {};
@@ -437,6 +440,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
       s: N,
       i: 0
     }), i[1].s) {
+      // Also check for SELECT commands and strip off the <SELECT> <TXID> part and run it through
       case "ADD": {
         Xe(i, n);
         break;
@@ -468,7 +472,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
         break;
       }
     }
-  p(t, "MAP", n);
+  m(t, "MAP", n);
 }, ce = {
   name: "MAP",
   address: N,
@@ -479,7 +483,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
   { parent: "string" },
   { name: "string" }
 ], Q = async (t, e) => {
-  const r = Buffer.from(t + e), n = v.sha256(it(r));
+  const r = Buffer.from(t + e), n = I.sha256(it(r));
   return at(n);
 }, dt = async ({ dataObj: t, cell: e, tx: r }) => {
   if (!e.length || e[0].s !== "meta" || !e[1] || !e[1].s || !e[2] || !e[2].s || !r)
@@ -514,18 +518,12 @@ const ze = async ({ dataObj: t, cell: e }) => {
 }, ht = (t) => {
   if (t.length < 13)
     return !1;
-  const e = $(t, (o) => o.ops === "OP_IF"), r = $(
-    t,
-    (o, a) => a > e && o.ops === "OP_ENDIF"
-  ), n = t.slice(e, r), s = t[e - 1];
+  const e = k(t, (o) => o.ops === "OP_IF"), r = k(t, (o, a) => a > e && o.ops === "OP_ENDIF"), n = t.slice(e, r), s = t[e - 1];
   return (s == null ? void 0 : s.op) === 0 && !!n[0] && !!n[1] && n[1].s === "ord";
 }, ut = ({ dataObj: t, cell: e, out: r }) => {
   if (!e[0] || !r)
     throw new Error("Invalid Ord tx. dataObj, cell, out and tx are required.");
-  const n = $(e, (c) => c.ops === "OP_IF"), s = $(
-    e,
-    (c, f) => f > n && c.ops === "OP_ENDIF"
-  ) + 1, o = e.slice(n, s);
+  const n = k(e, (c) => c.ops === "OP_IF"), s = k(e, (c, f) => f > n && c.ops === "OP_ENDIF") + 1, o = e.slice(n, s);
   if (!o[0] || !o[1] || o[1].s !== "ord")
     throw new Error("Invalid Ord tx. Prefix not found.");
   let a, i;
@@ -535,37 +533,42 @@ const ze = async ({ dataObj: t, cell: e }) => {
     throw new Error("Invalid Ord data.");
   if (!i)
     throw new Error("Invalid Ord content type.");
-  p(t, "ORD", {
+  const d = {
     data: a,
     contentType: i
-  });
+  };
+  t.ORD || (t.ORD = []), t.ORD.push(d);
 }, H = {
   name: "ORD",
   handler: ut,
   scriptChecker: ht
 };
-function $(t, e) {
-  return lt(t, e);
+function k(t, e) {
+  return gt(t, e);
 }
-function lt(t, e, r) {
+function gt(t, e, r) {
   const n = t == null ? 0 : t.length;
   if (!n)
     return -1;
   let s = n - 1;
-  return gt(t, e, s);
+  return lt(t, e, s);
 }
-function gt(t, e, r, n) {
+function lt(t, e, r, n) {
   let s = r + 1;
   for (; s--; )
     if (e(t[s], s, t))
       return s;
   return -1;
 }
-const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", pt = [{ pair: "json" }, { address: "string" }, { timestamp: "string" }], mt = ({ dataObj: t, cell: e, tx: r }) => {
+const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", mt = [
+  { pair: "json" },
+  { address: "string" },
+  { timestamp: "string" }
+], pt = ({ dataObj: t, cell: e, tx: r }) => {
   if (e[0].s !== de || !e[1] || !e[2] || !e[3] || !e[1].s || !e[2].s || !e[3].s)
     throw new Error(`Invalid RON record ${r == null ? void 0 : r.tx.h}`);
   const n = JSON.parse(e[1].s), s = Number(e[3].s);
-  p(t, "RON", {
+  m(t, "RON", {
     pair: n,
     address: e[2].s,
     timestamp: s
@@ -573,18 +576,18 @@ const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", pt = [{ pair: "json" }, { addre
 }, yt = {
   name: "RON",
   address: de,
-  opReturnSchema: pt,
-  handler: mt
+  opReturnSchema: mt,
+  handler: pt
 }, he = "1SymRe7erxM46GByucUWnB9fEEMgo7spd", bt = [{ url: "string" }], wt = ({ dataObj: t, cell: e, tx: r }) => {
   if (e[0].s !== he || !e[1] || !e[1].s)
     throw new Error(`Invalid SymRe tx: ${r}`);
-  p(t, "SYMRE", { url: e[1].s });
+  m(t, "SYMRE", { url: e[1].s });
 }, Et = {
   name: "SYMRE",
   address: he,
   opReturnSchema: bt,
   handler: wt
-}, ue = /* @__PURE__ */ new Map([]), le = /* @__PURE__ */ new Map([]), ge = /* @__PURE__ */ new Map([]), pe = /* @__PURE__ */ new Map(), me = [
+}, ue = /* @__PURE__ */ new Map([]), ge = /* @__PURE__ */ new Map([]), le = /* @__PURE__ */ new Map([]), me = /* @__PURE__ */ new Map(), pe = [
   X,
   ee,
   re,
@@ -593,29 +596,23 @@ const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", pt = [{ pair: "json" }, { addre
   O,
   Ke,
   Ue,
-  De,
+  Je,
   je,
   yt,
   Et,
   H
-], Bt = me.map((t) => t.name), ye = [X, ee, re, ce, fe, H];
+], Bt = pe.map((t) => t.name), ye = [X, ee, re, ce, fe, H];
 for (const t of ye)
-  t.address && ue.set(t.address, t.name), le.set(t.name, t.handler), t.opReturnSchema && pe.set(t.name, t.opReturnSchema), t.scriptChecker && ge.set(t.name, t.scriptChecker);
-class St {
+  t.address && ue.set(t.address, t.name), ge.set(t.name, t.handler), t.opReturnSchema && me.set(t.name, t.opReturnSchema), t.scriptChecker && le.set(t.name, t.scriptChecker);
+class Pt {
   enabledProtocols;
   protocolHandlers;
   protocolScriptCheckers;
   protocolOpReturnSchemas;
   constructor() {
-    this.enabledProtocols = ue, this.protocolHandlers = le, this.protocolScriptCheckers = ge, this.protocolOpReturnSchemas = pe;
+    this.enabledProtocols = ue, this.protocolHandlers = ge, this.protocolScriptCheckers = le, this.protocolOpReturnSchemas = me;
   }
-  addProtocolHandler({
-    name: e,
-    address: r,
-    opReturnSchema: n,
-    handler: s,
-    scriptChecker: o
-  }) {
+  addProtocolHandler({ name: e, address: r, opReturnSchema: n, handler: s, scriptChecker: o }) {
     r && this.enabledProtocols.set(r, e), this.protocolHandlers.set(e, s), n && this.protocolOpReturnSchemas.set(e, n), o && this.protocolScriptCheckers.set(e, o);
   }
   transformTx = async (e) => {
@@ -626,7 +623,7 @@ class St {
       if (n === "out")
         for (const o of e.out) {
           const { tape: a } = o;
-          a != null && a.some((c) => Ie(c)) && (r = await this.processDataProtocols(a, o, e, r));
+          a != null && a.some((c) => Ae(c)) && (r = await this.processDataProtocols(a, o, e, r));
           const i = this.protocolScriptCheckers.get(O.name), d = this.protocolScriptCheckers.get(H.name);
           if (a != null && a.some((c) => {
             const { cell: f } = c;
@@ -655,7 +652,7 @@ class St {
         }
       else n === "in" ? r[n] = s.map((o) => {
         const a = { ...o };
-        return delete a.tape, a;
+        return a.tape = void 0, a;
       }) : r[n] = s;
     if (r.METANET && e.parent) {
       const n = {
@@ -664,7 +661,7 @@ class St {
         child: e.child,
         head: e.head
       };
-      r.METANET.push(n), delete r.ancestor, delete r.child, delete r.parent, delete r.head, delete r.node;
+      r.METANET.push(n), r.ancestor = void 0, r.child = void 0, r.parent = void 0, r.head = void 0, r.node = void 0;
     }
     return r;
   };
@@ -686,7 +683,7 @@ class St {
         tx: a
       });
     } else
-      p(n, e, r);
+      m(n, e, r);
   };
   processDataProtocols = async (e, r, n, s) => {
     var o;
@@ -694,7 +691,7 @@ class St {
       const { cell: i } = a;
       if (!i)
         throw new Error("empty cell while parsing");
-      if (J(a))
+      if (D(a))
         continue;
       const d = i[0].s;
       if (d) {
@@ -711,10 +708,10 @@ class St {
     return s;
   };
 }
-const Pt = async (t) => {
+const St = async (t) => {
   const e = `https://api.whatsonchain.com/v1/bsv/main/tx/${t}/hex`;
   return console.log("hitting", e), await (await fetch(e)).text();
-}, xt = async (t) => await Se({
+}, xt = async (t) => await Pe({
   tx: { r: t },
   split: [
     {
@@ -728,7 +725,7 @@ const Pt = async (t) => {
 }), Ht = async (t, e) => {
   if (typeof t == "string") {
     let n;
-    if (t.length === 64 && (n = await Pt(t)), Buffer.from(t).byteLength <= 146)
+    if (t.length === 64 && (n = await St(t)), Buffer.from(t).byteLength <= 146)
       throw new Error("Invalid rawTx");
     n || (n = t);
     const s = await xt(n);
@@ -737,12 +734,12 @@ const Pt = async (t) => {
     else
       throw new Error("Invalid txid");
   }
-  const r = new St();
+  const r = new Pt();
   if (e)
     if (r.enabledProtocols.clear(), xe(e))
-      for (const n of me)
+      for (const n of pe)
         e != null && e.includes(n.name) && r.addProtocolHandler(n);
-    else if (Ae(e))
+    else if (ve(e))
       for (const n of e) {
         const s = n;
         s && r.addProtocolHandler(s);
@@ -754,12 +751,12 @@ const Pt = async (t) => {
   return r.transformTx(t);
 };
 export {
-  St as BMAP,
+  Pt as BMAP,
   Ht as TransformTx,
-  me as allProtocols,
+  pe as allProtocols,
   xt as bobFromRawTx,
   ye as defaultProtocols,
-  Pt as fetchRawTx,
+  St as fetchRawTx,
   Bt as supportedProtocols
 };
 //# sourceMappingURL=bmap.es.js.map

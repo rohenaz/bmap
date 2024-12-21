@@ -1,6 +1,6 @@
+import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
-import { describe, expect, test } from "bun:test";
 import { bobFromRawTx } from "../../src/bmap";
 
 const bapHex = fs.readFileSync(

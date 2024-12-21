@@ -1,9 +1,9 @@
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import { saveProtocolData } from "../utils";
 
 const protocolAddress = "$";
 
-const opReturnSchema = [
+const opReturnSchema: SchemaField[] = [
   {
     su: [{ pubkey: "string" }, { sign_position: "string" }, { signature: "string" }],
     echo: [{ data: "string" }, { to: "string" }, { filename: "string" }],

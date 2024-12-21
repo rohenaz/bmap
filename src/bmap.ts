@@ -87,13 +87,7 @@ export class BMAP {
     this.protocolOpReturnSchemas = protocolOpReturnSchemas;
   }
 
-  addProtocolHandler({
-    name,
-    address,
-    opReturnSchema,
-    handler,
-    scriptChecker,
-  }: Protocol) {
+  addProtocolHandler({ name, address, opReturnSchema, handler, scriptChecker }: Protocol) {
     if (address) {
       this.enabledProtocols.set(address, name);
     }
@@ -174,7 +168,7 @@ export class BMAP {
       } else if (key === "in") {
         dataObj[key] = val.map((v: In) => {
           const r = { ...v } as any;
-          delete r.tape;
+          r.tape = undefined;
           return r as In;
         });
       } else {
@@ -193,11 +187,11 @@ export class BMAP {
       } as MetaNet;
       (dataObj.METANET as MetaNet[]).push(meta);
       // remove parent and node from root level for (MOM data)
-      delete dataObj.ancestor;
-      delete dataObj.child;
-      delete dataObj.parent;
-      delete dataObj.head;
-      delete dataObj.node;
+      dataObj.ancestor = undefined;
+      dataObj.child = undefined;
+      dataObj.parent = undefined;
+      dataObj.head = undefined;
+      dataObj.node = undefined;
     }
 
     return dataObj as BmapTx;
@@ -215,10 +209,7 @@ export class BMAP {
     });
   };
 
-  process = async (
-    protocolName: string,
-    { cell, dataObj, tape, out, tx }: HandlerProps,
-  ) => {
+  process = async (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => {
     if (
       this.protocolHandlers.has(protocolName) &&
       typeof this.protocolHandlers.get(protocolName) === "function"
@@ -243,7 +234,7 @@ export class BMAP {
     tape: Tape[],
     out: Out,
     tx: BobTx,
-    dataObj: Partial<BobTx>,
+    dataObj: Partial<BobTx>
   ): Promise<Partial<BobTx>> => {
     // loop over tape
     for (const cellContainer of tape) {
@@ -310,7 +301,7 @@ export const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
 // at the expense of detecting more data protocols
 export const TransformTx = async (
   tx: BobTx | string | MomTx | BmapTx,
-  protocols?: string[] | Protocol[],
+  protocols?: string[] | Protocol[]
 ) => {
   if (typeof tx === "string") {
     let rawTx: string | undefined;
@@ -360,7 +351,7 @@ export const TransformTx = async (
       }
     } else {
       throw new Error(
-        "Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).",
+        "Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[])."
       );
     }
   }
@@ -369,4 +360,12 @@ export const TransformTx = async (
 };
 
 // Export types
-export type { BmapTx, BobTx, Handler, HandlerProps, MomTx, Protocol, ScriptChecker } from './types/common';
+export type {
+  BmapTx,
+  BobTx,
+  Handler,
+  HandlerProps,
+  MomTx,
+  Protocol,
+  ScriptChecker,
+} from "./types/common";

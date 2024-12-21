@@ -8,10 +8,10 @@ const { toArray } = Utils;
 const protocolAddress = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p";
 
 const opReturnSchema: SchemaField[] = [
-  { paymail: 'string' },
-  { pubkey: 'binary' },
-  { signature: 'string' },
-]
+  { paymail: "string" },
+  { pubkey: "binary" },
+  { signature: "string" },
+];
 
 const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
   // Validation

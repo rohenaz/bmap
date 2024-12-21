@@ -67,7 +67,7 @@ export declare class BMAP {
     protocolScriptCheckers: Map<string, ScriptChecker>;
     protocolOpReturnSchemas: Map<string, SchemaField[]>;
     constructor();
-    addProtocolHandler({ name, address, opReturnSchema, handler, scriptChecker, }: Protocol): void;
+    addProtocolHandler({ name, address, opReturnSchema, handler, scriptChecker }: Protocol): void;
     transformTx: (tx: BobTx | MomTx) => Promise<BmapTx>;
     processUnknown: (key: string, dataObj: Partial<BmapTx>, out: Out) => void;
     process: (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => Promise<void>;
@@ -89,7 +89,7 @@ export declare type BmapTx = {
     SYMRE?: SYMRE[];
     RON?: RON[];
     HAIP?: HAIP[];
-} & BobTx
+} & BobTx;
 
 export declare const bobFromRawTx: (rawTx: string) => Promise<BobTx>;
 
@@ -106,7 +106,7 @@ export declare type BobTx = {
     };
     lock?: number;
     [key: string]: any;
-} & BpuTx
+} & BpuTx;
 
 export declare const defaultProtocols: Protocol[];
 
@@ -165,7 +165,7 @@ declare type MetanetNode = {
     a: string;
 };
 
-export declare type MomTx = {} & BobTx & MetaNet
+export declare type MomTx = {} & BobTx & MetaNet;
 
 declare type ORD = {
     data: string; //base64
@@ -186,11 +186,13 @@ declare type RON = {
     timestamp: string;
 };
 
-declare type SchemaField = SchemaFieldValue | SchemaFieldValue[];
+declare type SchemaField = { [key: string]: SchemaValue } | SimpleField[];
 
-declare type SchemaFieldValue = { [key: string]: string }
+declare type SchemaValue = string | SimpleField | { [key: string]: SchemaValue } | SchemaValue[];
 
 export declare type ScriptChecker = (cell: Cell[]) => boolean;
+
+declare type SimpleField = { [key: string]: string };
 
 export declare const supportedProtocols: string[];
 

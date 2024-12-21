@@ -1,6 +1,6 @@
 import { Hash, Utils } from "@bsv/sdk";
 import type { Cell, Tape } from "bpu-ts";
-import type { BobTx } from "./types/common";
+import type { BmapTx, BobTx, SchemaField } from "./types/common";
 const { toArray } = Utils;
 
 export const isStringArray = (arr: Array<any>): boolean => {
@@ -29,23 +29,27 @@ export const isObjectArray = (arr: Array<any>): boolean => {
 export const cellValue = (pushData: Cell, schemaEncoding?: string): string | number => {
   if (!pushData) {
     throw new Error(`cannot get cell value of: ${pushData}`);
-  } else if (schemaEncoding === "string") {
-    return pushData["s"] ? pushData.s : pushData.ls || "";
-  } else if (schemaEncoding === "hex") {
-    return pushData["h"]
+  }
+  if (schemaEncoding === "string") {
+    return pushData.s ? pushData.s : pushData.ls || "";
+  }
+  if (schemaEncoding === "hex") {
+    return pushData.h
       ? pushData.h
       : pushData.lh ||
-          (pushData["b"]
+          (pushData.b
             ? Buffer.from(pushData.b, "base64").toString("hex")
             : pushData.lb && Buffer.from(pushData.lb, "base64").toString("hex")) ||
           "";
-  } else if (schemaEncoding === "number") {
-    return Number.parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
-  } else if (schemaEncoding === "file") {
-    return `bitfs://${pushData["f"] ? pushData.f : pushData.lf}`;
+  }
+  if (schemaEncoding === "number") {
+    return Number.parseInt(pushData.h ? pushData.h : pushData.lh || "0", 16);
+  }
+  if (schemaEncoding === "file") {
+    return `bitfs://${pushData.f ? pushData.f : pushData.lf}`;
   }
 
-  return (pushData["b"] ? pushData.b : pushData.lb) || "";
+  return (pushData.b ? pushData.b : pushData.lb) || "";
 };
 
 /**
@@ -100,8 +104,8 @@ export const saveProtocolData = (
  */
 export const bmapOpReturnSchemaHandler = (
   protocolName: string,
-  opReturnSchema: Object[],
-  dataObj: Object,
+  opReturnSchema: SchemaField[],
+  dataObj: BmapTx,
   cell: Cell[],
   tx: BobTx
 ) => {
@@ -121,7 +125,7 @@ export const bmapOpReturnSchemaHandler = (
 
     const [field] = Object.keys(schemaField);
     const [schemaEncoding] = Object.values(schemaField);
-    obj[field] = cellValue(cell[x + 1], schemaEncoding);
+    obj[field] = cellValue(cell[x + 1], schemaEncoding as string);
   }
 
   saveProtocolData(dataObj, protocolName, obj);

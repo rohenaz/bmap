@@ -10,18 +10,10 @@ const scriptChecker = (cell: Cell[]) => {
 
   // Find OP_IF wrapper
   const startIdx = findIndex(cell, (c: Cell) => c.ops === "OP_IF");
-  const endIdx = findIndex(
-    cell,
-    (c: Cell, i: number) => i > startIdx && c.ops === "OP_ENDIF",
-  );
+  const endIdx = findIndex(cell, (c: Cell, i: number) => i > startIdx && c.ops === "OP_ENDIF");
   const ordScript = cell.slice(startIdx, endIdx);
   const prevCell = cell[startIdx - 1];
-  return (
-    prevCell?.op === 0 &&
-    !!ordScript[0] &&
-    !!ordScript[1] &&
-    ordScript[1].s === "ord"
-  );
+  return prevCell?.op === 0 && !!ordScript[0] && !!ordScript[1] && ordScript[1].s === "ord";
 };
 
 const handler = ({ dataObj, cell, out }: HandlerProps): void => {
@@ -31,11 +23,7 @@ const handler = ({ dataObj, cell, out }: HandlerProps): void => {
 
   // Find OP_IF wrapper
   const startIdx = findIndex(cell, (c: Cell) => c.ops === "OP_IF");
-  const endIdx =
-    findIndex(
-      cell,
-      (c: Cell, i: number) => i > startIdx && c.ops === "OP_ENDIF",
-    ) + 1;
+  const endIdx = findIndex(cell, (c: Cell, i: number) => i > startIdx && c.ops === "OP_ENDIF") + 1;
   const ordScript = cell.slice(startIdx, endIdx);
 
   if (!ordScript[0] || !ordScript[1] || ordScript[1].s !== "ord") {
@@ -79,7 +67,10 @@ export const ORD: Protocol = {
   scriptChecker,
 };
 
-function findIndex<T>(array: T[], predicate: (value: T, index: number, array: T[]) => boolean): number {
+function findIndex<T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => boolean
+): number {
   return findLastIndex(array, predicate);
 }
 
@@ -95,8 +86,7 @@ function findLastIndex<T>(
   let index = length - 1;
   if (fromIndex !== undefined) {
     index = fromIndex;
-    index =
-      fromIndex < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1);
+    index = fromIndex < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1);
   }
   return baseFindIndex(array, predicate, index, true);
 }
@@ -105,7 +95,7 @@ function baseFindIndex<T>(
   array: T[],
   predicate: (value: T, index: number, array: T[]) => boolean,
   fromIndex: number,
-  fromRight: boolean,
+  fromRight: boolean
 ): number {
   const { length } = array;
   let index = fromIndex + (fromRight ? 1 : -1);

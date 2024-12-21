@@ -1,6 +1,6 @@
 {
   "name": "bmapjs",
-  "version": "0.4.0-beta.59",
+  "version": "0.4.0-beta.60",
   "description": "A transaction parser for Bitcoin data protocols like B, MAP, BAP, 1Sat Ordinals, SIGMA, METANET, and AIP/HAIP.",
   "main": "dist/bmap.cjs.js",
   "module": "dist/bmap.es.js",
@@ -20,7 +20,8 @@
     "prebuild": "rimraf dist",
     "build": "vite build",
     "lint": "biome check .",
-    "lint:fix": "biome check . --apply",
+    "lint:fix": "biome check . --write",
+    "lint:fix:unsafe": "biome check . --fix --unsafe",
     "format": "biome format .",
     "format:fix": "biome format . --write",
     "test": "bun test",

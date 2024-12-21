@@ -1,16 +1,18 @@
 import type { BpuTx, Cell, In, Out, Tape } from "bpu-ts";
-import type { _21E8 } from "./protocols/_21e8";
-import type { AIP } from "./protocols/aip";
-import type { B } from "./protocols/b";
-import type { BAP } from "./protocols/bap";
-import type { BITCOM } from "./protocols/bitcom";
-import type { BITKEY } from "./protocols/bitkey";
-import type { BITPIC } from "./protocols/bitpic";
-import type { HAIP } from "./protocols/haip";
-import type { MAP } from "./protocols/map";
-import type { ORD } from "./protocols/ord";
-import type { RON } from "./protocols/ron";
-import type { SYMRE } from "./protocols/symre";
+import type {
+  AIP,
+  B,
+  BAP,
+  BITCOM,
+  BITKEY,
+  BITPIC,
+  HAIP,
+  MAP,
+  ORD,
+  RON,
+  SYMRE,
+  _21E8,
+} from "./protocols";
 
 export type HandlerProps = {
   dataObj: BmapTx;
@@ -36,7 +38,7 @@ export type BobTx = {
   };
   lock?: number;
   [key: string]: any;
-} & BpuTx
+} & BpuTx;
 
 export type MetanetNode = {
   tx: string;
@@ -51,7 +53,7 @@ export type MetaNet = {
   head?: boolean;
   node: MetanetNode;
 };
-export type MomTx = {} & BobTx & MetaNet
+export type MomTx = {} & BobTx & MetaNet;
 
 export type BmapTx = {
   timestamp: number;
@@ -68,11 +70,11 @@ export type BmapTx = {
   SYMRE?: SYMRE[];
   RON?: RON[];
   HAIP?: HAIP[];
-} & BobTx
+} & BobTx;
 
-type SimpleField = { [key: string]: string }
-type ComplexField = { [key: string]: SimpleField[] | string | SimpleField[][] }
-export type SchemaField = { [key: string]: string | SimpleField | SimpleField[] | ComplexField } | SimpleField[]
+type SimpleField = { [key: string]: string };
+type SchemaValue = string | SimpleField | { [key: string]: SchemaValue } | SchemaValue[];
+export type SchemaField = { [key: string]: SchemaValue } | SimpleField[];
 
 export type Protocol = {
   name: string;

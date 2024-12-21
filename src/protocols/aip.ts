@@ -1,6 +1,6 @@
 import { BSM, BigNumber, Hash, Script, Signature, Utils } from "@bsv/sdk";
 import type { Cell, Tape } from "bpu-ts";
-import type { HandlerProps, Protocol, SchemaField } from "../types/common";
+import type { BmapTx, BobTx, HandlerProps, Protocol, SchemaField } from "../types/common";
 import type { AIP as AIPType } from "../types/protocols/aip";
 import type { HAIP as HAIPType } from "../types/protocols/haip";
 import { cellValue, checkOpFalseOpReturn, isBase64, saveProtocolData } from "../utils";
@@ -10,10 +10,10 @@ const { toArray, toHex, fromBase58Check, toBase58Check } = Utils;
 const address = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva";
 
 const opReturnSchema: SchemaField[] = [
-  { algorithm: 'string' },
-  { address: 'string' },
-  { signature: 'binary' },
-  [{ index: 'binary' }],
+  { algorithm: "string" },
+  { address: "string" },
+  { signature: "binary" },
+  [{ index: "binary" }],
 ];
 
 function validateSignature(
@@ -22,7 +22,7 @@ function validateSignature(
   tape: Tape[]
 ): boolean {
   if (!Array.isArray(tape) || tape.length < 3) {
-    throw new Error('AIP requires at least 3 cells including the prefix');
+    throw new Error("AIP requires at least 3 cells including the prefix");
   }
 
   let cellIndex = -1;
@@ -33,11 +33,11 @@ function validateSignature(
     }
   }
   if (cellIndex === -1) {
-    throw new Error('AIP could not find cell in tape');
+    throw new Error("AIP could not find cell in tape");
   }
 
   let usingIndexes: number[] = aipObj.index || [];
-  const signatureValues = ['6a']; // OP_RETURN - is included in AIP
+  const signatureValues = ["6a"]; // OP_RETURN - is included in AIP
   for (let i = 0; i < cellIndex; i++) {
     const cellContainer = tape[i];
     if (!checkOpFalseOpReturn(cellContainer)) {
@@ -47,12 +47,12 @@ function validateSignature(
           signatureValues.push(statement.h);
         } else if (statement.b) {
           // no hex? try base64
-          signatureValues.push(toHex(toArray(statement.b, 'base64')));
+          signatureValues.push(toHex(toArray(statement.b, "base64")));
         } else if (statement.s) {
           signatureValues.push(toHex(toArray(statement.s)));
         }
       }
-      signatureValues.push('7c'); // | hex
+      signatureValues.push("7c"); // | hex
     }
   }
 
@@ -75,15 +75,15 @@ function validateSignature(
   if (usingIndexes.length > 0) {
     for (const index of usingIndexes) {
       if (index >= signatureValues.length) {
-        console.log('[validateSignature] Index out of bounds:', index);
+        console.log("[validateSignature] Index out of bounds:", index);
         return false;
       }
-      signatureBufferStatements.push(toArray(signatureValues[index], 'hex'));
+      signatureBufferStatements.push(toArray(signatureValues[index], "hex"));
     }
   } else {
     // add all the values to the signature buffer
     for (const statement of signatureValues) {
-      signatureBufferStatements.push(toArray(statement, 'hex'));
+      signatureBufferStatements.push(toArray(statement, "hex"));
     }
   }
 
@@ -95,7 +95,7 @@ function validateSignature(
       signatureBufferStatements.shift();
     }
     const dataScript = Script.fromHex(toHex(signatureBufferStatements.flat()));
-    let dataArray = toArray(dataScript.toHex(), 'hex');
+    let dataArray = toArray(dataScript.toHex(), "hex");
     if (aipObj.index_unit_size) {
       // the indexed buffer should not contain the OP_RETURN opcode, but this
       // is added by the buildDataOut function automatically. Remove it.
@@ -115,9 +115,9 @@ function validateSignature(
 
   let signature: Signature;
   try {
-    signature = Signature.fromCompact(aipObj.signature, 'base64');
+    signature = Signature.fromCompact(aipObj.signature, "base64");
   } catch (e) {
-    console.log('[validateSignature] Failed to parse signature:', e);
+    console.log("[validateSignature] Failed to parse signature:", e);
     return false;
   }
 
@@ -136,11 +136,11 @@ function validateSignature(
             return BSM.verify(messageBuffer, signature, publicKey);
           }
         } catch (e) {
-          console.log('[tryNormalLogic] Recovery error:', e);
+          console.log("[tryNormalLogic] Recovery error:", e);
         }
       }
     } catch (e) {
-      console.log('[tryNormalLogic] error:', e);
+      console.log("[tryNormalLogic] error:", e);
     }
     return false;
   };
@@ -156,7 +156,7 @@ function validateSignature(
       const trimmed = signatureBufferStatements.slice(1, -1);
       const buff = Hash.sha256(trimmed.flat());
       const hexStr = toHex(buff);
-      const twetchMsg = toArray(hexStr, 'utf8');
+      const twetchMsg = toArray(hexStr, "utf8");
 
       const msgHash = BSM.magicHash(twetchMsg);
       const bigMsg = toBigNumberFromBuffer(msgHash);
@@ -171,11 +171,11 @@ function validateSignature(
             return BSM.verify(twetchMsg, signature, publicKey);
           }
         } catch (e) {
-          console.log('[tryTwetchLogic] Recovery error:', e);
+          console.log("[tryTwetchLogic] Recovery error:", e);
         }
       }
     } catch (e) {
-      console.log('[tryTwetchLogic] error:', e);
+      console.log("[tryTwetchLogic] error:", e);
     }
     return false;
   };
@@ -195,16 +195,16 @@ function toBigNumberFromBuffer(buffer: number[]): BigNumber {
 }
 
 export enum SIGPROTO {
-  HAIP = 'HAIP',
-  AIP = 'AIP',
-  BITCOM_HASHED = 'BITCOM_HASHED',
-  PSP = 'PSP',
+  HAIP = "HAIP",
+  AIP = "AIP",
+  BITCOM_HASHED = "BITCOM_HASHED",
+  PSP = "PSP",
 }
 
 export const AIPhandler = async (
   useOpReturnSchema: SchemaField[],
   protocol: SIGPROTO,
-  dataObj: any,
+  dataObj: Partial<BobTx>,
   cell: Cell[],
   tape: Tape[]
 ): Promise<HandlerProps> => {
@@ -213,7 +213,7 @@ export const AIPhandler = async (
 
   // Does not have the required number of fields
   if (cell.length < 4) {
-    throw new Error('AIP requires at least 4 fields including the prefix');
+    throw new Error("AIP requires at least 4 fields including the prefix");
   }
 
   for (const [idx, schemaField] of Object.entries(useOpReturnSchema)) {
@@ -226,14 +226,14 @@ export const AIPhandler = async (
       const fieldData: number[] = [];
       for (let i = x + 1; i < cell.length; i++) {
         if (cell[i].h && Array.isArray(fieldData)) {
-          fieldData.push(Number.parseInt(cell[i].h || '', 16));
+          fieldData.push(Number.parseInt(cell[i].h || "", 16));
         }
       }
       aipObj[aipField] = fieldData;
     } else {
       const [aipField] = Object.keys(schemaField) as (keyof AIPType)[];
       const [schemaEncoding] = Object.values(schemaField);
-      aipObj[aipField] = cellValue(cell[x + 1], schemaEncoding) || '';
+      aipObj[aipField] = cellValue(cell[x + 1], schemaEncoding as string) || "";
     }
   }
 
@@ -246,24 +246,24 @@ export const AIPhandler = async (
   }
 
   if (!aipObj.signature) {
-    throw new Error('AIP requires a signature');
+    throw new Error("AIP requires a signature");
   }
 
   validateSignature(aipObj as Partial<AIPType>, cell, tape);
 
   saveProtocolData(dataObj, protocol, aipObj);
-  return { dataObj, cell, tape };
+  return { dataObj: dataObj as BmapTx, cell, tape };
 };
 
 const handler = async ({ dataObj, cell, tape }: HandlerProps): Promise<HandlerProps> => {
   if (!tape) {
-    throw new Error('Invalid AIP transaction. tape is required');
+    throw new Error("Invalid AIP transaction. tape is required");
   }
   return AIPhandler(opReturnSchema, SIGPROTO.AIP, dataObj, cell, tape);
 };
 
 export const AIP: Protocol = {
-  name: 'AIP',
+  name: "AIP",
   address,
   opReturnSchema,
   handler,

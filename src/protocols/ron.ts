@@ -1,9 +1,13 @@
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import { saveProtocolData } from "../utils";
 
 const address = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1";
 
-const opReturnSchema = [{ pair: "json" }, { address: "string" }, { timestamp: "string" }];
+const opReturnSchema: SchemaField[] = [
+  { pair: "json" },
+  { address: "string" },
+  { timestamp: "string" },
+];
 
 const handler = ({ dataObj, cell, tx }: HandlerProps) => {
   if (

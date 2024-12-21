@@ -75,3 +75,10 @@
 - Test data in tests/data/ provides examples of each protocol
 - All protocol handlers must be registered in src/bmap.ts
 - Error messages should be descriptive and protocol-specific
+- Protocol handlers must be async if they perform async operations
+- Simple schema-based handlers (like BAP) should be sync
+- AIP signature verification requires careful error handling
+- ORD protocol must handle multiple outputs correctly
+- Protocol handlers must match test expectations for async/sync behavior
+- All protocol types must be exported through src/types/index.d.ts
+- Type definitions must be included in package.json files array

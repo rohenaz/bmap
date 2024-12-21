@@ -1,6 +1,6 @@
+import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
-import { test, describe, expect } from "bun:test";
 import {
   BMAP,
   type BobTx,
@@ -52,7 +52,7 @@ describe("bmap", () => {
   test("add handler", () => {
     const bmap = new BMAP();
     const opReturnSchema: SchemaField[] = [];
-    const protocolHandler: Handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => { };
+    const protocolHandler: Handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {};
     bmap.addProtocolHandler({
       name: "test",
       address: "123TEST",
@@ -219,7 +219,7 @@ describe("bmap", () => {
 
     expect(
       parseTx["1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo"] &&
-      Array.isArray(parseTx["1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo"])
+        Array.isArray(parseTx["1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo"])
     ).toBe(true);
     // expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual('object')
     // // rest is checked in boost.test.js
