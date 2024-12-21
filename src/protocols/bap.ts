@@ -1,9 +1,9 @@
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import { bmapOpReturnSchemaHandler } from "../utils";
 
 const address = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT";
 
-const opReturnSchema = [
+const opReturnSchema: SchemaField[] = [
   { type: "string" },
   { hash: "string" },
   { sequence: "string" },

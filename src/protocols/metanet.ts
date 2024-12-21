@@ -1,17 +1,12 @@
-
 import { Hash, Utils } from "@bsv/sdk";
-import type {
-  HandlerProps,
-  MetaNet,
-  MetanetNode,
-  Protocol,
-} from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
+import type { MetaNet } from "../types/protocols/metanet";
 
 const { toArray, toHex } = Utils;
 
 const address = "meta";
 
-const opReturnSchema = [
+const opReturnSchema: SchemaField[] = [
   { address: "string" },
   { parent: "string" },
   { name: "string" },
@@ -45,7 +40,11 @@ const handler = async ({ dataObj, cell, tx }: HandlerProps) => {
     tx: tx.tx.h,
     id: nodeId,
   };
-  let parent = {} as MetanetNode;
+  let parent = {
+    a: "",
+    tx: "",
+    id: "",
+  };
   if (tx.in) {
     const parentId = await getEnvSafeMetanetID(tx.in[0].e.a, cell[2].s);
     // Parent node
@@ -62,7 +61,7 @@ const handler = async ({ dataObj, cell, tx }: HandlerProps) => {
   dataObj.METANET.push({
     node,
     parent,
-  } as MetaNet);
+  });
 };
 
 export const METANET: Protocol = {

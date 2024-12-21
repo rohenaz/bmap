@@ -1,5 +1,5 @@
 import { BSM, BigNumber, Hash, PublicKey, Signature, Utils } from "@bsv/sdk";
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import { cellValue, saveProtocolData } from "../utils";
 
 const { toArray, toBase58Check, toHex } = Utils;
@@ -7,7 +7,7 @@ const { magicHash } = BSM;
 
 const address = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC";
 
-const opReturnSchema = [
+const opReturnSchema: SchemaField[] = [
   { bitkey_signature: "string" },
   { user_signature: "string" },
   { paymail: "string" },
@@ -55,7 +55,7 @@ const handler = async ({ dataObj, cell }: HandlerProps) => {
     const x = Number.parseInt(idx, 10);
     const bitkeyField = Object.keys(schemaField)[0];
     const schemaEncoding = Object.values(schemaField)[0];
-    bitkeyObj[bitkeyField] = cellValue(cell[x + 1], schemaEncoding) as string;
+    bitkeyObj[bitkeyField] = cellValue(cell[x + 1], schemaEncoding as string) as string;
   }
 
   // Derive userAddress from pubkey
@@ -71,21 +71,25 @@ const handler = async ({ dataObj, cell }: HandlerProps) => {
   const bitkeyMessage = Hash.sha256(toArray(concatenatedBuffer));
   // This is the raw message. BSM.verify() will do magicHash internally.
 
-  const bitkeySignature = Signature.fromCompact(bitkeyObj.bitkey_signature as string, 'base64');
+  const bitkeySignature = Signature.fromCompact(bitkeyObj.bitkey_signature as string, "base64");
 
   // Recover Bitkey pubkey
   const recoveredBitkeyPubkey = recoverPublicKeyFromBSM(bitkeyMessage, bitkeySignature);
   const recoveredBitkeyPubKeyHash = recoveredBitkeyPubkey.toHash() as number[];
   const recoveredBitkeyAddress = toBase58Check(recoveredBitkeyPubKeyHash);
-  const bitkeySignatureVerified = BSM.verify(bitkeyMessage, bitkeySignature, recoveredBitkeyPubkey) && (recoveredBitkeyAddress === address);
+  const bitkeySignatureVerified =
+    BSM.verify(bitkeyMessage, bitkeySignature, recoveredBitkeyPubkey) &&
+    recoveredBitkeyAddress === address;
 
   // Verify user signature by using the pubkey as the message
   const userMessage = toArray(Buffer.from(pubkeyHex, "utf8"));
-  const userSignature = Signature.fromCompact(bitkeyObj.user_signature as string, 'base64');
+  const userSignature = Signature.fromCompact(bitkeyObj.user_signature as string, "base64");
   const recoveredUserPubkey = recoverPublicKeyFromBSM(userMessage, userSignature);
   const recoveredUserPubKeyHash = recoveredUserPubkey.toHash() as number[];
   const recoveredUserAddress = toBase58Check(recoveredUserPubKeyHash);
-  const userSignatureVerified = BSM.verify(userMessage, userSignature, recoveredUserPubkey) && (recoveredUserAddress === userAddress);
+  const userSignatureVerified =
+    BSM.verify(userMessage, userSignature, recoveredUserPubkey) &&
+    recoveredUserAddress === userAddress;
 
   bitkeyObj.verified = bitkeySignatureVerified && userSignatureVerified;
   saveProtocolData(dataObj, "BITKEY", bitkeyObj);

@@ -1,0 +1,84 @@
+# Self-learning
+- Keep this file updated with facts you learn about this project
+- Compare changes against target implementation hash to maintain design integrity
+
+# Project Facts
+- Name: bmapjs
+- Description: A transaction parser for Bitcoin data protocols (B, MAP, BAP, 1Sat Ordinals, SIGMA, METANET, AIP/HAIP)
+- Type: TypeScript library
+- License: Open BSV
+- Repository: https://github.com/rohenaz/bmap
+
+# Build & Development
+- Build Tool: Vite
+- Entry Point: src/bmap.ts
+- Test Framework: Bun
+- Package Manager: Bun (with npm publish support)
+- Linting: Biome (replaces ESLint/Prettier)
+
+# Key Dependencies
+- BSV SDK (Bitcoin SV development kit for cryptographic operations)
+- MessagePack (MessagePack implementation for data serialization)
+- BPU-TS (Bitcoin transaction parser -> BOB format)
+- Node Fetch (HTTP client for network requests)
+- AJV (JSON Schema validator)
+
+# Project Structure
+- src/bmap.ts (Main entry point)
+- src/protocols/ (Individual protocol handlers)
+- src/types/ (TypeScript type definitions)
+- src/utils/ (Shared utility functions)
+- tests/protocols/ (Protocol-specific tests)
+- tests/node/ (Node.js specific tests)
+- tests/data/ (Test fixtures and transaction data)
+
+# Testing
+- Framework: Bun test (migrated from Jest)
+- Test Command: bun test
+- Watch Mode: bun test --watch
+- Protocol Tests:
+  - AIP/HAIP (Identity and signing)
+  - BAP (Bitcoin Authentication Protocol)
+  - B (Simple data protocol)
+  - BitCom/BitKey/BitPic (Various Bitcoin applications)
+  - MAP (Media content and metadata)
+  - MetaNet (Graph protocol)
+  - Ordinals (NFT-like protocol)
+  - RON/SymRE (Additional protocols)
+
+# Build Outputs
+- ES Modules: dist/bmap.es.js
+- CommonJS: dist/bmap.cjs.js
+- TypeScript Definitions: dist/types/
+- NPM Package Contents:
+  - dist/ (Built files)
+  - README.md
+  - LICENSE
+
+# Development Commands
+- lint: bun run lint
+- lint:fix: bun run lint:fix
+- format: bun run format
+- format:fix: bun run format:fix
+- build: bun run build
+- test: bun test
+- publish: bun run pub
+
+# Important Notes
+- Target Implementation Hash: 0d0314e98f5c25f15c52788c291f29aaba808b58
+- Protocol handlers should maintain consistent error handling
+- Signature verification is critical for AIP/HAIP protocols
+- MetaNet requires careful handling of node relationships
+- Build process excludes source files from npm package
+- Type definitions are crucial for library consumers
+- Protocol handlers should match target implementation design
+- Test data in tests/data/ provides examples of each protocol
+- All protocol handlers must be registered in src/bmap.ts
+- Error messages should be descriptive and protocol-specific
+- Protocol handlers must be async if they perform async operations
+- Simple schema-based handlers (like BAP) should be sync
+- AIP signature verification requires careful error handling
+- ORD protocol must handle multiple outputs correctly
+- Protocol handlers must match test expectations for async/sync behavior
+- All protocol types must be exported through src/types/index.d.ts
+- Type definitions must be included in package.json files array

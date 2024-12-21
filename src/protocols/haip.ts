@@ -1,14 +1,14 @@
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import { AIPhandler, SIGPROTO } from "./aip";
 
 const address = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3";
 
-const opReturnSchema = [
-  { hashing_algorithm: "string" },
-  { signing_algorithm: "string" },
-  { signing_address: "string" },
+const opReturnSchema: SchemaField[] = [
+  { algorithm: "string" },
+  { algorithm: "string" },
+  { address: "string" },
   { signature: "string" },
-  { index_unit_size: "number" },
+  { algorithm: "string" },
   [{ index: "binary" }],
 ];
 
@@ -25,7 +25,7 @@ const handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {
     SIGPROTO.HAIP,
     dataObj,
     cell,
-    tape,
+    tape
     // tx,
   );
 };

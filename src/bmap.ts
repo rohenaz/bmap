@@ -20,6 +20,7 @@ import type {
   MetaNet,
   MomTx,
   Protocol,
+  SchemaField,
   ScriptChecker,
 } from "./types/common";
 import {
@@ -36,7 +37,7 @@ const enabledProtocols = new Map<string, string>([]);
 const protocolHandlers = new Map<string, Handler>([]);
 // Script checkers are intentionally minimalistic detection functions for identifying matching scripts for a given protocol. Only if a checker returns true is a handler called for processing.
 const protocolScriptCheckers = new Map<string, ScriptChecker>([]);
-const protocolOpReturnSchemas = new Map<string, Object[]>();
+const protocolOpReturnSchemas = new Map<string, SchemaField[]>();
 
 export const allProtocols = [
   AIP,
@@ -74,12 +75,9 @@ for (const protocol of defaultProtocols) {
 // Takes a BOB formatted op_return transaction
 export class BMAP {
   enabledProtocols: Map<string, string>;
-
   protocolHandlers: Map<string, Handler>;
-
   protocolScriptCheckers: Map<string, ScriptChecker>;
-
-  protocolOpReturnSchemas: Map<string, Object[]>;
+  protocolOpReturnSchemas: Map<string, SchemaField[]>;
 
   constructor() {
     // initial default protocol handlers in this instantiation
@@ -89,13 +87,7 @@ export class BMAP {
     this.protocolOpReturnSchemas = protocolOpReturnSchemas;
   }
 
-  addProtocolHandler({
-    name,
-    address,
-    opReturnSchema,
-    handler,
-    scriptChecker,
-  }: Protocol) {
+  addProtocolHandler({ name, address, opReturnSchema, handler, scriptChecker }: Protocol) {
     if (address) {
       this.enabledProtocols.set(address, name);
     }
@@ -176,7 +168,7 @@ export class BMAP {
       } else if (key === "in") {
         dataObj[key] = val.map((v: In) => {
           const r = { ...v } as any;
-          delete r.tape;
+          r.tape = undefined;
           return r as In;
         });
       } else {
@@ -195,11 +187,11 @@ export class BMAP {
       } as MetaNet;
       (dataObj.METANET as MetaNet[]).push(meta);
       // remove parent and node from root level for (MOM data)
-      delete dataObj.ancestor;
-      delete dataObj.child;
-      delete dataObj.parent;
-      delete dataObj.head;
-      delete dataObj.node;
+      dataObj.ancestor = undefined;
+      dataObj.child = undefined;
+      dataObj.parent = undefined;
+      dataObj.head = undefined;
+      dataObj.node = undefined;
     }
 
     return dataObj as BmapTx;
@@ -217,10 +209,7 @@ export class BMAP {
     });
   };
 
-  process = async (
-    protocolName: string,
-    { cell, dataObj, tape, out, tx }: HandlerProps,
-  ) => {
+  process = async (protocolName: string, { cell, dataObj, tape, out, tx }: HandlerProps) => {
     if (
       this.protocolHandlers.has(protocolName) &&
       typeof this.protocolHandlers.get(protocolName) === "function"
@@ -229,7 +218,7 @@ export class BMAP {
       if (handler) {
         /* eslint-disable no-await-in-loop */
         await handler({
-          dataObj: dataObj,
+          dataObj,
           cell,
           tape,
           out,
@@ -245,7 +234,7 @@ export class BMAP {
     tape: Tape[],
     out: Out,
     tx: BobTx,
-    dataObj: Partial<BobTx>,
+    dataObj: Partial<BobTx>
   ): Promise<Partial<BobTx>> => {
     // loop over tape
     for (const cellContainer of tape) {
@@ -284,9 +273,7 @@ export class BMAP {
 
 export const fetchRawTx = async (txid: string): Promise<string> => {
   const url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`;
-
   console.log("hitting", url);
-
   const res = await fetch(url);
   return await res.text();
 };
@@ -314,7 +301,7 @@ export const bobFromRawTx = async (rawTx: string): Promise<BobTx> => {
 // at the expense of detecting more data protocols
 export const TransformTx = async (
   tx: BobTx | string | MomTx | BmapTx,
-  protocols?: string[] | Protocol[],
+  protocols?: string[] | Protocol[]
 ) => {
   if (typeof tx === "string") {
     let rawTx: string | undefined;
@@ -364,7 +351,7 @@ export const TransformTx = async (
       }
     } else {
       throw new Error(
-        "Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[]).",
+        "Invalid protocol array. Must be either an array of protocol names (string[]), or Protocol objects (Protocol[])."
       );
     }
   }
@@ -373,17 +360,12 @@ export const TransformTx = async (
 };
 
 // Export types
-export type { BmapTx, BobTx, Handler, HandlerProps, MetaNet, MomTx, Protocol, ScriptChecker } from './types/common';
-export type { _21E8 } from './types/protocols/_21e8';
-export type { AIP } from './types/protocols/aip';
-export type { B } from './types/protocols/b';
-export type { BAP } from './types/protocols/bap';
-export type { BITCOM } from './types/protocols/bitcom';
-export type { BITKEY } from './types/protocols/bitkey';
-export type { BITPIC } from './types/protocols/bitpic';
-export type { HAIP } from './types/protocols/haip';
-export type { MAP } from './types/protocols/map';
-export type { ORD } from './types/protocols/ord';
-export type { RON } from './types/protocols/ron';
-export type { SYMRE } from './types/protocols/symre';
-
+export type {
+  BmapTx,
+  BobTx,
+  Handler,
+  HandlerProps,
+  MomTx,
+  Protocol,
+  ScriptChecker,
+} from "./types/common";

@@ -27,13 +27,11 @@ const $8c5e6215e1bd1bd5$export$b691916706e0e9cc = (pushData, schemaEncoding)=>{
     if (!pushData) throw new Error(`cannot get cell value of: ${pushData}`);
     else if (schemaEncoding === "string") return pushData["s"] ? pushData.s : pushData.ls || "";
     else if (schemaEncoding === "hex") return pushData["h"] ? pushData.h : pushData.lh || (pushData["b"] ? (0, $a6mis$Buffer).from(pushData.b, "base64").toString("hex") : pushData.lb && (0, $a6mis$Buffer).from(pushData.lb, "base64").toString("hex")) || "";
-    else if (schemaEncoding === "number") return parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
+    else if (schemaEncoding === "number") return Number.parseInt(pushData["h"] ? pushData.h : pushData.lh || "0", 16);
     else if (schemaEncoding === "file") return `bitfs://${pushData["f"] ? pushData.f : pushData.lf}`;
     return (pushData["b"] ? pushData.b : pushData.lb) || "";
 };
-const $8c5e6215e1bd1bd5$export$238b4e54af8fe886 = function(cc) {
-    return cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].op && cc.cell[1].op === 106 || cc.cell[0].op === 106;
-};
+const $8c5e6215e1bd1bd5$export$238b4e54af8fe886 = (cc) => cc.cell[0] && cc.cell[1] && cc.cell[0].op === 0 && cc.cell[1].op && cc.cell[1].op === 106 || cc.cell[0].op === 106;
 const $8c5e6215e1bd1bd5$export$23dbc584560299c3 = (dataObj, protocolName, data)=>{
     if (!dataObj[protocolName]) dataObj[protocolName] = [
         data
@@ -47,21 +45,21 @@ const $8c5e6215e1bd1bd5$export$23dbc584560299c3 = (dataObj, protocolName, data)=
         dataObj[protocolName][dataObj[protocolName].length] = data;
     }
 };
-const $8c5e6215e1bd1bd5$export$ee2a8bbe689a8ef5 = function(protocolName, opReturnSchema, dataObj, cell, tx) {
+const $8c5e6215e1bd1bd5$export$ee2a8bbe689a8ef5 = (protocolName, opReturnSchema, dataObj, cell, tx) => {
     // loop over the schema
     const obj = {};
     // Does not have the required number of fields
     const length = opReturnSchema.length + 1;
     if (cell.length < length) throw new Error(`${protocolName} requires at least ${length} fields including the prefix: ${tx.tx.h}`);
     for (const [idx, schemaField] of Object.entries(opReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         const [field] = Object.keys(schemaField);
         const [schemaEncoding] = Object.values(schemaField);
         obj[field] = $8c5e6215e1bd1bd5$export$b691916706e0e9cc(cell[x + 1], schemaEncoding);
     }
     $8c5e6215e1bd1bd5$export$23dbc584560299c3(dataObj, protocolName, obj);
 };
-const $8c5e6215e1bd1bd5$export$ca4d6504ca148ae4 = function(data) {
+const $8c5e6215e1bd1bd5$export$ca4d6504ca148ae4 = (data) => {
     const regex = "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?";
     return new RegExp(`^${regex}$`, "gi").test(data);
 };
@@ -88,7 +86,7 @@ const $6e4f14d1954af30e$var$opReturnSchema = [
         }
     ]
 ];
-const $6e4f14d1954af30e$var$getFileBuffer = async function(bitfsRef) {
+const $6e4f14d1954af30e$var$getFileBuffer = async (bitfsRef) => {
     let fileBuffer = (0, $a6mis$Buffer).from("");
     try {
         const result = await (0, $a6mis$nodefetch)(`https://x.bitfs.network/${bitfsRef}`, {});
@@ -98,7 +96,7 @@ const $6e4f14d1954af30e$var$getFileBuffer = async function(bitfsRef) {
     }
     return fileBuffer;
 };
-const $6e4f14d1954af30e$var$validateSignature = async function(aipObj, cell, tape) {
+const $6e4f14d1954af30e$var$validateSignature = async (aipObj, cell, tape) => {
     if (!Array.isArray(tape) || tape.length < 3) throw new Error("AIP requires at least 3 cells including the prefix");
     let cellIndex = -1;
     tape.forEach((cc, index)=>{
@@ -136,7 +134,7 @@ const $6e4f14d1954af30e$var$validateSignature = async function(aipObj, cell, tap
             const indexLength = aipObj.index_unit_size * 2;
             usingIndexes = [];
             const indexes = cell[6].h;
-            for(let i1 = 0; i1 < indexes.length; i1 += indexLength)usingIndexes.push(parseInt(indexes.substr(i1, indexLength), 16));
+            for(let i1 = 0; i1 < indexes.length; i1 += indexLength)usingIndexes.push(Number.parseInt(indexes.substr(i1, indexLength), 16));
             aipObj.index = usingIndexes;
         }
     }
@@ -190,19 +188,19 @@ const $6e4f14d1954af30e$var$validateSignature = async function(aipObj, cell, tap
     return aipObj.verified || false;
 };
 let $6e4f14d1954af30e$export$6c117c038f18b127;
-(function(SIGPROTO) {
+((SIGPROTO) => {
     SIGPROTO["HAIP"] = "HAIP";
     SIGPROTO["AIP"] = "AIP";
     SIGPROTO["BITCOM_HASHED"] = "BITCOM_HASHED";
     SIGPROTO["PSP"] = "PSP";
 })($6e4f14d1954af30e$export$6c117c038f18b127 || ($6e4f14d1954af30e$export$6c117c038f18b127 = {}));
-const $6e4f14d1954af30e$export$f0079d0908cdbf96 = async function(useOpReturnSchema, protocol, dataObj, cell, tape, tx) {
+const $6e4f14d1954af30e$export$f0079d0908cdbf96 = async (useOpReturnSchema, protocol, dataObj, cell, tape, tx) => {
     // loop over the schema
     const aipObj = {};
     // Does not have the required number of fields
     if (cell.length < 4) throw new Error("AIP requires at least 4 fields including the prefix " + tx);
     for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         let schemaEncoding;
         let aipField;
         if (schemaField instanceof Array) {
@@ -211,7 +209,7 @@ const $6e4f14d1954af30e$export$f0079d0908cdbf96 = async function(useOpReturnSche
             [aipField] = Object.keys(schemaField[0]);
             // run through the rest of the fields in this cell, should be de indexes
             const fieldData = [];
-            for(let i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(parseInt(cell[i].h || "", 16));
+            for(let i = x + 1; i < cell.length; i++)if (cell[i].h && Array.isArray(fieldData)) fieldData.push(Number.parseInt(cell[i].h || "", 16));
             aipObj[aipField] = fieldData;
             continue;
         } else {
@@ -229,7 +227,7 @@ const $6e4f14d1954af30e$export$f0079d0908cdbf96 = async function(useOpReturnSche
     await $6e4f14d1954af30e$var$validateSignature(aipObj, cell, tape);
     (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, protocol, aipObj);
 };
-const $6e4f14d1954af30e$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+const $6e4f14d1954af30e$var$handler = async ({ dataObj , cell , tape , tx  })=>{
     if (!tape) throw new Error("Invalid AIP transaction. tape is required");
     if (!tx) throw new Error("Invalid AIP transaction. tx is required");
     return await $6e4f14d1954af30e$export$f0079d0908cdbf96($6e4f14d1954af30e$var$opReturnSchema, "AIP", dataObj, cell, tape, tx);
@@ -262,7 +260,7 @@ const $7aa111bfe3605772$var$opReturnSchema = [
         filename: "string"
     }
 ];
-const $7aa111bfe3605772$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $7aa111bfe3605772$var$handler = ({ dataObj , cell , tx  }) => {
     const encodingMap = new Map();
     encodingMap.set("utf8", "string");
     encodingMap.set("text", "string") // invalid but people use it :(
@@ -279,7 +277,7 @@ const $7aa111bfe3605772$var$handler = function({ dataObj: dataObj , cell: cell ,
     const bObj = {};
     // loop over the schema
     for (const [idx, schemaField] of Object.entries($7aa111bfe3605772$var$opReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         const bField = Object.keys(schemaField)[0];
         let schemaEncoding = Object.values(schemaField)[0];
         if (bField === "content") {
@@ -336,7 +334,7 @@ const $e51e508d397a2f63$var$opReturnSchema = [
         sequence: "string"
     }
 ];
-const $e51e508d397a2f63$export$c3c52e219617878 = ({ dataObj: dataObj , cell: cell , tx: tx  })=>{
+const $e51e508d397a2f63$export$c3c52e219617878 = ({ dataObj , cell , tx  })=>{
     if (!tx) throw new Error(`Invalid BAP tx, tx required`);
     (0, $8c5e6215e1bd1bd5$export$ee2a8bbe689a8ef5)("BAP", $e51e508d397a2f63$var$opReturnSchema, dataObj, cell, tx);
 };
@@ -406,7 +404,7 @@ const $98b3080a17c71cf0$var$opReturnSchema = [
     }
 ];
 // const handler = function (dataObj, protocolName, cell, tape, tx) {
-const $98b3080a17c71cf0$var$handler = ({ dataObj: dataObj , cell: cell  })=>{
+const $98b3080a17c71cf0$var$handler = ({ dataObj , cell  })=>{
     if (!cell.length || !cell.every((c)=>c.s)) throw new Error("Invalid Bitcom tx");
     // gather up the string values
     const bitcomObj = cell.map((c)=>c && c.s ? c.s : "");
@@ -426,7 +424,7 @@ const $98b3080a17c71cf0$export$c19e3a57d69468ea = {
 
 
 
-const $39dd6b3960e6a3ea$export$fe8725667d42151 = async function(paymail, publicKey) {
+const $39dd6b3960e6a3ea$export$fe8725667d42151 = async (paymail, publicKey) => {
     const client = new (0, $a6mis$PaymailClient)((0, $a6mis$dns), (0, $a6mis$nodefetch));
     return client.verifyPubkeyOwner(publicKey, paymail);
 };
@@ -480,7 +478,7 @@ const $541801f53125a663$var$validateSignature = (pspObj, cell, tape)=>{
     }
     return pspObj.verified;
 };
-const $541801f53125a663$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
+const $541801f53125a663$var$handler = async ({ dataObj , cell , tape  })=>{
     // Paymail Signature Protocol
     // Validation
     if (!cell.length || cell[0].s !== $541801f53125a663$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].b || !cell[2].s || !cell[3].s || !tape) throw new Error(`Invalid Paymail Signature Protocol record`);
@@ -494,7 +492,7 @@ const $541801f53125a663$export$c3c3eee1546d651a = async (useOpReturnSchema, prot
     // Does not have the required number of fields
     if (cell.length < 4) throw new Error("PSP requires at least 4 fields including the prefix " + cell);
     for (const [idx, schemaField] of Object.entries(useOpReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         const [pspField] = Object.keys(schemaField);
         const [schemaEncoding] = Object.values(schemaField);
         pspObj[pspField] = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
@@ -536,7 +534,7 @@ const $6cb5742cd91204d2$var$opReturnSchema = [
         paymail: "string"
     }
 ];
-const $6cb5742cd91204d2$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape  })=>{
+const $6cb5742cd91204d2$var$handler = async ({ dataObj , cell , tape  })=>{
     if (!tape) throw new Error(`Invalid BITCOM_HASHED tx. Bad tape`);
     return await (0, $541801f53125a663$export$c3c3eee1546d651a)($6cb5742cd91204d2$var$opReturnSchema, (0, $6e4f14d1954af30e$export$6c117c038f18b127).BITCOM_HASHED, dataObj, cell, tape);
 };
@@ -568,12 +566,12 @@ const $5cabab930d18e9f6$var$opReturnSchema = [
 ];
 // const handler = function (dataObj, cell, tape, tx) {
 // https://bitkey.network/how
-const $5cabab930d18e9f6$var$handler = async ({ dataObj: dataObj , cell: cell  })=>{
+const $5cabab930d18e9f6$var$handler = async ({ dataObj , cell  })=>{
     if (!cell.length) throw new Error("Invalid Bitkey tx");
     const bitkeyObj = {};
     // loop over the schema
     for (const [idx, schemaField] of Object.entries($5cabab930d18e9f6$var$opReturnSchema)){
-        const x = parseInt(idx, 10);
+        const x = Number.parseInt(idx, 10);
         const bitkeyField = Object.keys(schemaField)[0];
         const schemaEncoding = Object.values(schemaField)[0];
         bitkeyObj[bitkeyField] = (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(cell[x + 1], schemaEncoding);
@@ -612,7 +610,7 @@ const $25b031142c3ac89e$var$opReturnSchema = [
         signature: "string"
     }
 ];
-const $25b031142c3ac89e$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+const $25b031142c3ac89e$var$handler = async ({ dataObj , cell , tape , tx  })=>{
     // Validation
     if (cell[0].s !== $25b031142c3ac89e$var$protocolAddress || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].b || !cell[3].s || !tape) throw new Error(`Invalid BITPIC record: ${tx}`);
     const bitpicObj = {
@@ -675,7 +673,7 @@ const $ba95ea4e23297c9b$var$protocolIdentifier = "boostpow";
     // protocol identifier always in first pushdata
     return cell[0].s === $ba95ea4e23297c9b$var$protocolIdentifier;
 };
-const $ba95ea4e23297c9b$var$handler = ({ dataObj: dataObj , cell: cell , out: out , tx: tx  })=>{
+const $ba95ea4e23297c9b$var$handler = ({ dataObj , cell , out , tx  })=>{
     if (!tx || !cell[0] || !out) throw new Error(`Invalid BOOST tx. dataObj, cell, out and tx are required.`);
     // build ASM from either op codes and script chunks
     const asm = cell.map((c)=>c.ops ? c.ops : (0, $8c5e6215e1bd1bd5$export$b691916706e0e9cc)(c, "hex") || "").join(" ");
@@ -717,7 +715,7 @@ const $0677e8846d069940$var$opReturnSchema = [
     ]
 ];
 // https://github.com/torusJKL/BitcoinBIPs/blob/master/HAIP.md
-const $0677e8846d069940$var$handler = async ({ dataObj: dataObj , cell: cell , tape: tape , tx: tx  })=>{
+const $0677e8846d069940$var$handler = async ({ dataObj , cell , tape , tx  })=>{
     if (!tape) throw new Error(`Invalid HAIP tx. Bad tape`);
     if (!tx) throw new Error(`Invalid HAIP tx.`);
     return await (0, $6e4f14d1954af30e$export$f0079d0908cdbf96)($0677e8846d069940$var$opReturnSchema, (0, $6e4f14d1954af30e$export$6c117c038f18b127).HAIP, dataObj, cell, tape, tx);
@@ -788,7 +786,7 @@ const $294420dffa930363$var$opReturnSchema = [
         }
     }
 ];
-const $294420dffa930363$var$processADD = function(cell, mapObj) {
+const $294420dffa930363$var$processADD = (cell, mapObj) => {
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -801,7 +799,7 @@ const $294420dffa930363$var$processADD = function(cell, mapObj) {
         } else if (last && Array.isArray(mapObj[last])) mapObj[last].push(pushdata);
     }
 };
-const $294420dffa930363$var$proccessDELETE = function(cell, mapObj) {
+const $294420dffa930363$var$proccessDELETE = (cell, mapObj) => {
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -814,7 +812,7 @@ const $294420dffa930363$var$proccessDELETE = function(cell, mapObj) {
         } else if (last) mapObj[last].push(pushdata);
     }
 };
-const $294420dffa930363$var$processSELECT = function(cell, mapObj) {
+const $294420dffa930363$var$processSELECT = (cell, mapObj) => {
     // TODO
     // console.log('MAP SELECT');
     for (const pushdataContainer of cell)// ignore MAP command
@@ -823,7 +821,7 @@ const $294420dffa930363$var$processSELECT = function(cell, mapObj) {
         continue;
     }
 };
-const $294420dffa930363$var$processMSGPACK = function(cell, mapObj) {
+const $294420dffa930363$var$processMSGPACK = (cell, mapObj) => {
     for (const pushdataContainer of cell){
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
@@ -837,7 +835,7 @@ const $294420dffa930363$var$processMSGPACK = function(cell, mapObj) {
     }
     return mapObj;
 };
-const $294420dffa930363$var$processJSON = function(cell, mapObj) {
+const $294420dffa930363$var$processJSON = (cell, mapObj) => {
     for (const pushdataContainer of cell){
         // ignore MAP command
         if (pushdataContainer.i === 0 || pushdataContainer.i === 1) continue;
@@ -849,7 +847,7 @@ const $294420dffa930363$var$processJSON = function(cell, mapObj) {
     }
     return mapObj;
 };
-const $294420dffa930363$var$processSET = function(cell, mapObj) {
+const $294420dffa930363$var$processSET = (cell, mapObj) => {
     let last = null;
     for (const pushdataContainer of cell){
         // ignore MAP command
@@ -866,7 +864,7 @@ const $294420dffa930363$var$processSET = function(cell, mapObj) {
         }
     }
 };
-const $294420dffa930363$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $294420dffa930363$var$handler = ({ dataObj , cell , tx  }) => {
     // Validate
     if (cell[0].s !== $294420dffa930363$var$address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) throw new Error(`Invalid MAP record: ${tx}`);
     let mapObj = {};
@@ -943,13 +941,13 @@ const $fbd4a3a1e0399b51$var$opReturnSchema = [
         name: "string"
     }
 ];
-const $fbd4a3a1e0399b51$export$3eb18141230d6532 = async function(a, tx) {
+const $fbd4a3a1e0399b51$export$3eb18141230d6532 = async (a, tx) => {
     // Calculate the node ID
     const buf = (0, $a6mis$Buffer).from(a + tx);
     const hashBuf = await (0, $8c5e6215e1bd1bd5$export$bced8d2aada2d1c9)(buf);
     return hashBuf.toString("hex");
 };
-const $fbd4a3a1e0399b51$var$handler = async ({ dataObj: dataObj , cell: cell , tx: tx  })=>{
+const $fbd4a3a1e0399b51$var$handler = async ({ dataObj , cell , tx  })=>{
     if (!cell.length || cell[0].s !== "meta" || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s || !tx) throw new Error("Invalid Metanet tx " + tx);
     // For now, we just copy from MOM keys later if available, or keep BOB format
     const nodeId = await $fbd4a3a1e0399b51$export$3eb18141230d6532(cell[1].s, tx.tx.h);
@@ -997,7 +995,7 @@ const $da321a7b0ed8b49b$var$opReturnSchema = [
         timestamp: "string"
     }
 ];
-const $da321a7b0ed8b49b$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $da321a7b0ed8b49b$var$handler = ({ dataObj , cell , tx  }) => {
     if (cell[0].s !== $da321a7b0ed8b49b$var$address || !cell[1] || !cell[2] || !cell[3] || !cell[1].s || !cell[2].s || !cell[3].s) throw new Error(`Invalid RON record ${tx === null || tx === void 0 ? void 0 : tx.tx.h}`);
     const pair = JSON.parse(cell[1].s);
     const timestamp = Number(cell[3].s);
@@ -1022,7 +1020,7 @@ const $ba3299f8714dec0f$var$opReturnSchema = [
         url: "string"
     }
 ];
-const $ba3299f8714dec0f$var$handler = function({ dataObj: dataObj , cell: cell , tx: tx  }) {
+const $ba3299f8714dec0f$var$handler = ({ dataObj , cell , tx  }) => {
     if (cell[0].s !== $ba3299f8714dec0f$var$address || !cell[1] || !cell[1].s) throw new Error(`Invalid SymRe tx: ${tx}`);
     (0, $8c5e6215e1bd1bd5$export$23dbc584560299c3)(dataObj, "SYMRE", {
         url: cell[1].s
@@ -1058,7 +1056,7 @@ const $cbff6fb4c505c31d$var$scriptChecker = (cell)=>{
     // protocol identifier always in first pushdata
     return ops.join() === $cbff6fb4c505c31d$var$_21e8Script.join();
 };
-const $cbff6fb4c505c31d$var$handler = ({ dataObj: dataObj , cell: cell , out: out  })=>{
+const $cbff6fb4c505c31d$var$handler = ({ dataObj , cell , out  })=>{
     if (!cell[0] || !out) throw new Error(`Invalid 21e8 tx. dataObj, cell, out and tx are required.`);
     // assemble asm
     // make sure first piece matches a txid
@@ -1131,7 +1129,7 @@ class $5662655d7032e480$export$894a720e71f90b3c {
         this.protocolScriptCheckers = $5662655d7032e480$var$protocolScriptCheckers;
         this.protocolOpReturnSchemas = $5662655d7032e480$var$protocolOpReturnSchemas;
     }
-    addProtocolHandler({ name: name , address: address , opReturnSchema: opReturnSchema , handler: handler , scriptChecker: scriptChecker  }) {
+    addProtocolHandler({ name , address , opReturnSchema , handler , scriptChecker  }) {
         if (address) this.enabledProtocols.set(address, name);
         this.protocolHandlers.set(name, handler);
         if (opReturnSchema) this.protocolOpReturnSchemas.set(name, opReturnSchema);
@@ -1144,12 +1142,12 @@ class $5662655d7032e480$export$894a720e71f90b3c {
         for (const [key, val] of Object.entries(tx)){
             if (key === "out") // loop over the outputs
             for (const out of tx.out){
-                const { tape: tape  } = out;
+                const { tape  } = out;
                 if (tape === null || tape === void 0 ? void 0 : tape.some((cc)=>(0, $8c5e6215e1bd1bd5$export$238b4e54af8fe886)(cc))) // loop over tape
                 for (const cellContainer of tape){
                     // Skip the OP_RETURN / OP_FALSE OP_RETURN cell
                     if ((0, $8c5e6215e1bd1bd5$export$238b4e54af8fe886)(cellContainer)) continue;
-                    const { cell: cell  } = cellContainer;
+                    const { cell  } = cellContainer;
                     if (!cell) throw new Error("empty cell while parsing");
                     const prefix = cell[0].s;
                     await this.process(this.enabledProtocols.get(prefix || "") || prefix || "", {
@@ -1166,7 +1164,7 @@ class $5662655d7032e480$export$894a720e71f90b3c {
                     const _21e8Checker = this.protocolScriptCheckers.get((0, $cbff6fb4c505c31d$export$85479a00ad164ad6).name);
                     // Check for boostpow and 21e8
                     if (tape === null || tape === void 0 ? void 0 : tape.some((cc)=>{
-                        const { cell: cell  } = cc;
+                        const { cell  } = cc;
                         if (boostChecker && boostChecker(cell)) // 'found boost'
                         return true;
                         if (_21e8Checker && _21e8Checker(cell)) // 'found 21e8'
@@ -1230,7 +1228,7 @@ class $5662655d7032e480$export$894a720e71f90b3c {
             e: out.e
         });
     };
-    process = async (protocolName, { cell: cell , dataObj: dataObj , tape: tape , out: out , tx: tx  })=>{
+    process = async (protocolName, { cell , dataObj , tape , out , tx  })=>{
         if (this.protocolHandlers.has(protocolName) && typeof this.protocolHandlers.get(protocolName) === "function") {
             const handler = this.protocolHandlers.get(protocolName);
             if (handler) /* eslint-disable no-await-in-loop */ await handler({

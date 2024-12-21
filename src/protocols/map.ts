@@ -1,13 +1,12 @@
-
 import { decode } from "@msgpack/msgpack";
 import type { Cell } from "bpu-ts";
-import type { HandlerProps, Protocol } from "../types/common";
+import type { HandlerProps, Protocol, SchemaField } from "../types/common";
 import type { MAP as MAPType } from "../types/protocols/map";
 import { saveProtocolData } from "../utils";
 
 const address = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5";
 
-const opReturnSchema = [
+const opReturnSchema: SchemaField[] = [
   {
     cmd: {
       SET: [{ key: "string" }, { val: "string" }],
@@ -68,7 +67,6 @@ const processSELECT = (cell: Cell[], mapObj: MAPType) => {
     // ignore MAP command
     if (pushdataContainer.i === 0 || pushdataContainer.i === 1) {
       mapObj.SELECT = "TODO";
-      continue;
     }
   }
 };
@@ -115,11 +113,7 @@ const processSET = (cell: Cell[], mapObj: MAPType) => {
   let last = null;
   for (const pushdataContainer of cell) {
     // ignore MAP command
-    if (
-      !pushdataContainer.s ||
-      pushdataContainer.i === 0 ||
-      pushdataContainer.i === 1
-    ) {
+    if (!pushdataContainer.s || pushdataContainer.i === 0 || pushdataContainer.i === 1) {
       continue;
     }
 
@@ -140,13 +134,7 @@ const processSET = (cell: Cell[], mapObj: MAPType) => {
 
 const handler = ({ dataObj, cell, tx }: HandlerProps) => {
   // Validate
-  if (
-    cell[0].s !== address ||
-    !cell[1] ||
-    !cell[1].s ||
-    !cell[2] ||
-    !cell[2].s
-  ) {
+  if (cell[0].s !== address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) {
     throw new Error(`Invalid MAP record: ${tx}`);
   }
 

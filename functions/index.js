@@ -14,7 +14,7 @@ const cors = require('cors-async')({ origin: true })
 
 export const decode = functions.https.onRequest(async (req, res) => {
     await cors(req, res)
-    let parts = req.url.split('/').splice(1)
+    const parts = req.url.split('/').splice(1)
     const tx = parts[1]
     const format = parts[2]
     console.log('tx', tx)
@@ -22,21 +22,21 @@ export const decode = functions.https.onRequest(async (req, res) => {
     // fetch the tx
     try {
         if (format === 'raw') {
-            let rawTx = await rawTxFromTxid(tx)
+            const rawTx = await rawTxFromTxid(tx)
             res.status(200).send(rawTx)
             return
         } else if (format === 'json') {
-            let json = await jsonFromTxid(tx)
+            const json = await jsonFromTxid(tx)
             res.status(200).send(json)
             return
         }
 
-        let bob = await bobFromTxid(tx)
+        const bob = await bobFromTxid(tx)
         console.log('bob', bob.out[0])
 
         // Transform from BOB to BMAP
         console.log('loading protocols', allProtocols)
-        let decoded = await TransformTx(
+        const decoded = await TransformTx(
             bob,
             allProtocols.map((p) => p.name)
         )
@@ -75,7 +75,7 @@ const bobFromRawTx = async (rawtx) => {
 
 const bobFromPlanariaByTxid = async (txid) => {
     // // The query we constructed from step 2.
-    let query = {
+    const query = {
         v: 3,
         q: {
             find: {
@@ -90,15 +90,15 @@ const bobFromPlanariaByTxid = async (txid) => {
     }
 
     // Turn the query into base64 encoded string.
-    let b64 = Buffer.from(JSON.stringify(query)).toString('base64')
-    let url = `https://bob.planaria.network/q/1GgmC7Cg782YtQ6R9QkM58voyWeQJmJJzG/${b64}`
+    const b64 = Buffer.from(JSON.stringify(query)).toString('base64')
+    const url = `https://bob.planaria.network/q/1GgmC7Cg782YtQ6R9QkM58voyWeQJmJJzG/${b64}`
     // Attach planaria API KEY as header
-    let header = {
+    const header = {
         headers: { key: '14yHvrKQEosfAbkoXcEwY6wSvxNKteFbzU' },
     }
     try {
-        let res = await fetch(url, header)
-        let j = await res.json()
+        const res = await fetch(url, header)
+        const j = await res.json()
         return j.c.concat(j.u)[0]
     } catch (e) {
         throw e
@@ -107,12 +107,12 @@ const bobFromPlanariaByTxid = async (txid) => {
 
 const jsonFromTxid = async (txid) => {
     // get rawtx for txid
-    let url = 'https://api.whatsonchain.com/v1/bsv/main/tx/' + txid
+    const url = 'https://api.whatsonchain.com/v1/bsv/main/tx/' + txid
 
     console.log('hitting', url)
     try {
         // let res = await fetch(url, header)
-        let res = await fetch(url)
+        const res = await fetch(url)
         return await res.json()
     } catch (e) {
         throw e
@@ -120,7 +120,7 @@ const jsonFromTxid = async (txid) => {
 }
 
 const bobFromTxid = async (txid) => {
-    let rawtx = await rawTxFromTxid(txid)
+    const rawtx = await rawTxFromTxid(txid)
     // Transform using BPU
     try {
         return await bobFromRawTx(rawtx)
