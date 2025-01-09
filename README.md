@@ -54,33 +54,25 @@ bun run format
 
 # Importing
 
-You can import bmap using require:
-
-```js
-const { BMAP } = require('bmapjs')
-```
-
-or using ESM module import:
-
 ```js
 import { BMAP, TransformTx } from 'bmapjs'
 ```
 
 # Using in the browser
 
-You can use bmapjs in the browser by pointing to the .cjs file in the dist folder:
+You can use bmapjs in the browser by pointing to the ES module in the dist folder:
+
+```html
+<script type="module">
+    import { BMAP, TransformTx } from './dist/bmap.es.js'
+    // more code here
+</script>
+```
+
+For legacy support, a CommonJS version is also available:
 
 ```html
 <script src="dist/bmap.cjs"></script>
-```
-
-The CJS is by far the largest package since it includes dependencies. It is also possible to import in the browser using the module syntax:
-
-```html
-<script src="dist/bmap.es.js" type="module">
-    import { TransformTx } from 'bmapjs'
-    // more code here
-</script>
 ```
 
 # Other languages
@@ -91,8 +83,6 @@ The CJS is by far the largest package since it includes dependencies. It is also
 
 Turn a BOB formatted transaction into a BMAP tx. It will throw an error if the transaction is malformed.
 
-In Node.js/Bun:
-
 ```js
 import { TransformTx } from 'bmapjs'
 
@@ -101,18 +91,6 @@ try {
 } catch (e) {
     console.error(e)
 }
-```
-
-or in the browser:
-
-```html
-<script src="dist/bmap.cjs"></script>
-```
-
-`bmap` will be available on the window object:
-
-```js
-const bmapTx = await bmap.TransformTx(bob_tx_object)
 ```
 
 ## BMAP (Transaction object)
@@ -154,7 +132,7 @@ interface BmapTx {
 
 Not all protocols available in `bmap.js` are active by default. These are less used or older protocols, but they can be easily added at runtime.
 
-```javascript
+```typescript
 import { BMAP, RON } from 'bmapjs'
 
 const bmap = new BMAP()

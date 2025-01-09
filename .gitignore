@@ -1,6 +1,5 @@
 # Build output
 dist/
-types/
 
 # Dependencies
 node_modules/
@@ -31,3 +30,5 @@ firebase-debug.log*
 
 # Development
 playground-*.js
+
+.bitcoin

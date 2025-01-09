@@ -1,0 +1,53 @@
+{
+  "bmapjs-transaction": {
+    "prefix": ["bmap-tx", "bmaptx"],
+    "description": "Create a BMAP transaction from a raw transaction hex string",
+    "body": [
+      "try {",
+      "  // First validate it's a valid transaction",
+      "  const tx = Transaction.fromHex(${1:rawTx});",
+      "  if (!tx) {",
+      "    throw new Error('Invalid transaction format');",
+      "  }",
+      "",
+      "  // Parse the transaction using BOB format",
+      "  const bob = await parse({",
+      "    tx: { r: ${1:rawTx} },",
+      "    split: [{ token: { op: 106 }, include: 'l' }, { token: { s: '|' } }],",
+      "  });",
+      "",
+      "  if (!bob || !bob.out || !Array.isArray(bob.out)) {",
+      "    return {",
+      "      data: JSON.stringify({ tx: { h: tx.hash().toString() } }, null, 2),",
+      "      type: 'transactions',",
+      "      name: \\`bob_\\${new Date().toISOString().replace(/[:.]/g, '-')}\\`",
+      "    };",
+      "  }",
+      "",
+      "  // Transform BOB format to BMAP",
+      "  const bmapTx = await TransformTx(bob as BobTx);",
+      "  console.log({ bmapTx });",
+      "",
+      "  return {",
+      "    data: JSON.stringify(bmapTx, null, 2),",
+      "    type: 'transactions',",
+      "    name: \\`\\${txid}_bmap_\\${new Date().toISOString().replace(/[:.]/g, '-')}\\`",
+      "  };",
+      "} catch (error) {",
+      "  console.error('BOB parsing error:', error);",
+      "  throw new Error(",
+      "    \\`Failed to parse transaction: \\${",
+      "      error instanceof Error ? error.message : String(error)",
+      "    }. Please ensure the transaction hex is valid.\\`",
+      "  );",
+      "}"
+    ],
+    "scope": "typescript,javascript",
+    "metadata": {
+      "tags": ["bitcoin", "bmap", "transaction", "parsing"],
+      "requires": ["bmapjs", "bsv"],
+      "author": "Sensory Snippets",
+      "version": "1.0.0"
+    }
+  }
+} 
