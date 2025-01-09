@@ -24,7 +24,11 @@ export default defineConfig({
       insertTypesEntry: true,
       cleanVueFileName: true,
       rollupTypes: true,
-      copyDtsFiles: true,
+      copyDtsFiles: false,
+      compilerOptions: {
+        preserveSymlinks: true,
+        skipLibCheck: true
+      },
       afterBuild: () => {
         console.log("Type declarations built successfully");
       },

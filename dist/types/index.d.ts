@@ -1,27 +1,29 @@
-import { BpuTx } from 'bpu-ts';
-import { Cell } from 'bpu-ts';
-import { In } from 'bpu-ts';
+import { _21E8 } from './types/protocols/_21e8';
+import { AIP } from './types/protocols/aip';
+import { B } from './types/protocols/b';
+import { BAP } from './types/protocols/bap';
+import { BITCOM } from './types/protocols/bitcom';
+import { BITKEY } from './types/protocols/bitkey';
+import { BITPIC } from './types/protocols/bitpic';
+import { BmapTx } from './types/common';
+import { BobTx } from './types/common';
+import { HAIP } from './types/protocols/haip';
+import { Handler } from './types/common';
+import { HandlerProps } from './types/common';
+import { MAP } from './types/protocols/map';
+import { MomTx } from './types/common';
+import { ORD } from './types/protocols/ord';
 import { Out } from 'bpu-ts';
+import { Protocol } from './types/common';
+import { RON } from './types/protocols/ron';
+import { SchemaField } from './types/common';
+import { ScriptChecker } from './types/common';
+import { SYMRE } from './types/protocols/symre';
 import { Tape } from 'bpu-ts';
 
-declare type _21E8 = {
-    txid: string;
-    target: string;
-    difficulty: number;
-    value: number;
-};
+export { _21E8 }
 
-declare type AIP = {
-    address?: string;
-    algorithm?: string;
-    signing_algorithm?: string;
-    signing_address?: string;
-    index?: number[];
-    hashing_algorithm?: string;
-    index_unit_size?: number;
-    signature?: string;
-    verified?: boolean;
-};
+export { AIP }
 
 export declare const allProtocols: (Protocol | {
     name: string;
@@ -32,34 +34,15 @@ export declare const allProtocols: (Protocol | {
     handler: ({ dataObj, cell, tx }: HandlerProps) => void;
 })[];
 
-declare type B = {
-    content: string;
-    "content-type": string;
-    encoding: string;
-    filename?: string;
-};
+export { B }
 
-declare type BAP = {
-    type: string;
-    hash: string;
-    sequence: string;
-};
+export { BAP }
 
-declare type BITCOM = string[];
+export { BITCOM }
 
-declare type BITKEY = {
-    bitkey_signature: string;
-    user_signature: string;
-    paymail: string;
-    pubkey: string;
-};
+export { BITKEY }
 
-declare type BITPIC = {
-    paymail: string;
-    pubkey: string;
-    signature: string;
-    verified: boolean;
-};
+export { BITPIC }
 
 export declare class BMAP {
     enabledProtocols: Map<string, string>;
@@ -74,149 +57,38 @@ export declare class BMAP {
     processDataProtocols: (tape: Tape[], out: Out, tx: BobTx, dataObj: Partial<BobTx>) => Promise<Partial<BobTx>>;
 }
 
-export declare interface BmapTx extends BobTx {
-    timestamp: number;
-    B?: B[];
-    AIP?: AIP[];
-    MAP?: MAP[];
-    BAP?: BAP[];
-    "21E8"?: _21E8[];
-    ORD?: ORD[];
-    BITCOM?: BITCOM[];
-    BITPIC?: BITPIC[];
-    BITKEY?: BITKEY[];
-    METANET?: MetaNet[];
-    SYMRE?: SYMRE[];
-    RON?: RON[];
-    HAIP?: HAIP[];
-}
+export { BmapTx }
 
 export declare const bobFromRawTx: (rawTx: string) => Promise<BobTx>;
 
-export declare interface BobTx extends BpuTx {
-    blk?: {
-        t: number;
-        i: number;
-    };
-    mem?: number;
-    out: Out[];
-    in?: In[];
-    tx: {
-        h: string;
-    };
-    lock?: number;
-    [key: string]: any;
-}
+export { BobTx }
 
 export declare const defaultProtocols: Protocol[];
 
 export declare const fetchRawTx: (txid: string) => Promise<string>;
 
-declare type HAIP = {
-    signing_address?: string;
-    hashing_algorithm?: string;
-    signing_algorithm?: string;
-    index?: number[];
-    index_unit_size?: number;
-    signature?: string;
-    verified?: boolean;
-};
+export { HAIP }
 
-export declare type Handler = (handlerProps: HandlerProps) => any;
+export { Handler }
 
-export declare type HandlerProps = {
-    dataObj: BmapTx;
-    cell: Cell[];
-    tape?: Tape[];
-    tx?: BobTx;
-    out?: Out;
-};
+export { HandlerProps }
 
-declare type MAP = {
-    app: string;
-    type: string;
-    context?: string;
-    subcontext?: string;
-    collection?: string;
-    url?: string;
-    audio?: string;
-    channel?: string;
-    rarity?: string;
-    tx?: string;
-    videoID?: string;
-    provider?: string;
-    tags?: string[];
-    start?: string;
-    duration?: string;
-    [prop: string]: string | string[];
-};
+export { MAP }
 
-declare type MetaNet = {
-    parent: MetanetNode;
-    ancestor?: MetanetNode[];
-    child?: MetanetNode[];
-    head?: boolean;
-    node: MetanetNode;
-};
+export { MomTx }
 
-declare type MetanetNode = {
-    tx: string;
-    id: string;
-    a: string;
-};
+export { ORD }
 
-export declare interface MomTx extends BobTx, MetaNet {}
+export { Protocol }
 
-declare type ORD = {
-    data: string; //base64
-    contentType: string;
-};
+export { RON }
 
-export declare type Protocol = {
-    name: string;
-    handler: Handler;
-    address?: string;
-    opReturnSchema?: SchemaField[];
-    scriptChecker?: ScriptChecker;
-};
-
-declare type RON = {
-    pair: string; // TODO: json tring - needs parsing
-    address: string;
-    timestamp: string;
-};
-
-declare type SchemaField = { [key: string]: SchemaValue } | SimpleField[];
-
-declare type SchemaValue = string | SimpleField | { [key: string]: SchemaValue } | SchemaValue[];
-
-export declare type ScriptChecker = (cell: Cell[]) => boolean;
-
-declare type SimpleField = { [key: string]: string };
+export { ScriptChecker }
 
 export declare const supportedProtocols: string[];
 
-declare type SYMRE = {
-    url: string;
-};
+export { SYMRE }
 
 export declare const TransformTx: (tx: BobTx | string | MomTx | BmapTx, protocols?: string[] | Protocol[]) => Promise<BmapTx>;
 
 export { }
-
-declare module "bun:test" {
-  export interface Assertion {
-    toBe(expected: any): void;
-    toEqual(expected: any): void;
-    toBeDefined(): void;
-    toBeTruthy(): void;
-    toThrow(expected?: string | RegExp): void;
-    rejects: {
-      toThrow(expected?: string | RegExp): Promise<void>;
-    };
-  }
-
-  export function expect(actual: any): Assertion;
-  export function describe(name: string, fn: () => void): void;
-  export function test(name: string, fn: () => void | Promise<void>): void;
-}
