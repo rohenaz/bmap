@@ -1,40 +1,48 @@
-import { parse as Pe } from "bpu-ts";
-import { Script as Se, Hash as A, Signature as B, Utils as k, BSM as b, BigNumber as Y, PublicKey as Z } from "@bsv/sdk";
+import { parse as Ee } from "bpu-ts";
+import { Script as Se, Hash as I, Signature as k, Utils as R, BSM as b, BigNumber as Y, PublicKey as Z } from "@bsv/sdk";
 import { decode as L } from "@msgpack/msgpack";
-const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), ve = (t) => t.length > 0 && t.every((e) => e === "object"), w = (t, e) => {
+const Pe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), xe = (t) => t.length > 0 && t.every((e) => e === "object"), w = (t, e) => {
   if (!t)
     throw new Error(`cannot get cell value of: ${t}`);
-  return e === "string" ? t.s ? t.s : t.ls || "" : e === "hex" ? t.h ? t.h : t.lh || (t.b ? Buffer.from(t.b, "base64").toString("hex") : t.lb && Buffer.from(t.lb, "base64").toString("hex")) || "" : e === "number" ? Number.parseInt(t.h ? t.h : t.lh || "0", 16) : e === "file" ? `bitfs://${t.f ? t.f : t.lf}` : (t.b ? t.b : t.lb) || "";
-}, Ie = (t) => t.cell.some((e) => e.op === 106), G = (t) => {
+  return e === "string" ? t.s ? t.s : t.ls || "" : e === "hex" ? t.h ? t.h : t.lh || (t.b ? Buffer.from(t.b, "base64").toString("hex") : t.lb && Buffer.from(t.lb, "base64").toString("hex")) || "" : e === "number" ? Number.parseInt(t.h ? t.h : t.lh || "0", 16) : e === "file" ? `bitfs://${t.f ? t.f : t.lf}` : e === "binary" ? t.b || t.lb || "" : (t.b ? t.b : t.lb) || "";
+}, ve = (t) => t.cell.some((e) => e.op === 106), J = (t) => {
   var r;
   if (t.cell.length !== 2)
     return !1;
   const e = t.cell.findIndex((n) => n.op === 106);
   return e !== -1 ? ((r = t.cell[e - 1]) == null ? void 0 : r.op) === 0 : !1;
 }, m = (t, e, r) => {
-  t[e] ? t[e].push(r) : t[e] = [r];
+  if (!t[e])
+    t[e] = [r];
+  else {
+    if (!Array.isArray(t[e])) {
+      const n = t[e];
+      t[e] = [], t[e][0] = n;
+    }
+    t[e].push(r);
+  }
 }, Ae = (t, e, r, n, s) => {
   const o = {}, a = e.length + 1;
   if (n.length < a)
     throw new Error(
       `${t} requires at least ${a} fields including the prefix: ${s.tx.h}`
     );
-  for (const [i, d] of Object.entries(e)) {
-    const c = Number.parseInt(i, 10), [f] = Object.keys(d), [u] = Object.values(d);
-    o[f] = w(n[c + 1], u);
+  for (const [i, h] of Object.entries(e)) {
+    const c = Number.parseInt(i, 10), [d] = Object.keys(h), [u] = Object.values(h);
+    o[d] = w(n[c + 1], u);
   }
   m(r, t, o);
-}, Be = (t) => {
+}, Ie = (t) => {
   const e = "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+/]{3}=)?";
   return new RegExp(`^${e}$`, "gi").test(t);
 }, K = "OP_SIZE <OP_X_PLACEHOLDER> OP_PICK OP_SHA256 OP_SWAP OP_SPLIT OP_DROP OP_EQUALVERIFY OP_DROP OP_CHECKSIG".split(
   " "
-), He = (t) => {
+), ke = (t) => {
   if (t.length !== 12)
     return !1;
   const e = [...t].map((s) => s.ops).splice(2, t.length), r = w(t[1], "hex"), n = Buffer.from(r).byteLength;
   return e[1] = `OP_${n}`, K[1] = `OP_${n}`, e.join() === K.join();
-}, Re = ({ dataObj: t, cell: e, out: r }) => {
+}, Be = ({ dataObj: t, cell: e, out: r }) => {
   if (!e[0] || !r)
     throw new Error("Invalid 21e8 tx. dataObj, cell, out and tx are required.");
   const n = w(e[0], "hex"), s = w(e[1], "hex");
@@ -47,189 +55,181 @@ const xe = (t) => t.length > 0 && t.every((e) => typeof e == "string"), ve = (t)
     txid: n
   };
   m(t, "21E8", a);
-}, C = {
+}, O = {
   name: "21E8",
-  handler: Re,
-  scriptChecker: He
-}, { toArray: v, toHex: I, fromBase58Check: F, toBase58Check: V } = k, J = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva", D = [
+  handler: Be,
+  scriptChecker: ke
+}, { toArray: v, toHex: A, fromBase58Check: F, toBase58Check: V } = R, G = "15PciHG22SNLQJXMoSUaWVi7WSqc7hCfva", W = [
   { algorithm: "string" },
   { address: "string" },
   { signature: "binary" },
   [{ index: "binary" }]
 ];
-function ke(t, e, r) {
+function He(t, e, r) {
   if (!Array.isArray(r) || r.length < 3)
     throw new Error("AIP requires at least 3 cells including the prefix");
   let n = -1;
-  for (let h = 0; h < r.length; h++)
-    if (r[h].cell === e) {
-      n = h;
+  for (let f = 0; f < r.length; f++)
+    if (r[f].cell === e) {
+      n = f;
       break;
     }
   if (n === -1)
     throw new Error("AIP could not find cell in tape");
   let s = t.index || [];
   const o = ["6a"];
-  for (let h = 0; h < n; h++) {
-    const l = r[h];
-    if (!G(l)) {
-      for (const g of l.cell)
-        g.h ? o.push(g.h) : g.b ? o.push(I(v(g.b, "base64"))) : g.s && o.push(I(v(g.s)));
+  for (let f = 0; f < n; f++) {
+    const g = r[f];
+    if (!J(g)) {
+      for (const l of g.cell)
+        l.h ? o.push(l.h) : l.b ? o.push(A(v(l.b, "base64"))) : l.s && o.push(A(v(l.s)));
       o.push("7c");
     }
   }
   if (t.hashing_algorithm && t.index_unit_size) {
-    const h = t.index_unit_size * 2;
+    const f = t.index_unit_size * 2;
     s = [];
-    const l = e[6].h;
-    for (let g = 0; g < l.length; g += h)
-      s.push(Number.parseInt(l.substr(g, h), 16));
+    const g = e[6].h;
+    for (let l = 0; l < g.length; l += f)
+      s.push(Number.parseInt(g.substr(l, f), 16));
     t.index = s;
   }
   const a = [];
   if (s.length > 0)
-    for (const h of s) {
-      if (h >= o.length)
-        return console.log("[validateSignature] Index out of bounds:", h), !1;
-      a.push(v(o[h], "hex"));
+    for (const f of s) {
+      if (f >= o.length)
+        return console.log("[validateSignature] Index out of bounds:", f), !1;
+      a.push(v(o[f], "hex"));
     }
   else
-    for (const h of o)
-      a.push(v(h, "hex"));
+    for (const f of o)
+      a.push(v(f, "hex"));
   let i;
   if (t.hashing_algorithm) {
     t.index_unit_size || a.shift();
-    const h = Se.fromHex(I(a.flat()));
-    let l = v(h.toHex(), "hex");
-    t.index_unit_size && (l = l.slice(1)), i = A.sha256(l);
+    const f = Se.fromHex(A(a.flat()));
+    let g = v(f.toHex(), "hex");
+    t.index_unit_size && (g = g.slice(1)), i = I.sha256(g);
   } else
     i = a.flat();
-  const d = t.address || t.signing_address;
-  if (!d || !t.signature)
+  const h = t.address || t.signing_address;
+  if (!h || !t.signature)
     return !1;
   let c;
   try {
-    c = B.fromCompact(t.signature, "base64");
-  } catch (h) {
-    return console.log("[validateSignature] Failed to parse signature:", h), !1;
+    c = k.fromCompact(t.signature, "base64");
+  } catch (f) {
+    return console.log("[validateSignature] Failed to parse signature:", f), !1;
   }
-  const f = () => {
+  const d = () => {
     try {
-      const h = b.magicHash(i), l = q(h);
-      for (let g = 0; g < 4; g++)
+      const f = b.magicHash(i), g = q(f);
+      for (let l = 0; l < 4; l++)
         try {
-          const y = c.RecoverPublicKey(g, l), E = y.toHash(), { prefix: P } = F(d);
-          if (V(E, P) === d)
+          const y = c.RecoverPublicKey(l, g), E = y.toHash(), { prefix: S } = F(h);
+          if (V(E, S) === h)
             return b.verify(i, c, y);
         } catch (y) {
           console.log("[tryNormalLogic] Recovery error:", y);
         }
-    } catch (h) {
-      console.log("[tryNormalLogic] error:", h);
+    } catch (f) {
+      console.log("[tryNormalLogic] error:", f);
     }
     return !1;
   }, u = () => {
     if (a.length <= 2)
       return !1;
     try {
-      const h = a.slice(1, -1), l = A.sha256(h.flat()), g = I(l), y = v(g, "utf8"), E = b.magicHash(y), P = q(E);
-      for (let S = 0; S < 4; S++)
+      const f = a.slice(1, -1), g = I.sha256(f.flat()), l = A(g), y = v(l, "utf8"), E = b.magicHash(y), S = q(E);
+      for (let P = 0; P < 4; P++)
         try {
-          const x = c.RecoverPublicKey(S, P), $ = x.toHash(), { prefix: T } = F(d);
-          if (V($, T) === d)
+          const x = c.RecoverPublicKey(P, S), $ = x.toHash(), { prefix: T } = F(h);
+          if (V($, T) === h)
             return b.verify(y, c, x);
         } catch (x) {
           console.log("[tryTwetchLogic] Recovery error:", x);
         }
-    } catch (h) {
-      console.log("[tryTwetchLogic] error:", h);
+    } catch (f) {
+      console.log("[tryTwetchLogic] error:", f);
     }
     return !1;
   };
-  let p = f();
+  let p = d();
   return p || (p = u()), t.verified = p, p;
 }
 function q(t) {
-  const e = I(t);
+  const e = A(t);
   return new Y(e, 16);
 }
-var W = /* @__PURE__ */ ((t) => (t.HAIP = "HAIP", t.AIP = "AIP", t))(W || {});
-const j = async (t, e, r, n, s) => {
+var D = /* @__PURE__ */ ((t) => (t.HAIP = "HAIP", t.AIP = "AIP", t))(D || {});
+const X = async (t, e, r, n, s) => {
   const o = {};
   if (n.length < 4)
     throw new Error("AIP requires at least 4 fields including the prefix");
   for (const [a, i] of Object.entries(t)) {
-    const d = Number.parseInt(a, 10);
+    const h = Number.parseInt(a, 10);
     if (Array.isArray(i)) {
-      const [c] = Object.keys(i[0]), f = [];
-      for (let u = d + 1; u < n.length; u++)
-        n[u].h && Array.isArray(f) && f.push(Number.parseInt(n[u].h || "", 16));
-      o[c] = f;
+      const [c] = Object.keys(i[0]), d = [];
+      for (let u = h + 1; u < n.length; u++)
+        n[u].h && Array.isArray(d) && d.push(Number.parseInt(n[u].h || "", 16));
+      o[c] = d;
     } else {
-      const [c] = Object.keys(i), [f] = Object.values(i);
-      o[c] = w(n[d + 1], f) || "";
+      const [c] = Object.keys(i), [d] = Object.values(i);
+      o[c] = w(n[h + 1], d) || "";
     }
   }
-  if (n[0].s === J && n[3].s && Be(n[3].s) && (o.signature = n[3].s), !o.signature)
+  if (n[0].s === G && n[3].s && Ie(n[3].s) && (o.signature = n[3].s), !o.signature)
     throw new Error("AIP requires a signature");
-  return ke(o, n, s), m(r, e, o), { dataObj: r, cell: n, tape: s };
-}, $e = async ({ dataObj: t, cell: e, tape: r }) => {
+  return He(o, n, s), m(r, e, o), { dataObj: r, cell: n, tape: s };
+}, Re = async ({ dataObj: t, cell: e, tape: r }) => {
   if (!r)
     throw new Error("Invalid AIP transaction. tape is required");
-  return j(D, "AIP", t, e, r);
-}, X = {
+  return X(W, "AIP", t, e, r);
+}, j = {
   name: "AIP",
-  address: J,
-  opReturnSchema: D,
-  handler: $e
-}, Te = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut", _ = [
+  address: G,
+  opReturnSchema: W,
+  handler: Re
+}, $e = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut", _ = [
   { content: ["string", "binary", "file"] },
   { "content-type": "string" },
   { encoding: "string" },
   // we use this field to determine content character encoding. If encoding is not a valid character encoding (gzip), we assume it is binary
   { filename: "string" }
-], Me = ({ dataObj: t, cell: e, tx: r }) => {
+], Te = ({ dataObj: t, cell: e, tx: r }) => {
   var o;
   const n = /* @__PURE__ */ new Map();
-  if (n.set("utf8", "string"), n.set("text", "string"), n.set("gzip", "binary"), n.set("text/plain", "string"), n.set("image/png", "binary"), n.set("image/jpeg", "binary"), !e[1] || !e[2])
+  if (n.set("utf8", "string"), n.set("text", "string"), n.set("gzip", "binary"), n.set("text/plain", "string"), n.set("image/png", "binary"), n.set("image/jpeg", "binary"), n.set("application/octet-stream", "binary"), !e[1] || !e[2])
     throw new Error(`Invalid B tx: ${r}`);
   if (e.length > _.length + 1)
     throw new Error("Invalid B tx. Too many fields.");
   const s = {};
   for (const [a, i] of Object.entries(_)) {
-    const d = Number.parseInt(a, 10), c = Object.keys(i)[0];
-    let f = Object.values(i)[0];
+    const h = Number.parseInt(a, 10), c = Object.keys(i)[0];
+    let d = Object.values(i)[0];
     if (c === "content")
       if (e[1].f)
-        f = "file";
-      else if ((!e[3] || !e[3].s) && e[2].s) {
-        if (f = n.get(e[2].s), !f) {
-          console.warn("Problem inferring encoding. Malformed B data.", e);
-          return;
-        }
-        e[3] || (e[3] = { h: "", b: "", s: "", i: 0, ii: 0 }), e[3].s = f === "string" ? "utf-8" : "binary";
-      } else {
+        d = "file";
+      else if ((!e[3] || !e[3].s) && e[2].s)
+        d = n.get(e[2].s), d || (d = "binary"), e[3] || (e[3] = { h: "", b: "", s: "", i: 0, ii: 0 }), e[3].s = d === "string" ? "utf-8" : "binary";
+      else {
         const p = (o = e[3]) != null && o.s ? n.get(e[3].s.replace("-", "").toLowerCase()) : null;
-        if (!p) {
-          console.warn("Problem inferring encoding. Malformed B data.", e);
-          return;
-        }
-        f = p;
+        p ? d = p : d = "binary";
       }
-    if (c === "encoding" && !e[d + 1] || c === "filename" && !e[d + 1])
+    if (c === "encoding" && !e[h + 1] || c === "filename" && !e[h + 1])
       continue;
-    if (!e || !e[d + 1])
+    if (!e || !e[h + 1])
       throw new Error(`malformed B syntax ${e}`);
-    const u = e[d + 1];
-    s[c] = w(u, f);
+    const u = e[h + 1];
+    s[c] = w(u, d);
   }
   m(t, "B", s);
 }, ee = {
   name: "B",
-  address: Te,
+  address: $e,
   opReturnSchema: _,
-  handler: Me
-}, Oe = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT", te = [
+  handler: Te
+}, Me = "1BAPSuaPnfGnSBM3GLV9yhxUdYe4vGbdMT", te = [
   { type: "string" },
   { hash: "string" },
   { sequence: "string" }
@@ -239,10 +239,10 @@ const j = async (t, e, r, n, s) => {
   Ae("BAP", te, t, e, r);
 }, re = {
   name: "BAP",
-  address: Oe,
+  address: Me,
   opReturnSchema: te,
   handler: Ce
-}, _e = "$", Ne = [
+}, Oe = "$", _e = [
   {
     su: [{ pubkey: "string" }, { sign_position: "string" }, { signature: "string" }],
     echo: [{ data: "string" }, { to: "string" }, { filename: "string" }],
@@ -262,28 +262,28 @@ const j = async (t, e, r, n, s) => {
     ],
     useradd: [{ address: "string" }]
   }
-], Le = ({ dataObj: t, cell: e }) => {
+], Ne = ({ dataObj: t, cell: e }) => {
   if (!e.length || !e.every((n) => n.s))
     throw new Error("Invalid Bitcom tx");
   const r = e.map((n) => n != null && n.s ? n.s : "");
   m(t, "BITCOM", r);
-}, Ke = {
+}, Le = {
   name: "BITCOM",
-  address: _e,
-  opReturnSchema: Ne,
-  handler: Le
-}, { toArray: z, toBase58Check: O, toHex: Fe } = k, { magicHash: Ve } = b, ne = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC", se = [
+  address: Oe,
+  opReturnSchema: _e,
+  handler: Ne
+}, { toArray: z, toBase58Check: C, toHex: Ke } = R, { magicHash: Fe } = b, ne = "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC", se = [
   { bitkey_signature: "string" },
   { user_signature: "string" },
   { paymail: "string" },
   { pubkey: "string" }
 ];
-function qe(t) {
-  const e = Fe(t);
+function Ve(t) {
+  const e = Ke(t);
   return new Y(e, 16);
 }
 function U(t, e) {
-  const r = Ve(t), n = qe(r);
+  const r = Fe(t), n = Ve(r);
   for (let s = 0; s < 4; s++)
     try {
       const o = e.RecoverPublicKey(s, n);
@@ -293,26 +293,26 @@ function U(t, e) {
     }
   throw new Error("Failed to recover public key from BSM signature");
 }
-const ze = async ({ dataObj: t, cell: e }) => {
+const qe = async ({ dataObj: t, cell: e }) => {
   if (e.length < 5)
     throw new Error("Invalid Bitkey tx");
   const r = {};
   for (const [T, M] of Object.entries(se)) {
-    const be = Number.parseInt(T, 10), we = Object.keys(M)[0], Ee = Object.values(M)[0];
-    r[we] = w(e[be + 1], Ee);
+    const ye = Number.parseInt(T, 10), be = Object.keys(M)[0], we = Object.values(M)[0];
+    r[be] = w(e[ye + 1], we);
   }
-  const n = r.pubkey, o = Z.fromString(n).toHash(), a = O(o), d = Buffer.from(r.paymail).toString("hex") + n, c = Buffer.from(d, "hex"), f = A.sha256(z(c)), u = B.fromCompact(r.bitkey_signature, "base64"), p = U(f, u), h = p.toHash(), l = O(h), g = b.verify(f, u, p) && l === ne, y = z(Buffer.from(n, "utf8")), E = B.fromCompact(r.user_signature, "base64"), P = U(y, E), S = P.toHash(), x = O(S), $ = b.verify(y, E, P) && x === a;
-  r.verified = g && $, m(t, "BITKEY", r);
-}, Ue = {
+  const n = r.pubkey, o = Z.fromString(n).toHash(), a = C(o), h = Buffer.from(r.paymail).toString("hex") + n, c = Buffer.from(h, "hex"), d = I.sha256(z(c)), u = k.fromCompact(r.bitkey_signature, "base64"), p = U(d, u), f = p.toHash(), g = C(f), l = b.verify(d, u, p) && g === ne, y = z(Buffer.from(n, "utf8")), E = k.fromCompact(r.user_signature, "base64"), S = U(y, E), P = S.toHash(), x = C(P), $ = b.verify(y, E, S) && x === a;
+  r.verified = l && $, m(t, "BITKEY", r);
+}, ze = {
   name: "BITKEY",
   address: ne,
   opReturnSchema: se,
-  handler: ze
-}, { magicHash: Qe } = b, { toArray: Ye } = k, oe = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p", Ze = [
+  handler: qe
+}, { magicHash: Ue } = b, { toArray: Qe } = R, oe = "18pAqbYqhzErT6Zk3a5dwxHtB9icv8jH2p", Ye = [
   { paymail: "string" },
   { pubkey: "binary" },
   { signature: "string" }
-], Ge = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
+], Ze = async ({ dataObj: t, cell: e, tape: r, tx: n }) => {
   if (e[0].s !== oe || !e[1] || !e[2] || !e[3] || !e[1].s || !e[2].b || !e[3].s || !r)
     throw new Error(`Invalid BITPIC record: ${n}`);
   const s = {
@@ -323,8 +323,8 @@ const ze = async ({ dataObj: t, cell: e }) => {
   };
   if (r[1].cell[0].s === "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut")
     try {
-      const a = e[1].lb || e[1].b, i = A.sha256(Ye(a, "base64")), d = B.fromCompact(s.signature, "base64"), c = Z.fromString(s.pubkey), f = Qe(i);
-      s.verified = b.verify(f, d, c);
+      const a = e[1].lb || e[1].b, i = I.sha256(Qe(a, "base64")), h = k.fromCompact(s.signature, "base64"), c = Z.fromString(s.pubkey), d = Ue(i);
+      s.verified = b.verify(d, h, c);
     } catch {
       s.verified = !1;
     }
@@ -332,9 +332,9 @@ const ze = async ({ dataObj: t, cell: e }) => {
 }, Je = {
   name: "BITPIC",
   address: oe,
-  opReturnSchema: Ze,
-  handler: Ge
-}, De = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3", ie = [
+  opReturnSchema: Ye,
+  handler: Ze
+}, Ge = "1HA1P2exomAwCUycZHr8WeyFoy5vuQASE3", ie = [
   { algorithm: "string" },
   { algorithm: "string" },
   { address: "string" },
@@ -346,17 +346,17 @@ const ze = async ({ dataObj: t, cell: e }) => {
     throw new Error("Invalid HAIP tx. Bad tape");
   if (!n)
     throw new Error("Invalid HAIP tx.");
-  return await j(
+  return await X(
     ie,
-    W.HAIP,
+    D.HAIP,
     t,
     e,
     r
     // tx,
   );
-}, je = {
+}, De = {
   name: "HAIP",
-  address: De,
+  address: Ge,
   opReturnSchema: ie,
   handler: We
 }, N = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5", ae = [
@@ -379,7 +379,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
     const s = n.s;
     n.i === 2 ? (e[s] = [], r = s) : r && Array.isArray(e[r]) && e[r].push(s);
   }
-}, et = (t, e) => {
+}, je = (t, e) => {
   let r = null;
   for (const n of t) {
     if (n.i === 0 || n.i === 1)
@@ -387,10 +387,10 @@ const ze = async ({ dataObj: t, cell: e }) => {
     const s = n.s;
     n.i === 2 ? (e[s] = [], r = s) : r && e[r].push(s);
   }
-}, tt = (t, e) => {
+}, et = (t, e) => {
   for (const r of t)
     (r.i === 0 || r.i === 1) && (e.SELECT = "TODO");
-}, rt = (t, e) => {
+}, tt = (t, e) => {
   for (const r of t)
     if (!(r.i === 0 || r.i === 1) && r.i === 2)
       try {
@@ -402,7 +402,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
         e = {};
       }
   return e;
-}, nt = (t, e) => {
+}, rt = (t, e) => {
   for (const r of t)
     if (!(r.i === 0 || r.i === 1) && r.i === 2)
       try {
@@ -411,7 +411,7 @@ const ze = async ({ dataObj: t, cell: e }) => {
         e = {};
       }
   return e;
-}, st = (t, e) => {
+}, nt = (t, e) => {
   let r = null;
   for (const n of t) {
     if (!n.s || n.i === 0 || n.i === 1)
@@ -425,9 +425,9 @@ const ze = async ({ dataObj: t, cell: e }) => {
       e[r] = s;
     }
   }
-}, ot = ({ dataObj: t, cell: e, tx: r }) => {
+}, st = ({ dataObj: t, cell: e, tx: r }) => {
   if (e[0].s !== N || !e[1] || !e[1].s || !e[2] || !e[2].s)
-    throw new Error(`Invalid MAP record: ${r}`);
+    throw new Error(`Invalid MAP record: ${JSON.stringify(r, null, 2).substring(0, 100)}`);
   let n = {};
   const s = [];
   let o = 0;
@@ -450,25 +450,25 @@ const ze = async ({ dataObj: t, cell: e }) => {
         break;
       }
       case "DELETE": {
-        et(i, n);
+        je(i, n);
         break;
       }
       case "CLEAR":
         break;
       case "SELECT": {
-        tt(i, n);
+        et(i, n);
         break;
       }
       case "MSGPACK": {
-        n = rt(i, n);
+        n = tt(i, n);
         break;
       }
       case "JSON": {
-        n = nt(i, n);
+        n = rt(i, n);
         break;
       }
       case "SET": {
-        st(i, n);
+        nt(i, n);
         break;
       }
     }
@@ -477,15 +477,15 @@ const ze = async ({ dataObj: t, cell: e }) => {
   name: "MAP",
   address: N,
   opReturnSchema: ae,
-  handler: ot
-}, { toArray: it, toHex: at } = k, ct = "meta", ft = [
+  handler: st
+}, { toArray: ot, toHex: it } = R, at = "meta", ct = [
   { address: "string" },
   { parent: "string" },
   { name: "string" }
 ], Q = async (t, e) => {
-  const r = Buffer.from(t + e), n = A.sha256(it(r));
-  return at(n);
-}, dt = async ({ dataObj: t, cell: e, tx: r }) => {
+  const r = Buffer.from(t + e), n = I.sha256(ot(r));
+  return it(n);
+}, ft = async ({ dataObj: t, cell: e, tx: r }) => {
   if (!e.length || e[0].s !== "meta" || !e[1] || !e[1].s || !e[2] || !e[2].s || !r)
     throw new Error(`Invalid Metanet tx ${r}`);
   const n = await Q(e[1].s, r.tx.h), s = {
@@ -512,55 +512,55 @@ const ze = async ({ dataObj: t, cell: e }) => {
   });
 }, fe = {
   name: "METANET",
-  address: ct,
-  opReturnSchema: ft,
-  handler: dt
-}, ht = (t) => {
+  address: at,
+  opReturnSchema: ct,
+  handler: ft
+}, dt = (t) => {
   if (t.length < 13)
     return !1;
-  const e = R(t, (o) => o.ops === "OP_IF"), r = R(t, (o, a) => a > e && o.ops === "OP_ENDIF"), n = t.slice(e, r), s = t[e - 1];
+  const e = H(t, (o) => o.ops === "OP_IF"), r = H(t, (o, a) => a > e && o.ops === "OP_ENDIF"), n = t.slice(e, r), s = t[e - 1];
   return (s == null ? void 0 : s.op) === 0 && !!n[0] && !!n[1] && n[1].s === "ord";
-}, ut = ({ dataObj: t, cell: e, out: r }) => {
+}, ht = ({ dataObj: t, cell: e, out: r }) => {
   if (!e[0] || !r)
     throw new Error("Invalid Ord tx. dataObj, cell, out and tx are required.");
-  const n = R(e, (c) => c.ops === "OP_IF"), s = R(e, (c, f) => f > n && c.ops === "OP_ENDIF") + 1, o = e.slice(n, s);
+  const n = H(e, (c) => c.ops === "OP_IF"), s = H(e, (c, d) => d > n && c.ops === "OP_ENDIF") + 1, o = e.slice(n, s);
   if (!o[0] || !o[1] || o[1].s !== "ord")
     throw new Error("Invalid Ord tx. Prefix not found.");
   let a, i;
-  if (o.forEach((c, f, u) => {
-    c.ops === "OP_1" && (i = u[f + 1].s), c.ops === "OP_0" && (a = u[f + 1].b);
+  if (o.forEach((c, d, u) => {
+    c.ops === "OP_1" && (i = u[d + 1].s), c.ops === "OP_0" && (a = u[d + 1].b);
   }), !a)
     throw new Error("Invalid Ord data.");
   if (!i)
     throw new Error("Invalid Ord content type.");
-  const d = {
+  const h = {
     data: a,
     contentType: i
   };
-  t.ORD || (t.ORD = []), t.ORD.push(d);
-}, H = {
+  t.ORD || (t.ORD = []), t.ORD.push(h);
+}, B = {
   name: "ORD",
-  handler: ut,
-  scriptChecker: ht
+  handler: ht,
+  scriptChecker: dt
 };
-function R(t, e) {
-  return gt(t, e);
+function H(t, e) {
+  return ut(t, e);
 }
-function gt(t, e, r) {
+function ut(t, e, r) {
   const n = t == null ? 0 : t.length;
   if (!n)
     return -1;
   let s = n - 1;
-  return lt(t, e, s);
+  return gt(t, e, s);
 }
-function lt(t, e, r, n) {
+function gt(t, e, r, n) {
   let s = r + 1;
   for (; s--; )
     if (e(t[s], s, t))
       return s;
   return -1;
 }
-const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", mt = [
+const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", lt = [
   { pair: "json" },
   { address: "string" },
   { timestamp: "string" }
@@ -573,95 +573,103 @@ const de = "1GvFYzwtFix3qSAZhESQVTz9DeudHZNoh1", mt = [
     address: e[2].s,
     timestamp: s
   });
-}, yt = {
+}, mt = {
   name: "RON",
   address: de,
-  opReturnSchema: mt,
+  opReturnSchema: lt,
   handler: pt
-}, he = "1SymRe7erxM46GByucUWnB9fEEMgo7spd", bt = [{ url: "string" }], wt = ({ dataObj: t, cell: e, tx: r }) => {
+}, he = "1SymRe7erxM46GByucUWnB9fEEMgo7spd", yt = [{ url: "string" }], bt = ({ dataObj: t, cell: e, tx: r }) => {
   if (e[0].s !== he || !e[1] || !e[1].s)
     throw new Error(`Invalid SymRe tx: ${r}`);
   m(t, "SYMRE", { url: e[1].s });
-}, Et = {
+}, wt = {
   name: "SYMRE",
   address: he,
-  opReturnSchema: bt,
-  handler: wt
-}, ue = /* @__PURE__ */ new Map([]), ge = /* @__PURE__ */ new Map([]), le = /* @__PURE__ */ new Map([]), me = /* @__PURE__ */ new Map(), pe = [
-  X,
+  opReturnSchema: yt,
+  handler: bt
+}, ue = /* @__PURE__ */ new Map([]), ge = /* @__PURE__ */ new Map([]), le = /* @__PURE__ */ new Map([]), pe = /* @__PURE__ */ new Map(), me = [
+  j,
   ee,
   re,
   ce,
   fe,
-  C,
-  Ke,
-  Ue,
+  O,
+  Le,
+  ze,
   Je,
-  je,
-  yt,
-  Et,
-  H
-], Bt = pe.map((t) => t.name), ye = [X, ee, re, ce, fe, H];
-for (const t of ye)
-  t.address && ue.set(t.address, t.name), ge.set(t.name, t.handler), t.opReturnSchema && me.set(t.name, t.opReturnSchema), t.scriptChecker && le.set(t.name, t.scriptChecker);
-class Pt {
+  De,
+  mt,
+  wt,
+  B
+], kt = me.map((t) => t.name), Et = [j, ee, re, ce, fe, B];
+for (const t of Et)
+  t.address && ue.set(t.address, t.name), ge.set(t.name, t.handler), t.opReturnSchema && pe.set(t.name, t.opReturnSchema), t.scriptChecker && le.set(t.name, t.scriptChecker);
+class St {
   enabledProtocols;
   protocolHandlers;
   protocolScriptCheckers;
   protocolOpReturnSchemas;
   constructor() {
-    this.enabledProtocols = ue, this.protocolHandlers = ge, this.protocolScriptCheckers = le, this.protocolOpReturnSchemas = me;
+    this.enabledProtocols = ue, this.protocolHandlers = ge, this.protocolScriptCheckers = le, this.protocolOpReturnSchemas = pe;
   }
   addProtocolHandler({ name: e, address: r, opReturnSchema: n, handler: s, scriptChecker: o }) {
     r && this.enabledProtocols.set(r, e), this.protocolHandlers.set(e, s), n && this.protocolOpReturnSchemas.set(e, n), o && this.protocolScriptCheckers.set(e, o);
   }
   transformTx = async (e) => {
+    var n, s, o;
     if (!e || !e.in || !e.out)
       throw new Error("Cannot process tx");
-    let r = {};
-    for (const [n, s] of Object.entries(e))
-      if (n === "out")
-        for (const o of e.out) {
-          const { tape: a } = o;
-          a != null && a.some((c) => Ie(c)) && (r = await this.processDataProtocols(a, o, e, r));
-          const i = this.protocolScriptCheckers.get(C.name), d = this.protocolScriptCheckers.get(H.name);
-          if (a != null && a.some((c) => {
-            const { cell: f } = c;
-            if (i != null && i(f) || d != null && d(f))
+    let r = {
+      // Initialize blk with default values
+      blk: {
+        i: ((n = e.blk) == null ? void 0 : n.i) ?? 0,
+        t: ((s = e.blk) == null ? void 0 : s.t) ?? 0,
+        h: ((o = e.blk) == null ? void 0 : o.h) ?? ""
+      }
+    };
+    for (const [a, i] of Object.entries(e))
+      if (a === "out")
+        for (const h of e.out) {
+          const { tape: c } = h;
+          c != null && c.some((p) => ve(p)) && (r = await this.processDataProtocols(c, h, e, r));
+          const d = this.protocolScriptCheckers.get(O.name), u = this.protocolScriptCheckers.get(B.name);
+          if (c != null && c.some((p) => {
+            const { cell: f } = p;
+            if (d != null && d(f) || u != null && u(f))
               return !0;
           }))
-            for (const c of a) {
-              const { cell: f } = c;
+            for (const p of c) {
+              const { cell: f } = p;
               if (!f)
                 throw new Error("empty cell while parsing");
-              let u = "";
-              if (i != null && i(f))
-                u = C.name;
-              else if (d != null && d(f))
-                u = H.name;
+              let g = "";
+              if (d != null && d(f))
+                g = O.name;
+              else if (u != null && u(f))
+                g = B.name;
               else
                 continue;
-              this.process(u, {
+              this.process(g, {
                 tx: e,
                 cell: f,
                 dataObj: r,
-                tape: a,
-                out: o
+                tape: c,
+                out: h
               });
             }
         }
-      else n === "in" ? r[n] = s.map((o) => {
-        const a = { ...o };
-        return a.tape = void 0, a;
-      }) : r[n] = s;
+      else a === "in" ? r[a] = i.map((h) => {
+        const c = { ...h };
+        return c.tape = void 0, c;
+      }) : r[a] = i;
     if (r.METANET && e.parent) {
-      const n = {
+      const a = {
         ancestor: e.ancestor,
         parent: e.parent,
         child: e.child,
         head: e.head
       };
-      r.METANET.push(n), r.ancestor = void 0, r.child = void 0, r.parent = void 0, r.head = void 0, r.node = void 0;
+      r.METANET.push(a), r.ancestor = void 0, r.child = void 0, r.parent = void 0, r.head = void 0, r.node = void 0;
     }
     return r;
   };
@@ -686,32 +694,31 @@ class Pt {
       m(n, e, r);
   };
   processDataProtocols = async (e, r, n, s) => {
-    var o;
-    for (const a of e) {
-      const { cell: i } = a;
-      if (!i)
+    for (const o of e) {
+      const { cell: a } = o;
+      if (!a)
         throw new Error("empty cell while parsing");
-      if (G(a))
+      if (J(o))
         continue;
-      const d = i[0].s;
-      if (d) {
-        const c = this.enabledProtocols.get(d) || ((o = ye.filter((f) => f.name === d)[0]) == null ? void 0 : o.name);
-        c ? await this.process(c, {
-          cell: i,
+      const i = a[0].s;
+      if (i) {
+        const h = this.enabledProtocols.get(i);
+        h ? await this.process(h, {
+          cell: a,
           dataObj: s,
           tape: e,
           out: r,
           tx: n
-        }) : this.processUnknown(d, s, r);
+        }) : this.processUnknown(i, s, r);
       }
     }
     return s;
   };
 }
-const St = async (t) => {
+const Pt = async (t) => {
   const e = `https://api.whatsonchain.com/v1/bsv/main/tx/${t}/hex`;
   return console.log("hitting", e), await (await fetch(e)).text();
-}, xt = async (t) => await Pe({
+}, xt = async (t) => await Ee({
   tx: { r: t },
   split: [
     {
@@ -722,10 +729,10 @@ const St = async (t) => {
       token: { s: "|" }
     }
   ]
-}), Ht = async (t, e) => {
+}), Bt = async (t, e) => {
   if (typeof t == "string") {
     let n;
-    if (t.length === 64 && (n = await St(t)), Buffer.from(t).byteLength <= 146)
+    if (t.length === 64 && (n = await Pt(t)), Buffer.from(t).byteLength <= 146)
       throw new Error("Invalid rawTx");
     n || (n = t);
     const s = await xt(n);
@@ -734,12 +741,12 @@ const St = async (t) => {
     else
       throw new Error("Invalid txid");
   }
-  const r = new Pt();
+  const r = new St();
   if (e)
-    if (r.enabledProtocols.clear(), xe(e))
-      for (const n of pe)
+    if (r.enabledProtocols.clear(), Pe(e))
+      for (const n of me)
         e != null && e.includes(n.name) && r.addProtocolHandler(n);
-    else if (ve(e))
+    else if (xe(e))
       for (const n of e) {
         const s = n;
         s && r.addProtocolHandler(s);
@@ -751,12 +758,12 @@ const St = async (t) => {
   return r.transformTx(t);
 };
 export {
-  Pt as BMAP,
-  Ht as TransformTx,
-  pe as allProtocols,
+  St as BMAP,
+  Bt as TransformTx,
+  me as allProtocols,
   xt as bobFromRawTx,
-  ye as defaultProtocols,
-  St as fetchRawTx,
-  Bt as supportedProtocols
+  Et as defaultProtocols,
+  Pt as fetchRawTx,
+  kt as supportedProtocols
 };
 //# sourceMappingURL=bmap.es.js.map

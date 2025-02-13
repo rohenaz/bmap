@@ -39,7 +39,7 @@ const protocolHandlers = new Map<string, Handler>([]);
 const protocolScriptCheckers = new Map<string, ScriptChecker>([]);
 const protocolOpReturnSchemas = new Map<string, SchemaField[]>();
 
-export const allProtocols = [
+export const allProtocols: Protocol[] = [
   AIP,
   B,
   BAP,
@@ -106,7 +106,14 @@ export class BMAP {
     }
 
     // This will become our nicely formatted response object
-    let dataObj: Partial<BobTx> = {};
+    let dataObj: Partial<BobTx> = {
+      // Initialize blk with default values
+      blk: {
+        i: tx.blk?.i ?? 0,
+        t: tx.blk?.t ?? 0,
+        h: tx.blk?.h ?? ""
+      }
+    };
 
     for (const [key, val] of Object.entries(tx)) {
       if (key === "out") {
@@ -199,10 +206,10 @@ export class BMAP {
 
   processUnknown = (key: string, dataObj: Partial<BmapTx>, out: Out) => {
     // no known non-OP_RETURN scripts
-    if (key && !dataObj[key]) {
-      dataObj[key] = [];
+    if (key && !dataObj[`_${key}`]) {
+      dataObj[`_${key}`] = [];
     }
-    (dataObj[key] as Out[]).push({
+    (dataObj[`_${key}`] as Out[]).push({
       i: out.i,
       e: out.e,
       tape: [],
@@ -216,7 +223,6 @@ export class BMAP {
     ) {
       const handler = this.protocolHandlers.get(protocolName);
       if (handler) {
-        /* eslint-disable no-await-in-loop */
         await handler({
           dataObj,
           cell,
@@ -251,11 +257,9 @@ export class BMAP {
       const prefix = cell[0].s;
 
       if (prefix) {
-        const bitcomProtocol =
-          this.enabledProtocols.get(prefix) ||
-          defaultProtocols.filter((p) => p.name === prefix)[0]?.name;
-        if (bitcomProtocol) {
-          await this.process(bitcomProtocol, {
+        const protocolName = this.enabledProtocols.get(prefix);
+        if (protocolName) {
+          await this.process(protocolName, {
             cell,
             dataObj: dataObj as BmapTx,
             tape,

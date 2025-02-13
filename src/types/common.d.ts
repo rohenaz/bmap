@@ -29,6 +29,7 @@ export interface BobTx extends BpuTx {
   blk?: {
     t: number;
     i: number;
+    h: string;
   };
   mem?: number;
   out: Out[];
@@ -54,7 +55,7 @@ export type MetaNet = {
   node: MetanetNode;
 };
 
-export interface MomTx extends BobTx, MetaNet {}
+export interface MomTx extends BobTx, MetaNet { }
 
 export interface BmapTx extends BobTx {
   timestamp: number;

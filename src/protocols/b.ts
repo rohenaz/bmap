@@ -18,6 +18,7 @@ const handler = ({ dataObj, cell, tx }: HandlerProps): void => {
   encodingMap.set("text/plain", "string");
   encodingMap.set("image/png", "binary");
   encodingMap.set("image/jpeg", "binary");
+  encodingMap.set("application/octet-stream", "binary"); // for encrypted data
 
   if (!cell[1] || !cell[2]) {
     throw new Error(`Invalid B tx: ${tx}`);
@@ -27,8 +28,6 @@ const handler = ({ dataObj, cell, tx }: HandlerProps): void => {
   if (cell.length > opReturnSchema.length + 1) {
     throw new Error("Invalid B tx. Too many fields.");
   }
-
-  // Make sure there are not more fields than possible
 
   const bObj: { [key: string]: string | number | undefined } = {};
   // loop over the schema
@@ -44,8 +43,8 @@ const handler = ({ dataObj, cell, tx }: HandlerProps): void => {
       } else if ((!cell[3] || !cell[3].s) && cell[2].s) {
         schemaEncoding = encodingMap.get(cell[2].s) as string;
         if (!schemaEncoding) {
-          console.warn("Problem inferring encoding. Malformed B data.", cell);
-          return;
+          // If we can't infer from content-type, assume binary for encrypted data
+          schemaEncoding = "binary";
         }
 
         // add the missing encoding field
@@ -58,10 +57,11 @@ const handler = ({ dataObj, cell, tx }: HandlerProps): void => {
           cell[3]?.s ? encodingMap.get(cell[3].s.replace("-", "").toLowerCase()) : null
         ) as string | null;
         if (!encoding) {
-          console.warn("Problem inferring encoding. Malformed B data.", cell);
-          return;
+          // If we can't determine encoding, assume binary for encrypted data
+          schemaEncoding = "binary";
+        } else {
+          schemaEncoding = encoding;
         }
-        schemaEncoding = encoding;
       }
     }
 

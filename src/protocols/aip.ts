@@ -3,7 +3,7 @@ import type { Cell, Tape } from "bpu-ts";
 import type { BmapTx, BobTx, HandlerProps, Protocol, SchemaField } from "../types/common";
 import type { AIP as AIPType } from "../types/protocols/aip";
 import type { HAIP as HAIPType } from "../types/protocols/haip";
-import { cellValue, checkOpFalseOpReturn, isBase64, saveProtocolData } from "../utils";
+import { cellValue, checkOpFalseOpReturn, isBase64, saveProtocolData, shallowEqualArrays } from "../utils";
 
 const { toArray, toHex, fromBase58Check, toBase58Check } = Utils;
 
@@ -13,7 +13,7 @@ const opReturnSchema: SchemaField[] = [
   { algorithm: "string" },
   { address: "string" },
   { signature: "binary" },
-  [{ index: "binary" }],
+  [{ index: "number[]" }],
 ];
 
 function validateSignature(
@@ -27,7 +27,8 @@ function validateSignature(
 
   let cellIndex = -1;
   for (let i = 0; i < tape.length; i++) {
-    if (tape[i].cell === cell) {
+    if (shallowEqualArrays(tape[i].cell, cell)) {
+      console.log("[validateSignature] found cell in tape");
       cellIndex = i;
       break;
     }
@@ -36,26 +37,91 @@ function validateSignature(
     throw new Error("AIP could not find cell in tape");
   }
 
+  console.log("[validateSignature] tape:", tape.map(t => t.cell.map(c => `c.ii: ${c.ii}, c.h: ${c.h?.slice(0, 10)}, c.b: ${c.b?.slice(0, 10)}, c.s: ${c.s?.slice(0, 10)}`)));
+
   let usingIndexes: number[] = aipObj.index || [];
-  const signatureValues = ["6a"]; // OP_RETURN - is included in AIP
-  for (let i = 0; i < cellIndex; i++) {
-    const cellContainer = tape[i];
-    if (!checkOpFalseOpReturn(cellContainer)) {
-      for (const statement of cellContainer.cell) {
-        // add the value as hex
-        if (statement.h) {
-          signatureValues.push(statement.h);
-        } else if (statement.b) {
-          // no hex? try base64
-          signatureValues.push(toHex(toArray(statement.b, "base64")));
-        } else if (statement.s) {
-          signatureValues.push(toHex(toArray(statement.s)));
-        }
-      }
-      signatureValues.push("7c"); // | hex
+  const signatureValues: number[][] = [];
+
+  // Always start with OP_RETURN
+  const allCells = tape.flatMap(t => t.cell)
+    .filter(c => c.ii !== undefined)
+    .sort((a, b) => (a.ii || 0) - (b.ii || 0));
+
+  const firstCell = allCells[0];
+  if (firstCell?.op === 106) {
+    signatureValues.push(toArray("6a", "hex")); // Use OP_RETURN from opcode
+  } else {
+    // If no opcode, just use the standard OP_RETURN
+    signatureValues.push(toArray("6a", "hex"));
+  }
+
+  // Create a map of all cells by their ii value
+  const cellsByIndex = new Map<number, Cell>();
+  for (const cell of allCells) {
+    if (cell.ii !== undefined) {
+      cellsByIndex.set(cell.ii, cell);
     }
   }
 
+  // Print out all cells in order with their hex values
+  console.log("[validateSignature] All cells in order:");
+  for (const c of allCells) {
+    console.log(`ii: ${c.ii}, hex: ${c.h}, s: ${c.s}`);
+  }
+
+  if (usingIndexes.length > 0) {
+    console.log("[validateSignature] Using indexes:", usingIndexes);
+
+    // Filter to only the values at the specified indices
+    for (let i = 0; i < usingIndexes.length; i++) {
+      const index = usingIndexes[i];
+
+      // Skip index 0 since we already handled OP_RETURN
+      if (index === 0) continue;
+
+      // Find the cell with exact ii match
+      const targetCell = allCells.find(c => (c.ii || 0) === index);
+
+      // If we don't find a cell at this index, it's a protocol separator
+      if (!targetCell) {
+        signatureValues.push(toArray("7c", "hex")); // |
+        continue;
+      }
+
+      if (targetCell.h) {
+        signatureValues.push(toArray(targetCell.h, "hex"));
+      } else if (targetCell.b) {
+        signatureValues.push(toArray(targetCell.b, "base64"));
+      } else if (targetCell.s) {
+        signatureValues.push(toArray(targetCell.s));
+      } else {
+        console.log(`[validateSignature] No usable value found in cell with ii: ${targetCell.ii}`);
+        return false;
+      }
+    }
+  } else {
+    // Process each tape up to the AIP tape
+    for (let i = 1; i < cellIndex; i++) {
+      const tapeCells = tape[i].cell;
+      if (!checkOpFalseOpReturn({ cell: tapeCells } as Tape)) {
+        // Add each cell's value
+        for (const cell of tapeCells) {
+          if (cell.h) {
+            signatureValues.push(toArray(cell.h, "hex"));
+          } else if (cell.b) {
+            signatureValues.push(toArray(cell.b, "base64"));
+          } else if (cell.s) {
+            signatureValues.push(toArray(cell.s));
+          }
+        }
+
+        // Add protocol separator after each tape
+        signatureValues.push(toArray("7c", "hex")); // |
+      }
+    }
+  }
+
+  // Handle HAIP specific logic
   if (aipObj.hashing_algorithm) {
     // when using HAIP, we need to parse the indexes in a non standard way
     // indexLength is byte size of the indexes being described
@@ -70,31 +136,16 @@ function validateSignature(
     }
   }
 
-  const signatureBufferStatements: number[][] = [];
-  // check whether we need to only sign some indexes
-  if (usingIndexes.length > 0) {
-    for (const index of usingIndexes) {
-      if (index >= signatureValues.length) {
-        console.log("[validateSignature] Index out of bounds:", index);
-        return false;
-      }
-      signatureBufferStatements.push(toArray(signatureValues[index], "hex"));
-    }
-  } else {
-    // add all the values to the signature buffer
-    for (const statement of signatureValues) {
-      signatureBufferStatements.push(toArray(statement, "hex"));
-    }
-  }
+  console.log("[validateSignature] Final signature values:", signatureValues.map(v => toHex(v)));
 
   let messageBuffer: number[];
   if (aipObj.hashing_algorithm) {
     // this is actually Hashed-AIP (HAIP) and works a bit differently
     if (!aipObj.index_unit_size) {
       // remove OP_RETURN - will be added by Script.buildDataOut
-      signatureBufferStatements.shift();
+      signatureValues.shift();
     }
-    const dataScript = Script.fromHex(toHex(signatureBufferStatements.flat()));
+    const dataScript = Script.fromHex(toHex(signatureValues.flat()));
     let dataArray = toArray(dataScript.toHex(), "hex");
     if (aipObj.index_unit_size) {
       // the indexed buffer should not contain the OP_RETURN opcode, but this
@@ -104,7 +155,7 @@ function validateSignature(
     messageBuffer = Hash.sha256(dataArray);
   } else {
     // regular AIP
-    messageBuffer = signatureBufferStatements.flat();
+    messageBuffer = signatureValues.flat();
   }
 
   // AIOP uses address, HAIP uses signing_address field names
@@ -115,6 +166,7 @@ function validateSignature(
 
   let signature: Signature;
   try {
+    // the signature is always base64 encoded
     signature = Signature.fromCompact(aipObj.signature, "base64");
   } catch (e) {
     console.log("[validateSignature] Failed to parse signature:", e);
@@ -148,12 +200,12 @@ function validateSignature(
   const tryTwetchLogic = (): boolean => {
     // Twetch signs a UTF-8 buffer of the hex string of a sha256 hash of the message
     // Without 0x06 (OP_RETURN) and without 0x7c at the end, the trailing pipe ("|")
-    if (signatureBufferStatements.length <= 2) {
+    if (signatureValues.length <= 2) {
       return false;
     }
 
     try {
-      const trimmed = signatureBufferStatements.slice(1, -1);
+      const trimmed = signatureValues.slice(1, -1);
       const buff = Hash.sha256(trimmed.flat());
       const hexStr = toHex(buff);
       const twetchMsg = toArray(hexStr, "utf8");
@@ -220,6 +272,8 @@ export const AIPhandler = async (
     if (Array.isArray(schemaField)) {
       // signature indexes are specified
       const [aipField] = Object.keys(schemaField[0]) as (keyof AIPType)[];
+      // field "index"
+      console.log("[AIPhandler] aipField:", aipField);
       // run through the rest of the fields in this cell, should be de indexes
       const fieldData: number[] = [];
       for (let i = x + 1; i < cell.length; i++) {
@@ -227,6 +281,7 @@ export const AIPhandler = async (
           fieldData.push(Number.parseInt(cell[i].h || "", 16));
         }
       }
+      console.log("[AIPhandler] fieldData:", fieldData);
       aipObj[aipField] = fieldData;
     } else {
       const [aipField] = Object.keys(schemaField) as (keyof AIPType)[];

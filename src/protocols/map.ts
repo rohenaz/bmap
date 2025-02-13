@@ -135,7 +135,8 @@ const processSET = (cell: Cell[], mapObj: MAPType) => {
 const handler = ({ dataObj, cell, tx }: HandlerProps) => {
   // Validate
   if (cell[0].s !== address || !cell[1] || !cell[1].s || !cell[2] || !cell[2].s) {
-    throw new Error(`Invalid MAP record: ${tx}`);
+    // limit each error message to 100 characters
+    throw new Error(`Invalid MAP record: ${JSON.stringify(tx, null, 2).substring(0, 100)}`);
   }
 
   let mapObj = {} as MAPType;
