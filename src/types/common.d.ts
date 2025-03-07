@@ -55,7 +55,7 @@ export type MetaNet = {
   node: MetanetNode;
 };
 
-export interface MomTx extends BobTx, MetaNet { }
+export interface MomTx extends BobTx, MetaNet {}
 
 export interface BmapTx extends BobTx {
   timestamp: number;

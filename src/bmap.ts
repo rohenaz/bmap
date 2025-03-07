@@ -111,8 +111,8 @@ export class BMAP {
       blk: {
         i: tx.blk?.i ?? 0,
         t: tx.blk?.t ?? 0,
-        h: tx.blk?.h ?? ""
-      }
+        h: tx.blk?.h ?? "",
+      },
     };
 
     for (const [key, val] of Object.entries(tx)) {

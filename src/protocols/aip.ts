@@ -3,7 +3,13 @@ import type { Cell, Tape } from "bpu-ts";
 import type { BmapTx, BobTx, HandlerProps, Protocol, SchemaField } from "../types/common";
 import type { AIP as AIPType } from "../types/protocols/aip";
 import type { HAIP as HAIPType } from "../types/protocols/haip";
-import { cellValue, checkOpFalseOpReturn, isBase64, saveProtocolData, shallowEqualArrays } from "../utils";
+import {
+  cellValue,
+  checkOpFalseOpReturn,
+  isBase64,
+  saveProtocolData,
+  shallowEqualArrays,
+} from "../utils";
 
 const { toArray, toHex, fromBase58Check, toBase58Check } = Utils;
 
@@ -37,14 +43,23 @@ function validateSignature(
     throw new Error("AIP could not find cell in tape");
   }
 
-  console.log("[validateSignature] tape:", tape.map(t => t.cell.map(c => `c.ii: ${c.ii}, c.h: ${c.h?.slice(0, 10)}, c.b: ${c.b?.slice(0, 10)}, c.s: ${c.s?.slice(0, 10)}`)));
+  console.log(
+    "[validateSignature] tape:",
+    tape.map((t) =>
+      t.cell.map(
+        (c) =>
+          `c.ii: ${c.ii}, c.h: ${c.h?.slice(0, 10)}, c.b: ${c.b?.slice(0, 10)}, c.s: ${c.s?.slice(0, 10)}`
+      )
+    )
+  );
 
   let usingIndexes: number[] = aipObj.index || [];
   const signatureValues: number[][] = [];
 
   // Always start with OP_RETURN
-  const allCells = tape.flatMap(t => t.cell)
-    .filter(c => c.ii !== undefined)
+  const allCells = tape
+    .flatMap((t) => t.cell)
+    .filter((c) => c.ii !== undefined)
     .sort((a, b) => (a.ii || 0) - (b.ii || 0));
 
   const firstCell = allCells[0];
@@ -80,7 +95,7 @@ function validateSignature(
       if (index === 0) continue;
 
       // Find the cell with exact ii match
-      const targetCell = allCells.find(c => (c.ii || 0) === index);
+      const targetCell = allCells.find((c) => (c.ii || 0) === index);
 
       // If we don't find a cell at this index, it's a protocol separator
       if (!targetCell) {
@@ -136,7 +151,10 @@ function validateSignature(
     }
   }
 
-  console.log("[validateSignature] Final signature values:", signatureValues.map(v => toHex(v)));
+  console.log(
+    "[validateSignature] Final signature values:",
+    signatureValues.map((v) => toHex(v))
+  );
 
   let messageBuffer: number[];
   if (aipObj.hashing_algorithm) {

@@ -4,8 +4,8 @@ import path from "node:path";
 import { parse } from "bpu-ts";
 import {
   BMAP,
-  type BobTx,
   type BmapTx,
+  type BobTx,
   type Handler,
   TransformTx,
   allProtocols,
@@ -54,7 +54,7 @@ describe("bmap", () => {
   test("add handler", () => {
     const bmap = new BMAP();
     const opReturnSchema: SchemaField[] = [];
-    const protocolHandler: Handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => { };
+    const protocolHandler: Handler = async ({ dataObj, cell, tape, tx }: HandlerProps) => {};
     bmap.addProtocolHandler({
       name: "test",
       address: "123TEST",
@@ -75,7 +75,7 @@ describe("bmap", () => {
     const txWithoutBlk = {
       tx: { h: "test" },
       in: [],
-      out: []
+      out: [],
     } as BobTx;
 
     const bmap = new BMAP();
@@ -245,7 +245,7 @@ describe("bmap", () => {
 
     expect(
       parseTx._1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo &&
-      Array.isArray(parseTx._1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo)
+        Array.isArray(parseTx._1MAEepzgWei6zKmbsdQSy8wAYL5ySDizKo)
     ).toBe(true);
     // expect(parseTx.BOOST && typeof parseTx.BOOST[0]).toEqual('object')
     // // rest is checked in boost.test.js
@@ -258,22 +258,16 @@ describe("bmap", () => {
   });
 
   test("parse encrypted B protocol message", async () => {
-    const encryptedBHex = fs.readFileSync(
-      path.resolve(
-        __dirname,
-        "../data/b-message.hex"
-      ),
-      "utf8"
-    );
+    const encryptedBHex = fs.readFileSync(path.resolve(__dirname, "../data/b-message.hex"), "utf8");
 
     const tx = await bobFromRawTx(encryptedBHex);
     expect(tx).toBeTruthy();
 
     // Log ONLY tape prefixes and cell data
-    console.log('\nB Protocol Data:');
+    console.log("\nB Protocol Data:");
     if (tx.out?.[0]?.tape) {
       tx.out[0].tape.forEach((tape, index) => {
-        if (tape.cell?.[0]?.s === '19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut') {
+        if (tape.cell?.[0]?.s === "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut") {
           console.log(`\nTape ${index}:`);
           tape.cell.forEach((cell, i) => {
             // For binary data, show the b field exists
@@ -281,10 +275,10 @@ describe("bmap", () => {
               console.log(`Cell ${i}: [base64 data present in 'b' field]`);
             } else {
               // limit this to 100 characters
-              console.log(`Cell ${i}: ${cell.s?.slice(0, 100) || '[no data]'}`);
+              console.log(`Cell ${i}: ${cell.s?.slice(0, 100) || "[no data]"}`);
             }
             // Show all available fields for debugging
-            console.log('  Available fields:', Object.keys(cell).join(', '));
+            console.log("  Available fields:", Object.keys(cell).join(", "));
           });
         }
       });
@@ -296,12 +290,7 @@ describe("bmap", () => {
     bmap.addProtocolHandler(B);
 
     // Process only the first output's tape
-    const dataObj = await bmap.processDataProtocols(
-      tx.out[0].tape,
-      tx.out[0],
-      tx,
-      {}
-    );
+    const dataObj = await bmap.processDataProtocols(tx.out[0].tape, tx.out[0], tx, {});
 
     expect(dataObj.B).toBeDefined();
     expect(Array.isArray(dataObj.B)).toBe(true);
@@ -310,20 +299,17 @@ describe("bmap", () => {
     // Test the B protocol message
     const b = dataObj.B[0];
     expect(b.content).toBeDefined();
-    expect(typeof b.content).toBe('string');
-    expect(b['content-type']).toBeDefined();
-    expect(b['content-type']).toBe('application/bitcoin-ecies; content-type=text/plain');
+    expect(typeof b.content).toBe("string");
+    expect(b["content-type"]).toBeDefined();
+    expect(b["content-type"]).toBe("application/bitcoin-ecies; content-type=text/plain");
     expect(b.encoding).toBeDefined();
-    expect(b.encoding).toBe('binary');
+    expect(b.encoding).toBe("binary");
     // filename is optional, so we don't assert it must exist
   });
 
   test("parse double B protocol message", async () => {
     const doubleBHex = fs.readFileSync(
-      path.resolve(
-        __dirname,
-        "../data/faulty-double-b-message.hex"
-      ),
+      path.resolve(__dirname, "../data/faulty-double-b-message.hex"),
       "utf8"
     );
 
@@ -331,13 +317,13 @@ describe("bmap", () => {
     expect(tx).toBeTruthy();
 
     // Log ONLY tape prefixes and cell data
-    console.log('\nTape Structure:');
+    console.log("\nTape Structure:");
     if (tx.out?.[0]?.tape) {
       tx.out[0].tape.forEach((tape, index) => {
         const prefix = tape.cell[0]?.s;
         console.log(`\nTape ${index}:`);
         console.log(`  Prefix: ${prefix}`);
-        console.log('  Cells:');
+        console.log("  Cells:");
         tape.cell.forEach((cell, i) => {
           if (cell.s) {
             // limit this to 100 characters
@@ -356,22 +342,17 @@ describe("bmap", () => {
     // Only recognize B protocol by its address
 
     // Process only the first output's tape
-    const dataObj = await bmap.processDataProtocols(
-      tx.out[0].tape,
-      tx.out[0],
-      tx,
-      {}
-    );
+    const dataObj = await bmap.processDataProtocols(tx.out[0].tape, tx.out[0], tx, {});
 
     // Log only the structure of the processed data
-    console.log('\nProcessed Data Structure:');
+    console.log("\nProcessed Data Structure:");
     if (dataObj.B) {
       console.log(`B protocol entries found: ${dataObj.B.length}`);
       dataObj.B.forEach((b: Record<string, unknown>, i: number) => {
         console.log(`\nB[${i}]:`);
-        console.log('  Fields:', Object.keys(b).join(', '));
-        console.log('  Content-Type:', b['content-type']);
-        console.log('  Encoding:', b.encoding);
+        console.log("  Fields:", Object.keys(b).join(", "));
+        console.log("  Content-Type:", b["content-type"]);
+        console.log("  Encoding:", b.encoding);
       });
     }
 
@@ -383,11 +364,11 @@ describe("bmap", () => {
     if (dataObj.B) {
       for (const b of dataObj.B) {
         expect(b.content).toBeDefined();
-        expect(typeof b.content).toBe('string');
-        expect(b['content-type']).toBeDefined();
-        expect(typeof b['content-type']).toBe('string');
+        expect(typeof b.content).toBe("string");
+        expect(b["content-type"]).toBeDefined();
+        expect(typeof b["content-type"]).toBe("string");
         expect(b.encoding).toBeDefined();
-        expect(typeof b.encoding).toBe('string');
+        expect(typeof b.encoding).toBe("string");
         // filename is optional, so we don't assert it must exist
       }
     }
@@ -417,5 +398,4 @@ describe("Ord 2", () => {
     expect(bmapTx.MAP).toBeDefined();
     expect(bmapTx.MAP?.[0].collection).toBe("sMon");
   });
-
 });

@@ -76,10 +76,17 @@ function He(t, e, r) {
     }
   if (n === -1)
     throw new Error("AIP could not find cell in tape");
-  console.log("[validateSignature] tape:", r.map((i) => i.cell.map((g) => {
-    var h, p, v;
-    return `c.ii: ${g.ii}, c.h: ${(h = g.h) == null ? void 0 : h.slice(0, 10)}, c.b: ${(p = g.b) == null ? void 0 : p.slice(0, 10)}, c.s: ${(v = g.s) == null ? void 0 : v.slice(0, 10)}`;
-  })));
+  console.log(
+    "[validateSignature] tape:",
+    r.map(
+      (i) => i.cell.map(
+        (g) => {
+          var h, p, v;
+          return `c.ii: ${g.ii}, c.h: ${(h = g.h) == null ? void 0 : h.slice(0, 10)}, c.b: ${(p = g.b) == null ? void 0 : p.slice(0, 10)}, c.s: ${(v = g.s) == null ? void 0 : v.slice(0, 10)}`;
+        }
+      )
+    )
+  );
   let s = t.index || [];
   const o = [], c = r.flatMap((i) => i.cell).filter((i) => i.ii !== void 0).sort((i, g) => (i.ii || 0) - (g.ii || 0)), a = c[0];
   a == null || a.op, o.push(y("6a", "hex"));
@@ -125,7 +132,10 @@ function He(t, e, r) {
       s.push(Number.parseInt(g.substr(h, i), 16));
     t.index = s;
   }
-  console.log("[validateSignature] Final signature values:", o.map((i) => H(i)));
+  console.log(
+    "[validateSignature] Final signature values:",
+    o.map((i) => H(i))
+  );
   let f;
   if (t.hashing_algorithm) {
     t.index_unit_size || o.shift();

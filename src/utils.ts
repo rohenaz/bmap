@@ -37,10 +37,10 @@ export const cellValue = (pushData: Cell, schemaEncoding?: string): string | num
     return pushData.h
       ? pushData.h
       : pushData.lh ||
-      (pushData.b
-        ? Buffer.from(pushData.b, "base64").toString("hex")
-        : pushData.lb && Buffer.from(pushData.lb, "base64").toString("hex")) ||
-      "";
+          (pushData.b
+            ? Buffer.from(pushData.b, "base64").toString("hex")
+            : pushData.lb && Buffer.from(pushData.lb, "base64").toString("hex")) ||
+          "";
   }
   if (schemaEncoding === "number") {
     return Number.parseInt(pushData.h ? pushData.h : pushData.lh || "0", 16);
@@ -155,10 +155,6 @@ export const sha256 = (msgBuffer: number[]) => {
   return Hash.sha256(toArray(msgBuffer));
 };
 
-
 export const shallowEqualArrays = <T>(arr1: T[], arr2: T[]): boolean => {
-  return (
-    arr1.length === arr2.length &&
-    arr1.every((value, index) => value === arr2[index])
-  );
-}
+  return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
+};
