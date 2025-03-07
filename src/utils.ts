@@ -48,6 +48,9 @@ export const cellValue = (pushData: Cell, schemaEncoding?: string): string | num
   if (schemaEncoding === "file") {
     return `bitfs://${pushData.f ? pushData.f : pushData.lf}`;
   }
+  if (schemaEncoding === "binary") {
+    return pushData.b || pushData.lb || "";
+  }
 
   return (pushData.b ? pushData.b : pushData.lb) || "";
 };
@@ -88,6 +91,11 @@ export const saveProtocolData = (
   if (!dataObj[protocolName]) {
     dataObj[protocolName] = [data];
   } else {
+    if (!Array.isArray(dataObj[protocolName])) {
+      const prevData = dataObj[protocolName];
+      dataObj[protocolName] = [];
+      dataObj[protocolName][0] = prevData;
+    }
     dataObj[protocolName].push(data);
   }
 };
@@ -145,4 +153,8 @@ export const isBase64 = (data: string) => {
 // hashes a message buffer, returns the hash as a buffer
 export const sha256 = (msgBuffer: number[]) => {
   return Hash.sha256(toArray(msgBuffer));
+};
+
+export const shallowEqualArrays = <T>(arr1: T[], arr2: T[]): boolean => {
+  return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 };

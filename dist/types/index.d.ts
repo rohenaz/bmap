@@ -25,14 +25,7 @@ export { _21E8 }
 
 export { AIP }
 
-export declare const allProtocols: (Protocol | {
-    name: string;
-    address: string;
-    opReturnSchema: {
-        url: string;
-    }[];
-    handler: ({ dataObj, cell, tx }: HandlerProps) => void;
-})[];
+export declare const allProtocols: Protocol[];
 
 export { B }
 

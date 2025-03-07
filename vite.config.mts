@@ -27,7 +27,7 @@ export default defineConfig({
       copyDtsFiles: false,
       compilerOptions: {
         preserveSymlinks: true,
-        skipLibCheck: true
+        skipLibCheck: true,
       },
       afterBuild: () => {
         console.log("Type declarations built successfully");

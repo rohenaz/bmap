@@ -29,6 +29,7 @@ export interface BobTx extends BpuTx {
   blk?: {
     t: number;
     i: number;
+    h: string;
   };
   mem?: number;
   out: Out[];
